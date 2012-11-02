@@ -1,0 +1,1 @@
+from pyproclust.clustering.test.data.cluster_definitions import clusters
