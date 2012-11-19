@@ -9,7 +9,7 @@ Created on 14/09/2012
 import sys
 import optparse
 import prody.proteins
-from pyproclust.protocol.matrixHandler import MatrixHandler
+from pyRMSD.matrixHandler import MatrixHandler
 from pyproclust.algorithms.kmedoids.kMedoids import KMedoids
 from pyproclust.tools.pdbTools import extract_frames_from_trajectory
 import random

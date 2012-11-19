@@ -11,7 +11,7 @@ from pyproclust.clustering.comparison.comparator import Separator,\
 from pyproclust.clustering.comparison.RMSDProbabilityDistributionComparison import RMSDProbabilityDistributionComparison
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
 from pyproclust.protocol.workspaceHandler import WorkspaceHandler
-from pyproclust.protocol.matrixHandler import MatrixHandler
+from pyRMSD.matrixHandler import MatrixHandler
 from pyproclust.protocol.trajectoryHandler import TrajectoryHandler 
 from pyproclust.protocol.clusteringExplorationFunctions import do_clustering_exploration
 from pyproclust.protocol.protocolImplementationFunctions import get_algorithm_scheduler,\
@@ -20,7 +20,6 @@ from pyproclust.protocol.protocolImplementationFunctions import get_algorithm_sc
 from pyproclust.protocol.refinementProtocol import pureRefinementProtocol,\
     mixedRefinementProtocol
 from pyproclust.clustering.clusterization import Clustering
-import pickle
 from pyproclust.tools.plotTools import matrixToImage
 from pyproclust.htmlreport.htmlReport import HTMLReport
 from pyproclust.tools.scriptTools import classify_generated_clusters
