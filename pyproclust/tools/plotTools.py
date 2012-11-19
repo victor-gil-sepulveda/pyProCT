@@ -7,13 +7,13 @@ Created on 15/10/2012
 import numpy
 import Image, ImageDraw
 import matplotlib.pyplot as plt
-from pyproclust.matrix.condensedMatrix import CondensedDistanceMatrix
 import pylab
 from pyproclust.tools.commonTools import list2ListWoZeros, normalize,\
     normalizeInRange
 import ImageFont
+from pyRMSD.condensedMatrix import CondensedMatrix
 
-def matrixToImage(condensed_distance_matrix,matrix_image_file):
+def matrixToImage(condensed_distance_matrix, matrix_image_file, max_size = (2048,2048)):
     # Normalize
     contents = condensed_distance_matrix.get_data()
     _max = numpy.max(contents)
@@ -21,7 +21,7 @@ def matrixToImage(condensed_distance_matrix,matrix_image_file):
     
     norm_contents = (contents - _min) / (_max - _min)
     
-    norm_condensed = CondensedDistanceMatrix(norm_contents)
+    norm_condensed = CondensedMatrix(norm_contents)
     _max = numpy.max(norm_contents)
     _min = numpy.min(norm_contents)
     

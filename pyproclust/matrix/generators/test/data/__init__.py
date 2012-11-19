@@ -1,3 +1,0 @@
-from xpm_matrix_data import xpm_matrix_string,xpm_values
-import vmd_scripts 
-import partial_out_data
