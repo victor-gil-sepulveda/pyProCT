@@ -11,7 +11,7 @@ from pyproclust.clustering.comparison.comparator import Separator
 from pyproclust.protocol.clusteringExplorationFunctions import do_clustering_exploration
 from pyproclust.protocol.protocolImplementationFunctions import get_algorithm_scheduler,\
     do_clustering_filtering, clustering_scoring
-from pyproclust.protocol.matrixHandler import MatrixHandler
+from pyRMSD.matrixHandler import MatrixHandler
 import numpy
 
 def pick_all_elements_from_clusters(clusters):

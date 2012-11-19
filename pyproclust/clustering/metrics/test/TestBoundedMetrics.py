@@ -9,7 +9,6 @@ from pyproclust.clustering.clusterization import Clustering
 from pyproclust.clustering.metrics.boundedClusteringMetrics import SilhouetteCoefficientCalculator,\
     BoundedCohesionCalculator
 from pyproclust.clustering.cluster import Cluster
-import pyproclust.tools.scriptTools as scripts_common
 from pyproclust.clustering.analysis.picklingParallelAnalysisRunner import PicklingParallelAnalysisRunner
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 import time

@@ -6,7 +6,6 @@ Created on 19/04/2012
 import pickle
 import os.path
 import errno
-import pyproclust.matrix.condensedMatrix as condensed_matrix_tools
 import math
 
 """
@@ -30,19 +29,6 @@ def tile_images_using_montage(file_prefix,num_of_columns,num_of_images,output):
     num_of_rows =  int(math.ceil(num_of_columns/num_of_images))
     command = "montage -border 0 -geometry 800x -tile %dx%d %s*.png %s"%(num_of_columns,num_of_rows,file_prefix,output)
     os.system(command)
-
-def load_matrix(filename):
-    """
-    Loads a matrix in txt or bin formats.
-    """
-    condensed_distance_matrix = None
-    matrix_file_handler = open(filename,'r')
-    if ".bin" in filename:
-        condensed_distance_matrix = pickle.load(matrix_file_handler)
-    else:
-        condensed_distance_matrix = condensed_matrix_tools.load_condensed_matrix(matrix_file_handler)
-    matrix_file_handler.close()
-    return condensed_distance_matrix
 
 def make_directory(directory_path):
     """
