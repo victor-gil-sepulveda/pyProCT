@@ -9,6 +9,8 @@ from pyproclust.clustering.metrics.clusteringMetrics import CohesionCalculator,\
 from pyproclust.clustering.metrics.boundedClusteringMetrics import SilhouetteCoefficientCalculator,\
     BoundedCohesionCalculator
 from pyproclust.clustering.cluster import Cluster
+from pyproclust.tools import scriptTools
+import pickle
 
 class Clustering(object):
     '''
@@ -212,3 +214,30 @@ class Clustering(object):
         for c in self.clusters:
             all_clustered_elements.extend(c.all_elements)
         return all_clustered_elements
+    
+    def save_to_disk(self, path_with_file_name):
+        """
+        Saves itself as a binary file.
+        
+        @param filename: complete path with name of the file 
+        """
+        not_repeated_path_with_file_name = scriptTools.get_not_repeated_file_name(path_with_file_name)
+        file_handler = open(not_repeated_path_with_file_name,'w')
+        pickle.dump(self,file_handler)
+        file_handler.close()
+
+    
+    @classmethod
+    def load_from_disk(cls, path_with_file_name):
+        """
+        Loads a clustering which was stored into disk.
+        
+        @param path_with_file_name: complete path with name of the file (the same used for saving).
+        
+        @return: The clustering stored in this file.
+        """
+        file_handler = open(path_with_file_name,'r')
+        clustering = pickle.load(file_handler)
+        file_handler.close()
+        return clustering
+    

@@ -97,14 +97,14 @@ class Protocol(object):
             self.htmlReport.report["Timing"] += 'Calculating RMSDs distribution and KL Divergence took %0.3f s\n' % (time_end-time_start)
             common.print_and_flush(" Done\n")
         
-        ############################################
+        #########################
         # Matrix plot
-        ############################################
+        #########################
         matrixToImage(self.matrixHandler.distance_matrix,self.workspaceHandler.matrix_path+"/matrix_plot.png")
         
-        ######################
+        ############################
         # Clustering exploration
-        ######################
+        ############################
         time_start = time.time()
         do_clustering_exploration(protocol_params, get_algorithm_scheduler(protocol_params),\
                                         self.matrixHandler.distance_matrix,\
@@ -113,9 +113,9 @@ class Protocol(object):
         time_end = time.time()
         self.htmlReport.report["Timing"] += 'Clustering generation took %0.3f s\n' % (time_end-time_start)
                 
-        #################################
+        ####################################
         # Load created clusterings from disk
-        #################################
+        ####################################
         time_start = time.time()
         non_filtered_clusterings = scripts_common.load_binary_clusters(self.workspaceHandler.clusterings_path)
         time_end = time.time()

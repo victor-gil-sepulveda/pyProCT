@@ -58,7 +58,8 @@ def spawn_hierarchical_cutoff_calculation_function(protocol_params,condensed_dis
     cid = 0
     for k in clusters.keys():
         clustering = clusters[k][1]
-        scripts_common.save_clusters_as_binary(clustering_directory,"hie_"+str(cid)+".bin",clustering)
+        complete_path_with_name = clustering_directory+"/"+"hie_"+str(cid)+".bin"
+        clustering.save_to_disk(complete_path_with_name)
         cid = cid + 1
     common.print_and_flush(" Done\n")
 
@@ -145,5 +146,4 @@ def spawn_spectral(protocol_params, condensed_distance_matrix, processManager,cl
 
 def run_algorithm(algorithm, algorithm_kwargs,clustering_id,directory):
     clustering = algorithm.perform_clustering(algorithm_kwargs)
-    scripts_common.save_clusters_as_binary(directory,str(clustering_id)+".bin",clustering)
-           
+    clustering.save_to_disk(directory+"/"+str(clustering_id)+".bin")
