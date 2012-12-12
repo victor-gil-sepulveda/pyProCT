@@ -4,14 +4,14 @@ Created on 21/05/2012
 @author: victor
 '''
 import time
+from pyRMSD.matrixHandler import MatrixHandler
+
 import pyproclust.tools.commonTools as common
 import pyproclust.tools.scriptTools as scripts_common
 from pyproclust.clustering.comparison.comparator import Separator,\
     ClusteringStatisticalAnalyzer, ClusteringPlotsGenerator
-from pyproclust.clustering.comparison.RMSDProbabilityDistributionComparison import RMSDProbabilityDistributionComparison
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
 from pyproclust.protocol.workspaceHandler import WorkspaceHandler
-from pyRMSD.matrixHandler import MatrixHandler
 from pyproclust.protocol.trajectoryHandler import TrajectoryHandler 
 from pyproclust.protocol.clusteringExplorationFunctions import do_clustering_exploration
 from pyproclust.protocol.protocolImplementationFunctions import get_algorithm_scheduler,\
@@ -23,6 +23,8 @@ from pyproclust.clustering.clusterization import Clustering
 from pyproclust.tools.plotTools import matrixToImage
 from pyproclust.htmlreport.htmlReport import HTMLReport
 from pyproclust.tools.scriptTools import classify_generated_clusters
+from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
+from pyproclust.tools.pdbTools import get_number_of_frames
 #from pyproclust.protocol.serialProcessPool import SerialProcessPool
 
 
@@ -49,6 +51,7 @@ class Protocol(object):
         #####################
         self.trajectoryHandler = TrajectoryHandler(protocol_params.pdb1, protocol_params.pdb2, protocol_params.rmsd_selection)
         self.htmlReport.report["Trajectories"] = self.trajectoryHandler
+        
         ##############################
         # Obtaining the distance matrix
         ##############################
@@ -76,18 +79,27 @@ class Protocol(object):
         
         self.htmlReport.report["Matrix Handler"] = self.matrixHandler
         ############################################
-        # Distribution analysis and matrix plot
+        # Distribution analysis
         ############################################
         if protocol_params.shallWeCompareTrajectories():
             common.print_and_flush("Calculating rmsd distributions and KL divergence...")
             time_end = time.time()
-            klDiv = RMSDProbabilityDistributionComparison(protocol_params.pdb1,protocol_params.pdb2,\
-                                                  self.matrixHandler.distance_matrix,\
-                                                  self.workspaceHandler.matrix_path+"/rmsd_distrib")
+            klDiv = KullbackLeiblerDivergence(protocol_params.pdb1,\
+                                              protocol_params.pdb2,\
+                                              get_number_of_frames(protocol_params.pdb1),
+                                              get_number_of_frames(protocol_params.pdb2),
+                                              self.matrixHandler.distance_matrix)
+            
+            klDiv.plot_distributions(self.workspaceHandler.matrix_path+"/rmsd_distrib")
+            klDiv.save_to_file(self.workspaceHandler.matrix_path+"/rmsd_distrib")
+            
             self.htmlReport.report["KL"] = klDiv
             self.htmlReport.report["Timing"] += 'Calculating RMSDs distribution and KL Divergence took %0.3f s\n' % (time_end-time_start)
             common.print_and_flush(" Done\n")
         
+        ############################################
+        # Matrix plot
+        ############################################
         matrixToImage(self.matrixHandler.distance_matrix,self.workspaceHandler.matrix_path+"/matrix_plot.png")
         
         ######################

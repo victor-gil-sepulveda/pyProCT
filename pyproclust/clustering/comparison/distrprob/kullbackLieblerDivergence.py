@@ -1,0 +1,155 @@
+'''
+Created on 20/08/2012
+
+@author: victor
+'''
+from pyproclust.tools.pdbTools import get_number_of_frames
+import numpy
+import matplotlib.pyplot as plt
+import math
+
+def smoothed(distribution,small_value = 1.0e-8):
+    """
+    Applies a smoothing process to the distribution.
+    See http://mathoverflow.net/questions/72668/how-to-compute-kl-divergence-when-pmf-contains-0s
+    for an explanation about the problem and the solution.
+    
+    @param distribution: distribution to be smoothed
+    @param small_value: value to be set to those bins with 0 probability
+    
+    @return: The smoothed distribution.
+    """
+    total_number_of_samples = len(distribution)
+    samples_in_distrib = numpy.count_nonzero(distribution)
+    pc = small_value * (total_number_of_samples - samples_in_distrib) / samples_in_distrib
+    smoothed_distrib = numpy.empty(len(distribution))
+    for i in range(len(distribution)):
+        if distribution[i] == 0:
+            smoothed_distrib[i] = small_value
+        else:
+            smoothed_distrib[i] = distribution[i] - pc
+    return smoothed_distrib
+
+class KullbackLeiblerDivergence(object):
+    
+    # Number of bins that the histogram will have when calculating the
+    # distribution
+    NUM_BINS = 100
+    
+    def __init__(self, pdb1, pdb2, number_of_models_1, number_of_models_2, condensedMatrix):
+        """
+        Class constructor. Does the actual calculation.
+        
+        @param pdb1: Complete path of the pdb file used in first place to build the distance matrix.
+        @param pdb2: The same for the second pdb.
+        @param number_of_models_1: The number of models of pdb1 (usually with get_number_of_frames(pdb1)).
+        @param number_of_models_2: The number of models of pdb2.
+        @param condensedMatrix: The actual calculated matrix.
+        """
+        self.pdb1 = pdb1
+        self.pdb2 = pdb2
+        
+        first_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix,0,number_of_models_1)
+        second_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix, number_of_models_1, number_of_models_2)
+        
+        max_of_submatrices = max(numpy.max(first_pdb_submatrix),numpy.max(second_pdb_submatrix))
+        min_of_submatrices = min(numpy.min(first_pdb_submatrix),numpy.min(second_pdb_submatrix))
+        distribution_range = (min_of_submatrices, max_of_submatrices)
+        
+        prob_histogram1, self.bins1 = KullbackLeiblerDivergence.get_probability_histogram(\
+                                                                                          first_pdb_submatrix,\
+                                                                                          distribution_range,\
+                                                                                          KullbackLeiblerDivergence.NUM_BINS)
+        
+        prob_histogram2, self.bins2 = KullbackLeiblerDivergence.get_probability_histogram(\
+                                                                                          second_pdb_submatrix,\
+                                                                                          distribution_range,\
+                                                                                          KullbackLeiblerDivergence.NUM_BINS)
+
+        self.smoothed_prob_histogram1 = smoothed(prob_histogram1)
+        self.smoothed_prob_histogram2 = smoothed(prob_histogram2)
+        
+        self.kl1 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram1,self.smoothed_prob_histogram2)
+        self.kl2 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram2,self.smoothed_prob_histogram1)
+        
+    def plot_distributions(self, where):
+        """
+        Saves a plot of the distributions.
+        @param where: The name of the file without extension (".png" will be appended to the final name). 
+        """
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        ax.plot(self.bins1[:self.NUM_BINS],self.smoothed_prob_histogram1, 'b--', linewidth=2)
+        ax.plot(self.bins2[:self.NUM_BINS],self.smoothed_prob_histogram2, 'r--', linewidth=2)
+        ax.grid(True)
+        ax.legend([plt.Rectangle((0, 0), 1, 1, fc="b"),plt.Rectangle((0, 0), 1, 1, fc="r")],[self.pdb1,self.pdb2])
+        plt.savefig(where+".png")   
+    
+    def save_to_file(self, where):
+        """
+        Saves the K-L values in a text file.
+        @param where: The name of the file without extension (".txt" will be appended to the final name). 
+        """
+        open( where+".txt","w").write("KL Divergence\nt1 on t2: %f\nt2 on t1: %f"%(self.kl1,self.kl2))
+    
+    @classmethod
+    def get_probability_histogram(cls,data,bin_range,num_bins):
+        """
+        Creates the histogram using numpy.
+        @param data: data from which we will create the histogram (in this case the data of one of the submatrices)
+        @param bin_range: tuple with the maximum and minimum value the sum of all distributions (not only this one) can have.
+        @param num_bins: Number of discrete parts of the distribution.
+        """
+        hist = numpy.histogram(data, num_bins, bin_range)
+        float_hist = numpy.asarray(hist[0],dtype=numpy.float32)
+        return float_hist/len(data), hist[1]
+    
+    @classmethod
+    def get_matrix_data(cls,matrix,initial_element,number_of_elements):
+        """
+        A matrix generated from the concatenation of two pdbs may have 3 submatrices. First is the pairwise matrix of 
+        the first pdb, second the pairwise matrix of the second, and third is the distance matrix of pdb1 vs pdb2 
+        (in which info is duplicated, as its itself a pairwise distance matrix). This function grabs the data 
+        of one of the two first submatrices.
+        
+        @param matrix: The matrix we are talking about :/
+        @param initial_element: is the index of the initial element of the pdb we want to extract the data. For instance
+        if we are working with 2 trajectories of 3 and 4 frames, indexes are [tr1:[0,1,2] tr2:[3,4,5,6]], so to extract 
+        the first submatrix data, initial_element would be 0 and number_of_elements 3. Extracting the second submatrix will
+        need a initial_element value of 3 and a number_of_elements value of 4.
+        @param number_of_elements: As explained above, the number of models the pdb we are working with has.
+        
+        @return: A 1D numpy.array containing the submatrix data. 
+        """
+        traj_data = numpy.empty(number_of_elements*(number_of_elements-1)/2)
+        final_element = initial_element+number_of_elements
+        m_i = 0
+        for i in range(initial_element, final_element):
+            for j in range(i, final_element):
+                if(i!=j):
+                    traj_data[m_i] = matrix[i,j]
+                    m_i = m_i+1
+        return traj_data
+    
+    @classmethod
+    def kullback_leibler_divergence_calculation(cls, dist1, dist2):
+        """
+        Calculates the Kullback - Leibler divergence of two distributions.
+        @param dist1: first distribution
+        @param dist2: second distribution
+        
+        @return: The Kullback-Leibler Divergence value
+        """
+        kl = 0;
+        for i in range(len(dist1)):
+            try:
+                kl += dist1[i] * math.log(dist1[i]/dist2[i],2)
+            except ArithmeticError:
+                print "dist1[i]", dist1[i],"dist2[i]", dist2[i]
+        return kl
+    
+    def get_calculated_KL_values(self):
+        """
+        A simple getter...
+        """
+        return (self.kl1, self.kl2)

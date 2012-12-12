@@ -94,8 +94,7 @@ def extract_frames_from_trajectory(file_handler_in, number_of_frames, file_handl
 
 def create_CA_file(file_handler_in, file_handler_out):
     """
-    Creates a valid CA pdb from a valid pdb. Useful to reduce load times
-    with Prody.
+    Creates a valid CA pdb from a valid pdb. Useful to reduce load times.
     """
     for l in file_handler_in:
         if l[0:3] == 'MOD' or l[0:3] == 'END' or l[0:3] == 'TER': 
