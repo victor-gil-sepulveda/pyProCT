@@ -38,7 +38,7 @@ if __name__ == '__main__':
     print "Parsing PDB : ",options.pdb_in 
     sys.stdout.flush()
     pdb = prody.proteins.parsePDB(options.pdb_in)
-    coordsets = pdb.getCoordsets()[100:]
+    coordsets = pdb.getCoordsets()[20:]
     number_of_conformations = len(coordsets)
     number_of_atoms = len(pdb)
     selection = pdb.select("backbone or not protein")
