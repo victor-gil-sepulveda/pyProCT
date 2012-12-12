@@ -8,15 +8,15 @@ from pyproclust.clustering.metrics.clusteringMetrics import CohesionCalculator,\
     CohesionAndSeparationCalculator, MeanMinimumDistanceCalculator
 from pyproclust.clustering.metrics.boundedClusteringMetrics import SilhouetteCoefficientCalculator,\
     BoundedCohesionCalculator
-from pyproclust.clustering.cluster import Cluster
 from pyproclust.tools import scriptTools
 import pickle
+import os
 
 class Clustering(object):
     '''
     Class representing the result of a clustering algorithm (a set of clusters).
     '''
-    def __init__(self,clusters,details="", sort = True):
+    def __init__(self,clusters, details="", sort = True):
         '''
         Constructor
         '''
@@ -241,3 +241,46 @@ class Clustering(object):
         file_handler.close()
         return clustering
     
+    @classmethod
+    def load_all_from_directory(cls, directory):
+        """
+        Loads all clusterings in a directory.
+        
+        @param directory: The directory path.
+        
+        @return: The list of loaded clusterings inside this directory.
+        """
+        clusterings = []
+        clustering_files = []
+        
+        files = os.listdir(directory) 
+        for filename in files:
+            if ".bin" in filename:
+                clustering_files.append(directory+"/"+filename)
+        clustering_files.sort()
+        
+        for a_file in clustering_files:
+            clusterings.append(cls.load_from_disk(a_file))
+        
+        return clusterings
+    
+    @classmethod
+    def classify(tags,clusterings):
+        """
+        Classifies a collection of clusterings using the classes in 'tags', counting the occurrences for each class. 
+        A clustering belongs to a class if in its 'details' string the class-tag appears.  
+        
+        @param tags: An array with the class-tags used to classify.
+        @param clusterings: The list of clusterings to classify.
+        
+        @return: A counter of the class occurrences.
+        """
+        counter = {}
+        for t in tags:
+            counter[t] = 0
+        for clustering in clusterings:
+            for t in tags:
+                if t in clustering.details:
+                    counter[t] += 1
+        return counter
+            

@@ -6,7 +6,7 @@ Created on 23/10/2012
 import numbers
 import datetime
 from pyproclust.htmlreport.javascript import page_footer_chunk, page_header_chunk
-from pyproclust.tools.scriptTools import make_directory
+from pyproclust.tools.scriptTools import create_directory
 from PIL import Image
 import os
 
@@ -277,7 +277,7 @@ class HTMLReport(object):
     
     def create_thumbnails(self, dest_path):
         # Create img path there
-        make_directory(dest_path+"/img/thumbnails")
+        create_directory(dest_path+"/img/thumbnails")
         thumb_size = (256,256)
         for key in self.report["Image Paths"]:
             file_w_all, ext = os.path.splitext(self.report["Image Paths"][key])

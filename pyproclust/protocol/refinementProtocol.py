@@ -54,7 +54,7 @@ class pureRefinementProtocol(object):
     """
     def __init__(self,clusters,matrix,clusters_path,pdb_structure):
         # Workspace
-        scripts_common.make_directory(clusters_path)
+        scripts_common.create_directory(clusters_path)
         # Pick all the elements
         self.all_elements = pick_all_elements_from_clusters(clusters)
         self.number_of_elements = len(self.all_elements)

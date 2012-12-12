@@ -22,7 +22,7 @@ from pyproclust.protocol.refinementProtocol import pureRefinementProtocol,\
 from pyproclust.clustering.clusterization import Clustering
 from pyproclust.tools.plotTools import matrixToImage
 from pyproclust.htmlreport.htmlReport import HTMLReport
-from pyproclust.tools.scriptTools import classify_generated_clusters
+from pyproclust.tools.scriptTools import classify_generated_clusterings
 from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproclust.tools.pdbTools import get_number_of_frames
 #from pyproclust.protocol.serialProcessPool import SerialProcessPool
@@ -117,12 +117,12 @@ class Protocol(object):
         # Load created clusterings from disk
         ####################################
         time_start = time.time()
-        non_filtered_clusterings = scripts_common.load_binary_clusters(self.workspaceHandler.clusterings_path)
+        non_filtered_clusterings = Clustering.load_all_from_directory(self.workspaceHandler.clusterings_path)
         time_end = time.time()
         self.htmlReport.report["Timing"] += 'Clustering loading took %0.3f s\n' % (time_end-time_start)
         tags = ['Spectral', 'DBSCAN', 'GROMOS', 'K-Medoids', 'Random', 'Hierarchical']
-        counter, number_of_tries = classify_generated_clusters(tags,\
-                                                               clusterings = non_filtered_clusterings)  
+        counter  = Clustering.classify(tags, clusterings = non_filtered_clusterings)  
+        number_of_tries = len(non_filtered_clusterings)
         self.htmlReport.report["Tries"]["Contents"]["Number of tries"] = number_of_tries
         self.htmlReport.report["Tries"]["Contents"]["All Clusterings"] = (tags, counter)
         

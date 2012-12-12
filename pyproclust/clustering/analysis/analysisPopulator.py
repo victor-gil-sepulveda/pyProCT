@@ -170,7 +170,7 @@ class AnalysisPopulator(object):
     
     def analysis_function_minimum_mean_distance(self,clusterization,distance_matrix):
         """
-        Calculates the minimum mena distance...
+        Calculates the minimum mean distance...
         """
         return clusterization.minimum_mean_distance(0.1,distance_matrix) # 10% subsampling
     

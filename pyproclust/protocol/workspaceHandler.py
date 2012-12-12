@@ -26,13 +26,13 @@ class WorkspaceHandler(object):
          
     def create_directories(self):
         common.print_and_flush( "Creating workspace...")
-        scripts_common.make_directory(self.results_path)
-        scripts_common.make_directory(self.matrix_path)
-        scripts_common.make_directory(self.tmp_path)
-        scripts_common.make_directory(self.clusterings_path)
+        scripts_common.create_directory(self.results_path)
+        scripts_common.create_directory(self.matrix_path)
+        scripts_common.create_directory(self.tmp_path)
+        scripts_common.create_directory(self.clusterings_path)
         if self.do_refinement:
-            scripts_common.make_directory(self.refinement_pure_A)
-            scripts_common.make_directory(self.refinement_pure_B)
-            scripts_common.make_directory(self.refinement_mixed)
+            scripts_common.create_directory(self.refinement_pure_A)
+            scripts_common.create_directory(self.refinement_pure_B)
+            scripts_common.create_directory(self.refinement_mixed)
         common.print_and_flush( "Done\n")
         
