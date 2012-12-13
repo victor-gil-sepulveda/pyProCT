@@ -260,9 +260,11 @@ def plotSummaryTable(size, clustering_statistics_dic, per_cluster_statistics, to
 
 def fig2data ( fig ):
     """
-    @brief Convert a Matplotlib figure to a 4D numpy array with RGBA channels and return it
-    @param fig a matplotlib figure
-    @return a numpy 3D array of RGBA values
+    Convert a Matplotlib figure to a 4D numpy array with RGBA channels and return it
+    
+    @param fig: a matplotlib figure
+    
+    @return: a numpy 3D array of RGBA values
     """
     # draw the renderer
     fig.canvas.draw ( )
@@ -278,14 +280,38 @@ def fig2data ( fig ):
     
 def fig2img ( fig ):
     """
-    @brief Convert a Matplotlib figure to a PIL Image in RGBA format and return it
-    @param fig a matplotlib figure
-    @return a Python Imaging Library ( PIL ) image
+    Convert a Matplotlib figure to a PIL Image in RGBA format and return it
+    
+    @param fig: a matplotlib figure
+    
+    @return: a Python Imaging Library ( PIL ) image
     """
     # put the figure pixmap into a numpy array
     buf = fig2data ( fig )
     w, h, d = buf.shape #@UnusedVariable
     return Image.fromstring( "RGBA", ( w ,h ), buf.tostring( ) )
+
+def normalize(mylist, max_value):
+    normlist = []
+    max_in_list = numpy.max(mylist)
+    for d in mylist:
+        normlist.append(d*float(max_value)/float(max_in_list))
+    return normlist
+
+def normalizeInRange(mylist, min_value, max_value):
+    normlist = []
+    max_in_list = numpy.max(mylist)
+    effective_range = max_value - min_value
+    for d in mylist:
+        normlist.append(min_value + effective_range*(d/float(max_in_list)))
+    return normlist
+
+def list2ListWoZeros(mylist):
+    myretlist = []
+    for elem in mylist:
+        if elem!=0:
+            myretlist.append(elem)
+    return myretlist
 
 if __name__ == '__main__':
     image, max_radius = ballGraph(150, (400,400), 150, 10, 40, range(150),range(150))
@@ -294,3 +320,4 @@ if __name__ == '__main__':
     
     plotDataCards(image, (400,400), 150, max_radius, 10, 40, data)
     image.show()
+    
