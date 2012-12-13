@@ -5,9 +5,8 @@ Created on 16/03/2012
 '''
 import unittest
 import cStringIO
-from pyproclust.tools.commonTools import merge_files, gen_consecutive_ranges,\
-    normalizeInRange
-import numpy
+from pyproclust.tools.commonTools import merge_files, gen_consecutive_ranges,print_and_flush
+
 class Test(unittest.TestCase):
    
     def test_merge_files(self):
@@ -69,8 +68,9 @@ Nulla pulvinar mattis lectus, non eleifend libero commodo ut.
         self.assertItemsEqual(expected_range_2, range_2)
     
     def test_print_and_flush(self):
-        self.fail("TODO")
-        
+        handler = cStringIO.StringIO()
+        print_and_flush("Hello", handler)
+        self.assertEqual(handler.getvalue(), "Hello")
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

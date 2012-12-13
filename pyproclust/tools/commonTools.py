@@ -44,8 +44,8 @@ def print_and_flush(this_string, handler = sys.stdout):
     @param this_string: The string to be written. 
     @param handler: The file handler to write in.
     """
-    sys.stdout.write(this_string)
-    sys.stdout.flush()
+    handler.write(this_string)
+    handler.flush()
     
 def vararg_callback(option, opt_str, value, parser):
     """
