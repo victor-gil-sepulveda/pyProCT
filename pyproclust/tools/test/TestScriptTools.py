@@ -4,7 +4,9 @@ Created on 02/05/2012
 @author: victor
 '''
 import unittest
-from pyproclust.tools.scriptTools import get_not_repeated_file_name
+from pyproclust.tools.scriptTools import get_not_repeated_file_name,\
+    create_directory
+import os
 
 
 class testScriptTools(unittest.TestCase):
@@ -17,7 +19,9 @@ class testScriptTools(unittest.TestCase):
         self.assertEquals(re_existing_file, get_not_repeated_file_name(existing_file))
     
     def test_create_directory(self):
-        self.fail("TODO")
+        create_directory("tmp_test/test")
+        self.assertTrue(os.path.exists("tmp_test/test"))
+        os.system("rm -rf tmp_test")
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_separate_pure_from_mixed_clusters']

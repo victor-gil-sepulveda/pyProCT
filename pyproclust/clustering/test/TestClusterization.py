@@ -207,7 +207,14 @@ class Test(unittest.TestCase):
         numpy.testing.assert_equal(sorted(elements_batch), range(17))
         
     def test_classify(self):
-        self.fail("TODO")
+        tags = ["A","B","C"]
+        clusterings = [Clustering([], "this is of type A"),Clustering([], "this is of type B"),Clustering([], "this is of type C"),
+                       Clustering([], "this is of type B"),Clustering([], "this is of type S"),Clustering([], "this is of type A"),
+                       Clustering([], "this is of type A"),Clustering([], "this is of type C"),Clustering([], "this is of type D")]
+        counter =  Clustering.classify(tags, clusterings)
+        self.assertEqual(counter['A'], 3)
+        self.assertEqual(counter['B'], 2)
+        self.assertEqual(counter['C'], 2)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

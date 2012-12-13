@@ -265,7 +265,7 @@ class Clustering(object):
         return clusterings
     
     @classmethod
-    def classify(tags,clusterings):
+    def classify(cls,tags,clusterings):
         """
         Classifies a collection of clusterings using the classes in 'tags', counting the occurrences for each class. 
         A clustering belongs to a class if in its 'details' string the class-tag appears.  
