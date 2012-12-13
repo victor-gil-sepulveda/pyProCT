@@ -21,20 +21,26 @@ def getPDBStructure(pdb_path1,pdb_path2=None,selection_string="",subset_str = "c
 
 def get_number_of_frames(pdb_file):
     """
-    Uses egrep to count the number of times MODEL appears in the trajectory file, which will be indeed
+    Uses the 'egrep' shell command to count the number of times MODEL appears in the trajectory file, which will be indeed
     the number of different structures.
+    
+    @param pdb_file: The pdb file (path) from which the number of frames will be counting.
+    
+    @return: The number of MODEL tags found.
     """
     process = subprocess.Popen(["egrep","-c",''"^MODEL"'',pdb_file],stdout=subprocess.PIPE)
     lines = process.stdout.readlines()
     return int(lines[0])
 
-def read_to_TAG(file_in_handler,TAG):
+def read_to_TAG(file_input_handler, TAG):
     """
-    Advances the file handler reading cursor to the line after and ENMDL or TER tags.
-    It has unexpected behavior if both are found.
-    """    
+    Advances the file handler reading cursor to the line after a tag.
+    
+    @param file_input_handler: Working file handler.
+    @param TAG: The tag to advance to (for instance "MODEL", or "TER"). 
+    """
     lines = []  
-    for l in file_in_handler:
+    for l in file_input_handler:
         if isinstance(TAG, basestring):
             if l[:len(TAG)]==TAG:
                 return lines
@@ -45,21 +51,32 @@ def read_to_TAG(file_in_handler,TAG):
                 if l[:len(tag)]==TAG:
                     return lines
                 lines.append(l)
-    raise Exception, "No ENDMDL or TER tags found. This file may not be correct." 
+    raise Exception, "The end of the file was reached and the tag "+TAG+" was not found." 
 
-def advance_to_TAG(file_in_handler,TAG):
+def advance_to_TAG(file_input_handler, TAG):
     """
-    Advances the file handler reading cursor until it finds a MODEL tag.
+    Advances the file handler reading cursor until it finds a tag.
+    
+    @param file_input_handler: Working file handler.
+    @param TAG: The tag to advance to (for instance "MODEL", or "TER"). 
     """   
-    for l in file_in_handler:
+    for l in file_input_handler:
         if l[:len(TAG)]==TAG:
             return
 
 def write_a_tfile_model_into_other_tfile(file_in_handler, file_out_handler, current_model, INITIAL_TAG, END_TAG, skip=False, keep_header = False):
     """
     It writes the next model found in a trajectory unless the skip parameter is set to 'True'.
-    It makes the input file handler reading cursor to be placed the line after the end of 
-    the model.
+    It makes the input file handler reading cursor to be placed the line after the end of the model.
+    
+    @param file_in_handler: Input file handler.
+    @param file_out_handler: File handler to write the model to.
+    @param current_model: Is the model number we will write in the output handler.
+    @param INITIAL_TAG: Is the tag preceding the atom pdb data. Usually is "MODEL".
+    @param END_TAG: Is the last tag in a model, after the pdb atom data. Usually is "ENDMDL" or "TER".
+    @param skip: If true, the model will not be written to the output file, but the cursor of the input_file will be moved
+    anyway.
+    @param keep_header: Will try to keep any header previous to INITIAL_TAG, such as "REMARK" lines.
     """    
     # Shall we write this model or not?
     if skip:
@@ -82,6 +99,15 @@ def write_a_tfile_model_into_other_tfile(file_in_handler, file_out_handler, curr
 def extract_frames_from_trajectory(file_handler_in, number_of_frames, file_handler_out, frames_to_save, INITIAL_TAG="MODEL", END_TAG="ENDMDL", keep_header = False):
     """
     It extracts some frames from one trajectory and writes them down in an opened file handler.
+    
+    @param file_in_handler: Input file handler.
+    @param number_of_frames: Number of models in the input trajectory.
+    @param file_out_handler: File handler to write the model to.
+    @param frames_to_save: An array with the frame numbers to copy in the output trajectory. For example: [0,1,2] will store the
+    three first frames of the input trajectory into the second.
+    @param INITIAL_TAG: Is the tag preceding the atom pdb data. Usually is "MODEL".
+    @param END_TAG: Is the last tag in a model, after the pdb atom data. Usually is "ENDMDL" or "TER".
+    @param keep_header: Will try to keep any header previous to INITIAL_TAG, such as "REMARK" lines.
     """
     current = 0
     for i in range(number_of_frames):
@@ -95,6 +121,9 @@ def extract_frames_from_trajectory(file_handler_in, number_of_frames, file_handl
 def create_CA_file(file_handler_in, file_handler_out):
     """
     Creates a valid CA pdb from a valid pdb. Useful to reduce load times.
+    
+    @param file_handler_in: A file handler containing the trajectory to 'compress'.
+    @param file_handler_out: The file handler in which the new trajectory is written.
     """
     for l in file_handler_in:
         if l[0:3] == 'MOD' or l[0:3] == 'END' or l[0:3] == 'TER': 
@@ -103,20 +132,19 @@ def create_CA_file(file_handler_in, file_handler_out):
             if l[12:16] ==" CA ":
                 file_handler_out.write(l)
                 
-def repair_MODEL_ENDMDL_tags(input_pdb, output_pdb):
+def get_model_boundaries(input_pdb_handler):
     """
-    Tries to discover the structure of the file, to partition it in models. Then it adds the MODEL, ENDMDL tags
-    for each of its discovered models, generating this way a correct PDB.
+    Tries to discover the structure of the file.
     
     @param input_pdb: Is the pdb file we want to repair.
-    @param output_pdb: Is the resulting file (hopefully correct). 
+    
+    @return: The list of sections of the file that represent a model.
     """
-    file_in = open(input_pdb,"r")
     boundaries = []
     line_number = 0
     reading_model = False
     last_atom_serial = -1
-    for line in file_in:
+    for line in input_pdb_handler:
         if line[0:4] == "ATOM":
             atom_serial = int(line[5:11])
             # if the atom serial number decreases suddenly, it means we are starting
@@ -136,24 +164,27 @@ def repair_MODEL_ENDMDL_tags(input_pdb, output_pdb):
                 reading_model = False 
         
         line_number += 1
-    file_in.close()
+    return boundaries
+
+def repair_MODEL_ENDMDL_tags(input_pdb_handler, output_pdb_handler, boundaries):
+    """
+    Uses the previously discovered partition with 'get_MODEL_ENDMDL_boundaries' to add the necessary MODEL, 
+    ENDMDL tags for each of its discovered models.
     
-    file_in = open(input_pdb,"r")
-    file_out = open(output_pdb,"w")
+    @param input_pdb: Is the pdb file handler we want to repair.
+    @param output_pdb: Is the resulting file handler (hopefully correct). 
+    """  
     line_number = 0
     current_boundary = 0
-    for line in file_in:
+    for line in input_pdb_handler:
         if current_boundary == len(boundaries):
             break
         #print current_boundary
         if line_number == boundaries[current_boundary][0]:
-            file_out.write("MODEL "+str(current_boundary).rjust(8)+"\n")        
+            output_pdb_handler.write("MODEL "+str(current_boundary).rjust(8)+"\n")        
         if line_number>=boundaries[current_boundary][0] and line_number<=boundaries[current_boundary][1]:
-            file_out.write(line)
+            output_pdb_handler.write(line)
         if line_number == boundaries[current_boundary][1]:
-            file_out.write("ENDMDL\n")        
+            output_pdb_handler.write("ENDMDL\n")        
             current_boundary += 1
         line_number += 1
-    
-    file_in.close()
-    file_out.close()
