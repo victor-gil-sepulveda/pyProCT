@@ -89,7 +89,7 @@ def generate_color_list(number_of_colors):
         color_list.append(scolor)
     return color_list
 
-def show_2D_dataset_clusters(dataset_observations,scale, clusterization,margin = 0,):
+def show_2D_dataset_clusters(dataset_observations, scale, clusterization, margin = 0):
     """
     Generates an image with a 2D dataset drawn, where alll the points belonging to the same
     cluster have the same color, different from the color of the other clusters.
