@@ -8,12 +8,13 @@ import numpy
 import Image, ImageDraw
 import matplotlib.pyplot as plt
 import pylab
-from pyproclust.tools.commonTools import list2ListWoZeros, normalize,\
-    normalizeInRange
 import ImageFont
 from pyRMSD.condensedMatrix import CondensedMatrix
 
 def matrixToImage(condensed_distance_matrix, matrix_image_file, max_size = (2048,2048)):
+    """
+    
+    """
     # Normalize
     contents = condensed_distance_matrix.get_data()
     _max = numpy.max(contents)
@@ -38,13 +39,10 @@ def matrixToImage(condensed_distance_matrix, matrix_image_file, max_size = (2048
     ax.imshow(complete, interpolation='nearest')
     plt.savefig(matrix_image_file)
     
-def shortenName(name):
-    if len(name) > 10:
-        return  "..."+name[-10:] 
-    else:
-        return name
-    
 def pieChartCreation(graph_size, fracs, name1, name2, colors):
+    """
+    
+    """
     all_labels = ["A","B","Mixed"]
     all_colors = [colors['A'], colors['B'],colors['M']]
     this_labels = []
@@ -59,10 +57,13 @@ def pieChartCreation(graph_size, fracs, name1, name2, colors):
             this_fracs.append(fracs[i])
             this_colors.append(all_colors[i])
     pylab.pie(this_fracs, labels=this_labels, autopct='%1.1f%%', shadow=False,colors=this_colors)
-    pylab.title(shortenName(name1)+" vs "+shortenName(name2))
+    pylab.title(shorten_name(name1)+" vs "+shorten_name(name2))
     return fig2img(fig)
 
 def barGraphCreation(A_sizes, B_sizes, cluster_sizes, types, total_size, colors, graph_size):
+    """
+    
+    """
     mydpi = 100.
     fig = plt.figure(figsize = (graph_size[0]/mydpi, (graph_size[1])/mydpi), dpi = mydpi)
     fig.set_facecolor('white')
@@ -89,13 +90,10 @@ def barGraphCreation(A_sizes, B_sizes, cluster_sizes, types, total_size, colors,
     
     return fig2img(fig)
 
-def tuple2Int(t):
-    mytmplist = []
-    for element in t:
-        mytmplist.append(int(element))
-    return tuple(mytmplist)
-    
 def ballGraph(number_of_balls, size, max_box_diameter, h_ball_separation, v_ball_separation, sizes, alphas, colors, cluster_types, A_sizes, B_sizes):
+    """
+    
+    """
     w,h = size
     max_number_of_balls_in_a_row  = 0
     max_number_of_balls_in_a_column = 0
@@ -108,7 +106,7 @@ def ballGraph(number_of_balls, size, max_box_diameter, h_ball_separation, v_ball
     # Normalize ball sizes and alphas
     norm_sizes = normalize(sizes,max_box_diameter)
     # Reverse values and normalize between 1 and 0.3 (0.3 is the alpha of the cluster with most dispersion)
-    norm_alphas = normalizeInRange(1-numpy.array(normalizeInRange(alphas,0,1)),0.3,1)
+    norm_alphas = normalize_in_range(1-numpy.array(normalize_in_range(alphas,0,1)),0.3,1)
     # Paint it!!!
     canvas = Image.new("RGBA", size,color=(255,)*4)
     k = 0
@@ -123,13 +121,16 @@ def ballGraph(number_of_balls, size, max_box_diameter, h_ball_separation, v_ball
                 centering_offset = max_box_diameter/2. - this_diameter/2
                 ball = drawBall((max_box_diameter,)*2, this_diameter, colors[cluster_types[k]],norm_alphas[k])
                 if cluster_types[k] != 'M':
-                    canvas.paste(ball,tuple2Int(pos))
+                    canvas.paste(ball,tuple_to_int(pos))
                 else:
                     ball_with_inner_circles = circledPercentages(ball, (centering_offset,centering_offset), this_diameter, 0.3, A_sizes[k], B_sizes[k], colors)
-                    canvas.paste(ball_with_inner_circles,tuple2Int(pos))
+                    canvas.paste(ball_with_inner_circles,tuple_to_int(pos))
     return canvas,max_tmp_diameter
 
 def drawBall(canvas_size, ball_diameter, fill_color, alpha):
+    """
+    
+    """
     canvas = Image.new("RGBA", canvas_size,color=(255,)*4)
     draw = ImageDraw.Draw(canvas)
     centering_offset = int(max(canvas_size)/2. - ball_diameter/2)
@@ -144,10 +145,12 @@ def drawCircleBorder(canvas,bbox,width):
     draw = ImageDraw.Draw(canvas)
     border_position = (bbox[0]-width,bbox[1]-width,bbox[2]+width,bbox[3]+width)
     draw.ellipse(border_position,fill=(0,)*4)
-    draw.ellipse(tuple2Int(bbox),fill=(255,)*4)
+    draw.ellipse(tuple_to_int(bbox),fill=(255,)*4)
     
 def circledPercentages(ball_canvas, position, ball_diameter, radius_percent, sizeA, sizeB, colors):
+    """
     
+    """
     ball_radius = ball_diameter/2.
     width = radius_percent * ball_radius
     
@@ -158,20 +161,20 @@ def circledPercentages(ball_canvas, position, ball_diameter, radius_percent, siz
                   inner_bbox[2]+width, inner_bbox[3]+width)
     
     A_mask = Image.new("RGBA", ball_canvas.size,color=(255,)*4)
-    drawCircleBorder(A_mask,tuple2Int(inner_bbox),width)
+    drawCircleBorder(A_mask,tuple_to_int(inner_bbox),width)
     A_color = Image.new("RGBA", ball_canvas.size,color=colors['A'])
     A_circled =  Image.composite(ball_canvas, A_color, A_mask)
     
     B_mask = Image.new("RGBA", ball_canvas.size,color=(255,)*4)
-    drawCircleBorder(B_mask,tuple2Int(inner_bbox),width)
+    drawCircleBorder(B_mask,tuple_to_int(inner_bbox),width)
     B_color = Image.new("RGBA", ball_canvas.size,color=colors['B'])
     draw = ImageDraw.Draw(B_mask)
     B_percent = sizeB / float(sizeA+sizeB)
-    draw.pieslice(tuple2Int(outer_bbox), 0, int(360 *(1- B_percent)), fill = (255,)*4)
+    draw.pieslice(tuple_to_int(outer_bbox), 0, int(360 *(1- B_percent)), fill = (255,)*4)
     
     # Separation line from A-B
     draw = ImageDraw.Draw(B_color)
-    draw.pieslice(tuple2Int(outer_bbox), -1, int(360 *(1- B_percent))+1, outline = (0,)*4 )
+    draw.pieslice(tuple_to_int(outer_bbox), -1, int(360 *(1- B_percent))+1, outline = (0,)*4 )
     
     AB_circled = Image.composite(A_circled, B_color, B_mask)
     outer_border_canvas = Image.new("RGBA", AB_circled.size,color=(255,)*4)
@@ -183,6 +186,9 @@ def circledPercentages(ball_canvas, position, ball_diameter, radius_percent, siz
     return Image.composite(tmp, outer_border_canvas, outer_border_canvas)
 
 def writeTagPlusValue(canvas, position, string_tag, value):
+    """
+    
+    """
     string_value = ""
     if isinstance(value,(int,long)) :
         string_value = " %d"%value
@@ -191,6 +197,9 @@ def writeTagPlusValue(canvas, position, string_tag, value):
     writeTagPlusStringValue(canvas, position, string_tag, string_value)
 
 def writeTagPlusStringValue(canvas, position, string_tag, string_value):
+    """
+    
+    """
     draw = ImageDraw.Draw(canvas)
     width, height = draw.textsize(string_tag) #@UnusedVariable
     tag_position = position
@@ -199,6 +208,9 @@ def writeTagPlusStringValue(canvas, position, string_tag, string_value):
     draw.text(value_position, string_value, fill = (0,0,0), font = ImageFont.truetype("/usr/share/fonts/truetype/msttcorefonts/cour.ttf", 11))
     
 def plotDataCards(image, size, number_of_cards, max_radius, h_ball_separation, v_ball_separation, data, key_exceptions):
+    """
+    
+    """
     w, h = size
     max_number_of_cards_in_a_row = int(w / (float(max_radius)+h_ball_separation))
     max_number_of_cards_in_a_column = int(h / (float(max_radius)+v_ball_separation))
@@ -221,6 +233,9 @@ def plotDataCards(image, size, number_of_cards, max_radius, h_ball_separation, v
     return image
 
 def plotSummaryTable(size, clustering_statistics_dic, per_cluster_statistics, total_elements, trajectory_comparison):
+    """
+    
+    """
     canvas = Image.new("RGBA", size,color=(255,)*4)
     draw = ImageDraw.Draw(canvas)
     lines = []
@@ -248,8 +263,8 @@ def plotSummaryTable(size, clustering_statistics_dic, per_cluster_statistics, to
     lines.append(("Mean dispersion:","   %.2f (%.2f)"%(numpy.mean(per_cluster_statistics["cluster_dispersions"][1]),\
                                                    numpy.std(per_cluster_statistics["cluster_dispersions"][1]))))
     if trajectory_comparison:
-        lines.append(("Mean center differences:","   %.2f (%.2f)"%(numpy.mean(list2ListWoZeros(per_cluster_statistics["center_differences"][1])),\
-                                                       numpy.std(list2ListWoZeros(per_cluster_statistics["center_differences"][1])))))
+        lines.append(("Mean center differences:","   %.2f (%.2f)"%(numpy.mean(remove_zeros(per_cluster_statistics["center_differences"][1])),\
+                                                       numpy.std(remove_zeros(per_cluster_statistics["center_differences"][1])))))
     initial_pos = (10,30)
     offset = 0
     for l in lines:
@@ -292,13 +307,30 @@ def fig2img ( fig ):
     return Image.fromstring( "RGBA", ( w ,h ), buf.tostring( ) )
 
 def normalize(mylist, max_value):
+    """
+    Rescales the values of an array to be in the range (-max_value, max_value).
+    
+    @param mylist: The array to normalize.
+    @param max_value: 
+    
+    @return: The normalized list (numpy.array).
+    """
     normlist = []
     max_in_list = numpy.max(mylist)
     for d in mylist:
         normlist.append(d*float(max_value)/float(max_in_list))
     return normlist
 
-def normalizeInRange(mylist, min_value, max_value):
+def normalize_in_range(mylist, min_value, max_value):
+    """
+    Rescales all the values of an array to be in the range (min_value, max_value).
+    
+    @param mylist: The array to normalize.
+    @param min_value: Minimum value we want to have in the list.
+    @param max_value: Mximum value in the range.
+    
+    @return: The normalized list.
+    """
     normlist = []
     max_in_list = numpy.max(mylist)
     effective_range = max_value - min_value
@@ -306,18 +338,45 @@ def normalizeInRange(mylist, min_value, max_value):
         normlist.append(min_value + effective_range*(d/float(max_in_list)))
     return normlist
 
-def list2ListWoZeros(mylist):
+def remove_zeros(mylist):
+    """
+    Creates a new list which is equal to the input list but without zeros.
+    
+    @param mylist: The array to delete zeros.
+    
+    @return: The list without zeros.
+    """
     myretlist = []
     for elem in mylist:
         if elem!=0:
             myretlist.append(elem)
     return myretlist
 
-if __name__ == '__main__':
-    image, max_radius = ballGraph(150, (400,400), 150, 10, 40, range(150),range(150))
-    image.show()
-    data = {"lol":("lol:",range(150)),"lel":("lel:",range(150,300))}
+def tuple_to_int(t):
+    """
+    Creates a copy of a tuple, populated with int casts of its elements.
     
-    plotDataCards(image, (400,400), 150, max_radius, 10, 40, data)
-    image.show()
+    @param t: The tuple to cast.
+    
+    @return: A copy of the tuple with int elements.
+    """
+    mytmplist = []
+    for element in t:
+        mytmplist.append(int(element))
+    return tuple(mytmplist)
+
+def shorten_name(name, max_length = 10):
+    """
+    Makes a string shorter, leaving only certain quantity of the last characters, preceded by '...'.
+    
+    @param name: The string to shorten.
+    @param max_length: Maximum length of the resulting string.
+    
+    @return: A string with max_lenght characters plus '...'
+    """
+    if len(name) > max_length:
+        return  "..."+name[-max_length:] 
+    else:
+        return name
+
     

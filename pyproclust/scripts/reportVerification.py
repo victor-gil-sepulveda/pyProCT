@@ -5,6 +5,12 @@ import numpy
 import matplotlib.pyplot as plt
 import scipy.stats
 
+###################################
+#
+# Workbench for parameter estimation.
+#
+###################################
+
 if __name__ == '__main__':
     report_file = sys.argv[1]
     reports_file_handler = open(report_file,"r")

@@ -14,7 +14,12 @@ from pyproclust.clustering.clusterization import Clustering
 
 def gen_color(num_elems,max_elems):
     """
-    Generates a color in ddot format for a
+    Generates a red color in 'dot' format, which tone is based in the number of elements of a cluster (more elements, more intense).
+    
+    @param num_elems: 
+    @param max_elems: 
+    
+    @return: 
     """
     red_tone = num_elems / float(max_elems)
     color = "0.000 %.3f 1.000"%(red_tone)
