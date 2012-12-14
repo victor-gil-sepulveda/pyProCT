@@ -5,7 +5,7 @@ Created on 04/05/2012
 '''
 import unittest
 from pyproclust.matrix.condensedMatrix import CondensedDistanceMatrix
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 from pyproclust.clustering.metrics.boundedClusteringMetrics import SilhouetteCoefficientCalculator,\
     BoundedCohesionCalculator
 from pyproclust.clustering.cluster import Cluster

@@ -4,7 +4,8 @@ Created on 13/08/2012
 @author: victor
 '''
 import prody
-from pyproclust.clustering.clusterization import Clustering, Cluster
+from pyproclust.clustering.clustering import Clustering
+from pyproclust.clustering.cluster import Cluster
 from pyproclust.tools.pdbTools import getPDBStructure
 
 
