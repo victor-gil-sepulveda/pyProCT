@@ -4,7 +4,7 @@ Created on 19/03/2012
 @author: victor
 '''
 import unittest
-import pyproclust.algorithms.validation.validationTools as val_tools
+import validation.validationTools as val_tools
 
 
 class Test(unittest.TestCase):

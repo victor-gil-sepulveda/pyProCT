@@ -13,7 +13,7 @@ class PCAMetric(object):
     def __init__(self):
         prody.setVerbosity('none')
     
-    def evaluate(self,clustering,pdb_struct):
+    def evaluate(self, clustering, pdb_struct):
         # Now do calculation for each one of the clusters
         pca_mean_val = 0.;
         for c in clustering.clusters:
