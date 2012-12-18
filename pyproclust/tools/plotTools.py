@@ -3,7 +3,6 @@ Created on 15/10/2012
 
 @author: victor
 '''
-
 import numpy
 import Image, ImageDraw
 import matplotlib.pyplot as plt
@@ -11,9 +10,13 @@ import pylab
 import ImageFont
 from pyRMSD.condensedMatrix import CondensedMatrix
 
-def matrixToImage(condensed_distance_matrix, matrix_image_file, max_size = (2048,2048)):
+def matrixToImage(condensed_distance_matrix, matrix_image_file):
     """
+    Generates a plot of the distance matrix given as argument and stores it into disk.
     
+    @param condensed_distance_matrix: Is the matrix (CondensedMatrix) from which we want to create
+    the image.
+    @param matrix_image_file: The path of the image file to create (with file extension).
     """
     # Normalize
     contents = condensed_distance_matrix.get_data()
@@ -41,7 +44,18 @@ def matrixToImage(condensed_distance_matrix, matrix_image_file, max_size = (2048
     
 def pieChartCreation(graph_size, fracs, name1, name2, colors):
     """
+    Creates the big pie chart of the report. In this pie chart one fraction represents the amount of space
+    sampled together by both trajectories, and the other two fractions represent the amount of space that was
+    sampled by either A or B. 
     
+    @param graph_size: The graph size in pixels (?)
+    @param fracs: a list or tuple containing the total number of elements of pure A, pure B, and mixed clusters. 
+    @param name1: String identifying the first trajectory.
+    @param name2: String identifying the second trajectory.
+    @param colors: dictionary with color descriptions for "A", "B" and "M" (Mixed) written in string format (for 
+    example "#FFFFFF" for white)
+    
+    @return : A PIL image of the pie chart.
     """
     all_labels = ["A","B","Mixed"]
     all_colors = [colors['A'], colors['B'],colors['M']]
@@ -62,7 +76,18 @@ def pieChartCreation(graph_size, fracs, name1, name2, colors):
 
 def barGraphCreation(A_sizes, B_sizes, cluster_sizes, types, total_size, colors, graph_size):
     """
+    Draws a bar graph with information about the number of elements in the first ten biggest clusters.
     
+    @param A_sizes: Total number of elements in 'A' clusters, f.ex. [2,3,0,4,5] In this case the third cluster would be of type B.
+    @param B_sizes: The same, for 'B' type clusters.
+    @param cluster_sizes: List containing the size of each cluster.
+    @param types: List containing the type of each cluster ('A','B' or 'M' (Mixed))
+    @param total_size: Number of clustered elements.
+    @param colors: dictionary with color descriptions for "A", "B" and "M" (Mixed) written in string format (for 
+    example "#FFFFFF" for white)
+    @param graph_size: Size of the image (width, height)
+    
+    @return : A PIL image of the graph bar.
     """
     mydpi = 100.
     fig = plt.figure(figsize = (graph_size[0]/mydpi, (graph_size[1])/mydpi), dpi = mydpi)
@@ -90,10 +115,29 @@ def barGraphCreation(A_sizes, B_sizes, cluster_sizes, types, total_size, colors,
     
     return fig2img(fig)
 
-def ballGraph(number_of_balls, size, max_box_diameter, h_ball_separation, v_ball_separation, sizes, alphas, colors, cluster_types, A_sizes, B_sizes):
+def ballGraph(number_of_balls, size, max_box_diameter, h_ball_separation, v_ball_separation,\
+                             sizes, alphas, colors, cluster_types, A_sizes, B_sizes):
+    """
+    It draws an image with N spheres (where N is typically the number of clusters we have). This spheres are
+    outlined and in the case they're representing a 'M' type cluster, they have an inner circle representing the amount
+    of elements of 'A' and 'B' that it has.
+    
+     @param number_of_balls: The number of data analysis we have done (usually number of clusters).
+     @param size: Size of the image to hold the ball graph.
+     @param max_box_diameter: Is the diameter of the biggest possible sphere.
+     @param h_ball_separation: Separation of each sphere in the x axis.
+     @param v_ball_separation: Separation of each sphere in the y axis (usually enough to fit the 'data card')
+     @param sizes: List containing the size of each cluster.
+     @param alphas: Is a list containing the dispersion for each cluster.
+     @param colors: Dictionary of colors for each type ('A','B' and 'M') with RGB color in tuple form (f.ex. (255,255,255) is white)
+     @param cluster_types: List containing the type of each cluster ('A','B' or 'M' (Mixed))
+     @param A_sizes: Total number of elements in 'A' clusters, f.ex. [2,3,0,4,5] In this case the third cluster would be of type B.
+     @param B_sizes: The same, for 'B' type clusters.
+    
+     @return: The PIL image with the drawing and the maximum calculated diameter of the biggest sphere.
     """
     
-    """
+    # Refactorizable
     w,h = size
     max_number_of_balls_in_a_row  = 0
     max_number_of_balls_in_a_column = 0
@@ -103,7 +147,7 @@ def ballGraph(number_of_balls, size, max_box_diameter, h_ball_separation, v_ball
         max_number_of_balls_in_a_column = int(h / (float(max_tmp_diameter)+v_ball_separation))
         max_tmp_diameter -= 1
     
-    # Normalize ball sizes and alphas
+    # Normalize ball sizes and alphas (based on dispersion)
     norm_sizes = normalize(sizes,max_box_diameter)
     # Reverse values and normalize between 1 and 0.3 (0.3 is the alpha of the cluster with most dispersion)
     norm_alphas = normalize_in_range(1-numpy.array(normalize_in_range(alphas,0,1)),0.3,1)
@@ -125,13 +169,19 @@ def ballGraph(number_of_balls, size, max_box_diameter, h_ball_separation, v_ball
                 else:
                     ball_with_inner_circles = circledPercentages(ball, (centering_offset,centering_offset), this_diameter, 0.3, A_sizes[k], B_sizes[k], colors)
                     canvas.paste(ball_with_inner_circles,tuple_to_int(pos))
-    return canvas,max_tmp_diameter
+    return canvas, max_tmp_diameter
 
 def drawBall(canvas_size, ball_diameter, fill_color, alpha):
     """
+    Draws the image of black-outlined sphere representing a cluster.
     
+    @param ball_diameter: The diameter of the sphere...
+    @param fill_color: Color used to fill the sphere.
+    @param alpha: Is the alpha value of the image (usually the 
+    
+    @return: A PIL image of the resulting sphere. 
     """
-    canvas = Image.new("RGBA", canvas_size,color=(255,)*4)
+    canvas = Image.new("RGBA", canvas_size, color=(255,)*4)
     draw = ImageDraw.Draw(canvas)
     centering_offset = int(max(canvas_size)/2. - ball_diameter/2)
     position = (centering_offset,centering_offset,centering_offset+ball_diameter,centering_offset+ball_diameter)
@@ -141,7 +191,14 @@ def drawBall(canvas_size, ball_diameter, fill_color, alpha):
     drawCircleBorder(border_canvas, position, 2)
     return Image.composite(Image.blend(blending_canvas,canvas,alpha), border_canvas, border_canvas)
 
-def drawCircleBorder(canvas,bbox,width):
+def drawCircleBorder(canvas, bbox, width):
+    """
+    Draws a black border over a sphere PIL image.
+    
+    @param canvas: The PIL image with the sphere.
+    @param bbox: The description of this image's bounding box in coordinates (upper left x, ul y, bottom right x, br y).
+    @param width: The width of the border.
+    """
     draw = ImageDraw.Draw(canvas)
     border_position = (bbox[0]-width,bbox[1]-width,bbox[2]+width,bbox[3]+width)
     draw.ellipse(border_position,fill=(0,)*4)
@@ -149,13 +206,23 @@ def drawCircleBorder(canvas,bbox,width):
     
 def circledPercentages(ball_canvas, position, ball_diameter, radius_percent, sizeA, sizeB, colors):
     """
+    Draws the inner part of the sphere (if it's of type 'M') with the percentage of 'A' and 'B' parts.
     
+    @param ball_canvas: Sphere image to draw the inner part.
+    @param position: The corner of the bounding box of the sphere, relative to the image.
+    @param ball_diameter: The diameter of the sphere drawn in ball_canvas.
+    @param radius_percent: Is the percent of the radius dedicated to the percentage representation.
+    @param sizeA: Number of elements of 'A' in the 'M' cluster.
+    @param sizeB: Number of elements of 'B' in the 'M' cluster.
+    @param colors: Dictionary of colors for each type ('A','B' and 'M') with RGB color in tuple form (f.ex. (255,255,255) is white)
+    
+    @return: A PIL image with the complete sphere drawing (the complete representation of an 'M' cluster).
     """
     ball_radius = ball_diameter/2.
     width = radius_percent * ball_radius
     
-    inner_bbox = (position[0]+0.5*ball_radius,position[1]+0.5*ball_radius,\
-                  position[0]+ball_diameter-(0.5*ball_radius),position[1]+ball_diameter-(0.5*ball_radius))
+    inner_bbox = (position[0]+0.5*ball_radius, position[1]+0.5*ball_radius,\
+                  position[0]+ball_diameter-(0.5*ball_radius), position[1]+ball_diameter-(0.5*ball_radius))
     
     outer_bbox = (inner_bbox[0]-width, inner_bbox[1]-width,\
                   inner_bbox[2]+width, inner_bbox[3]+width)
@@ -187,7 +254,12 @@ def circledPercentages(ball_canvas, position, ball_diameter, radius_percent, siz
 
 def writeTagPlusValue(canvas, position, string_tag, value):
     """
+    Writes a numeric value into an image, preceded with a bold tag.
     
+    @param canvas: PIL image to write into.
+    @param position: Position where it starts to write.
+    @param string_tag: The tag.
+    @param value: The value we want to write.
     """
     string_value = ""
     if isinstance(value,(int,long)) :
@@ -198,7 +270,12 @@ def writeTagPlusValue(canvas, position, string_tag, value):
 
 def writeTagPlusStringValue(canvas, position, string_tag, string_value):
     """
+    Writes text into an image, preceded with a bold tag.
     
+    @param canvas: PIL image to write into.
+    @param position: Position where it starts to write.
+    @param string_tag: The tag.
+    @param string_value: The string we want to write.
     """
     draw = ImageDraw.Draw(canvas)
     width, height = draw.textsize(string_tag) #@UnusedVariable
@@ -209,6 +286,18 @@ def writeTagPlusStringValue(canvas, position, string_tag, string_value):
     
 def plotDataCards(image, size, number_of_cards, max_radius, h_ball_separation, v_ball_separation, data, key_exceptions):
     """
+    Writes the small data cards under each cluster sphere representation.
+    
+    @param image: Image to draw into.
+    @param size:
+    @param number_of_cards:
+    @param max_radius:
+    @param h_ball_separation:
+    @param v_ball_separation:
+    @param data:
+    @param key_exceptions: 
+    
+    @return: A PIL image with the written data cards.
     
     """
     w, h = size
@@ -234,7 +323,16 @@ def plotDataCards(image, size, number_of_cards, max_radius, h_ball_separation, v
 
 def plotSummaryTable(size, clustering_statistics_dic, per_cluster_statistics, total_elements, trajectory_comparison):
     """
+    Writes the summary table, used in both the simple and extended output.
     
+    @param size: Size of the summary table.
+    @param clustering_statistics_dic: 
+    @param per_cluster_statistics: 
+    @param total_elements: 
+    @param trajectory_comparison: If true, it means we are performing a trajectory comparison, and the trajectory comparison
+    specific data is added.
+    
+    @return: A PIL image with the written summary table.
     """
     canvas = Image.new("RGBA", size,color=(255,)*4)
     draw = ImageDraw.Draw(canvas)
@@ -273,7 +371,7 @@ def plotSummaryTable(size, clustering_statistics_dic, per_cluster_statistics, to
         offset += draw.textsize(l[1])[1]+5
     return canvas
 
-def fig2data ( fig ):
+def fig2data (fig):
     """
     Convert a Matplotlib figure to a 4D numpy array with RGBA channels and return it
     
@@ -293,7 +391,7 @@ def fig2data ( fig ):
     buf = numpy.roll ( buf, 3, axis = 2 )
     return buf
     
-def fig2img ( fig ):
+def fig2img (fig):
     """
     Convert a Matplotlib figure to a PIL Image in RGBA format and return it
     

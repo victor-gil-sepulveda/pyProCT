@@ -265,7 +265,7 @@ class ClusteringPlotsGenerator(object):
         canvas = Image.new("RGBA", composition_size, color=(255,)*4)
         
         if self.stats_analyzer.trajectory_comparison == True:
-            pie_chart_percents =      (1,0.7) # Overlapping with the next...
+            pie_chart_percents =      (1,0.7)   # Overlappinga bit with the next...
             summary_table_percents=   (1,0.28)
             graph_bar_percents =      (1,0.22)
         else:
@@ -286,12 +286,14 @@ class ClusteringPlotsGenerator(object):
                                         self.data_lists,\
                                         self.stats_analyzer.total_number_of_elements,\
                                         self.stats_analyzer.trajectory_comparison)
+        
         if self.stats_analyzer.trajectory_comparison == True:
             bar_plot = barGraphCreation(self.data_lists["A_sizes"][1],\
                                         self.data_lists["B_sizes"][1],\
                                         self.data_lists["cluster_sizes"][1],\
                                         self.cluster_types,\
-                                        numpy.sum(self.data_lists["cluster_sizes"][1]),self.str_colors,\
+                                        numpy.sum(self.data_lists["cluster_sizes"][1]),\
+                                        self.str_colors,\
                                         (int(composition_size[0]*graph_bar_percents[0]),\
                                          int(composition_size[1]*graph_bar_percents[1])))
         else:
@@ -299,7 +301,8 @@ class ClusteringPlotsGenerator(object):
                                         self.data_lists["B_sizes"][1],\
                                         self.data_lists["cluster_sizes"][1],\
                                         self.cluster_types,\
-                                        numpy.sum(self.data_lists["cluster_sizes"][1]),self.str_colors,\
+                                        numpy.sum(self.data_lists["cluster_sizes"][1]),\
+                                        self.str_colors,\
                                         (int(composition_size[0]*graph_bar_percents[0]),\
                                          int(composition_size[1]*graph_bar_percents[1])))
             
