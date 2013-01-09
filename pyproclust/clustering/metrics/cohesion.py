@@ -8,7 +8,7 @@ class CohesionCalculator(object):
     def __init__(self):
         pass
     
-    def evaluate(self,cluster,condensed_distance_matrix):
+    def evaluate(self, cluster, condensed_distance_matrix):
         """
         Returns the cohesion value of a cluster. The condensed matrix given as 
         parameter stores the distances of the elements of the dataset used to extract

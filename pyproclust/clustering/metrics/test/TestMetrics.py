@@ -119,10 +119,10 @@ class TestMetrics(unittest.TestCase):
         
         cosep_calctor = CohesionAndSeparationCalculator()
         
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion_wo_prot(clusters_1[0],clusters_1[1],distances),7.0)
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion_wo_prot(clusters_1[0],clusters_1[2],distances),20.0)
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion_wo_prot(clusters_1[1],clusters_1[2],distances),17.0)
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion_wo_prot(clusters_2[0],clusters_2[1],distances),34.0)
+        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[1],distances),7.0)
+        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[2],distances),20.0)
+        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_1[1],clusters_1[2],distances),17.0)
+        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_2[0],clusters_2[1],distances),34.0)
     
     def test_cluster_cohe_sep_wo_prot_eval(self):
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,
@@ -140,11 +140,11 @@ class TestMetrics(unittest.TestCase):
         clusterization_2 = Clustering(clusters_2)
         cosep_calctor = CohesionAndSeparationCalculator()
         
-        self.assertEqual(cosep_calctor._CohesionAndSeparationCalculator__noproto_eval(clusters_1[0],clusterization_1,1.,distances),27.0)
-        self.assertEqual(cosep_calctor._CohesionAndSeparationCalculator__noproto_eval(clusters_1[1],clusterization_1,1.,distances),24.0)
-        self.assertEqual(cosep_calctor._CohesionAndSeparationCalculator__noproto_eval(clusters_1[2],clusterization_1,1.,distances),37.0)
-        self.assertEqual(cosep_calctor._CohesionAndSeparationCalculator__noproto_eval(clusters_2[0],clusterization_2,1.,distances),34.0)
-        self.assertEqual(cosep_calctor._CohesionAndSeparationCalculator__noproto_eval(clusters_2[1],clusterization_2,1.,distances),34.0)
+        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_1[0],clusterization_1,1.,distances),27.0)
+        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_1[1],clusterization_1,1.,distances),24.0)
+        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_1[2],clusterization_1,1.,distances),37.0)
+        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_2[0],clusterization_2,1.,distances),34.0)
+        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_2[1],clusterization_2,1.,distances),34.0)
     
     
     

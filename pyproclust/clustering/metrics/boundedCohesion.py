@@ -12,7 +12,7 @@ class BoundedCohesionCalculator(object):
     def __init__(self):
         pass
     
-    def evaluate(self,clustering,condensed_distance_matrix):
+    def evaluate(self,clustering, condensed_distance_matrix):
         """
         Returns the cohesion value of a cluster. The weight will be the number of elements
         of each cluster. 
