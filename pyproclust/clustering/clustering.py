@@ -146,50 +146,6 @@ class Clustering(object):
         for c in to_eliminate:       
             self.eliminate_cluster(c)
             
-    def cohesion_and_separation_factor(self,condensed_distance_matrix,unprototype):
-        """
-        Calculates the cohesion and separation factor of this clusterization (calculating
-        both at the same time saves calculation)
-        """
-        #####################
-        # If required, try to eliminate prototypes
-        #####################
-        if unprototype:
-            for c in self.clusters:
-                c.prototype = None
-        
-        #####################
-        # Cohesion & Separation
-        #####################
-        cohesion_calctor = CohesionCalculator()
-        separation_calctor = CohesionAndSeparationCalculator()
-        total_cohesion = 0.
-        total_separation = 0.
-        for c in self.clusters:
-            cohesion = cohesion_calctor.evaluate(c, condensed_distance_matrix)
-            separation = separation_calctor.evaluate(c,self,cohesion,condensed_distance_matrix)
-            total_cohesion = total_cohesion + cohesion
-            total_separation = total_separation + separation
-        return total_cohesion,total_separation
-    
-    def bounded_cohesion(self,condensed_distance):
-        bounded_cohesion_calctor = BoundedCohesionCalculator()
-        return bounded_cohesion_calctor.evaluate(self, condensed_distance)
-    
-    def minimum_mean_distance(self,subsampling,condensed_matrix):
-        min_mean_dist_calctor = MeanMinimumDistanceCalculator() 
-        return min_mean_dist_calctor.evaluate(self,subsampling,condensed_matrix)
-    
-    def silhouette_factor(self,condensed_distance_matrix):
-        """
-        Calculate the silhouette factor.
-        """
-        #####################
-        # Silhouette
-        #####################
-        silhouette_calctor = SilhouetteCoefficientCalculator()
-        return silhouette_calctor.evaluate(condensed_distance_matrix, clusterization = self)
-    
     def gen_class_list(self):
         """
         Generates a class list from a clustering.
@@ -221,7 +177,6 @@ class Clustering(object):
         file_handler = open(not_repeated_path_with_file_name,'w')
         pickle.dump(self,file_handler)
         file_handler.close()
-
     
     @classmethod
     def load_from_disk(cls, path_with_file_name):

@@ -146,8 +146,21 @@ class TestMetrics(unittest.TestCase):
         self.assertEqual(sep_calctor.cluster_separation(clusters_2[0],clusterization_2,1.,distances),34.0)
         self.assertEqual(sep_calctor.cluster_separation(clusters_2[1],clusterization_2,1.,distances),34.0)
     
-    
-    
+    def test_regression_separation_eval(self):
+        distances =  CondensedMatrix( [ 1., 2., 3., 4.,
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
+        clusters = [Cluster(None, elements=[0,1]),
+                    Cluster(None, elements=[2]),
+                    Cluster(None, elements=[3,4])]
+        clustering = Clustering(clusters)
+        
+        sep_calctor = SeparationCalculator()
+        self.assertEqual( sep_calctor.evaluate(clustering, distances,[1,1,1]), 27.0 + 24.0 + 37.0)
+        self.assertEqual( sep_calctor.evaluate(clustering, distances), (1/0.5)*27.0 + (1/5.0)*37.0)
+        
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_cluster_cohesion']
     unittest.main()

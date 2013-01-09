@@ -13,16 +13,20 @@ class SeparationCalculator(object):
     
     def evaluate(self, clustering, condensed_distance_matrix, cohesions = None):
         all_clusters = clustering.clusters
-        my_cohesions = cohesions
-        if (my_cohesions is None):
+        
+        my_cohesions_dic = {}
+        if (cohesions is None):
             #Calculate_cohesions if not given
             cohesion_calctor = CohesionCalculator()
-            for c in all_clusters:
-                cohesions.append( cohesion_calctor.evaluate(c, condensed_distance_matrix))
-        
+            for cluster in all_clusters:
+                my_cohesions_dic[cluster] =  cohesion_calctor.evaluate(cluster, condensed_distance_matrix)
+        else:
+            for i, cluster in enumerate(all_clusters):
+                my_cohesions_dic[cluster] = cohesions[i]
+                
         total_separation = 0
         for i, cluster in enumerate(all_clusters):
-            separation = self.cluster_separation(cluster, clustering, cohesions[i], condensed_distance_matrix)
+            separation = self.cluster_separation(cluster, clustering, my_cohesions_dic[cluster], condensed_distance_matrix)
             total_separation = total_separation + separation
         
         return total_separation
@@ -45,7 +49,7 @@ class SeparationCalculator(object):
                     sep_and_cohe = sep_and_cohe + self.__clusters_mixed_cohesion(cluster,c_j,condensed_distance_matrix)
             return weight*sep_and_cohe
         else:
-            return numpy.finfo(numpy.float32).max
+            return 0. # not defined in this case, could be numpy.finfo(numpy.float32).max
     
     def __clusters_mixed_cohesion(self,cluster_1,cluster_2,condensed_distance_matrix):
         """
