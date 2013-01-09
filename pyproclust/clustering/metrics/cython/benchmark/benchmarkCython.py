@@ -13,9 +13,10 @@ from pyproclust.clustering.metrics.cython.meanMinimumDistance import CythonMeanM
 from pyproclust.clustering.metrics.cython.silhouette import CythonSilhouetteCoefficientCalculator
 import time
 from pyproclust.clustering.metrics.graphMetrics import NCut
-from pyproclust.clustering.metrics.boundedClusteringMetrics import BoundedCohesionCalculator,\
-    SilhouetteCoefficientCalculator
-from pyproclust.clustering.metrics.clusteringMetrics import MeanMinimumDistanceCalculator
+from pyproclust.clustering.metrics.boundedCohesion import BoundedCohesionCalculator
+from pyproclust.clustering.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator
+from pyproclust.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
+
 
 def do_benchmark( who, calculator, matrix, clustering):
     t1 = time.time()
@@ -37,7 +38,6 @@ if __name__ == '__main__':
     #Create a random clustering
     NUMBER_OF_CLUSTERS = 100
     ELEMENTS_PER_CLUSTER = MAX_ELEMENTS/ NUMBER_OF_CLUSTERS
-    elements = range(MAX_ELEMENTS)
     clusters = []
     for i in range(NUMBER_OF_CLUSTERS):
         elems = range(i*ELEMENTS_PER_CLUSTER,(i+1)*ELEMENTS_PER_CLUSTER)
