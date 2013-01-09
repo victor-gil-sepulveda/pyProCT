@@ -19,7 +19,7 @@ class SeparationCalculator(object):
             #Calculate_cohesions if not given
             cohesion_calctor = CohesionCalculator()
             for cluster in all_clusters:
-                my_cohesions_dic[cluster] =  cohesion_calctor.evaluate(cluster, condensed_distance_matrix)
+                my_cohesions_dic[cluster] =  cohesion_calctor.evaluate_cluster(cluster, condensed_distance_matrix)
         else:
             for i, cluster in enumerate(all_clusters):
                 my_cohesions_dic[cluster] = cohesions[i]

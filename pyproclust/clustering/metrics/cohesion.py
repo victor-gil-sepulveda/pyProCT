@@ -8,20 +8,17 @@ class CohesionCalculator(object):
     def __init__(self):
         pass
     
-    def evaluate(self, cluster, condensed_distance_matrix):
+    def evaluate(self, clustering, matrix):
+        total_cohesion = 0
+        for cluster in clustering.clusters:
+            total_cohesion = total_cohesion + self.evaluate_cluster(cluster, matrix)
+        return total_cohesion
+    
+    def evaluate_cluster(self, cluster, condensed_distance_matrix):
         """
         Returns the cohesion value of a cluster. The condensed matrix given as 
         parameter stores the distances of the elements of the dataset used to extract
         the cluster.
-        """
-        if cluster.prototype == None:
-            return self.__noproto_eval(cluster,condensed_distance_matrix)
-        else:
-            return self.__proto_eval(cluster,condensed_distance_matrix)
-    
-    def __noproto_eval(self,cluster,condensed_distance_matrix):
-        """
-        Evaluation of the cohesion value for a cluster without prototype.
         
         The definition of cohesion would be weight*2*cohesion in the case we follow
         the exact formula in the book []. As we are going to do comparisons, the x2 global
@@ -36,11 +33,3 @@ class CohesionCalculator(object):
             for j in range(i+1,size):
                 cohesion = cohesion + condensed_distance_matrix[cluster[i],cluster[j]]
         return weight*cohesion
-    
-    def __proto_eval(self,cluster,condensed_distance_matrix):
-        """
-        Evaluation of the cohesion value for a cluster without protorype.
-        """
-        print "CohesionCalculator,__proto_eval Not implemented"
-        exit(-1)
-        

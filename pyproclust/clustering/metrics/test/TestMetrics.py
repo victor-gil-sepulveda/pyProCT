@@ -98,11 +98,11 @@ class TestMetrics(unittest.TestCase):
         
         cohesion_calctor = CohesionCalculator()
         
-        self.assertEqual(cohesion_calctor.evaluate(clusters_1[0],distances), 0.5)
-        self.assertEqual(cohesion_calctor.evaluate(clusters_1[1],distances), 0.)
-        self.assertEqual(cohesion_calctor.evaluate(clusters_1[2],distances), 5.0)
-        self.assertEqual(cohesion_calctor.evaluate(clusters_2[0],distances), 5.0)
-        self.assertEqual(cohesion_calctor.evaluate(clusters_2[1],distances), 3.0)
+        self.assertEqual(cohesion_calctor.evaluate_cluster(clusters_1[0],distances), 0.5)
+        self.assertEqual(cohesion_calctor.evaluate_cluster(clusters_1[1],distances), 0.)
+        self.assertEqual(cohesion_calctor.evaluate_cluster(clusters_1[2],distances), 5.0)
+        self.assertEqual(cohesion_calctor.evaluate_cluster(clusters_2[0],distances), 5.0)
+        self.assertEqual(cohesion_calctor.evaluate_cluster(clusters_2[1],distances), 3.0)
 
     def test_cluster_mixed_cohesion_wo_prot(self):
         
@@ -160,6 +160,18 @@ class TestMetrics(unittest.TestCase):
         self.assertEqual( sep_calctor.evaluate(clustering, distances,[1,1,1]), 27.0 + 24.0 + 37.0)
         self.assertEqual( sep_calctor.evaluate(clustering, distances), (1/0.5)*27.0 + (1/5.0)*37.0)
         
+    def test_regression_cohesion_eval(self):
+        distances =  CondensedMatrix( [ 1., 2., 3., 4.,
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
+        clusters = [Cluster(None, elements=[0,1]),
+                    Cluster(None, elements=[2]),
+                    Cluster(None, elements=[3,4])]
+        clustering = Clustering(clusters)
+        
+        cohesion_calctor = CohesionCalculator()
+        self.assertEqual( cohesion_calctor.evaluate(clustering, distances), 5.5)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_cluster_cohesion']
