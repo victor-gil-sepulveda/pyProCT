@@ -28,7 +28,7 @@ class BoundedCohesionCalculator(object):
                 weight = 1. / size
                 cohesion = 0.
                 for i in range(size-1):
-                    for j in range(i+1,size):
+                    for j in range(i+1, size):
                         cohesion = cohesion + condensed_distance_matrix[c[i],c[j]]
                 total_cohesion +=  weight*cohesion
             return total_cohesion / max_cohesion

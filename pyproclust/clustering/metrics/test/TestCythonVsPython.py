@@ -30,7 +30,7 @@ class TestCythonVsPython(unittest.TestCase):
         
         for i in range(20):
             print "\n",i, "try"
-            matrix = CondensedMatrix(numpy.random.rand(1000))
+            matrix = CondensedMatrix(numpy.random.rand((1000*999)/2))
             clusters = []
             for i in range(10):
                 elems = range(i*100,(i+1)*100)
@@ -42,7 +42,6 @@ class TestCythonVsPython(unittest.TestCase):
                 cyresult = cythoncalc.evaluate(clustering, matrix)
                 result = calc.evaluate(clustering, matrix)
                 self.assertEqual(cyresult, result)
-                
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
