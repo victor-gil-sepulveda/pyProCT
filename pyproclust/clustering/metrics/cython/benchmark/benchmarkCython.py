@@ -20,10 +20,7 @@ from pyproclust.clustering.metrics.silhouette import SilhouetteCoefficientCalcul
 
 def do_benchmark( who, calculator, matrix, clustering):
     t1 = time.time()
-    if "Minimum" in key:
-        result = calculator.evaluate(clustering, 20, matrix)
-    else:
-        result = calculator.evaluate(clustering, matrix)
+    result = calculator.evaluate(clustering, matrix)
     t2 = time.time()
     print '\tCalculating with %s took %0.3fs giving %.3f as result' % (who,t2-t1,result)
     return t2-t1
@@ -49,7 +46,8 @@ if __name__ == '__main__':
                "NCut":(CythonNCut(),NCut()),
                "BoundedCohesion":(CythonBoundedCohesionCalculator(),BoundedCohesionCalculator()),
                "MeanMinimumDistance":(CythonMeanMinimumDistanceCalculator(), MeanMinimumDistanceCalculator()),
-               "Silhouette":(CythonSilhouetteCoefficientCalculator(),SilhouetteCoefficientCalculator())}
+               "Silhouette":(CythonSilhouetteCoefficientCalculator(),SilhouetteCoefficientCalculator())
+               }
     
     # Do the benchmark
     for key in metrics:

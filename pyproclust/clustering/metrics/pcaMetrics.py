@@ -21,7 +21,7 @@ class PCAMetric(object):
         to the axis of bigger variability) weighted by the cluster size.
         
         @param clustering: The clustering we want to calculate the metric.
-        @param trajectory_handler: The TrajectoryHandler containing the coordsets.
+        @param trajectory_handler: The TrajectoryHandler containing the coordinates as prody-like coordsets.
         
         @return: the value of the metric.
         """
@@ -48,6 +48,15 @@ class PCAMetric(object):
     
     @classmethod
     def do_iterative_superposition(cls, flattened_coordinates, number_of_conformations, atoms_per_conformation):
+        """
+        Performs an iterative superposition over the subset of conformations of a cluster. 
+        
+        @param flattened_coordinates: The flattened array of these conformations' coordinates. This function
+        MODIFIES the array contents.
+        @param number_of_conformations: The number of conformations (so the number of elements of the cluster)
+        @param atoms_per_conformation: Exactly what the name suggests.
+        
+        """
         calculator_id = availableCalculators.availableCalculators()["QTRFIT_OMP_CALCULATOR"]
         pyRMSD.calculators.iterativeSuperposition(calculator_id, 
                                                   flattened_coordinates,

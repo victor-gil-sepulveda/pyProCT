@@ -25,11 +25,11 @@ class TestCythonVsPython(unittest.TestCase):
         metrics = {
                "NCut":(CythonNCut(),NCut()),
                "BoundedCohesion":(CythonBoundedCohesionCalculator(),BoundedCohesionCalculator()),
-               #"MeanMinimumDistance":(CythonMeanMinimumDistanceCalculator(), MeanMinimumDistanceCalculator()),
+               "MeanMinimumDistance":(CythonMeanMinimumDistanceCalculator(10), MeanMinimumDistanceCalculator(10)),
                "Silhouette":(CythonSilhouetteCoefficientCalculator(),SilhouetteCoefficientCalculator())}
         
-        for i in range(20):
-            print "\n",i, "try"
+        for i in range(10):
+            print "\n%dth try"%i
             matrix = CondensedMatrix(numpy.random.rand((1000*999)/2))
             clusters = []
             for i in range(10):
@@ -41,7 +41,12 @@ class TestCythonVsPython(unittest.TestCase):
                 cythoncalc, calc = metrics[metric_name]
                 cyresult = cythoncalc.evaluate(clustering, matrix)
                 result = calc.evaluate(clustering, matrix)
-                self.assertEqual(cyresult, result)
+                if metric_name == "MeanMinimumDistance":
+                    # Use of randomness can change results a bit
+                    self.assertAlmostEqual(cyresult, result, 2)
+                else:
+                    self.assertEqual(cyresult, result)
+                
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

@@ -20,7 +20,7 @@ class MeanMinimumDistanceCalculator(object):
         if seed_num:
             random.seed(seed_num)
     
-    def evaluate(self,clustering,subsampling_percent,condensed_matrix):
+    def evaluate(self, clustering, condensed_matrix, subsampling_percent = 20):
         mean_min_dists = 0
         total_elements_in_mean_min_dist = 0
         clustering_size = len(clustering.clusters)

@@ -30,9 +30,9 @@ class TestMetrics(unittest.TestCase):
     
     def test_get_min_distances(self):
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters = [Cluster(None, elements=[0,1,2]),
                     Cluster(None, elements=[3,4])]
         
@@ -67,7 +67,7 @@ class TestMetrics(unittest.TestCase):
                                 10.]
         distances =  CondensedMatrix( triangle )
         clustering = Clustering(clusters)
-        self.assertEqual(7.0, calculator.evaluate(clustering,20,distances))
+        self.assertEqual(7.0, calculator.evaluate(clustering,distances,20))
         
     def test_full_run(self):
         condensed_matrix = CondensedMatrix(matrix)
@@ -80,7 +80,7 @@ class TestMetrics(unittest.TestCase):
                                                  "max_num_of_clusters":-1, 
                                                  "num_clusters":i
                                                  })
-            values.append( calculator.evaluate(clustering, 30, condensed_matrix))
+            values.append( calculator.evaluate(clustering, condensed_matrix, 30))
         self.assertTrue(max(values) < cmax)
         
     def test_cluster_cohesion_without_prototype(self):

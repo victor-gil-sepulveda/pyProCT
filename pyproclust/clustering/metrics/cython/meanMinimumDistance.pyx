@@ -27,7 +27,7 @@ cdef class CythonMeanMinimumDistanceCalculator(object):
         if seed_num:
             random.seed(seed_num)
     
-    def evaluate(self,clustering,int subsampling_percent,condensed_matrix):
+    def evaluate(self, clustering, condensed_matrix, int subsampling_percent = 20):
         cdef int i , j , clustering_size,total_elements_in_mean_min_dist
         cdef double mean_min_dists
         mean_min_dists = 0.
