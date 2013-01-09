@@ -10,7 +10,7 @@ import pyproclust.tools.commonTools as common
 import os
 from pyproclust.clustering.cluster import Cluster
 from pyproclust.tools.distributionTools import get_distance_std_dev_for_elems
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 
 def gen_color(num_elems,max_elems):
     """
@@ -27,6 +27,8 @@ def gen_color(num_elems,max_elems):
     return color.lower()
 
 def populate_nodes_with_labels(clustering, num_elems_of_traj_2, std_deviations, graph):
+    """
+    """
 #    print "num_elems_of_traj_2", num_elems_of_traj_2
     labels = []
     num_clusters = len(clustering.clusters)
@@ -42,6 +44,8 @@ def populate_nodes_with_labels(clustering, num_elems_of_traj_2, std_deviations, 
     return labels
 
 def calculate_probability_matrix(clustering):
+    """
+    """
     num_clusters = len(clustering.clusters)
     total_elements,cluster_sizes = clusTools.get_cluster_sizes(clustering.clusters) #@UnusedVariable
     class_list = clustering.gen_class_list()
@@ -63,6 +67,8 @@ def calculate_probability_matrix(clustering):
     return prob_matrix
 
 def add_graph_edges(graph,labels,clustering,prob_matrix):
+    """
+    """
     num_clusters = len(clustering.clusters)
     for i in range(num_clusters):
         for j in range(num_clusters):
@@ -71,6 +77,8 @@ def add_graph_edges(graph,labels,clustering,prob_matrix):
                 graph.add_edge((labels[i],labels[j]),wt=prob,label = '%.2f%%'%(prob*100))
 
 def do_graph(clustering,num_elems_of_traj_2,std_deviations,filename):
+    """
+    """
     graph = digraph()
     labels = populate_nodes_with_labels(clustering, num_elems_of_traj_2,std_deviations, graph)
     prob_matrix = calculate_probability_matrix(clustering)
@@ -82,6 +90,8 @@ def do_graph(clustering,num_elems_of_traj_2,std_deviations,filename):
     os.system("cat tmp_dot|dot -Tpng -o "+filename+";rm tmp_dot")
  
 def purge_mixed_clusters_and_do_graph(mixed, pure_clusters_traj1,condensed_distance_matrix,std_devs_from_A,path):
+    """
+    """
     common.print_and_flush( "Purging clusters...")
     # Purge all mixed clusters of elements from traj2
     purged = []

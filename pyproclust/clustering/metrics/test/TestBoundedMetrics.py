@@ -4,22 +4,19 @@ Created on 04/05/2012
 @author: victor
 '''
 import unittest
-from pyproclust.matrix.condensedMatrix import CondensedDistanceMatrix
+from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.clustering.clustering import Clustering
 from pyproclust.clustering.metrics.boundedClusteringMetrics import SilhouetteCoefficientCalculator,\
     BoundedCohesionCalculator
 from pyproclust.clustering.cluster import Cluster
-from pyproclust.clustering.analysis.picklingParallelAnalysisRunner import PicklingParallelAnalysisRunner
-from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
-import time
 
-class Test(unittest.TestCase):
+class TestBoundedMetrics(unittest.TestCase):
     def test_mirrored_bounded_cohesion(self):
         
-        distances =  CondensedDistanceMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+        distances =  CondensedMatrix( [ 1., 2., 3., 4.,
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         
         clusters = [Cluster(None, elements=[0,1,2]),
                       Cluster(None, elements=[3,4])]
@@ -33,10 +30,10 @@ class Test(unittest.TestCase):
         self.assertAlmostEqual(0.696945,calculator.evaluate(clustering, distances),places = 4)
     
     def test_get_average_distance(self):
-        distances =  CondensedDistanceMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+        distances =  CondensedMatrix( [ 1., 2., 3., 4.,
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters_1 = [Cluster(None, elements=[0,1]),
                       Cluster(None, elements=[2] ),
                       Cluster(None, elements=[3,4])]
@@ -56,10 +53,10 @@ class Test(unittest.TestCase):
     
     def test_one_element_silhouette(self):
         
-        distances =  CondensedDistanceMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+        distances =  CondensedMatrix( [ 1., 2., 3., 4.,
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters_1 = [Cluster(None, elements=[0,1]),
                       Cluster(None, elements=[2] ),
                       Cluster(None, elements=[3,4])]
@@ -80,10 +77,10 @@ class Test(unittest.TestCase):
         self.assertAlmostEqual( sil_calc._SilhouetteCoefficientCalculator__one_element_silhouette(1,clusters_2[1],clusterization_2,distances),-0.2777, places = 3)
 
     def test_one_cluster_silhouette(self):
-        distances =  CondensedDistanceMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+        distances =  CondensedMatrix( [ 1., 2., 3., 4.,
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters_1 = [Cluster(None, elements=[0,1]),
                       Cluster(None, elements=[2] ),
                       Cluster(None, elements=[3,4])]
@@ -97,10 +94,10 @@ class Test(unittest.TestCase):
         self.assertItemsEqual( sil_calc._SilhouetteCoefficientCalculator__one_cluster_partial_silhouette(clusters_1[2],clusterization_1,distances),[-0.55000000000000004, -0.45000000000000001])
 
     def test_one_clusterization_silhouette(self):
-        distances =  CondensedDistanceMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+        distances =  CondensedMatrix( [ 1., 2., 3., 4.,
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters_1 = [Cluster(None, elements=[0,1]),
                       Cluster(None, elements=[2] ),
                       Cluster(None, elements=[3,4])]
@@ -111,35 +108,6 @@ class Test(unittest.TestCase):
         
         self.assertItemsEqual(sil_calc._SilhouetteCoefficientCalculator__one_clusterization_partial_silhouette(clusterization_1,distances),expected)
         
-#    def test_mirrored_bounded_cohesion_batch(self):
-#        import pyproclust.tools.commonTools as common
-#        
-#        common.print_and_flush( "Loading clusters.")
-#        clusterings = scripts_common.load_binary_clusters("data/")
-#        
-#        common.print_and_flush( "\nLoading condensed matrix.\n")
-#        condensed_distance_matrix = scripts_common.load_matrix("data2/matrix.bin")
-#        
-#        analyzer = PicklingParallelAnalysisRunner(8)
-#        
-#        AnalysisPopulator(analyzer, condensed_distance_matrix)
-#        
-#        for c in clusterings:
-#            analyzer.run_analysis_for(c)
-#        
-#        common.print_and_flush( "Starting evaluation.")
-#        string_results, results_pack = analyzer.generate_report() #@UnusedVariable
-#        
-#        print string_results
-#        for clustering in clusterings:
-#            t1 = time.time()
-#            common.print_and_flush( "starting evaluation")
-#            clustering.minimum_mean_distance(0.1,condensed_distance_matrix)
-#            t2 = time.time()
-#            print 'It took %0.3f minutes' % ((t2-t1)/60.)
-        
-        # first run 6.11 minutes, memory hungry
-        # 6.478 the second one
             
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_bounded_separation']

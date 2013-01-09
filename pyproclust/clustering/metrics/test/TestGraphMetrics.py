@@ -4,15 +4,14 @@ Created on 13/08/2012
 @author: victor
 '''
 import unittest
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 from pyproclust.clustering.cluster import Cluster
 from pyproclust.clustering.metrics.graphMetrics import getClusterAndComplementary,W,d,vol,\
 all_cut, MinMaxCut,  NCut
-from pyproclust.matrix.condensedMatrix import CondensedDistanceMatrix
+from pyRMSD.condensedMatrix import CondensedMatrix
+from pyproclust.clustering.metrics.cython.normNCut import CythonNCut
 
-
-class Test(unittest.TestCase):
-
+class TestGraphMetrics(unittest.TestCase):
 
     def test_getClusterAndComplementary(self):
         clustering = Clustering([Cluster(1,range(5)),Cluster(5,range(5,10)),Cluster(10,range(10,20))])
@@ -28,7 +27,7 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                  9,3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         self.assertEqual(W(range(3),range(3,6),matrix), 37)
         
     def test_d(self):
@@ -37,7 +36,7 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                 9, 3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         self.assertEqual(d(2, matrix),13.0)
         
     def test_vol(self):
@@ -46,7 +45,7 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                 9, 3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         
         self.assertEqual( vol([2,4,3],matrix),71)
         
@@ -57,7 +56,7 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                 9, 3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         
         self.assertEqual(  all_cut(clustering,matrix), 52)
         
@@ -68,7 +67,7 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                 9, 3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         
         self.assertEqual(  all_cut(clustering,matrix), 52)
         
@@ -79,7 +78,7 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                 9, 3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         
         calculator = MinMaxCut()
         
@@ -92,9 +91,9 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                 9, 3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         
-        calculator = NCut()
+        calculator = CythonNCut()
         
         self.assertAlmostEqual( calculator.evaluate(clustering, matrix),1.21017786561,4)
         
@@ -105,7 +104,7 @@ class Test(unittest.TestCase):
                              4, 1, 1,
                                 9, 3,
                                    8]
-        matrix = CondensedDistanceMatrix(matrix_data)
+        matrix = CondensedMatrix(matrix_data)
         
         calculator = MinMaxCut()
         

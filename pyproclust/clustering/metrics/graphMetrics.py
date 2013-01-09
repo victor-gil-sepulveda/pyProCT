@@ -13,7 +13,7 @@ a cluster.
 def getClusterAndComplementary(i,all_clusters):
     """
     Returns the list representing the elements of cluster 'ith' and the 
-    list representing the clusters of 
+    list representing the sum of elements of all other clusters.
     """
     complementary = []
     for j in range(len(all_clusters)):

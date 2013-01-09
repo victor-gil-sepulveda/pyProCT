@@ -6,10 +6,12 @@ Created on 06/06/2012
 import numpy
 from pyproclust.clustering.cluster import get_cluster_sizes
 from pyproclust.clustering.analysis.analysis import Analysis
-from pyproclust.clustering.metrics.cython.CythonMetrics import CythonBoundedCohesionCalculator,\
-    CythonSilhouetteCoefficientCalculator,CythonMeanMinimumDistanceCalculator
 from pyproclust.clustering.metrics.graphMetrics import NCut, RatioCut, MinMaxCut
 from pyproclust.clustering.metrics.pcaMetrics import PCAMetric
+from pyproclust.clustering.metrics.cython.boundedCohesion import CythonBoundedCohesionCalculator
+from pyproclust.clustering.metrics.cython.meanMinimumDistance import CythonMeanMinimumDistanceCalculator
+from pyproclust.clustering.metrics.cython.silhouette import CythonSilhouetteCoefficientCalculator
+from pyproclust.clustering.metrics.cython.normNCut import CythonNCut
 
 
 class AnalysisPopulator(object):
@@ -44,6 +46,8 @@ class AnalysisPopulator(object):
             self.all_possible_analysis["NCut"]=Analysis("NCut",self.analysis_function_n_cut,distance_matrix)
             self.all_possible_analysis["NormNCut"]=Analysis("NormNCut",self.analysis_function_norm_n_cut,distance_matrix)
             self.all_possible_analysis["MixMaxCut"]=Analysis("MixMaxCut",self.analysis_function_minmax_cut,distance_matrix)
+            # Cython & Graph
+            self.all_possible_analysis["CythonNormNCut"]=Analysis("CythonNormNCut",self.analysis_function_cython_norm_n_cut,distance_matrix)
             # PCA
             self.all_possible_analysis["PCAanalysis"]=Analysis("PCAanalysis",self.analysis_function_pca,pdb_struct)
             
@@ -70,6 +74,10 @@ class AnalysisPopulator(object):
     def analysis_function_n_cut(self,clustering,condensed_matrix):
         calculator = NCut()
         return calculator.evaluate(clustering, condensed_matrix)
+    
+    def analysis_function_cython_norm_n_cut(self,clustering,condensed_matrix):
+        calculator = CythonNCut()
+        return calculator.evaluate(clustering, condensed_matrix) / len(clustering.clusters)
     
     def analysis_function_norm_n_cut(self,clustering,condensed_matrix):
         calculator = NCut()

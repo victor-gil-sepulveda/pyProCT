@@ -288,14 +288,15 @@ def plotDataCards(image, size, number_of_cards, max_radius, h_ball_separation, v
     """
     Writes the small data cards under each cluster sphere representation.
     
-    @param image: Image to draw into.
-    @param size:
-    @param number_of_cards:
-    @param max_radius:
-    @param h_ball_separation:
-    @param v_ball_separation:
-    @param data:
-    @param key_exceptions: 
+    @param image: Canvas to draw into (PIL image).
+    @param size: Tuple with the canvas size
+    @param number_of_cards: Number of cards we have to write (same as number of clusters)
+    @param max_radius: Is the radius of the biggest possible sphere.
+    @param h_ball_separation: Separation of each sphere in the x axis.
+    @param v_ball_separation: Separation of each sphere in the y axis (usually enough to fit the 'data card')
+    @param data: A dictionary containing all the data with the form {data_key:(data_label, data_array)}, 
+    for example: {"cluster_sizes":("size", [4,6,2,5,3,8])}
+    @param key_exceptions: Those keys of the data dictionary we want to skip.
     
     @return: A PIL image with the written data cards.
     
@@ -409,7 +410,7 @@ def normalize(mylist, max_value):
     Rescales the values of an array to be in the range (-max_value, max_value).
     
     @param mylist: The array to normalize.
-    @param max_value: 
+    @param max_value: Maximum value in the range.
     
     @return: The normalized list (numpy.array).
     """
@@ -425,7 +426,7 @@ def normalize_in_range(mylist, min_value, max_value):
     
     @param mylist: The array to normalize.
     @param min_value: Minimum value we want to have in the list.
-    @param max_value: Mximum value in the range.
+    @param max_value: Maximum value in the range.
     
     @return: The normalized list.
     """

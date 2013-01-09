@@ -5,7 +5,7 @@ Created on 20/03/2012
 '''
 import unittest
 from pyproclust.clustering.cluster import Cluster
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 import pyproclust.tools.test.data as test_data
 import cStringIO
 import os

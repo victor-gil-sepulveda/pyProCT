@@ -38,7 +38,7 @@ cdef class CythonSilhouetteCoefficientCalculator(object):
             for element in cluster.all_elements:
                 cluster_silhouettes[i] = self.__one_element_silhouette(element,cluster,clustering,condensed_distance_matrix)
                 i = i + 1
-        
+                
         return numpy.mean(cluster_silhouettes)
     
     @cython.boundscheck(False)
@@ -47,6 +47,7 @@ cdef class CythonSilhouetteCoefficientCalculator(object):
         cdef int where_am_i, i 
         
         a_i = self.__get_average_distance_with_my_cluster(element,cluster,condensed_distance_matrix)
+
         #where_am_i = clusterization.cluster_index(cluster)
         #################
         # TOTAL REWRITE
@@ -59,9 +60,8 @@ cdef class CythonSilhouetteCoefficientCalculator(object):
         ####### 
         b_i = numpy.finfo(numpy.float32).max
         for i in range(len(clusterization.clusters)):
-            
             if where_am_i != i:
-                b_i = double_min(b_i,self.__get_average_distance_with_cluster(element,clusterization.clusters[i],condensed_distance_matrix))
+                b_i = double_min(b_i, self.__get_average_distance_with_cluster(element,clusterization.clusters[i],condensed_distance_matrix))
         return (b_i-a_i)/double_max(a_i,b_i)
     
     @cython.boundscheck(False)
@@ -85,24 +85,28 @@ cdef class CythonSilhouetteCoefficientCalculator(object):
         """
         Calculates the average distance of one element to all the elements of his cluster.
         """
-        cdef double distance_sum_1 = 0
-        cdef int cluster_size
+        cdef double distance_sum = 0.
+        cdef int cluster_size = 0
         
         cluster_size = cluster.get_size()
+        
         if cluster_size == 1:
+            # Value is undefined
             return 1. 
+        
         else:
+            # Else calculate it
             distance_sum = self.__sum_cluster_distances(element, cluster, condensed_distance_matrix)
-            return distance_sum_1 / (cluster_size-1)
+            return distance_sum / (cluster_size-1)
     
     @cython.boundscheck(False)
     cpdef double __get_average_distance_with_cluster(self,int element,cluster,condensed_distance_matrix):
         """
         Calculates the average distance of one element to all the elements of his cluster.
         """
-        cdef double distance_sum_2 = 0
-        cdef int cluster_size_1
+        cdef double distance_sum = 0.
+        cdef int cluster_size = 0
         
-        cluster_size_1 = cluster.get_size()
+        cluster_size = cluster.get_size()
         distance_sum = self.__sum_cluster_distances(element,cluster,condensed_distance_matrix)
-        return distance_sum_2 / cluster_size_1
+        return distance_sum / cluster_size
