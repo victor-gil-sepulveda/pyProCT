@@ -11,7 +11,7 @@ import cStringIO
 import os
 import numpy
 
-class Test(unittest.TestCase):
+class TestClustering(unittest.TestCase):
 
     def test_get_percent_population_of_cluster(self):
         clusters =(

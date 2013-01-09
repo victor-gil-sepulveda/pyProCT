@@ -4,13 +4,30 @@ Created on 09/01/2013
 @author: victor
 '''
 import numpy
+from pyproclust.clustering.metrics.cohesion import CohesionCalculator
 
-class CohesionAndSeparationCalculator(object):
+class SeparationCalculator(object):
     
     def __init__(self):
         pass
     
-    def cluster_cohesion(self, cluster, clusterization, clustering_cohesion, condensed_distance_matrix):
+    def evaluate(self, clustering, condensed_distance_matrix, cohesions = None):
+        all_clusters = clustering.clusters
+        my_cohesions = cohesions
+        if (my_cohesions is None):
+            #Calculate_cohesions if not given
+            cohesion_calctor = CohesionCalculator()
+            for c in all_clusters:
+                cohesions.append( cohesion_calctor.evaluate(c, condensed_distance_matrix))
+        
+        total_separation = 0
+        for i, cluster in enumerate(all_clusters):
+            separation = self.cluster_separation(cluster, clustering, cohesions[i], condensed_distance_matrix)
+            total_separation = total_separation + separation
+        
+        return total_separation
+            
+    def cluster_separation(self, cluster, clustering, clustering_cohesion, condensed_distance_matrix):
         """
         Returns the cohesion plus separation value of a cluster. The condensed matrix 
         given as parameter stores the distances of the elements of the dataset used to 
@@ -20,11 +37,11 @@ class CohesionAndSeparationCalculator(object):
             weight = 1./clustering_cohesion
             sep_and_cohe = 0.0
             ## I'm inside?
-            where_am_i = clusterization.cluster_index(cluster)
+            where_am_i = clustering.cluster_index(cluster)
             
-            for i in range(len(clusterization.clusters)):    
+            for i in range(len(clustering.clusters)):    
                 if i != where_am_i :
-                    c_j = clusterization.clusters[i]
+                    c_j = clustering.clusters[i]
                     sep_and_cohe = sep_and_cohe + self.__clusters_mixed_cohesion(cluster,c_j,condensed_distance_matrix)
             return weight*sep_and_cohe
         else:

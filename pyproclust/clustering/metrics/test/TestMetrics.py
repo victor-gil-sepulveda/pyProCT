@@ -11,8 +11,8 @@ from pyproclust.clustering.metrics.test import matrix
 from pyproclust.algorithms.random import RandomAlgorithm
 from pyproclust.clustering.metrics.meanMinimumDistance import mean_function,\
     MeanMinimumDistanceCalculator
-from pyproclust.clustering.metrics.cohesionAndSeparation import CohesionAndSeparationCalculator
 from pyproclust.clustering.metrics.cohesion import CohesionCalculator
+from pyproclust.clustering.metrics.separation import SeparationCalculator
 
 class TestMetrics(unittest.TestCase):
     
@@ -107,9 +107,9 @@ class TestMetrics(unittest.TestCase):
     def test_cluster_mixed_cohesion_wo_prot(self):
         
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters_1 = [Cluster(None, elements=[0,1]),
                       Cluster(None, elements=[2] ),
                       Cluster(None, elements=[3,4])]
@@ -117,18 +117,18 @@ class TestMetrics(unittest.TestCase):
         clusters_2 = [Cluster(None, elements=[0,2,4]),
                       Cluster(None, elements=[1,3])]
         
-        cosep_calctor = CohesionAndSeparationCalculator()
+        sep_calctor = SeparationCalculator()
         
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[1],distances),7.0)
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[2],distances),20.0)
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_1[1],clusters_1[2],distances),17.0)
-        self.assertEqual( cosep_calctor._CohesionAndSeparationCalculator__clusters_mixed_cohesion(clusters_2[0],clusters_2[1],distances),34.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[1],distances),7.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[2],distances),20.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_1[1],clusters_1[2],distances),17.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_2[0],clusters_2[1],distances),34.0)
     
     def test_cluster_cohe_sep_wo_prot_eval(self):
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters_1 = [Cluster(None, elements=[0,1]),
                       Cluster(None, elements=[2] ),
                       Cluster(None, elements=[3,4])]
@@ -138,13 +138,13 @@ class TestMetrics(unittest.TestCase):
         
         clusterization_1 = Clustering(clusters_1)
         clusterization_2 = Clustering(clusters_2)
-        cosep_calctor = CohesionAndSeparationCalculator()
+        sep_calctor = SeparationCalculator()
         
-        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_1[0],clusterization_1,1.,distances),27.0)
-        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_1[1],clusterization_1,1.,distances),24.0)
-        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_1[2],clusterization_1,1.,distances),37.0)
-        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_2[0],clusterization_2,1.,distances),34.0)
-        self.assertEqual(cosep_calctor.cluster_cohesion(clusters_2[1],clusterization_2,1.,distances),34.0)
+        self.assertEqual(sep_calctor.cluster_separation(clusters_1[0],clusterization_1,1.,distances),27.0)
+        self.assertEqual(sep_calctor.cluster_separation(clusters_1[1],clusterization_1,1.,distances),24.0)
+        self.assertEqual(sep_calctor.cluster_separation(clusters_1[2],clusterization_1,1.,distances),37.0)
+        self.assertEqual(sep_calctor.cluster_separation(clusters_2[0],clusterization_2,1.,distances),34.0)
+        self.assertEqual(sep_calctor.cluster_separation(clusters_2[1],clusterization_2,1.,distances),34.0)
     
     
     
