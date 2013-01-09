@@ -4,10 +4,6 @@ Created on 20/03/2012
 @author: victor
 '''
 from pyproclust.tools.pdbTools import extract_frames_from_trajectory
-from pyproclust.clustering.metrics.clusteringMetrics import CohesionCalculator,\
-    CohesionAndSeparationCalculator, MeanMinimumDistanceCalculator
-from pyproclust.clustering.metrics.boundedClusteringMetrics import SilhouetteCoefficientCalculator,\
-    BoundedCohesionCalculator
 from pyproclust.tools import scriptTools
 import pickle
 import os

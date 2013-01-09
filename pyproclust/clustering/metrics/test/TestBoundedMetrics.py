@@ -6,9 +6,9 @@ Created on 04/05/2012
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.clustering.clustering import Clustering
-from pyproclust.clustering.metrics.boundedClusteringMetrics import SilhouetteCoefficientCalculator,\
-    BoundedCohesionCalculator
 from pyproclust.clustering.cluster import Cluster
+from pyproclust.clustering.metrics.boundedCohesion import BoundedCohesionCalculator
+from pyproclust.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
 
 class TestBoundedMetrics(unittest.TestCase):
     def test_mirrored_bounded_cohesion(self):

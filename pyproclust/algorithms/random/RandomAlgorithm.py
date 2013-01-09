@@ -5,7 +5,7 @@ Created on 19/04/2012
 '''
 import random
 from pyproclust.clustering.cluster import gen_clusters_from_class_list
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 
 class RandomClusteringAlgorithm(object):
     '''
@@ -26,21 +26,16 @@ class RandomClusteringAlgorithm(object):
         max_num_of_clusters = kwargs["max_num_of_clusters"]
         
         try:
-            num_clusters = kwargs["num_clusters"]
+            num_of_clusters = kwargs["num_clusters"]
         except KeyError:
-            num_clusters = None
+            num_of_clusters = random.randint(1, max_num_of_clusters-1)
 
         num_of_nodes = self.condensed_matrix.row_length
-        if num_clusters != None:
-            num_of_clusters = num_clusters
-        else:
-            num_of_clusters = random.randint(1,max_num_of_clusters-1)
             
         node_class = []
-        elements_per_cluster = 1
         
         try:
-            elements_per_cluster = num_of_nodes / num_of_clusters
+            elements_per_cluster = max(1, num_of_nodes / num_of_clusters)
         except:
             elements_per_cluster = 1
             
