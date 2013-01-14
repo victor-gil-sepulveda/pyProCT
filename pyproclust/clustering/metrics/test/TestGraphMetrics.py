@@ -7,9 +7,8 @@ import unittest
 from pyproclust.clustering.clustering import Clustering
 from pyproclust.clustering.cluster import Cluster
 from pyproclust.clustering.metrics.graphMetrics import getClusterAndComplementary,W,d,vol,\
-all_cut, MinMaxCut,  NCut
+all_cut, MinMaxCut, NCut
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproclust.clustering.metrics.cython.normNCut import CythonNCut
 
 class TestGraphMetrics(unittest.TestCase):
 
@@ -93,7 +92,7 @@ class TestGraphMetrics(unittest.TestCase):
                                    8]
         matrix = CondensedMatrix(matrix_data)
         
-        calculator = CythonNCut()
+        calculator = NCut()
         
         self.assertAlmostEqual( calculator.evaluate(clustering, matrix),1.21017786561,4)
         

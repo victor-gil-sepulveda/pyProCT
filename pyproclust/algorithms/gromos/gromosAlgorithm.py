@@ -5,9 +5,8 @@ Created on 14/02/2012
 '''
 from pyproclust.clustering.cluster import cluster_from_tuple
 from pyproclust.algorithms.gromos.gromosAlgorithmTools import eliminate_cluster_from_node_list
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 import sys
-
 
 
 class GromosAlgorithm(object):

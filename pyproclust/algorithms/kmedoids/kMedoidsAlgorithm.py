@@ -7,15 +7,22 @@ Created on 29/05/2012
 import random
 from pyproclust.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
 from pyproclust.clustering.cluster import gen_clusters_from_class_list
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 
 
 
-class KMedoids(object):
+class KMedoidsAlgorithm(object):
     """
     K-Means like algorithm with medoids. Seeding is done with GROMOS.
     """
-    def __init__(self,condensed_matrix):
+    
+    @staticmethod
+    def seeding_types(): return  ["GROMOS","RANDOM", "EQUIDISTANT"]
+    
+    def __init__(self, condensed_matrix, rand_seed = None):
+        if not rand_seed is None:
+            random.seed(rand_seed)
+            
         self.condensed_matrix = condensed_matrix
         self.total_elements = condensed_matrix.row_length
         self.class_list = [0]*condensed_matrix.row_length
@@ -24,9 +31,10 @@ class KMedoids(object):
     def perform_clustering(self, kwargs):    
         self.k = kwargs["k"]
         self.seeding_max_cutoff = kwargs["seeding_max_cutoff"]
+        self.seeding_type = kwargs["seeding_type"]
         
         # Getting first medoids
-        current_medoids = self.seeding(self.k,self.seeding_max_cutoff)
+        current_medoids = self.seeding(self.k, self.seeding_max_cutoff, self.seeding_type)
         
         last_medoids = []
         while not self.convergence(current_medoids,last_medoids):
@@ -55,7 +63,6 @@ class KMedoids(object):
             if current[i] != last[i]:
                 return False
         return True
-            
     
     def get_closer_medoid(self,element,medoids,condensed_matrix):
         """
@@ -92,14 +99,37 @@ class KMedoids(object):
             medoids.append(c.calculate_medoid(self.condensed_matrix))
         return medoids
     
+        
+    def seeding(self, k, seeding_max_cutoff, seeding_type):
+        if not seeding_type in self.seeding_types():
+            print "[ERROR::SpectralClusteringAlgorithm] Seeding type " ,seeding_type, "is not a correct type. Use one of these instead: ", self.seeding_types()
+            exit()
+        
+        if seeding_type == "RANDOM":
+            return self.random_seeding(k)
+        
+        elif seeding_type == "GROMOS":
+            return self.gromos_seeding(k, seeding_max_cutoff)
+        
+        elif seeding_type == "EQUIDISTANT":
+            return self.equidistant_seeding(k, self.condensed_matrix.row_length)
+    
     def random_seeding(self,k):
         """
         Returns k random medoids.
         """
-        random.sample(range(self.condensed_matrix.row_length),k)
-        return random.sample(range(self.condensed_matrix.row_length),k)
+        random_medoids = random.sample(range(self.condensed_matrix.row_length),k)
+        return random_medoids
+
+    def equidistant_seeding(self, k, number_of_elements):
+        step = number_of_elements / k
+        medoids = []
+        for i in range(k):
+            medoids.append((step/2) + (i*step))
         
-    def seeding(self,k,seeding_max_cutoff):
+        return medoids
+    
+    def gromos_seeding(self, k, seeding_max_cutoff):
         """
         The first k medoids are selected running the gromos algorithm until we get at least
         k clusters.
@@ -107,7 +137,7 @@ class KMedoids(object):
         print "Seeding process"
         current_cutoff = seeding_max_cutoff
         clusters = []
-        while len(clusters)< k and current_cutoff > 0:
+        while len(clusters) < k and current_cutoff > 0:
             """
             EL BOOKEEPING SOLO TIENE SENTIDO EN MULTITHREADING; PERO NO
             CON PROCESOS SEPARADOS :(
@@ -118,9 +148,8 @@ class KMedoids(object):
             print "Trying gromos with cutoff =", current_cutoff,"for seeding"
             gromos_algorithm = GromosAlgorithm(self.condensed_matrix)
             clusters = gromos_algorithm.perform_clustering({"cutoff":current_cutoff, "max_clusters":k}).clusters
-            self.gromos_clusters_bookkeeping[current_cutoff] = len(clusters)
+#             self.gromos_clusters_bookkeeping[current_cutoff] = len(clusters)
             current_cutoff -= 0.1
-            
         
         # If it was impossible, do a random seeding
         if(current_cutoff<=0.):
