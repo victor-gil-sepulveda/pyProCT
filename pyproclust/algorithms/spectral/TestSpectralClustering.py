@@ -12,54 +12,58 @@ from scipy.spatial.distance import pdist
 class TestSpectralClustering(unittest.TestCase):
     
     def test_calculate_adjacency_matrix_regression(self):
-        
+          
         data = [1., 4., 6., 2., 5.,
                     3., 9., 7., 2.,
                         4., 1., 1.,
                              9.,3.,
                                 8.]
-        expected_W = [[1.,0.87792969,0.59423828,0.45825195,0.77099609,0.52197266],
-                    [0.87792969,1.,0.67675781,0.31005859,0.40234375,0.77099609],
-                    [0.59423828,0.67675781,1.,0.59423828,0.87792969,0.87792969],
-                    [0.45825195,0.31005859,0.59423828,1.,0.31005859,0.67675781],
-                    [0.77099609,0.40234375,0.87792969,0.31005859,1.,0.35302734],
-                    [0.52197266,0.77099609,0.87792969,0.67675781,0.35302734,1.]]
+         
+        expected_W = [[ 1.0, 2.14080811e-02, 0.0, 0.0, 2.38418579e-07, 0.0], 
+                      [ 2.14080811e-02, 1.0, 0.0, 0.0, 0.0, 2.38418579e-07], 
+                      [ 0.0, 0.0, 1.0, 0.0, 2.14080811e-02, 2.14080811e-02], 
+                      [ 0.0, 0.0, 0.0, 1.0, 0.0, 0.0], 
+                      [ 2.38418579e-07, 0.0, 2.14080811e-02, 0.0, 1.0, 0.0], 
+                      [ 0.0, 2.38418579e-07, 2.14080811e-02, 0.0, 0.0, 1.0]]
+         
         matrix  = CondensedMatrix(data)
-
+  
         W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(matrix)
         numpy.testing.assert_almost_equal(W,expected_W)
-        
-    def test_calculate_adjacency_matrix(self):
+          
+    def test_calculate_laplacian(self):
         data = [1., 4., 6., 2., 5.,
                     3., 9., 7., 2.,
                         4., 1., 1.,
                              9.,3.,
                                 8.]
-        expected_regression = [[0.94433594,-0.04876709,-0.03302002,-0.02545166,-0.04284668,-0.0289917],
-                             [-0.03991699, 0.95458984,-0.03076172,-0.01409149,-0.01829529,-0.03503418],
-                             [-0.04571533,-0.05206299,0.92285156,-0.04571533,-0.06750488,-0.06750488],
-                             [-0.01478577,-0.01000214,-0.01916504,0.96777344,-0.01000214,-0.02183533],
-                             [-0.02854919,-0.01490021,-0.03250122,-0.01148224,0.96289062,-0.01307678],
-                             [-0.02746582,-0.04058838,-0.04620361,-0.03561401,-0.01858521,0.94726562]]
-        
+         
+        expected_regression = [[0.9444444440305233, -0.0011893378105014563, 0.0, 0.0, -1.3245476715439963e-08, 0.0],
+                               [-0.0009730946039780974, 0.9545454531908035, 0.0, 0.0, 0.0, -1.0837208463954084e-08],
+                               [0.0, 0.0, 0.9230769202113152, 0.0, -0.0016467755194753408, -0.0016467755194753408],
+                               [0.0, 0.0, 0.0, 0.9677419364452362, 0.0, 0.0],
+                               [-8.830317810293309e-09, 0.0, -0.0007928918930701911, 0.0, 0.9629629626870155, 0.0],
+                               [0.0, -1.2548346361995755e-08, -0.0011267410591244698, 0.0, 0.0, 0.9473684206604958]]
+ 
         matrix  = CondensedMatrix(data)
-
+  
         W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(matrix)
-        
+          
         L_PYTHON, D = SpectralClusteringAlgorithm.calculate_laplacian(W, matrix, "PYTHON")
-        
+          
         W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(matrix)
-        
+          
         L_NUMPY, D = SpectralClusteringAlgorithm.calculate_laplacian(W, matrix, "NUMPY")
-        
+          
         W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(matrix)
-        
+          
         L_NUMPY_PURE, D = SpectralClusteringAlgorithm.calculate_laplacian(W, matrix, "NUMPY_PURE")
-
+  
         numpy.testing.assert_almost_equal(L_PYTHON, L_NUMPY, 3)
         numpy.testing.assert_almost_equal(L_PYTHON, L_NUMPY_PURE, 3)
         numpy.testing.assert_almost_equal(L_PYTHON, expected_regression, 3)
-        
+         
+          
     def test_calculate_degree_matrix(self):
         data = [1., 4., 6., 2., 5.,
                     3., 9., 7., 2.,
@@ -72,21 +76,21 @@ class TestSpectralClustering(unittest.TestCase):
         numpy.testing.assert_almost_equal(D, expected_D, 8)
         
     def test_naive_case(self):
-
 #         1       5         8
 #         |       |         |
 #         0 - 3   4     6 - 7 
 #         |                 |
 #         2                 9
-        
         points = [(0,0),(0,1),(0,-1),(1,0),
                   (3,0),(3,1),
                   (6,0),(7,0),(7,1),(7,-1)]
         matrix = CondensedMatrix(pdist(points))
         s_algo = SpectralClusteringAlgorithm(matrix, 3)
         clusters = s_algo.perform_clustering({"k":3}).clusters
+        
         for c in clusters:
-            print c
+            self.assertIn(c.all_elements, [[0, 1, 2, 3],[6, 7, 8, 9],[4, 5]])
+        
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

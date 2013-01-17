@@ -35,8 +35,8 @@ def gen_clusters_from_class_list(group_list,skip_list=[]):
     is defined as the list of N elements with the number of cluster to which each cluster
     belongs. Example: for 4 elements [1,2,3,4] a possible group list would be: [2,1,2,1] which
     means that element 0 and 2 belong to cluster 2 and the others to cluster 2. As it's not possible
-    to define a centroid or medioid, the first element of the cluster will be defined as the
-    centroid/medioid.
+    to define a centroid or medioid. ATENTION: the first element of the cluster will be defined as the
+    centroid/medoid.
     """
     dic_clusters = {}
     for i in range(len(group_list)):
