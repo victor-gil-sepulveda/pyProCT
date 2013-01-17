@@ -4,45 +4,78 @@ Created on 20/02/2012
 @author: victor
 '''
 
+import validation.datasets as data
 import scipy.spatial.distance as distance
-import pyproclust.algorithms.validation.validationTools as vt
-import pyproclust.algorithms.gromos.gromosAlgorithm as ga
-import pyproclust.algorithms.dbscan.dbscanAlgorithm as dba
-import pyproclust.algorithms.validation.datasets as data
-from pyproclust.matrix.condensedMatrix import CondensedDistanceMatrix
+from pyRMSD.condensedMatrix import CondensedMatrix
+from pyproclust.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
+from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm
+from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
+from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
+from pyproclust.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
+from validation.validationTools import params_to_string, dataset_loading_2D,\
+    show_2D_dataset_clusters
 
 """
 Script for visual validation of algorithms.
 """
-if __name__ == '__main__':
-    for dataset in data.all_datasets[0:4]:
+def build_algorithms(matrix):
+    algorithms = {
+                  "GROMOS":GromosAlgorithm(matrix),
+                  "DBSCAN":DBSCANAlgorithm(matrix),
+                  "K-Medoids":KMedoidsAlgorithm(matrix),
+                  "Hierarchical":HierarchicalClusteringAlgorithm(matrix),
+                  "Spectral":SpectralClusteringAlgorithm(matrix)
+                  }
+    
+    return algorithms
+
+def generate_params_for_alg_and_dataset():
+    
+    params = {
+              "GROMOS":{},
+              "DBSCAN":{},
+              "K-Medoids":{},
+              "Hierarchical":{},
+              "Spectral":{}
+              }
+    for algorithm_name in params.keys():
+        for dataset_name in data.number_of_clusters:
+            params[algorithm_name][dataset_name] = []
+    
+    # Params for spectral and K-medoids
+    for dataset_name in data.number_of_clusters:
+        num_clusters_list = data.number_of_clusters[dataset_name]
+        print num_clusters_list
+        for num_clusters in num_clusters_list:
+            params["K-Medoids"][dataset_name].append({"k":num_clusters, "seeding_type":"EQUIDISTANT"})
+            params["Spectral"][dataset_name].append({"k":num_clusters})
+            
+    # Params for GROMOS
+    for dataset_name in data.number_of_clusters:
+        params["GROMOS"][dataset_name].append({'cutoff':7.0})
+        params["GROMOS"][dataset_name].append({'cutoff':5.0})
+        params["GROMOS"][dataset_name].append({'cutoff':3.0})
+        params["Hierarchical"][dataset_name].append({'cutoff':1.1523})
         
-        # Creating matrixes for datasets...
-        observations = vt.dataset_loading_2D(dataset)
+    return params
+
+if __name__ == '__main__':
+    params_for_alg_and_dataset = generate_params_for_alg_and_dataset()
+    for dataset_name in data.all_datasets:
+        
+        dataset = data.all_datasets[dataset_name]
+        
+        # Creating the matrix
+        observations = dataset_loading_2D(dataset)
         total_number_of_observations = len(observations)
         condensed_matrix_data = distance.pdist(observations)
-        condensed_matrix = CondensedDistanceMatrix(condensed_matrix_data)
+        condensed_matrix = CondensedMatrix(condensed_matrix_data)
         
-        # Testing it for different algorithms...
-        #####################
-        ### GROMOS
-        #####################
-        algorithm = ga.GromosAlgorithm(condensed_matrix)
-        clusterization =  algorithm.perform_clustering(4.0)
-        clusterization.eliminate_noise(2)
-        candidates = []
-        
-        for c in clusterization.clusters:
-            if c.get_size()>3 and len(candidates)<5:
-                candidates.append(c.prototype)
-            
-        vt.show_2D_dataset(observations,15 ,20 ,4. ,candidates).show()
-        vt.show_2D_dataset_clusters(observations, 15, clusterization,20).show()
-        #####################
-        ### DBSCAN
-        #####################
-        algorithm = dba.DBSCANAlgorithm(condensed_matrix)
-        clusterization =  algorithm.perform_clustering(4.0,3)
-        vt.show_2D_dataset_clusters(observations, 15, clusterization,20).show()
-        
-        print "Done"
+        algorithms = build_algorithms(condensed_matrix)
+        for algorithm_name in algorithms:
+            algorithm = algorithms[algorithm_name]
+            params_list = params_for_alg_and_dataset[algorithm_name][dataset_name]
+            for params in params_list:
+                clustering = algorithm.perform_clustering(params)
+                image_name = algorithm_name+"_"+dataset_name+"_"+params_to_string(params)
+                show_2D_dataset_clusters(observations, 20, clustering, 20).save("clustering_images/%s.jpg"%image_name,"JPEG")

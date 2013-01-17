@@ -6,7 +6,7 @@ Created on 19/03/2012
 import scipy.cluster.hierarchy as hcluster
 import  fastcluster as hcluster_fast
 from pyproclust.clustering.cluster import gen_clusters_from_class_list
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 
 class HierarchicalClusteringAlgorithm(object):
     '''

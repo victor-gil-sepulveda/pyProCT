@@ -364,8 +364,85 @@ spaeth_07 = """11 50
  1  9
  5  8"""
  
-concentric_circles = """
-1.197 -0.236
+spaeth_08 = """16 50
+37 50
+40 50
+20 49
+37 48
+34 46
+38 45
+21 44
+35 43
+24 42
+32 42
+32 39
+24 38
+30 38
+27 36
+30 35
+25 34
+28 34
+27 32
+ 1 31
+29 31
+25 30
+ 3 29
+23 29
+29 29
+24 28
+ 2 26
+ 6 26 
+19 26
+22 26
+32 26
+10 25
+20 24
+ 5 22
+12 22
+16 22
+34 22
+ 9 20
+15 20
+13 19
+18 19
+15 18
+13 17
+22 17
+11 15
+15 15
+18 15
+24 15
+36 15
+39 14
+12 13
+10 12
+15 12
+19 12
+24 12
+29 12
+37 11
+ 9 10
+ 7  9
+22  9
+26  9
+41  9
+29  8
+34  8
+39  8
+ 6  7
+ 4  5
+26  5
+37  5
+42  5
+44  5
+32  4
+ 2  3
+37  2
+47  2
+ 1  1
+30  1"""
+ 
+concentric_circles = """1.197 -0.236
 1.005 0.174
 1.133 0.158
 0.809 0.238
@@ -814,8 +891,30 @@ concentric_circles = """
 5.059 -1.170
 4.995 -0.168
 4.914 -0.409
-5.463 -0.344
-"""
+5.463 -0.344"""
  
- 
-all_datasets = [spaeth_01,spaeth_02,spaeth_03,spaeth_04,spaeth_05,spaeth_06,spaeth_07, concentric_circles]
+all_datasets = {
+                'spaeth_01':spaeth_01,
+                'spaeth_02':spaeth_02,
+                'spaeth_03':spaeth_03,
+                'spaeth_04':spaeth_04,
+                'spaeth_05':spaeth_05,
+                'spaeth_06':spaeth_06,
+                'spaeth_07':spaeth_07, 
+                'spaeth_08':spaeth_08, 
+                'concentric_circles':concentric_circles
+                }
+
+# From visual inspection
+number_of_clusters = {
+                        'spaeth_01':[3,4,5,6],
+                        'spaeth_02': [],
+                        'spaeth_03': [1,2,3],
+                        'spaeth_04': [6],
+                        'spaeth_05': [3],
+                        'spaeth_06': [3],
+                        'spaeth_07': [2], 
+                        'spaeth_08': [3], 
+                        'concentric_circles': [3]
+                      }
+

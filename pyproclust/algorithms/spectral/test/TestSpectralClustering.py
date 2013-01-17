@@ -85,7 +85,7 @@ class TestSpectralClustering(unittest.TestCase):
                   (3,0),(3,1),
                   (6,0),(7,0),(7,1),(7,-1)]
         matrix = CondensedMatrix(pdist(points))
-        s_algo = SpectralClusteringAlgorithm(matrix, 3)
+        s_algo = SpectralClusteringAlgorithm(matrix)
         clusters = s_algo.perform_clustering({"k":3}).clusters
         
         for c in clusters:

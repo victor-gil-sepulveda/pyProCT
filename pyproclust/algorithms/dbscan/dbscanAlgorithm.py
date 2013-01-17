@@ -4,7 +4,7 @@ Created on 16/04/2012
 @author: victor
 '''
 from pyproclust.clustering.cluster import gen_clusters_from_class_list
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 
 
 class PointClassType:

@@ -28,7 +28,7 @@ class SpectralClusteringAlgorithm(object):
         """
         return  ["PYTHON","NUMPY", "NUMPY_PURE"]
     
-    def __init__(self, condensed_matrix, max_clusters, laplacian_calculation_type = "PYTHON"):
+    def __init__(self, condensed_matrix, laplacian_calculation_type = "PYTHON"):
         """
         Constructor. Calculates the eigenvectors given a dataset distance matrix. The eigenvector distances would be the
         common part for clusterings with different k.
