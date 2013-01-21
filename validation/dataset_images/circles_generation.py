@@ -15,12 +15,6 @@ def get_circle(center=(0.0, 0.0), r=1.0, numpoints=150):
     x = center[0] + r * np.cos(t)  
     y = center[1] + r * np.sin(t)  
     return np.column_stack((x, y))  
-  
-def radial_kernel(c=1.5):  
-    def inner(a, b):  
-        d = a - b  
-        return np.exp((-1 * (np.sqrt(np.dot(d, d.conj()))**2)) / c)  
-    return inner 
 
 def circle_samples():  
     circles = []  

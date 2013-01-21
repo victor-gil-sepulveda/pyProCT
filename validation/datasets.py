@@ -918,3 +918,29 @@ number_of_clusters = {
                         'concentric_circles': [3]
                       }
 
+# Parameters for Spectral from visual inspection
+sigma_sq = {
+                        'spaeth_01': 8.,
+                        'spaeth_02': 10.,
+                        'spaeth_03': 15.,
+                        'spaeth_04': 5.,
+                        'spaeth_05': 4.105,
+                        'spaeth_06': 2.2,
+                        'spaeth_07': 7, 
+                        'spaeth_08': 8., 
+                        'concentric_circles': 0.5
+                      } # Nota: parece que sigma esta relacionada con el ratio entre la distancia maxima y la varianza
+
+# Parameters for DBSCAN [eps, minpts] 
+DBSCAN_params_sq = {
+                        'spaeth_01': [{"eps":6 ,"minpts":3}],
+                        'spaeth_02': [{"eps":8 ,"minpts":2}],
+                        'spaeth_03': [{"eps":4 ,"minpts":4}],
+                        'spaeth_04': [{"eps":6 ,"minpts":3}],
+                        'spaeth_05': [{"eps":4 ,"minpts":3}],
+                        'spaeth_06': [{"eps":4.8 ,"minpts":3},{"eps":5.3 ,"minpts":3}],
+                        'spaeth_07': [{"eps":5.2 ,"minpts":3}], 
+                        'spaeth_08': [{"eps":4 ,"minpts":3}], 
+                        'concentric_circles': [{"eps":0.6 ,"minpts":4}]} # Nota: basicamente tenemos que encontrar un buen eps para un
+                                                                         # minpts reducido para que el clustering no se expanda del centro 
+                                                                         # a los circulos concentricos

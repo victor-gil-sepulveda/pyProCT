@@ -3,13 +3,14 @@ Created on 14/08/2012
 
 @author: victor
 '''
-from pyproclust.clustering.clustering import Clustering
-from pyproclust.clustering.metrics.graphMetrics import d as degree
 import numpy
 import scipy.linalg
 from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from scipy.spatial.distance import pdist
 from pyRMSD.condensedMatrix import CondensedMatrix
+from pyproclust.clustering.cluster import gen_clusters_from_class_list
+import scipy.cluster.vq
+from pyproclust.clustering.clustering import Clustering
 
 class SpectralClusteringAlgorithm(object):
     '''
@@ -28,33 +29,97 @@ class SpectralClusteringAlgorithm(object):
         """
         return  ["PYTHON","NUMPY", "NUMPY_PURE"]
     
-    def __init__(self, condensed_matrix, laplacian_calculation_type = "PYTHON"):
+    def __init__(self, condensed_matrix, max_clusters = None, sigma_sq = None, laplacian_calculation_type = "PYTHON", store_W = False, verbose = False):
         """
         Constructor. Calculates the eigenvectors given a dataset distance matrix. The eigenvector distances would be the
         common part for clusterings with different k.
         
         @param condensed_matrix: The distance matrix of the dataset.
+        @param sigma_sq: The squared value of sigma for the adjacency matrix calculation. If None, the value will be automatically
+        calculated.
         @param max_clusters: Maximum number of clusters we will try with this algorithm (for instance with max_clusters = 10
         we can try with ks in range [1..10]
         @param laplacian_calculation_type: The type of calculation.
+        @param store_W: If True the object stores the adjacency matrix. Useful for testing.
+        @param verbose: If True some messages will be printed.
         """
-        print "Calculating W ..."
-        W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix)
+        if not max_clusters is None:
+            self.max_clusters = max_clusters
+        else:
+            self.max_clusters = condensed_matrix.row_length
+        
+        if verbose: print "Calculating W ..."
+        
+        if not sigma_sq is None:
+            self.sigma_sq = sigma_sq
+            W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix, sigma_sq)
+        else:
+            W, self.sigma_sq = self.do_sigma_estimation(condensed_matrix)
+            if verbose: print "Sigma estimation: ", self.sigma_sq
+        
+        # Zero all negative values (similarities cannot be < 0 )
+        W[W<0] = 0.0        
+        
+        if store_W:
+            self.W = numpy.copy(W)
         
         if not laplacian_calculation_type in SpectralClusteringAlgorithm.laplacian_calculation_types():
             print "[ERROR::SpectralClusteringAlgorithm] Type " ,laplacian_calculation_type, "is not a correct type. Use one of these instead: ", SpectralClusteringAlgorithm.laplacian_calculation_types()
             exit()
         
-        L, D = SpectralClusteringAlgorithm.calculate_laplacian(W, condensed_matrix, laplacian_calculation_type)
+        L, D = SpectralClusteringAlgorithm.calculate_laplacian(W, condensed_matrix, laplacian_calculation_type, verbose)
         
         # Eigenvector i is v[:,i]
-        w, vr = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
+        eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
         
-        # Pick the first N rows of the eigenvectors matrix (a row is v[i])
-        self.eigen_distances = CondensedMatrix(pdist(vr))
+        # Order eigenvectors by eigenvalue (from lowest to biggest)
+        idx = eigenvalues.real.argsort()
+        self.eigenvectors = self.eigenvectors[:, idx]
+        
+        # We'll only store the vectors we need, usually << N
+        self.eigenvectors = self.eigenvectors[:,:self.max_clusters]
+        
+    def perform_clustering(self, kwargs):
+        """
+        Does the actual clustering by doing a k-medoids clustering of the first k eigenvector rows.
+        
+        @param kwargs: Dictionary with this mandatory keys:
+            - 'k': Number of clusters to generate. Must be <= than max_clusters
+            
+        @return: a Clustering instance with the clustered data.
+        """
+        # Mandatory parameter
+        k = int(kwargs["k"])
+        
+        try:
+            use_k_medoids = bool(kwargs["use_k_medoids"])
+        except KeyError:
+            use_k_medoids = True
+        
+        if k > self.max_clusters: # If k > max_number_of_clusters @ init
+            print "[ERROR SpectralClusteringAlgorithm::perform_clustering] this algorithm was defined to generate at maximum ",self.max_clusters," clusters."
+
+        algorithm_details = "Spectral algorithm with k = %d and sigma squared = %.3f" %(int(k), self.sigma_sq)
+        
+        if use_k_medoids:
+            # The row vectors we have are in R^k (so k length)
+            eigen_distances = CondensedMatrix(pdist(self.eigenvectors[:,:k]))
+            k_medoids_args = {"k":k,
+                              "seeding_max_cutoff":-1,
+                              "seeding_type": "EQUIDISTANT"}
+            k_medoids_alg = KMedoidsAlgorithm(eigen_distances)
+            clustering = k_medoids_alg.perform_clustering(k_medoids_args)
+            clustering.details = algorithm_details
+            return k_medoids_alg.perform_clustering(k_medoids_args)
+        else:
+            centroid, labels = scipy.cluster.vq.kmeans2(self.eigenvectors[:,:k], 
+                                                        k, iter = 1000, minit = 'points')
+            del centroid
+            clusters = gen_clusters_from_class_list(labels)
+            return Clustering(clusters,details = algorithm_details)
     
     @classmethod
-    def calculate_laplacian(cls, W, condensed_matrix, laplacian_calculation_type):
+    def calculate_laplacian(cls, W, condensed_matrix, laplacian_calculation_type, verbose = False):
         """
         Calculates the RW laplacian: L = I - D^-1 * W 
         
@@ -65,29 +130,52 @@ class SpectralClusteringAlgorithm(object):
         @return: The laplacian.
         """
         if laplacian_calculation_type == "PYTHON":
-            print "Calculating D ..."
-            D = SpectralClusteringAlgorithm.calculate_degree_matrix(condensed_matrix)
-            print "Calculating L ..."
+            if verbose: print "Calculating D ..."
+            D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
+            if verbose: print "Calculating L ..."
             return SpectralClusteringAlgorithm.calculate_laplacian_python(W, D), numpy.diag(D)
             
-        elif laplacian_calculation_type == "NUMPY_PURE":
-            print "Calculating D ..."
-            D = SpectralClusteringAlgorithm.calculate_degree_matrix(condensed_matrix)
-            print "Calculating L ..."
-            return SpectralClusteringAlgorithm.calculate_laplacian_numpy_pure(W, D), numpy.diag(D)
-            
         elif laplacian_calculation_type == "NUMPY":
-            print "Calculating Dinv ..."
-            Dinv = numpy.diag(SpectralClusteringAlgorithm.calculate_inverse_degree_matrix(condensed_matrix))
-            print "Calculating L ..."
+            if verbose: print "Calculating Dinv ..."
+            Dinv = numpy.diag(SpectralClusteringAlgorithm.calculate_inverse_degree_matrix(W))
+            if verbose: print "Calculating L ..."
             return SpectralClusteringAlgorithm.calculate_laplacian_numpy(W, Dinv), Dinv
         
+        elif laplacian_calculation_type == "NUMPY_PURE":
+            if verbose: print "Calculating D ..."
+            D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
+            if verbose: print "Calculating L ..."
+            return SpectralClusteringAlgorithm.calculate_laplacian_numpy_pure(W, D), numpy.diag(D)
+            
         else:
             print "[ERROR SpectralClusteringAlgorithm::calculate_laplacian] Not defined laplacian calculator type: ", laplacian_calculation_type
             exit()
     
+    def do_sigma_estimation(self,matrix):
+        """
+        Does a first sigma approximation so that at most a 10% of the elements are lower than 0.
+        
+        @param matrix: The distance matrix for this dataset.
+        
+        @return: The adjacency matrix with the chosen sigma estimation.
+        
+        """
+        sq_first_approx = matrix.calculateVariance() / matrix.calculateMax() # Possible lower bound
+        W = SpectralClusteringAlgorithm.calculate_adjacency_matrix( matrix, sq_first_approx)
+        number_of_elems = float(matrix.row_length ** 2)
+        number_of_negative_elements = len(W[W<0].flatten())
+        print "Negative percent",number_of_negative_elements,number_of_elems,number_of_negative_elements / number_of_elems 
+        while number_of_negative_elements / number_of_elems > 0.1 :
+            sq_first_approx += 0.5
+            W = SpectralClusteringAlgorithm.calculate_adjacency_matrix( matrix, sq_first_approx)
+            number_of_negative_elements  = float(len(W[W<0].flatten()))
+            print "Negative percent",number_of_negative_elements/ number_of_elems 
+        
+        return W, sq_first_approx
+        
+        
     @classmethod
-    def calculate_adjacency_matrix(cls, matrix):
+    def calculate_adjacency_matrix(cls, matrix, sigma_sq):
         """
         Calculates the adjacency matrix (W) representing the distance graph for this dataset. It constructs a 
         'fully connected graph', as explained in (Luxburg 2007).
@@ -97,50 +185,42 @@ class SpectralClusteringAlgorithm(object):
         @return: The adjacency matrix.
         """
         # The adjacency matrix
-        data_std = matrix.calculateVariance() 
-        
         W_tmp = numpy.zeros((matrix.row_length,)*2, dtype = numpy.float16)
         
         for i in range(matrix.row_length):
             for j in range(i, matrix.row_length):
                 W_tmp[i,j] = matrix[i,j]
                 W_tmp[j,i] = matrix[i,j]
-        
-        W = numpy.exp( - (W_tmp**2) / 2*data_std).astype(numpy.float16)
+
+        W = numpy.exp( - ((W_tmp**2) / float(sigma_sq))).astype(numpy.float16)
         
         # W is squared and symmetric, and its diagonal is 1.
         return W
     
     @classmethod
-    def calculate_degree_matrix(cls, matrix):
+    def calculate_degree_matrix(cls, W):
         """
         Calculates... the degree matrix (as an array containing the diagonal).
         
-        @param matrix: The distance matrix for this dataset.
+        @param W: The adjacency matrix.
         
         @return: The degree matrix as an array.
         """
         # The degree matrix is the diagonal matrix with the degrees for each element.
-        D = numpy.zeros(matrix.row_length, dtype = numpy.float16)
-        for i in range(matrix.row_length):
-            D[i] = degree(i, matrix)
-        return D
+        # The degree is the sum of the row of W (or column as it's symmetric) for each element.
+        return [sum(Wi) for Wi in W]
     
     @classmethod
-    def calculate_inverse_degree_matrix(cls, matrix):
+    def calculate_inverse_degree_matrix(cls, W):
         """
         Calculates the inverse of the degree matrix.
         @see: calculate_degree_matrix
         
-        @param matrix: The distance matrix for this dataset.
+        @param W: The adjacency matrix.
         
         @return: The inverse degree matrix as an array.
         """
-        # The degree matrix is the diagonal matrix with the degrees for each element.
-        D = numpy.zeros(matrix.row_length, dtype = numpy.float16)
-        for i in range(matrix.row_length):
-            D[i] = 1./degree(i, matrix)
-        return D
+        return [1./sum(Wi) for Wi in W]
     
     @classmethod
     def calculate_laplacian_python(cls, W, D):
@@ -193,25 +273,3 @@ class SpectralClusteringAlgorithm(object):
         L = I - numpy.dot(Dinv,W)
         return L
             
-    def perform_clustering(self, kwargs):
-        """
-        Does the actual clustering by doing a k-medoids clustering of the first k eigenvector rows.
-        
-        @param kwargs: Dictionary with this mandatory keys:
-            - 'k': Number of clusters to generate. Must be <= than max_clusters
-        
-        @return: a Clustering instance with the clustered data.
-        """
-        # Mandatory parameter
-        k = int(kwargs["k"])
-        
-        if k > len(self.eigen_distances): # If k > max_number_of_clusters @ init
-            print "[ERROR SpectralClusteringAlgorithm::perform_clustering] this algorithm was defined to generate at maximum ",len(self.eigen_distances)," clusters."
-            
-        k_medoids_args = {"k":k,
-                          "seeding_max_cutoff":-1,
-                          "seeding_type": "EQUIDISTANT"}
-                          
-        k_medoids_alg = KMedoidsAlgorithm(self.eigen_distances)
-        
-        return k_medoids_alg.perform_clustering(k_medoids_args)
