@@ -1,0 +1,100 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    <title>pyProClust: easy clustering for biomolecules</title>
+    <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.10.0.custom.min.css"
+      media="screen">
+    <script type="text/javascript" src="js/jquery-1.9.0.min.js"></script>
+    <script type="text/javascript" src="js/jquery-ui-1.10.0.custom.min.js"></script>
+    <script>
+    $(document).ready( function() {
+      
+      var spinner = $( "#number_of_processors" ).spinner();
+      spinner.spinner( "value", 4 );
+      
+      $('#matrix_calculation').click(function() {
+        if($('#matrix_calculation').prop('checked')){
+          $("#load_matrix").hide("blind");
+        }
+        else{
+          $("#load_matrix").show("blind");
+        }
+      })
+              
+      $('#matrix_save').click(function() {
+        if($('#matrix_save').prop('checked')){
+          $("#save_matrix_field").show("blind");
+        }
+        else{
+          $("#save_matrix_field").hide("blind");
+        }
+      })
+      
+        
+      $('#matrix_save').click(function() {
+          $("#second_trajectory_field").hide("blind")
+      })
+      
+      
+      $('#traj_radio_1').click(function() {
+          $("#second_trajectory_field").hide("blind")
+      })
+      
+      $('#traj_radio_2').click(function() {
+          $("#second_trajectory_field").show("blind")
+      })
+        
+     });
+    </script>
+  </head>
+  <body> pyProClust<br>
+    <br>
+    <form method="POST" action="localhost:8000/create_script" name="all_parameters">
+      <fieldset name="general_params"><legend>General</legend>
+        <div> Project root folder: <input id="working_directory" name="working_directory"></div>
+        <div> Number of processors to use: <input id="number_of_processors" name="number_of_processors"></div>
+      </fieldset>
+      <fieldset name="calculo_matriz"><legend>Distance Matrix Calculation</legend>
+        <label for="calculo_matriz"> Calculate matrix </label><input checked="checked"
+          name="calcular_matriz" id="matrix_calculation" type="checkbox"><br>
+        <div id="load_matrix" hidden="false"> Select a matrix file to load: <input
+            name="matrix_path" type="file"></div>
+        <label for="matrix_calculation"> Save matrix </label><input name="guardar_matriz"
+          id="matrix_save" type="checkbox"><br>
+        <div id="save_matrix_field" hidden="true"> Choose a location to save the
+          matrix: <input name="store_matrix_path" type="file"><br>
+        </div>
+        <div> Selection string:<input name="rmsd_selection" id="rmsd_selection"
+            type="text"></div>
+      </fieldset>
+      <fieldset name="datos_trayectorias"><legend>Trajectories</legend>
+        <table border="0">
+          <tbody>
+            <tr>
+              <td>
+                <div> Single trajectory (clustering):</div>
+              </td>
+              <td><input id="traj_radio_1" value="1" name="number_of_trajectories"
+                  checked="checked" type="radio"></td>
+            </tr>
+            <tr>
+              <td>
+                <div> Two trajectories (comparison):</div>
+              </td>
+              <td><input id="traj_radio_2" value="1" name="number_of_trajectories"
+                  type="radio"></td>
+            </tr>
+            <tr>
+            </tr>
+          </tbody>
+        </table>
+        <div> First trajectory to load (pdb file): <input name="matrix_path" type="file">
+        </div>
+        <div id="second_trajectory_field" hidden="true"> Second trajectory to
+          load (pdb file): <input name="matrix_path" type="file"> </div>
+      </fieldset>
+    </form>
+    
+  </body>
+</html>
