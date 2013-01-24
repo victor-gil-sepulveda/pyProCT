@@ -71,6 +71,8 @@ class SpectralClusteringAlgorithm(object):
         
         # Eigenvector i is v[:,i]
         eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
+        # We can try with scipy.sparse.linalg.eigs as the matrix is sparse
+#         eigenvalues, self.eigenvectors = scipy.sparse.linalg.eigs(L, k = self.max_clusters, M = D,which ='SM',return_eigenvectors = True)
         
         # Order eigenvectors by eigenvalue (from lowest to biggest)
         idx = eigenvalues.real.argsort()

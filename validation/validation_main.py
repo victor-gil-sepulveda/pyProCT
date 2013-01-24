@@ -16,6 +16,7 @@ from validation.validationTools import params_to_string, dataset_loading_2D,\
     show_2D_dataset_clusters, generate_similarity_network
 from validation.datasets import sigma_sq
 import numpy
+from pyproclust.tools.scriptTools import create_directory
 
 """
 Script for visual validation of algorithms.
@@ -70,6 +71,7 @@ if __name__ == '__main__':
     params_for_alg_and_dataset = generate_params_for_alg_and_dataset()
     condensed_matrices = {}
     all_observations = {}
+    create_directory("./clustering_images")
     for dataset_name in data.all_datasets:
         dataset = data.all_datasets[dataset_name]
         # Creating the matrix

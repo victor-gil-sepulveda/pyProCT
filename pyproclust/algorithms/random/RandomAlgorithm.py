@@ -20,7 +20,7 @@ class RandomClusteringAlgorithm(object):
     def perform_clustering(self,kwargs):
         """
         Creates a clustering where the clusters have been created by random selection of 
-        the elements in the dataset. It will create a random number of clusters iif "max_num_of_clusters" is 
+        the elements in the dataset. It will create a random number of clusters if "max_num_of_clusters" is 
         defined, or an exact number of clusters this clusters if "num_clusters" is defined.
         """
         max_num_of_clusters = kwargs["max_num_of_clusters"]
