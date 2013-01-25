@@ -35,6 +35,6 @@ if __name__ == '__main__':
     PORT = 8000
 
     httpd = SocketServer.TCPServer(("localhost", PORT), Handler)
-    webbrowser.open("http://localhost:8000",new=1, autoraise=True)
+    webbrowser.open("http://localhost:8000", new=1, autoraise=True)
     print "serving at port", PORT
     httpd.serve_forever()

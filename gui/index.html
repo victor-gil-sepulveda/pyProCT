@@ -2,92 +2,52 @@
 <html>
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+    
     <title>pyProClust: easy clustering for biomolecules</title>
-    <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.10.0.custom.min.css"
-      media="screen">
-     <link href="css/jquery.tagit.css" rel="stylesheet" type="text/css">
-    <link rel="stylesheet" type="text/css" href="css/basic.css"
-      media="screen">
-    <script type="text/javascript" src="js/jquery-1.9.0.min.js" charset="utf-8"></script>
-    <script type="text/javascript" src="js/jquery-ui-1.10.0.custom.min.js" charset="utf-8"></script>
-    <script type="text/javascript" src="js/jquery.ui.selectmenu.js" charset="utf-8"></script>
+    
+    <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.10.0.custom.min.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/ui/jquery.ui.selectmenu.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/ui/jquery.tagit.css" media="screen">
+    <link rel="stylesheet" type="text/css" href="css/basic.css"  media="screen">
+    <link rel="stylesheet" type="text/css" href="css/browse/enhanced.css"  media="screen">
+    
+    <script type="text/javascript" src="js/jquery/jquery-1.9.0.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/jquery/jquery-ui-1.10.0.custom.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/jquery/jquery.ui.selectmenu.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/jquery/jQuery.fileinput.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/jquery/tag-it.min.js" charset="utf-8"></script>
+    
     <script type="text/javascript" src="js/cluster_params_field_templating.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/query_and_eval.js" charset="utf-8"></script>
-    <script type="text/javascript" src="js/tag-it.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/click_behaviour.js" charset="utf-8"></script>
+    
     <script>
-        function toggable_checkbox(this_widget, toggles_this_one, invert){
-            if (!invert){
-                $(this_widget).click(function() {
-                    if($(this_widget).prop('checked')){
-                        $(toggles_this_one).hide("blind");
-                    }
-                    else{
-                        $(toggles_this_one).show("blind");
-                    }
-                });
-            }
-            else{
-                $(this_widget).click(function() {
-                    if(!$(this_widget).prop('checked')){
-                        $(toggles_this_one).hide("blind");
-                    }
-                    else{
-                        $(toggles_this_one).show("blind");
-                    }
-                });
-            }
-        }
-        
-        function toggable_radiobutton(radio1, radio2, toggles_this_one){
-            $(radio1).click(function() {
-                $(toggles_this_one).hide("blind")
-            });
-
-            $(radio2).click(function() {
-                $(toggles_this_one).show("blind")
-            });
-        }
-        
-        function toggable_text(text_id, sign_image_id, toggles_this_one){
-            $(text_id).click(function(){
-                if ($(toggles_this_one).prop("hidden")){
-                    $(sign_image_id).prop("src","images/expanded.png")
-                    $(toggles_this_one).show("blind");
-                    $(toggles_this_one).prop("hidden",false)
-                }
-                else{
-                    $(sign_image_id)[0].src = "images/collapsed.png";   
-                    $(toggles_this_one).hide("blind");
-                    $(toggles_this_one).prop("hidden",true)
-                }
-            });
-        }
-        
-        
-        
         $(document).ready( function() {
+            var clustering_algorithm_fields = {"GROMOS Algorithm":null, 
+                                                "K-Medoids Algorithm":null,
+                                                "Hierarchical Algorithm":null,
+                                                "Spectral Algorithm":null,
+                                                "DBSCAN Algorithm":null,
+                                                "Random Algorithm":null};
             
-            var clustering_algorithm_fields = { "GROMOS Algorithm":null, 
-                                            "K-Medoids Algorithm":null,
-                                            "Hierarchical Algorithm":null,
-                                            "Spectral Algorithm":null,
-                                            "DBSCAN Algorithm":null,
-                                            "Random Algorithm":null};
-            
-            var clustering_algorithm_ids = {    "GROMOS Algorithm":"gromos", 
-                                            "K-Medoids Algorithm":"kmedoids",
-                                            "Hierarchical Algorithm":"hierarchical",
-                                            "Spectral Algorithm":"spectral",
-                                            "DBSCAN Algorithm":"dbscan",
-                                            "Random Algorithm":"random"};
+            var clustering_algorithm_ids = { "GROMOS Algorithm":"gromos", 
+                                                "K-Medoids Algorithm":"kmedoids",
+                                                "Hierarchical Algorithm":"hierarchical",
+                                                "Spectral Algorithm":"spectral",
+                                                "DBSCAN Algorithm":"dbscan",
+                                                "Random Algorithm":"random"};
             
             var query_types = ["NumClusters", "NumClusteredElems", "MeanClusterSize",
-                           "PercentInTop4", "PercentInTop", "Cohesion-Separation",
-                           "NoiseLevel", "MirrorCohesion", "MinimumMeanSeparation",
-                           "Silhouette", "CythonMirrorCohesion", "CythonMinimumMeanSeparation",
-                           "CythonSilhouette", "RatioCut", "NCut",
-                           "CythonNormNCut", "NormNCut", "MixMaxCut",
-                           "PCAanalysis"]
+                               "PercentInTop4", "PercentInTop", "Cohesion-Separation",
+                               "NoiseLevel", "MirrorCohesion", "MinimumMeanSeparation",
+                               "Silhouette", "CythonMirrorCohesion", "CythonMinimumMeanSeparation",
+                               "CythonSilhouette", "RatioCut", "NCut",
+                               "CythonNormNCut", "NormNCut", "MixMaxCut",
+                               "PCAanalysis"]
+            
+            var criteria_types = ["MeanClusterSize", "CythonMirrorCohesion", "CythonMinimumMeanSeparation",
+                                   "CythonSilhouette", "RatioCut", "NCut",
+                                   "CythonNormNCut", "MixMaxCut", "PCAanalysis"]
             
             var query_types_dict = {}
                     
@@ -95,38 +55,47 @@
                 $("#algorithms_listbox").append("<option>"+clustering_algorithm_name+"</option>");
             }
             
-            for (clustering_algorithm_id in clustering_algorithm_ids){
-                $("#algorithms_field").append("<div id ='"+clustering_algorithm_id+"'/>");
-            }
-            
             for (var i = 0; i < query_types.length; i++){
                 $("#query_listbox").append("<option>"+query_types[i]+"</option>");
                 query_types_dict[query_types[i]] = 0;
             }
                        
-                       
             generate_all_fields(clustering_algorithm_fields, clustering_algorithm_ids);
             
             // All widgets of class spinner_widget are converted to real sp. w.
-            $( ".spinner_widget" ).spinner();
-            //$( ".selection_widget" ).selectmenu();
+            $(".spinner_widget").spinner();
             
+            // Selection widgets
+            $("#algorithms_listbox").selectmenu();
+            $("#query_listbox").selectmenu();
+            
+            // Buttons
             $(".button_widget").button();
+            $("#matrix_source_radiobuttons").buttonset();
+            $("#trajectory_selection_radiobuttons").buttonset();
+            $("#run_button").button({icons:{primary:'ui-icon-circle-triangle-e'}});
+            $("#save_button").button({icons:{primary:'ui-icon-disk'}});
             
-            $(".tag_widget").tagit({availableTags: query_types,
-                                    beforeTagAdded: function(event, ui) {
-                                    console.log(ui);
-                                        if (!(ui.tagLabel in query_types_dict)){
-                                            return false;
-                                        }
-                                    }});
+            // File browsing
+            $("#store_matrix_path").customFileInput();	
+            $("#matrix_path").customFileInput();
+            $("#pdb1").customFileInput();
+            $("#pdb2").customFileInput();
             
-        dialog = jQuery("<div>",{
-                            title: "Error",
-                            text: "hello"
-                        }).dialog({modal:true});            
-                        
-            /*$('input:text')
+            // Tag widgets
+            $("#query_tags").tagit({availableTags: query_types,
+                                    readOnly: true,
+                                    onTagClicked: function(event, ui) {
+                                        $(this).tagit("removeTagByLabel", ui.tagLabel);
+                                    }
+                                   });  
+            $("#evaluation_criteria_tags").tagit({readOnly: true,
+                                                  onTagClicked: function(event, ui) {
+                                                    $(this).tagit("removeTagByLabel", ui.tagLabel);
+                                                    }
+                                                  });   
+            // Set up text entry widgets            
+            $('.text_field_widget')
               .button()
               .css({
                       'font' : 'inherit',
@@ -134,98 +103,127 @@
                 'text-align' : 'left',
                    'outline' : 'none',
                     'cursor' : 'text'
-              });*/
+              });
             
-            $("#add_clustering_algorithm").button().click(function(){
+            
+            // Set up button behaviour
+            
+            // Adding algorithms
+            $("#add_clustering_algorithm").click(function(){
                 add_clustering_algorithm_field($("#algorithms_listbox").val(), 
                                                 clustering_algorithm_fields,
                                                 clustering_algorithm_ids, 
                                                 "#algorithms_field");
             });
             
+            
+            // Adding evaluation criteria
             $("#add_evaluation_criteria_button").click(function(){
-                
+                            $("<div >", {title: "New Criteria",id:'criteria_creation_dialog'})
+                            .append(get_eval_dialog_contents(criteria_types))
+                            .dialog({modal:true, 
+                                    autoResize:true,
+                                    width:'auto',
+                                    create: function( event, ui ) {
+                                       $(".dialog_spinner").spinner({places:2,step:0.05});
+                                       $(".dialog_spinner").css({width:"35px"});
+                                    },
+                                    close: function( event, ui ){
+                                         $(this).dialog("destroy"); 
+                                    },
+                                    buttons: [{ text: "Discard",
+                                                click: function() { 
+                                                    $(this).dialog("destroy"); 
+                                                    } 
+                                              },
+                                              { text: "Ok",
+                                                click: function() { 
+                                                    var criteria = criteria_to_string('criteria_creation_dialog', criteria_types);
+                                                    $("#evaluation_criteria_tags").tagit("createTag",criteria);
+                                                    $(this).dialog("destroy");
+                                                    } 
+                                              }]
+                                    });
             });
             
+            // Adding queries
             $("#add_query_button").click(function(){
-                //add_evalquery_blob($("#query_listbox").val(), "#query_container_field");
                 $("#query_tags").tagit("createTag",$("#query_listbox").val());
             });
-
-            toggable_checkbox('#matrix_calculation', "#load_matrix_field", false);
-
-            toggable_checkbox('#matrix_save', "#save_matrix_field", true);
-
-            toggable_radiobutton('#traj_radio_1', '#traj_radio_2', '#second_trajectory_field');
-
-            toggable_text('#advanced_options_label','#advanced_options_sign',"#advanced_options_field");
             
+            // Setup dynamic properties
+            toggable_checkbox('#matrix_save', "#save_matrix_field");
+            toggable_checkbox('#advanced_options', "#advanced_options_field");
+            toggable_checkbox('#refinement_options', "#refinement_options_field");
+            toggable_radiobutton('#traj_radio_1', '#traj_radio_2', '', '#second_trajectory_field');
+            toggable_radiobutton('#matrix_calculation_button', '#matrix_path_button', '#rmsd_selection', '#load_matrix_field');
         });
         
     </script>
   </head>
-  <body> pyProClust<br>
-    <br>
-    <form method="POST" action="localhost:8000/create_script" name="all_parameters">
-      
+  <body> 
+  pyProClust: easy clustering for biomolecules <br>
+    
+    <fieldset id="global_options_field" name="global_params"><legend>Global</legend>
+        <table border="0">
+            <tbody>
+                <tr>
+                    <td>
+                        <div>Project root folder:</div>
+                    </td>
+                    <td>
+                        <input class = 'text_field_widget' id="working_directory" name="working_directory">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    
     <fieldset name="calculo_matriz"><legend>Distance Matrix Calculation</legend>
-        <label for="calculo_matriz"> Calculate matrix </label>
-        <input checked="checked" name="calcular_matriz" id="matrix_calculation" type="checkbox"><br>
         
-        <div id="load_matrix_field" hidden="false"> Select a matrix file to
-        load: <input name="matrix_path" type="file"></div>
+        <div id = "matrix_source_radiobuttons">
+            <input id="matrix_calculation_button" value="1" name="matrix_source" checked type="radio">
+            <label for="matrix_calculation_button">Calculate matrix</label>
+            
+            <input id="matrix_path_button" value="2" name="matrix_source" type="radio">
+            <label for="matrix_path_button"> Load Matrix </label>    
+        </div>    
         
-        <div> Selection string:<input name="rmsd_selection" id="rmsd_selection"
-        type="text"></div>
+        <div id="load_matrix_field" hidden="true"> Select a matrix file to load: 
+            <input id="matrix_path" type="file" class="file_widget">
+        </div>
         
-        <label for="matrix_calculation"> Save matrix </label><input name="guardar_matriz"
-        id="matrix_save" type="checkbox">
+        <div id="rmsd_selection" > Selection string:
+            <input class = 'text_field_widget' name="rmsd_selection" type="text">
+        </div>
         
-        <div id="save_matrix_field" hidden="true"> Choose a location to save the
-        matrix: <input name="store_matrix_path" type="file">
+        <input id="matrix_save" type="checkbox" class="button_widget">
+        <label for="matrix_save"> Save matrix </label>
+        
+        <div id="save_matrix_field" hidden="true"> Choose a location to save the matrix: 
+            <input id="store_matrix_path" type="file" class="file_widget">
         </div>
         
     </fieldset>
 
     <fieldset name="datos_trayectorias"><legend>Trajectories</legend>
-        <table border="0">
-            <tbody>
-                <tr>
-                    <td>
-                        <div> Single trajectory (clustering):</div>
-                    </td>
-                    <td>
-                        <input id="traj_radio_1" value="1" name="number_of_trajectories"
-                        checked="checked" type="radio">
-                     </td>
-                </tr>
-                <tr>
-                    <td>
-                        <div> Two trajectories (comparison):</div>
-                    </td>
-                    <td>
-                        <input id="traj_radio_2" value="1" name="number_of_trajectories"
-                        type="radio">
-                    </td>
-                </tr> 
-                <tr>
-                    <td>
-                        <div> First trajectory to load (pdb file):</div>
-                    </td>
-                    <td>
-                        <input name="matrix_path" type="file">
-                    </td>
-                </tr>
-                <tr id="second_trajectory_field" hidden="true">
-                    <td>
-                        <div> Second trajectory to load (pdb file):</div>
-                    </td>
-                    <td>
-                        <input name="matrix_path" type="file"> 
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div id = "trajectory_selection_radiobuttons">
+            <input id="traj_radio_1" value="1" name="number_of_trajectories"
+                            checked="checked" type="radio">
+            <label for="traj_radio_1">Clustering</label>
+            
+            <input id="traj_radio_2" value="2" name="number_of_trajectories"
+                            type="radio">
+            <label for="traj_radio_2">Comparison</label>    
+        </div>     
+        
+        <div> First trajectory to load (pdb file):</div>
+        <input id="pdb1" type="file">
+        
+        <div id = 'second_trajectory_field' hidden='true'>
+            <div> Second trajectory to load (pdb file):</div>
+            <input id="pdb2" type="file"> 
+        <div>
     </fieldset>
     
     <fieldset name="datos_clustering"><legend>Clustering</legend>
@@ -320,7 +318,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <div class="query_container" id = "evaluation_criteria_container_field"/>
+                            <input class = "tag_widget" id="evaluation_criteria_tags"  type="text">
                         </td>
                     </tr>
                 </tbody>
@@ -328,30 +326,83 @@
         </fieldset>
     </fieldset>
     
-        <div> <label id = "advanced_options_label">Advanced options  <img src="images/collapsed.png" id = "advanced_options_sign"></label> </div>
-            <fieldset id="advanced_options_field" hidden="true" name="advanced_params"><legend>Advanced</legend>
-                <table border="0">
-                    <tbody>
-                        <tr>
-                            <td>
-                                <div>Project root folder:</div>
-                            </td>
-                            <td>  
-                                <input id="working_directory" name="working_directory">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <div> Number of processors to use:   </div>
-                            </td>
-                            <td>
-                                <input class = "spinner_widget" id="number_of_processors" >
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </fieldset>
-        </div>
-    </form>
+    <fieldset id="advanced_options_field" hidden="true" name="advanced_params"><legend>Advanced Options</legend>
+        <table border="0">
+            <tbody>
+                <tr>
+                    <td>
+                        <div> Number of processors to use:   </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="number_of_processors" value = 4 >
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div> Clustering scheduler query interval:   </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="algorithm_scheduler_sleep_time" value = 15 >
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div> Scoring scheduler query interval:   </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="scoring_scheduler_sleep_time" value = 15 >
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    
+    <fieldset id="refinement_options_field" hidden="true" name="advanced_params"><legend>Refinement Options</legend>
+        <table border="0">
+            <tbody>
+                <tr>
+                    <td>
+                        <div>Use refinement:</div>
+                    </td>
+                    <td>  
+                        <input class="button_widget" type="checkbox" id="do_refinement">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div> Refinement step: </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="refinement_min_clusters" >
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div> Minimum number of clusters: </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="refinement_min_clusters" >
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div> Maximum number of clusters: </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="refinement_max_clusters" >
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </fieldset>
+    
+    </div>
+    
+    <input class="button_widget" type="checkbox" id="advanced_options"> <label for="advanced_options">Global Options</label>
+    <input class="button_widget" type="checkbox" id="refinement_options"> <label for="refinement_options">Refinement</label>
+    <span id = "save_button" >Save Script </span>
+    <span id = "run_button" > Run </span>
 </body>
 </html>

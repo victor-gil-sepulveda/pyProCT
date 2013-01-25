@@ -20,7 +20,10 @@ function create_clustering_algorithm_field(clustering_algorithm_name, clustering
     return parameters_field;
 }
 
-function prepare_field_interactive_buttons(clustering_algorithm, clustering_algorithm_ids){
+function prepare_field_interactive_buttons(clustering_algorithm, 
+                                            clustering_algorithm_ids, 
+                                            clustering_algorithm_fields){
+                                            
     clustering_algorithm_id = clustering_algorithm_ids[clustering_algorithm];
     
     // Prepare the checkbox
@@ -45,7 +48,7 @@ function add_clustering_algorithm_field(clustering_algorithm,
         clustering_algorithm_fields[clustering_algorithm]["contents"].appendTo($("#"+clustering_algorithm_id+"_field"));
         clustering_algorithm_fields[clustering_algorithm]["contents"].show("slide");
         
-        prepare_field_interactive_buttons(clustering_algorithm, clustering_algorithm_ids)
+        prepare_field_interactive_buttons(clustering_algorithm, clustering_algorithm_ids, clustering_algorithm_fields);
     }
 }
 
