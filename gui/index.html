@@ -18,7 +18,7 @@
     <script type="text/javascript" src="js/jquery/tag-it.min.js" charset="utf-8"></script>
     
     <script type="text/javascript" src="js/cluster_params_field_templating.js" charset="utf-8"></script>
-    <script type="text/javascript" src="js/query_and_eval.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/evaluation_criteria_handling.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/click_behaviour.js" charset="utf-8"></script>
     
     <script>
@@ -49,18 +49,29 @@
                                    "CythonSilhouette", "RatioCut", "NCut",
                                    "CythonNormNCut", "MixMaxCut", "PCAanalysis"]
             
-            var query_types_dict = {}
-                    
+            
+            
+            /////////////////////////////////////
+            // (SIMPLE) DYNAMIC CODE GENERATION
+            /////////////////////////////////////
+            
+            // Add options to the cluster algorithm listbox
             for (clustering_algorithm_name in clustering_algorithm_fields){
                 $("#algorithms_listbox").append("<option>"+clustering_algorithm_name+"</option>");
             }
             
+            // Pregenerate clustering parameter fields
+            generate_all_fields(clustering_algorithm_fields, clustering_algorithm_ids);
+
+            // Add options to the query listbox
             for (var i = 0; i < query_types.length; i++){
                 $("#query_listbox").append("<option>"+query_types[i]+"</option>");
-                query_types_dict[query_types[i]] = 0;
             }
-                       
-            generate_all_fields(clustering_algorithm_fields, clustering_algorithm_ids);
+
+            
+            /////////////////////////////
+            // APPEARANCE
+            /////////////////////////////
             
             // All widgets of class spinner_widget are converted to real sp. w.
             $(".spinner_widget").spinner();
@@ -83,70 +94,43 @@
             $("#pdb2").customFileInput();
             
             // Tag widgets
-            $("#query_tags").tagit({availableTags: query_types,
-                                    readOnly: true,
-                                    onTagClicked: function(event, ui) {
-                                        $(this).tagit("removeTagByLabel", ui.tagLabel);
-                                    }
-                                   });  
-            $("#evaluation_criteria_tags").tagit({readOnly: true,
-                                                  onTagClicked: function(event, ui) {
-                                                    $(this).tagit("removeTagByLabel", ui.tagLabel);
-                                                    }
-                                                  });   
+            $("#query_tags, #evaluation_criteria_tags").tagit({
+                    availableTags: query_types,
+                    readOnly: true,
+                    onTagClicked: function(event, ui) {
+                        $(this).tagit("removeTagByLabel", ui.tagLabel);
+                    }
+            });  
+            
             // Set up text entry widgets            
             $('.text_field_widget')
               .button()
               .css({
-                      'font' : 'inherit',
-                     'color' : 'inherit',
-                'text-align' : 'left',
-                   'outline' : 'none',
+                    'font' : 'inherit',
+                    'color' : 'inherit',
+                    'text-align' : 'left',
+                    'outline' : 'none',
                     'cursor' : 'text'
               });
             
             
-            // Set up button behaviour
+            /////////////////////////////
+            // BEHAVIOUR
+            /////////////////////////////
             
-            // Adding algorithms
+            // Adding algorithms button
             $("#add_clustering_algorithm").click(function(){
                 add_clustering_algorithm_field($("#algorithms_listbox").val(), 
                                                 clustering_algorithm_fields,
                                                 clustering_algorithm_ids, 
-                                                "#algorithms_field");
+                                                "#algorithms_field")
             });
             
             
-            // Adding evaluation criteria
-            $("#add_evaluation_criteria_button").click(function(){
-                            $("<div >", {title: "New Criteria",id:'criteria_creation_dialog'})
-                            .append(get_eval_dialog_contents(criteria_types))
-                            .dialog({modal:true, 
-                                    autoResize:true,
-                                    width:'auto',
-                                    create: function( event, ui ) {
-                                       $(".dialog_spinner").spinner({places:2,step:0.05});
-                                       $(".dialog_spinner").css({width:"35px"});
-                                    },
-                                    close: function( event, ui ){
-                                         $(this).dialog("destroy"); 
-                                    },
-                                    buttons: [{ text: "Discard",
-                                                click: function() { 
-                                                    $(this).dialog("destroy"); 
-                                                    } 
-                                              },
-                                              { text: "Ok",
-                                                click: function() { 
-                                                    var criteria = criteria_to_string('criteria_creation_dialog', criteria_types);
-                                                    $("#evaluation_criteria_tags").tagit("createTag",criteria);
-                                                    $(this).dialog("destroy");
-                                                    } 
-                                              }]
-                                    });
-            });
+            // Adding evaluation criteria button
+            $("#add_evaluation_criteria_button").click(criteria_creation_show_dialog(criteria_types));
             
-            // Adding queries
+            // Adding queries button
             $("#add_query_button").click(function(){
                 $("#query_tags").tagit("createTag",$("#query_listbox").val());
             });
