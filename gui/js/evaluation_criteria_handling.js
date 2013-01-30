@@ -1,7 +1,7 @@
 /*
     Prepares and shows the evaluation criteria dialog.
 */
-function criteria_creation_show_dialog(criteria_types){
+function criteria_creation_show_dialog(criteria_types, tag_widget_id){
     return function(){
         $("<div >", {title: "New Criteria",id:'criteria_creation_dialog'})
         // Add contents to the dialog
@@ -25,67 +25,43 @@ function criteria_creation_show_dialog(criteria_types){
                           { text: "Ok",
                             click: function() { 
                                 var criteria = criteria_to_string('criteria_creation_dialog', criteria_types);
-                                $("#evaluation_criteria_tags").tagit("createTag",criteria);
+                                $("#"+tag_widget_id).tagit("createTag",criteria);
                                 $(this).dialog("destroy");
                                 } 
                           }]
                 })
     };
 }
-
+/*
+    Creates the contents of the dialog (using handlebars))
+*/
 function get_eval_dialog_contents(criteria_list){
-    
-    var contents = "\
-        <table>\
-        <tr><th>Action</th><th>Criteria</th><th>Weight</th></tr>\
-        <tbody id = 'criteria_table'>"+
-         get_table_contents_for_all_criteria(criteria_list)+
-        "</tbody>\
-        </table>";
-    
-    return contents;
- }
- 
- function get_table_contents_for_all_criteria(criteria_list){
-    var total_len = criteria_list.length;
-    var contents = "";
-    for (var i =0; i<total_len; i++){
-        var row = get_row_contents(criteria_list[i]);
-        contents += wrap_with_tr(row);
+    // Gather data
+    var data = {criteria:[]};
+    for (var i = 0;i < criteria_list.length; i++){
+        var criteria_name = criteria_list[i];
+        data.criteria.push({name:criteria_name,  initial_value:0});
     }
-    return contents;
- }
- 
- function wrap_with_tr(this_html){
-    contents = "<tr>"+this_html+"</tr>";
-    return contents;
- }
- 
- function get_row_contents(criteria_name){
-    contents =  //wrap_with_td("<input class='dialog_checkbox' type='checkbox'/>", criteria_name)+
-                wrap_with_td("<select>\
-                                 <option> Minimize </option>\
-                                 <option> Maximize </option>\
-                            </select>", criteria_name)+
-                wrap_with_td(criteria_name) +
-                wrap_with_td("<input class='dialog_spinner "+criteria_name+"' type = 'input' value ='0'/>", criteria_name);
-    return contents;
- }
- 
- function wrap_with_td(this_html, this_class){
-    contents = "<td class='"+this_class+"'>"+this_html+"</td>";
     
-    return contents;
- }
- 
+    // Render it
+    var source   = $("#dialog_contents_template").html();
+    var template = Handlebars.compile(source);
+    return template(data);
+}
+
+/*
+    Creates a string from the contents of the dialog that represents one evaluation criteria.
+*/
 function criteria_to_string(dialog_to_extract_data, criteria_list){
     var string_criteria = "";
     for (var i =0; i<criteria_list.length; i++){
-        var weight =  $("."+criteria_list[i]+" .dialog_spinner").spinner( "value" );
+        var criteria_name = criteria_list[i];
+        // Get the spinners value, if different than 0, proceed
+        var weight =  $("#"+criteria_name+"_spinner").val();
         if (weight != 0){
             // Maximize or minimize?
-            var min_max = $("."+criteria_list[i]+" option:selected").text();
-            string_criteria += min_max+" "+criteria_list[i]+" (weigth: "+weight+") and"   
+            var min_max = $("#"+criteria_name+"_listbox").val();
+            string_criteria += min_max + " " + criteria_name + " (weigth: "+ weight + ") and"   
         }
     }
     // remove last and return

@@ -9,32 +9,40 @@ import SocketServer
 import logging
 import cgi
 import webbrowser
+import json
 
 if __name__ == '__main__':
     
     class ServerHandler(SimpleHTTPServer.SimpleHTTPRequestHandler):
-
-        def do_GET(self):
+        """
+        Very simple implementation of a Request handler which only accepts POST requests.
+        """
+        
+        def get_handlers(self):
+            return {"/test": self.test_handler,
+                    "/save_params": self.save_params_handler}
+            
+        def test_handler(self, data):
+            print "DATA", data 
             logging.error(self.headers)
-            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
-    
+            self.wfile.write('{"caca":3}')
+        
+        def save_params_handler(self, data):
+            print data
+            print "DATA", json.loads(data,encoding='ASCII')
+            logging.error(self.headers)
+            self.wfile.write('{"caca":3}')
+            
         def do_POST(self):
-            logging.error(self.headers)
-            form = cgi.FieldStorage(
-                fp=self.rfile,
-                headers=self.headers,
-                environ={'REQUEST_METHOD':'POST',
-                         'CONTENT_TYPE':self.headers['Content-Type'],
-                         })
-            for item in form.list:
-                logging.error(item)
-            SimpleHTTPServer.SimpleHTTPRequestHandler.do_GET(self)
+            fp= self.rfile
+            data = fp.read(int(self.headers['Content-Length']))
+            handle = self.get_handlers()[self.path]
+            handle(data)
 
     Handler = ServerHandler
     
     PORT = 8000
-
-    httpd = SocketServer.TCPServer(("localhost", PORT), Handler)
-    webbrowser.open("http://localhost:8000", new=1, autoraise=True)
+    httpd = SocketServer.TCPServer(("127.0.0.1", PORT), Handler)
+    webbrowser.open("http://127.0.0.1:8000", new=0, autoraise=True)
     print "serving at port", PORT
     httpd.serve_forever()

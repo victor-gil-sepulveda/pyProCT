@@ -5,11 +5,78 @@
     
     <title>pyProClust: easy clustering for biomolecules</title>
     
+    
     <link rel="stylesheet" type="text/css" href="css/ui-lightness/jquery-ui-1.10.0.custom.min.css" media="screen">
     <link rel="stylesheet" type="text/css" href="css/ui/jquery.ui.selectmenu.css" media="screen">
     <link rel="stylesheet" type="text/css" href="css/ui/jquery.tagit.css" media="screen">
     <link rel="stylesheet" type="text/css" href="css/basic.css"  media="screen">
     <link rel="stylesheet" type="text/css" href="css/browse/enhanced.css"  media="screen">
+    
+    <script type="text/html" id = "dialog_contents_template">
+            <table>
+	        <tr><th>Action</th><th>Criteria</th><th>Weight</th></tr>
+	        <tbody id = 'criteria_table'>
+	            {{#criteria}}
+	                <tr>
+                      <td>
+                        <select class = 'dialog_listbox' id= '{{name}}_listbox'>
+                             <option> Minimize </option>
+                             <option> Maximize </option>
+                        </select>
+                      </td>
+                      <td>
+                        {{name}}
+                      </td>
+                      <td>
+                        <input class='dialog_spinner' id='{{name}}_spinner' type = 'input' value ='{{initial_value}}'/>
+                      </td>
+                    </tr>
+                {{/criteria}}
+	        </tbody>
+        </table>
+    </script>
+    
+    <script type="text/html" id = "basic_algo_field_template">
+        <div class = 'algorithm_title'> {{title}} </div>
+        <div class = 'closing_button' id='closing_button_{{id}}'>x</div>
+        <table border='0'>
+            <tbody>
+                <tr>
+                    <td>
+                        Let the software guess the best parameters
+                    </td>
+                    <td>
+                        <input checked='checked' id='guess_params_{{id}}' type='checkbox'>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div hidden = 'true' id = 'params_field_{{id}}'>
+            <table border='0'>
+                    <tbody>
+                        {{#properties}}
+	                    <tr>
+                            <td>
+                                {{label}}
+                            </td>
+                            <td>
+                                {{! To handle select statements }}
+                                {{#unless options}}
+                                    <input id = '{{control_id}}' type='{{control_type}}'>
+                                {{else}}
+                                    <select id='{{control_id}}'>
+                                        {{#each options}}
+                                        <option> {{this}} </option>
+                                        {{/each}}
+                                    </select>
+                                {{/unless}}
+                            </td>
+                        </tr>
+                        {{/properties}}
+                    </tbody>
+                </table>
+        </div>
+    </script>
     
     <script type="text/javascript" src="js/jquery/jquery-1.9.0.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/jquery/jquery-ui-1.10.0.custom.min.js" charset="utf-8"></script>
@@ -17,58 +84,40 @@
     <script type="text/javascript" src="js/jquery/jQuery.fileinput.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/jquery/tag-it.min.js" charset="utf-8"></script>
     
+    <script type="text/javascript" src="js/handlebars/handlebars-1.0.rc.1.min.js" charset="utf-8"></script>
+    
     <script type="text/javascript" src="js/cluster_params_field_templating.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/evaluation_criteria_handling.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/click_behaviour.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/params_gathering.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/definitions/algorithm_parameters_definition.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/definitions/algorithm_definitions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/definitions/query_and_criteria_definitions.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/definitions/base_parameters_definition.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/parameter_sintatic_checking.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/algorithm_parameter_parsers.js" charset="utf-8"></script>
     
     <script>
         $(document).ready( function() {
-            var clustering_algorithm_fields = {"GROMOS Algorithm":null, 
-                                                "K-Medoids Algorithm":null,
-                                                "Hierarchical Algorithm":null,
-                                                "Spectral Algorithm":null,
-                                                "DBSCAN Algorithm":null,
-                                                "Random Algorithm":null};
-            
-            var clustering_algorithm_ids = { "GROMOS Algorithm":"gromos", 
-                                                "K-Medoids Algorithm":"kmedoids",
-                                                "Hierarchical Algorithm":"hierarchical",
-                                                "Spectral Algorithm":"spectral",
-                                                "DBSCAN Algorithm":"dbscan",
-                                                "Random Algorithm":"random"};
-            
-            var query_types = ["NumClusters", "NumClusteredElems", "MeanClusterSize",
-                               "PercentInTop4", "PercentInTop", "Cohesion-Separation",
-                               "NoiseLevel", "MirrorCohesion", "MinimumMeanSeparation",
-                               "Silhouette", "CythonMirrorCohesion", "CythonMinimumMeanSeparation",
-                               "CythonSilhouette", "RatioCut", "NCut",
-                               "CythonNormNCut", "NormNCut", "MixMaxCut",
-                               "PCAanalysis"]
-            
-            var criteria_types = ["MeanClusterSize", "CythonMirrorCohesion", "CythonMinimumMeanSeparation",
-                                   "CythonSilhouette", "RatioCut", "NCut",
-                                   "CythonNormNCut", "MixMaxCut", "PCAanalysis"]
-            
-            
             
             /////////////////////////////////////
             // (SIMPLE) DYNAMIC CODE GENERATION
             /////////////////////////////////////
+            // Pregenerate clustering parameter fields
+            var clustering_algorithm_fields = generate_all_fields(clustering_algorithm_titles,
+                                                                  get_algorithm_parameters_definition());
             
             // Add options to the cluster algorithm listbox
-            for (clustering_algorithm_name in clustering_algorithm_fields){
-                $("#algorithms_listbox").append("<option>"+clustering_algorithm_name+"</option>");
+            for (clustering_algorithm in clustering_algorithm_titles){
+                var title = clustering_algorithm_titles[clustering_algorithm];
+                $("#algorithms_listbox").append("<option id='"+clustering_algorithm+"_option'>"+title+"</option>");
             }
-            
-            // Pregenerate clustering parameter fields
-            generate_all_fields(clustering_algorithm_fields, clustering_algorithm_ids);
 
             // Add options to the query listbox
             for (var i = 0; i < query_types.length; i++){
                 $("#query_listbox").append("<option>"+query_types[i]+"</option>");
             }
 
-            
             /////////////////////////////
             // APPEARANCE
             /////////////////////////////
@@ -94,7 +143,7 @@
             $("#pdb2").customFileInput();
             
             // Tag widgets
-            $("#query_tags, #evaluation_criteria_tags").tagit({
+            $("#query_types, #evaluation_criteria").tagit({
                     availableTags: query_types,
                     readOnly: true,
                     onTagClicked: function(event, ui) {
@@ -118,21 +167,21 @@
             // BEHAVIOUR
             /////////////////////////////
             
-            // Adding algorithms button
+            // 'Add and algorithm' button
             $("#add_clustering_algorithm").click(function(){
-                add_clustering_algorithm_field($("#algorithms_listbox").val(), 
-                                                clustering_algorithm_fields,
-                                                clustering_algorithm_ids, 
-                                                "#algorithms_field")
+                add_clustering_algorithm_field(clustering_algorithm_title_reverse[
+                                                           $("#algorithms_listbox option:selected").val()
+                                               ], 
+                                                clustering_algorithm_fields)
             });
             
             
             // Adding evaluation criteria button
-            $("#add_evaluation_criteria_button").click(criteria_creation_show_dialog(criteria_types));
+            $("#add_evaluation_criteria_button").click(criteria_creation_show_dialog(criteria_types, "evaluation_criteria"));
             
             // Adding queries button
             $("#add_query_button").click(function(){
-                $("#query_tags").tagit("createTag",$("#query_listbox").val());
+                $("#query_types").tagit("createTag",$("#query_listbox").val());
             });
             
             // Setup dynamic properties
@@ -140,8 +189,18 @@
             toggable_checkbox('#advanced_options', "#advanced_options_field");
             toggable_checkbox('#refinement_options', "#refinement_options_field");
             toggable_radiobutton('#traj_radio_1', '#traj_radio_2', '', '#second_trajectory_field');
-            toggable_radiobutton('#matrix_calculation_button', '#matrix_path_button', '#rmsd_selection', '#load_matrix_field');
-        });
+            toggable_radiobutton('#matrix_calculation_button', '#perform_distance_matrix_analysis', '#rmsd_selection', '#load_matrix_field');
+        
+        
+            /////////////////////////////
+            // AJAX 
+            /////////////////////////////
+            
+            // Save script to disk
+            $("#save_button").click(set_up_param_saving(clustering_algorithm_fields));
+            
+            // 
+     });
         
     </script>
   </head>
@@ -156,40 +215,13 @@
                         <div>Project root folder:</div>
                     </td>
                     <td>
-                        <input class = 'text_field_widget' id="working_directory" name="working_directory">
+                        <input class = 'text_field_widget' id="base" type= "text">
                     </td>
                 </tr>
             </tbody>
         </table>
     </fieldset>
     
-    <fieldset name="calculo_matriz"><legend>Distance Matrix Calculation</legend>
-        
-        <div id = "matrix_source_radiobuttons">
-            <input id="matrix_calculation_button" value="1" name="matrix_source" checked type="radio">
-            <label for="matrix_calculation_button">Calculate matrix</label>
-            
-            <input id="matrix_path_button" value="2" name="matrix_source" type="radio">
-            <label for="matrix_path_button"> Load Matrix </label>    
-        </div>    
-        
-        <div id="load_matrix_field" hidden="true"> Select a matrix file to load: 
-            <input id="matrix_path" type="file" class="file_widget">
-        </div>
-        
-        <div id="rmsd_selection" > Selection string:
-            <input class = 'text_field_widget' name="rmsd_selection" type="text">
-        </div>
-        
-        <input id="matrix_save" type="checkbox" class="button_widget">
-        <label for="matrix_save"> Save matrix </label>
-        
-        <div id="save_matrix_field" hidden="true"> Choose a location to save the matrix: 
-            <input id="store_matrix_path" type="file" class="file_widget">
-        </div>
-        
-    </fieldset>
-
     <fieldset name="datos_trayectorias"><legend>Trajectories</legend>
         <div id = "trajectory_selection_radiobuttons">
             <input id="traj_radio_1" value="1" name="number_of_trajectories"
@@ -210,9 +242,34 @@
         <div>
     </fieldset>
     
+    <fieldset name="calculo_matriz"><legend>Distance Matrix Calculation</legend>
+        
+        <div id = "matrix_source_radiobuttons">
+            <input id="matrix_calculation_button" value="1" name="matrix_source" checked type="radio">
+            <label for="matrix_calculation_button">Calculate matrix</label>
+            
+            <input id="perform_distance_matrix_analysis" value="2" name="matrix_source" type="radio">
+            <label for="perform_distance_matrix_analysis"> Load Matrix </label>    
+        </div>    
+        
+        <div id="load_matrix_field" hidden="true"> Select a matrix file to load: 
+            <input id="matrix_path" type="file" class="file_widget">
+        </div>
+        
+        <div id="rmsd_selection" > Selection string:
+            <input class = 'text_field_widget' name="rmsd_selection" type="text">
+        </div>
+        
+        <label for="matrix_save"> Save matrix </label>
+        <input id="matrix_save" type="checkbox" class="button_widget">
+        
+        <div id="save_matrix_field" hidden="true"> Choose a location to save the matrix: 
+            <input id="store_matrix_path" type="file" class="file_widget">
+        </div>
+    </fieldset>
+    
     <fieldset name="datos_clustering"><legend>Clustering</legend>
         <fieldset name="algorithms"><legend>Algorithms</legend>
-            
             <table border="0">
             <tbody>
                 <tr>
@@ -221,22 +278,20 @@
                     </td>
                     <td>
                         <select class="selection_widget" id="algorithms_listbox">
-                            
                         </select>
                     </td>
                     <td>
                         <div class="button_widget" id = "add_clustering_algorithm">+</div>
                     </td>
                 </tr>
-               
             </tbody>
             </table>
                 <div id="algorithms_field">
-                    <div id = "gromos_field"/> 
-                    <div id = "kmedoids_field"/> 
+                    <div id = "gromos_field"/>
+                    <div id = "kmedoids_field"/>
                     <div id = "hierarchical_field"/>
-                    <div id = "spectral_field"/> 
-                    <div id = "dbscan_field"/> 
+                    <div id = "spectral_field"/>
+                    <div id = "dbscan_field"/>
                     <div id = "random_field"/>
                 </div>
         </fieldset>
@@ -289,7 +344,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input class = "tag_widget" id="query_tags"  type="text">
+                            <input class = "tag_widget" id="query_types"  type="text">
                         </td>
                     </tr>
                     <tr>
@@ -302,7 +357,7 @@
                     </tr>
                     <tr>
                         <td colspan="2">
-                            <input class = "tag_widget" id="evaluation_criteria_tags"  type="text">
+                            <input class = "tag_widget" id="evaluation_criteria"  type="text">
                         </td>
                     </tr>
                 </tbody>

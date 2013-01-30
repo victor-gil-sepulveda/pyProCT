@@ -1,0 +1,21 @@
+<table>
+	<tr><th>Action</th><th>Criteria</th><th>Weight</th></tr>
+	<tbody id = 'criteria_table'>
+	    {{#criteria}}
+	        <tr>
+              <td>
+                <select>
+                     <option> Minimize </option>
+                     <option> Maximize </option>
+                </select>
+              </td>
+              <td>
+                {{name}}
+              </td>
+              <td>
+                <input class='dialog_spinner' type = 'input' value ='0'/>
+              </td>
+            </tr>
+        {{/criteria}}
+	</tbody>
+</table>
