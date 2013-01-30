@@ -12,7 +12,49 @@ function get_algorithm_parameter_parsers(){
             };
 }
 
+/*
+    Creates a copy of one parameter.
+*/
+function clone_param(this_param){
+    var cloned = {};
+    for (key in this_param){
+        cloned[key] = this_param[key];
+    }
+    return cloned;
+}
 
+/**
+ *   Extends a parameter list with an attribute that can have diverse values.
+ *   For instance, extending [{"a":3,"b":4},{"d":7}] with "c" = [5,6] would produce:
+ *   [{"a":3,"b":4,"c":5} , {"a":3,"b":4,"c":6}, {"d":7,"c":5}, {"d":7,"c":6}]
+ *
+ *      
+ **/
+function combine_parameters(this_parameters, with_this_parameter, with_this_values){
+    var extended_parameters = [];
+    for(var i = 0; i < with_this_values.length; i++){
+        for(var j = 0; j < this_parameters.length; j++){
+           var new_param = clone_param(this_parameters[j]);
+           new_param[with_this_parameter] =  with_this_values[i];
+           extended_parameters.push(new_param);
+        }
+    }
+    return extended_parameters;
+}
+
+/**
+ *   Generates the parameters for one or more list of values.
+ *   Example:
+ *   bind_parameters({"a":[1,2],"b":[3,4]}) == [{"a":1,"b":3},{"a":2,"b":4}]
+ *   bind_parameters({"a":[1,2],"b":[3,4]},{"d":2}) ==  [{"a":1,"b":3,"d":2},{"a":2,"b":4,"d":2}]
+ *
+ *   @param {As. Array} lists_dic is a dictionary where the key will be the name of the parameter,
+ *   and the value for this key will be the list of values for this parameter.
+ *
+ *   @param {As. Array} singular a dictionary with values that remain constant for all parameters.
+ *
+ *   @returns {list} A list of parameters.      
+ **/
 function bind_parameters(lists_dic,singular){
     var parameters = [];
     // length
@@ -103,8 +145,8 @@ function parse_dbscan_parameters(my_field){
     ], "dbscan");
     
     return bind_parameters({
-                            "eps":eps_list,
-                            "minpts": minpts_list        
+                                "eps":eps_list,
+                                "minpts": minpts_list        
                             });
 }
 
@@ -119,17 +161,13 @@ function parse_kmedoids_parameters(my_field){
             }
     ], "kmedoids");
     
-    var parameters = [];
-    for(var i = 0; i < clustering_size_list.length; i++){
-        var param = {"k":clustering_size_list[i]};
-        var seeding_type =  get_value_of(my_field.find("#kmedoids_seeding_type")).toLowerCase();
-        param["seeding_type"] = seeding_type;
-        /*if(seeding_type == "gromos"){
-            param["seeding_max_cutoff"] = parseInt(get_value_of(my_field.find("#kmedoids_seeding_type")));
-        }*/
-        parameters.push(param);
-    }
-    return parameters;
+    /*if(seeding_type == "gromos"){
+        param["seeding_max_cutoff"] = parseInt(get_value_of(my_field.find("#kmedoids_seeding_type")));
+    }*/
+    
+    return bind_parameters({
+                             "k": clustering_size_list      
+                            });
 }
 
 function parse_spectral_parameters(my_field){
@@ -152,26 +190,27 @@ function parse_spectral_parameters(my_field){
             }
     ], "spectral");
     
-    var parameters = [];
-    for(var i = 0; i < sigma_list.length; i++){
-        for(var j = 0; j < k_list.length; j++){
-            parameters.push({
-                            "sigma":sigma_list[i],
-                            "num_clusters":k_list[j],
-                            //"use_k_medoids":
-                            });
-        }
-    }
-    return parameters;
+    return combine_parameters(bind_parameters({
+                                                //"use_k_medoids": ,
+                                                "k": k_list        
+                                                }), 
+                                                "sigma", sigma_list );
 }
 
 function parse_random_parameters(my_field){
-    var cutoff_list = parse_list(my_field.find("#number_of_clusters").val());
-    var parameters = []
-    for(var i = 0; i < cutoff_list.length; i++){
-        parameters.push({"num_clusters":cutoff_list[i]});
-    }
-    return parameters;
+    var number_of_clusters_list = parse_list(my_field.find("#number_of_clusters").val());
+    
+    check([{ 
+            "rule": list_not_empty,
+            "params":{
+                    "num_clusters": number_of_clusters_list
+            }  
+           }
+    ], "random");
+    
+    return bind_parameters({
+                             "num_clusters": number_of_clusters_list      
+                            });
 }
 
 /*
