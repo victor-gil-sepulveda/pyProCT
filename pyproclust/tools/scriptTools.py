@@ -6,17 +6,24 @@ Created on 19/04/2012
 import errno
 import os.path
 
-def create_directory(directory_path):
+def create_directory(directory_path, ensure_writability = False):
     """
     Creates a directory (with subdirs) if it doesn't exist.
     
     @param directory_path: the path of the directory and subdirectories to be created. 
     """
+    if ensure_writability:
+        if not os.access(os.path.dirname(directory_path), os.W_OK):
+            return False
+    
     try:
         os.makedirs(directory_path)
+        return True
     except OSError, e:
         if e.errno != errno.EEXIST:
             raise
+    
+    return False
 
 def get_not_repeated_file_name(path_with_file):
     """

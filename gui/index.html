@@ -83,9 +83,11 @@
     <script type="text/javascript" src="js/jquery/jquery.ui.selectmenu.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/jquery/jQuery.fileinput.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/jquery/tag-it.min.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/jquery/jquery.center.js" charset="utf-8"></script>
     
     <script type="text/javascript" src="js/handlebars/handlebars-1.0.rc.1.min.js" charset="utf-8"></script>
     
+    <script type="text/javascript" src="js/path_tools.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/cluster_params_field_templating.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/evaluation_criteria_handling.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/click_behaviour.js" charset="utf-8"></script>
@@ -96,9 +98,16 @@
     <script type="text/javascript" src="js/definitions/base_parameters_definition.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/parameter_sintatic_checking.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/algorithm_parameter_parsers.js" charset="utf-8"></script>
-    
+    <script type="text/javascript" src="js/dialogs.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/run_script.js" charset="utf-8"></script>
+    <script type="text/javascript" src="js/save_script.js" charset="utf-8"></script>
+        
     <script>
         $(document).ready( function() {
+            // Center window
+            $("#main").center();
+            // Template Loading
+            
             
             /////////////////////////////////////
             // (SIMPLE) DYNAMIC CODE GENERATION
@@ -131,16 +140,16 @@
             
             // Buttons
             $(".button_widget").button();
-            $("#matrix_source_radiobuttons").buttonset();
-            $("#trajectory_selection_radiobuttons").buttonset();
+            $("#creation").buttonset();
+            $("#action").buttonset();
             $("#run_button").button({icons:{primary:'ui-icon-circle-triangle-e'}});
             $("#save_button").button({icons:{primary:'ui-icon-disk'}});
             
             // File browsing
-            $("#store_matrix_path").customFileInput();	
-            $("#matrix_path").customFileInput();
-            $("#pdb1").customFileInput();
-            $("#pdb2").customFileInput();
+            //$("#store_matrix_path").customFileInput();	
+            //$("#matrix_path").customFileInput();
+            //$("#pdb1").customFileInput();
+            //$("#pdb2").customFileInput();
             
             // Tag widgets
             $("#query_types, #evaluation_criteria").tagit({
@@ -160,8 +169,7 @@
                     'text-align' : 'left',
                     'outline' : 'none',
                     'cursor' : 'text'
-              });
-            
+            });
             
             /////////////////////////////
             // BEHAVIOUR
@@ -185,28 +193,31 @@
             });
             
             // Setup dynamic properties
-            toggable_checkbox('#matrix_save', "#save_matrix_field");
-            toggable_checkbox('#advanced_options', "#advanced_options_field");
-            toggable_checkbox('#refinement_options', "#refinement_options_field");
+            toggable_checkbox('#save_matrix', "#save_matrix_field",false);
+            toggable_checkbox('#advanced_options', "#advanced_options_field",true);
+            toggable_checkbox('#refinement_options', "#refinement_options_field",true);
             toggable_radiobutton('#traj_radio_1', '#traj_radio_2', '', '#second_trajectory_field');
             toggable_radiobutton('#matrix_calculation_button', '#perform_distance_matrix_analysis', '#rmsd_selection', '#load_matrix_field');
-        
         
             /////////////////////////////
             // AJAX 
             /////////////////////////////
             
             // Save script to disk
-            $("#save_button").click(set_up_param_saving(clustering_algorithm_fields));
-            
-            // 
+            $("#save_button").click(set_up_save_script(clustering_algorithm_fields));
+            $("#run_button").click(set_up_run(clustering_algorithm_fields));
+            ///////////////////////
      });
         
     </script>
   </head>
   <body> 
-  pyProClust: easy clustering for biomolecules <br>
-    
+  <div class = 'main_frame' id="main"> 
+    <div class = 'main_title_container'>
+        <img src="images/pyproclust.png" > </img>
+    </div>
+  
+  <div class = 'main_window'> 
     <fieldset id="global_options_field" name="global_params"><legend>Global</legend>
         <table border="0">
             <tbody>
@@ -215,154 +226,150 @@
                         <div>Project root folder:</div>
                     </td>
                     <td>
-                        <input class = 'text_field_widget' id="base" type= "text">
+                        <input class = 'text_field_widget' id="base" type= "text" value = "/home/victor/Escritorio/test">
                     </td>
                 </tr>
             </tbody>
         </table>
     </fieldset>
     
-    <fieldset name="datos_trayectorias"><legend>Trajectories</legend>
-        <div id = "trajectory_selection_radiobuttons">
-            <input id="traj_radio_1" value="1" name="number_of_trajectories"
-                            checked="checked" type="radio">
+    <fieldset id="datos_trayectorias"><legend>Trajectories</legend>
+        <div id = "action">
+            <input id="traj_radio_1" value="clustering" name="traj" checked="checked" type="radio">
             <label for="traj_radio_1">Clustering</label>
             
-            <input id="traj_radio_2" value="2" name="number_of_trajectories"
-                            type="radio">
+            <input id="traj_radio_2" value="comparison" name="traj" type="radio">
             <label for="traj_radio_2">Comparison</label>    
         </div>     
         
         <div> First trajectory to load (pdb file):</div>
-        <input id="pdb1" type="file">
+        <input id="pdb1" class= 'text_field_widget' type="text">
         
         <div id = 'second_trajectory_field' hidden='true'>
             <div> Second trajectory to load (pdb file):</div>
-            <input id="pdb2" type="file"> 
+            <input id="pdb2" type="text" class = 'text_field_widget'> 
         <div>
     </fieldset>
     
-    <fieldset name="calculo_matriz"><legend>Distance Matrix Calculation</legend>
+    <fieldset id="matrix_calculation"><legend>Distance Matrix Calculation</legend>
         
-        <div id = "matrix_source_radiobuttons">
-            <input id="matrix_calculation_button" value="1" name="matrix_source" checked type="radio">
+        <div id = "creation">
+            <input id="matrix_calculation_button" value="calculate" name="matrix_source" checked type="radio">
             <label for="matrix_calculation_button">Calculate matrix</label>
             
-            <input id="perform_distance_matrix_analysis" value="2" name="matrix_source" type="radio">
+            <input id="perform_distance_matrix_analysis" value="load" name="matrix_source" type="radio">
             <label for="perform_distance_matrix_analysis"> Load Matrix </label>    
-        </div>    
+        </div>
         
         <div id="load_matrix_field" hidden="true"> Select a matrix file to load: 
-            <input id="matrix_path" type="file" class="file_widget">
+            <input id="matrix_path" type="text" class = 'text_field_widget'>
         </div>
         
         <div id="rmsd_selection" > Selection string:
             <input class = 'text_field_widget' name="rmsd_selection" type="text">
         </div>
         
-        <label for="matrix_save"> Save matrix </label>
-        <input id="matrix_save" type="checkbox" class="button_widget">
+        <label for="save_matrix"> Save matrix </label>
+        <input id="save_matrix" type="checkbox" class="button_widget">
         
         <div id="save_matrix_field" hidden="true"> Choose a location to save the matrix: 
-            <input id="store_matrix_path" type="file" class="file_widget">
+            <input id="store_matrix_path" type="text" class = 'text_field_widget'>
         </div>
     </fieldset>
     
-    <fieldset name="datos_clustering"><legend>Clustering</legend>
-        <fieldset name="algorithms"><legend>Algorithms</legend>
-            <table border="0">
+    <fieldset name="algorithms"><legend>Algorithms</legend>
+        <table border="0">
+        <tbody>
+            <tr>
+                <td>
+                    <div>Add</div>
+                </td>
+                <td>
+                    <select class="selection_widget" id="algorithms_listbox">
+                    </select>
+                </td>
+                <td>
+                    <div class="button_widget" id = "add_clustering_algorithm">+</div>
+                </td>
+            </tr>
+        </tbody>
+        </table>
+            <div id="algorithms_field">
+                <div id = "gromos_field"/>
+                <div id = "kmedoids_field"/>
+                <div id = "hierarchical_field"/>
+                <div id = "spectral_field"/>
+                <div id = "dbscan_field"/>
+                <div id = "random_field"/>
+            </div>
+    </fieldset>
+    
+    <fieldset id="best_clustering_field"><legend>Best Clustering Characterization</legend>
+        <table border="0">
             <tbody>
                 <tr>
                     <td>
-                        <div>Add</div>
+                        <div>Maximum noise (%)</div>
+                    </td>
+                    <td>  
+                        <input class = "spinner_widget" id="maximum_noise" value = "15">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div> Minimum number of clusters:   </div>
                     </td>
                     <td>
-                        <select class="selection_widget" id="algorithms_listbox">
+                        <input class = "spinner_widget" id="minimum_clusters" value = "10">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <div> Maximum number of clusters:   </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="maximum_clusters" value = "30">
+                    </td>
+                </tr><tr>
+                    <td>
+                        <div> Minimum cluster size (elements):   </div>
+                    </td>
+                    <td>
+                        <input class = "spinner_widget" id="minimum_cluster_size" value = "50">
+                    </td>
+                </tr>
+                
+                <tr>
+                    <td>
+                        <div>Add query</div>
+                    </td>
+                    <td>
+                        <select class="selection_widget" id="query_listbox">
+                            
                         </select>
+                        <div class="button_widget" id = "add_query_button">+</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input class = "tag_widget" id="query_types"  type="text">
+                    </td>
+                </tr>
+                <tr>
+                    <td >
+                        <div>Add new evaluation criteria </div> 
                     </td>
                     <td>
-                        <div class="button_widget" id = "add_clustering_algorithm">+</div>
+                        <div class="button_widget" id = "add_evaluation_criteria_button">+</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2">
+                        <input class = "tag_widget" id="evaluation_criteria"  type="text">
                     </td>
                 </tr>
             </tbody>
-            </table>
-                <div id="algorithms_field">
-                    <div id = "gromos_field"/>
-                    <div id = "kmedoids_field"/>
-                    <div id = "hierarchical_field"/>
-                    <div id = "spectral_field"/>
-                    <div id = "dbscan_field"/>
-                    <div id = "random_field"/>
-                </div>
-        </fieldset>
-        
-        <fieldset name="best_clustering"><legend>Best Clustering Characterization</legend>
-            <table border="0">
-                <tbody>
-                    <tr>
-                        <td>
-                            <div>Maximum noise (%)</div>
-                        </td>
-                        <td>  
-                            <input class = "spinner_widget" id="max_noise" value = "15">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div> Minimum number of clusters per clustering:   </div>
-                        </td>
-                        <td>
-                            <input class = "spinner_widget" id="min_clusters" value = "10">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <div> Maximum number of clusters per clustering:   </div>
-                        </td>
-                        <td>
-                            <input class = "spinner_widget" id="max_clusters" value = "30">
-                        </td>
-                    </tr><tr>
-                        <td>
-                            <div> Minimum cluster size (elements):   </div>
-                        </td>
-                        <td>
-                            <input class = "spinner_widget" id="min_cluster_size" value = "50">
-                        </td>
-                    </tr>
-                    
-                    <tr>
-                        <td>
-                            <div>Add query</div>
-                        </td>
-                        <td>
-                            <select class="selection_widget" id="query_listbox">
-                                
-                            </select>
-                            <div class="button_widget" id = "add_query_button">+</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <input class = "tag_widget" id="query_types"  type="text">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td >
-                            <div>Add new evaluation criteria </div> 
-                        </td>
-                        <td>
-                            <div class="button_widget" id = "add_evaluation_criteria_button">+</div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <input class = "tag_widget" id="evaluation_criteria"  type="text">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </fieldset>
+        </table>
     </fieldset>
     
     <fieldset id="advanced_options_field" hidden="true" name="advanced_params"><legend>Advanced Options</legend>
@@ -437,11 +444,13 @@
         </table>
     </fieldset>
     
+</div>
+    <div class="main_buttons">
+        <input class="button_widget" type="checkbox" id="advanced_options"> <label for="advanced_options">Advanced Options</label>
+        <input class="button_widget" type="checkbox" id="refinement_options"> <label for="refinement_options">Refinement</label>
+        <span id = "save_button" >Save Script </span>
+        <span id = "run_button" > Run </span>
     </div>
-    
-    <input class="button_widget" type="checkbox" id="advanced_options"> <label for="advanced_options">Global Options</label>
-    <input class="button_widget" type="checkbox" id="refinement_options"> <label for="refinement_options">Refinement</label>
-    <span id = "save_button" >Save Script </span>
-    <span id = "run_button" > Run </span>
+</div>
 </body>
 </html>

@@ -5,7 +5,7 @@ Created on 23/10/2012
 '''
 import numbers
 import datetime
-from pyproclust.htmlreport.javascript import page_footer_chunk, page_header_chunk
+#from pyproclust.htmlreport.javascript import page_footer_chunk, page_header_chunk
 from pyproclust.tools.scriptTools import create_directory
 from PIL import Image
 import os
@@ -267,11 +267,11 @@ class HTMLReport(object):
         lines.append('</ul>')
         lines.append("</div>")
         
-        final_html = page_header_chunk
+        final_html = ""#page_header_chunk
         for l in lines:
             final_html += l+"\n"
         
-        final_html += page_footer_chunk 
+        #final_html += page_footer_chunk 
         
         return final_html
     

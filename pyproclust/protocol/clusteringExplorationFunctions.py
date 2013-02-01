@@ -4,14 +4,13 @@ Created on 19/09/2012
 @author: victor
 '''
 from pyproclust.algorithms.dbscan.dbscanTools import dbscan_param_space_search
-from pyproclust.algorithms.kmedoids.kMedoids import KMedoids
+from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproclust.algorithms.random.RandomAlgorithm import RandomClusteringAlgorithm
 from pyproclust.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
 from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
 from pyproclust.algorithms.hierarchical.hierarchicalTools import get_clusters_with_dicotomic_search
 import pyproclust.tools.commonTools as common
-import pyproclust.tools.scriptTools as scripts_common
-from pyproclust.algorithms.spectral.spectralClusteringalgorithm import SpectralClusteringAlgorithm
+from pyproclust.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
 from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm
 
 def do_clustering_exploration(protocol_params, processManager,condensed_distance_matrix, max_dist, mean_dist,clustering_directory, htmlReport):
@@ -101,7 +100,7 @@ def spawn_kmedoids(protocol_params, condensed_distance_matrix,starting_gromos_cu
     ###################
     common.print_and_flush("Spawning k-medoids clustering.\n")
     base_cutoff = starting_gromos_cutoff
-    alg = KMedoids(condensed_distance_matrix)
+    alg = KMedoidsAlgorithm(condensed_distance_matrix)
     for k in range(protocol_params.min_clusters, protocol_params.max_clusters+1, protocol_params.kmedoids_step):
         process_name = "KMedoids_" + str(k)
         description = "K-Medoids calculation for k = "+str( k)+" and base seeding cutoff "+str(base_cutoff)

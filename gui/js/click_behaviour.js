@@ -2,9 +2,20 @@
     Shows and hides one field when the button is clicked, depending on its initial
     state.
 */
-function toggable_checkbox(this_checkbox, over_this_field){
+function toggable_checkbox(this_checkbox, over_this_field, center){
     $(this_checkbox).click(function() {
-        $(over_this_field).toggle("blind")
+        $(over_this_field).toggle({effect:"blind", complete:function(){
+                if(center){
+                    $('.main_window').animate({
+                        scrollTop: '+=' + $( over_this_field).offset().top + 'px'
+                    }, 'slow');
+                }
+            }
+        });
+        
+        /*var height = $(over_this_field)[0].scrollHeight;
+        console.log(height+" "+$('.main_window').height())
+        $('.main_window').scrollTop($('.main_window').height());*/
     });
 }
 

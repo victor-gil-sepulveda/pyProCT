@@ -11,7 +11,7 @@ class TrajectoryHandler(object):
     def __init__(self, pdb1, pdb2, rmsd_selection, subset = 'calpha'):
         if pdb1 == "" and pdb2 == "": 
             common.print_and_flush( "[ERROR] no pdb file(s) were given for RMSD calculation. Exiting...\n")
-            exit()
+            raise algo
         else:
             self.pdb1 = pdb1
             self.pdb2 = pdb2

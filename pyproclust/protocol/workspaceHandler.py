@@ -5,34 +5,49 @@ Created on 19/09/2012
 '''
 import pyproclust.tools.scriptTools as scripts_common
 import pyproclust.tools.commonTools as common
+import os
+import json
 
 class WorkspaceHandler(object):
 
-    def __init__(self,protocol_parameters):
+    def __init__(self, parameters):
+        self.data = {
+                      "results": parameters["workspace"]["base"]+parameters["workspace"]["results"],
+                      "tmp" : parameters["workspace"]["base"]+parameters["workspace"]["tmp"],
+                      "clusterings" : parameters["workspace"]["base"]+parameters["workspace"]["clusterings"]
+        }
         
-        self.results_path = protocol_parameters.getWorkspacePathFor("results")
-        self.matrix_path = protocol_parameters.getWorkspacePathFor("matrix analysis")
-        self.tmp_path = protocol_parameters.getWorkspacePathFor("tmp")
-        self.clusterings_path = protocol_parameters.getWorkspacePathFor("clusterings")
-        self.do_refinement = protocol_parameters.do_refinement
+        self.do_refinement = parameters["refinement"]["use"]
+        
         if self.do_refinement:
-            self.__refinement_base = protocol_parameters.getWorkspacePathFor("refinement_base")
-            self.refinement_pure_A = self.__refinement_base+\
-                            protocol_parameters.getWorkspacePathFor("pure_A",add_working_dir = False)
-            self.refinement_pure_B = self.__refinement_base+\
-                            protocol_parameters.getWorkspacePathFor("pure_B",add_working_dir = False)
-            self.refinement_mixed = self.__refinement_base+\
-                            protocol_parameters.getWorkspacePathFor("mixed",add_working_dir = False)
-         
-    def create_directories(self):
-        common.print_and_flush( "Creating workspace...")
-        scripts_common.create_directory(self.results_path)
-        scripts_common.create_directory(self.matrix_path)
-        scripts_common.create_directory(self.tmp_path)
-        scripts_common.create_directory(self.clusterings_path)
+            refinement_base = parameters["workspace"]["base"]+"/"+parameters["workspace"]["refinement_base"]
+            self.data["refinement"]["pure_A"] = refinement_base+"/pure_A"
+            self.data["refinement"]["pure_B"] = refinement_base+"/pure_B"
+            self.data["refinement"]["mixed"] = refinement_base+"/mixed"
+    
+    def __getitem__(self,key):
+        return self.data[key]
+    
+    def __str__(self):
+        return json.dumps(self.data, sort_keys=False, indent=4, separators=(',', ': '))
+    
+    def create_directories(self, remove_existing = True):
+        common.print_and_flush( "Creating workspace...\n")
+        for path in self.data:
+            if os.path.exists(self.data[path]) and remove_existing:
+                common.print_and_flush(self.data[path]+" exists, removing.\n")
+                os.rmdir(self.data[path])
+            scripts_common.create_directory(self.data[path])
+        
         if self.do_refinement:
-            scripts_common.create_directory(self.refinement_pure_A)
-            scripts_common.create_directory(self.refinement_pure_B)
-            scripts_common.create_directory(self.refinement_mixed)
+            for path in self.data["refinement"]:
+                if os.path.exists(self.data["refinement"][path]) and remove_existing:
+                    common.print_and_flush(self.data["refinement"][path]+" exists, removing.\n")
+                    os.rmdir(self.data["refinement"][path])
+                scripts_common.create_directory(self.data["refinement"][path])
+        
         common.print_and_flush( "Done\n")
+    
+        
+            
         

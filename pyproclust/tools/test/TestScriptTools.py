@@ -22,6 +22,7 @@ class testScriptTools(unittest.TestCase):
         create_directory("tmp_test/test")
         self.assertTrue(os.path.exists("tmp_test/test"))
         os.system("rm -rf tmp_test")
+        self.assertFalse(create_directory("/folder_at_root", True))
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_separate_pure_from_mixed_clusters']

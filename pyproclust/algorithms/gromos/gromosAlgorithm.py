@@ -38,7 +38,7 @@ class GromosAlgorithm(object):
             clusters.append(cluster)
             elements_already_clustered = elements_already_clustered + cluster.get_size()
             if elements_already_clustered + len(nodes) > self.condensed_matrix.row_length:
-                print "La jodimos: ", elements_already_clustered + len(nodes), iteration
+                print "[ERROR :: GROMOS perform_clustering] ", elements_already_clustered + len(nodes), iteration
                 exit(1)
             iteration = iteration + 1 
         return Clustering(clusters,details="GROMOS (cutoff = "+str(cutoff)+")")

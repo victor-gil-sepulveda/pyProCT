@@ -12,8 +12,12 @@ function get_algorithm_parameter_parsers(){
             };
 }
 
-/*
-    Creates a copy of one parameter.
+/**
+ *  Creates a copy of one parameter.
+ *   
+ *  @param {As. Array} this_param  Is the param to be copied.
+ *   
+ *  @returns {As. Array} A copy of the parameter. 
 */
 function clone_param(this_param){
     var cloned = {};
@@ -85,7 +89,7 @@ function bind_parameters(lists_dic,singular){
 }
 
 function parse_gromos_parameters(my_field){
-    var cutoff_list = parse_list(my_field.find("#cutoff_list").val(), parseFloat);
+    var cutoff_list = get_value_of(my_field.find("#cutoff_list"),"list:float");
     
     check([{ 
             "rule": list_not_empty,
@@ -101,7 +105,7 @@ function parse_gromos_parameters(my_field){
 }
 
 function parse_hierarchical_parameters(my_field){
-    var cutoff_list = parse_list(my_field.find("#cutoff_list").val(), parseFloat);
+    var cutoff_list = get_value_of(my_field.find("#cutoff_list"),"list:float");
     
     check([
             { "rule": list_not_empty,
@@ -122,8 +126,8 @@ function parse_hierarchical_parameters(my_field){
 }
 
 function parse_dbscan_parameters(my_field){
-    var eps_list = parse_list(my_field.find("#eps_list").val(), parseFloat);
-    var minpts_list = parse_list(my_field.find("#minpts_list").val(), parseFloat);
+    var eps_list = get_value_of(my_field.find("#eps_list"),"list:float");
+    var minpts_list = get_value_of(my_field.find("#minpts_list"),"list:float");
     
     check([
             { "rule": list_not_empty,
@@ -151,7 +155,7 @@ function parse_dbscan_parameters(my_field){
 }
 
 function parse_kmedoids_parameters(my_field){
-    var clustering_size_list = parse_list(my_field.find("#number_of_clusters").val());
+    var clustering_size_list = get_value_of(my_field.find("#number_of_clusters"),"list:int");
     
     check([
             { "rule": list_not_empty,
@@ -171,8 +175,8 @@ function parse_kmedoids_parameters(my_field){
 }
 
 function parse_spectral_parameters(my_field){
-    var sigma_list = parse_list(my_field.find("#sigma").val(), parseFloat);
-    var k_list = parse_list(my_field.find("#number_of_clusters").val());
+    var sigma_list = get_value_of(my_field.find("#sigma"),"list:float");
+    var k_list = get_value_of(my_field.find("#number_of_clusters"),"list:int");
     
     check([
             { "rule": list_not_empty,
@@ -198,7 +202,7 @@ function parse_spectral_parameters(my_field){
 }
 
 function parse_random_parameters(my_field){
-    var number_of_clusters_list = parse_list(my_field.find("#number_of_clusters").val());
+    var number_of_clusters_list = get_value_of(my_field.find("#number_of_clusters"),"list:int");
     
     check([{ 
             "rule": list_not_empty,
@@ -213,35 +217,49 @@ function parse_random_parameters(my_field){
                             });
 }
 
-/*
-    Parses the contents of a text control holding a list of numbers description. This list can 
-    have two forms:
-    - Comma separated list of numbers Ex. "1, 2, 3, 4"
-    - Range with this form : start, end : step  Ex. "4, 14 :2"  = "4, 6, 8, 10, 12"
-*/
-function parse_list(list_string, conversor){
+/**
+ *   Parses the contents of a text control holding a list of numbers description. This list can 
+ *   have two forms:
+ *  - Comma separated list of numbers Ex. "1, 2, 3, 4"
+ *  - Range with this form : start, end : step  Ex. "4, 14 :2"  = "4, 6, 8, 10, 12"
+ *   
+ *   @param {string} in_this_control The control holding the list.
+ *
+ *   @param {function} using_this_conversor Function that getting a string returns its numeric representation (Ex. parseInt)
+ *
+ *   @returns {list} The expected list of numbers.    
+ **/
+function parse_list( in_this_control, using_this_conversor){
+    
+    var conversor;
     
     // Default value for conversor
-    if (conversor == undefined){
+    if (using_this_conversor == undefined){
         conversor = parseInt
+    }
+    else{
+        conversor = using_this_conversor;
     }
     
     try{
+        // getting value
+        var list_string = $(in_this_control).val();
+        
         // Remove non dot, colon digit or character 
-        var list_string = list_string.replace(/[^\d,.:]+/g, '');
+        list_string = list_string.replace(/[^\d,.:]+/g, '');
         
         var sequence = [];
         
         // Analyze the string    
-        var parts = list_string.split(":")
+        var parts = list_string.split(":");
         if (parts.length == 2){
             // Is the description of a range i,j :step, those can only be integers
             var range_parts = parts[0].split(",");
             if( range_parts.length != 2){
                 return undefined;
             }
-            var i = parseInt(range_parts[0]);
-            var j = parseInt(range_parts[1]);
+            var i = Math.abs(parseInt(range_parts[0]));
+            var j = Math.abs(parseInt(range_parts[1]));
             if( isNaN(i) || isNaN(j)){
                 return undefined;
             }
@@ -256,33 +274,124 @@ function parse_list(list_string, conversor){
             var string_sequence = parts[0].split(",");
             for(var i = 0; i < string_sequence.length; i++){
             console.log("*"+string_sequence[i]+"*")
-                var value = conversor(string_sequence[i]);
+                var value = Math.abs(conversor(string_sequence[i]));
                 if(!isNaN(value)){
                     sequence.push(value);
                 }
             }
         }
-    }
+    } 
     catch(error_message){
         throw "There was an error while parsing this list:["+list_string+"]. Error was: "+error_mesage
     }
-    
     return sequence;
+}
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ **/
+function parse_criteria_tags(list_of_tags){
+    var all_criteria = {};
+    for (var i = 0; i < list_of_tags.length; i++){
+        all_criteria["criteria_"+i] = parse_one_criteria_tag(list_of_tags[i]);
+    }
+    return all_criteria;
+}
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ **/
+function parse_one_criteria_tag(list_of_tags){
+    var parts = list_of_tags.split("and");
+    var criteria = [];
+    for (var i = 0; i < parts.length; i++){
+        criteria.push(parse_subcriteria(parts[i]));
+    }
+    return criteria;
+}
+
+/**
+ *
+ *
+ *
+ *
+ *
+ *
+ **/
+function parse_subcriteria(subcriteria_string){
+    var parts = subcriteria_string.split(" ");
+    var subcriteria = {};
+    
+    if(parts[0] == "Minimize"){
+        subcriteria["action"] = ">";
+    }
+    else{
+        subcriteria["action"] = "<";
+    }
+    subcriteria["query"] = parts[1];
+    
+    subcriteria["weight"] = parseFloat(parts[3]);
+    
+    return subcriteria;    
 }
 
 /*
     Helper function to get the value of an undetermined control.
 */
-function get_value_of(of_this){
-    switch($(of_this).attr('type')){
+function get_value_of(of_this_control, type){
+    
+    if (type == undefined){
+        type = $(of_this_control).attr("type");
+    }
+    
+    switch(type){
+        case "list:float":
+            return parse_list( of_this_control, parseFloat);
+        
+        case "list:int":
+            return parse_list( of_this_control, parseInt);
+        
+        case "file":
+            console.log($(of_this_control).prop('files'));
+            var filename = $(of_this_control).val().replace(/C:\\fakepath\\/i, '').replace(/\\/i, '/');
+            return filename;
+        
         case "text":
-            return $(of_this).val();
+            return $(of_this_control).val();
+        
         case "checkbox":
-            return $(of_this).is(":checked");
+            return $(of_this_control).is(":checked");
+        
+        case "radio":
+            return $(of_this_control).find(":checked").val();
+        
+        case "int":
+            return parseInt($(of_this_control).val());
+        
+        case "float":
+            return parseFloat($(of_this_control).val());
+        
         case "number":
-            return $(of_this).val();
+            return $(of_this_control).val();
+
+        case "tags":
+            return $(of_this_control).tagit("assignedTags");
+        
+        case "tags:criteria":
+            return parse_criteria_tags($(of_this_control).tagit("assignedTags"));
+        
         default:
-            return $(of_this).val();
+            return $(of_this_control).val();
     }
 }
 

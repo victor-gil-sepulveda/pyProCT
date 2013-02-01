@@ -7,7 +7,6 @@ import time
 from pyRMSD.matrixHandler import MatrixHandler
 
 import pyproclust.tools.commonTools as common
-import pyproclust.tools.scriptTools as scripts_common
 from pyproclust.clustering.comparison.comparator import Separator,\
     ClusteringStatisticalAnalyzer, ClusteringPlotsGenerator
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
@@ -19,10 +18,9 @@ from pyproclust.protocol.protocolImplementationFunctions import get_algorithm_sc
     clustering_scoring
 from pyproclust.protocol.refinementProtocol import pureRefinementProtocol,\
     mixedRefinementProtocol
-from pyproclust.clustering.clusterization import Clustering
+from pyproclust.clustering.clustering import Clustering
 from pyproclust.tools.plotTools import matrixToImage
 from pyproclust.htmlreport.htmlReport import HTMLReport
-from pyproclust.tools.scriptTools import classify_generated_clusterings
 from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproclust.tools.pdbTools import get_number_of_frames
 #from pyproclust.protocol.serialProcessPool import SerialProcessPool
@@ -33,14 +31,14 @@ class Protocol(object):
     def __init__(self):
         self.htmlReport = HTMLReport()
         
-    def run(self,protocol_params):
+    def run(self, parameters):
         
         #####################
         # Create workspace 
         #####################
-        self.workspaceHandler = WorkspaceHandler(protocol_params)
+        self.workspaceHandler = WorkspaceHandler(parameters)
         self.workspaceHandler.create_directories()
-        
+
         #####################
         # Start timing 
         #####################
