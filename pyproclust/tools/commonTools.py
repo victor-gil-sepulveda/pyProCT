@@ -47,34 +47,19 @@ def print_and_flush(this_string, handler = sys.stdout):
     handler.write(this_string)
     handler.flush()
     
-def vararg_callback(option, opt_str, value, parser):
+def convert(my_input):
     """
-    Parses a list of float numbers. To be used with 'optparse'.
-    Got from: http://docs.python.org/2/library/optparse.html
+    Recursively encodes all strings of an input dictionary as UTF-8. Useful to eliminate unicode strings.
     
-    @param option: ...
-    @param opt_str: ...
-    @param value: ...
-    @param parser: ...
+    @param my_input: A dictionary object.
+    
+    @return: Encoded dictionary.
     """
-    assert value is None
-    value = []
-    
-    def floatable(my_str):
-        try:
-            float(my_str)
-            return True
-        except ValueError:
-            return False
-    
-    for arg in parser.rargs:
-        # stop on --foo like options
-        if arg[:2] == "--" and len(arg) > 2:
-            break
-        # stop on -a, but not on -3 or -3.0
-        if arg[:1] == "-" and len(arg) > 1 and not floatable(arg):
-            break
-        value.append(float(arg))
-    
-    del parser.rargs[:len(value)]
-    setattr(parser.values, option.dest, value)
+    if isinstance(my_input, dict):
+        return {convert(key): convert(value) for key, value in my_input.iteritems()}
+    elif isinstance(my_input, list):
+        return [convert(element) for element in my_input]
+    elif isinstance(my_input, unicode):
+        return my_input.encode('utf-8')
+    else:
+        return my_input

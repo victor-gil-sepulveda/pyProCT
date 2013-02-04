@@ -12,72 +12,6 @@
     <link rel="stylesheet" type="text/css" href="css/basic.css"  media="screen">
     <link rel="stylesheet" type="text/css" href="css/browse/enhanced.css"  media="screen">
     
-    <script type="text/html" id = "dialog_contents_template">
-            <table>
-	        <tr><th>Action</th><th>Criteria</th><th>Weight</th></tr>
-	        <tbody id = 'criteria_table'>
-	            {{#criteria}}
-	                <tr>
-                      <td>
-                        <select class = 'dialog_listbox' id= '{{name}}_listbox'>
-                             <option> Minimize </option>
-                             <option> Maximize </option>
-                        </select>
-                      </td>
-                      <td>
-                        {{name}}
-                      </td>
-                      <td>
-                        <input class='dialog_spinner' id='{{name}}_spinner' type = 'input' value ='{{initial_value}}'/>
-                      </td>
-                    </tr>
-                {{/criteria}}
-	        </tbody>
-        </table>
-    </script>
-    
-    <script type="text/html" id = "basic_algo_field_template">
-        <div class = 'algorithm_title'> {{title}} </div>
-        <div class = 'closing_button' id='closing_button_{{id}}'>x</div>
-        <table border='0'>
-            <tbody>
-                <tr>
-                    <td>
-                        Let the software guess the best parameters
-                    </td>
-                    <td>
-                        <input checked='checked' id='guess_params_{{id}}' type='checkbox'>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <div hidden = 'true' id = 'params_field_{{id}}'>
-            <table border='0'>
-                    <tbody>
-                        {{#properties}}
-	                    <tr>
-                            <td>
-                                {{label}}
-                            </td>
-                            <td>
-                                {{! To handle select statements }}
-                                {{#unless options}}
-                                    <input id = '{{control_id}}' type='{{control_type}}'>
-                                {{else}}
-                                    <select id='{{control_id}}'>
-                                        {{#each options}}
-                                        <option> {{this}} </option>
-                                        {{/each}}
-                                    </select>
-                                {{/unless}}
-                            </td>
-                        </tr>
-                        {{/properties}}
-                    </tbody>
-                </table>
-        </div>
-    </script>
-    
     <script type="text/javascript" src="js/jquery/jquery-1.9.0.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/jquery/jquery-ui-1.10.0.custom.min.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/jquery/jquery.ui.selectmenu.js" charset="utf-8"></script>
@@ -87,6 +21,7 @@
     
     <script type="text/javascript" src="js/handlebars/handlebars-1.0.rc.1.min.js" charset="utf-8"></script>
     
+    <script type="text/javascript" src="js/tools.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/path_tools.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/cluster_params_field_templating.js" charset="utf-8"></script>
     <script type="text/javascript" src="js/evaluation_criteria_handling.js" charset="utf-8"></script>
@@ -106,15 +41,20 @@
         $(document).ready( function() {
             // Center window
             $("#main").center();
-            // Template Loading
             
+            //------------------
+            // Template Loading
+            //------------------
+            var basic_algo_field_template = load_text_resource_with_ajax("/templates/basic_algo_field_template.template")
+            var dialog_contents_template = load_text_resource_with_ajax("/templates/dialog_contents.template");
             
             /////////////////////////////////////
             // (SIMPLE) DYNAMIC CODE GENERATION
             /////////////////////////////////////
             // Pregenerate clustering parameter fields
             var clustering_algorithm_fields = generate_all_fields(clustering_algorithm_titles,
-                                                                  get_algorithm_parameters_definition());
+                                                                  get_algorithm_parameters_definition(),
+                                                                  basic_algo_field_template);
             
             // Add options to the cluster algorithm listbox
             for (clustering_algorithm in clustering_algorithm_titles){
@@ -185,7 +125,9 @@
             
             
             // Adding evaluation criteria button
-            $("#add_evaluation_criteria_button").click(criteria_creation_show_dialog(criteria_types, "evaluation_criteria"));
+            $("#add_evaluation_criteria_button").click(criteria_creation_show_dialog(criteria_types, 
+                                                                    "evaluation_criteria", 
+                                                                    dialog_contents_template));
             
             // Adding queries button
             $("#add_query_button").click(function(){
@@ -243,11 +185,11 @@
         </div>     
         
         <div> First trajectory to load (pdb file):</div>
-        <input id="pdb1" class= 'text_field_widget' type="text">
+        <input id="pdb1" class= 'text_field_widget' type="text" value = "/home/victor/Escritorio/test/ubi_5_clusters.pdb">
         
         <div id = 'second_trajectory_field' hidden='true'>
             <div> Second trajectory to load (pdb file):</div>
-            <input id="pdb2" type="text" class = 'text_field_widget'> 
+            <input id="pdb2" type="text" class = 'text_field_widget'  value = "/home/victor/Escritorio/test/ubi_9_clusters.pdb"> 
         <div>
     </fieldset>
     

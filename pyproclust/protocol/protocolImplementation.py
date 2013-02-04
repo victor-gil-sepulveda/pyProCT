@@ -47,9 +47,9 @@ class Protocol(object):
         #####################
         # Loading trajectory 
         #####################
-        self.trajectoryHandler = TrajectoryHandler(protocol_params.pdb1, protocol_params.pdb2, protocol_params.rmsd_selection)
+        self.trajectoryHandler = TrajectoryHandler(parameters)
         self.htmlReport.report["Trajectories"] = self.trajectoryHandler
-        
+        return
         ##############################
         # Obtaining the distance matrix
         ##############################

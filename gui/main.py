@@ -6,24 +6,15 @@ Created on 21/01/2013
 
 import SimpleHTTPServer
 import SocketServer
-import logging
 import webbrowser
 import json
 import hashlib
 import time
-from pyproclust.tools.scriptTools import create_directory
 import os
+from pyproclust.tools.scriptTools import create_directory
 from pyproclust.protocol.protocolImplementation import Protocol
-
-def convert(my_input):
-    if isinstance(my_input, dict):
-        return {convert(key): convert(value) for key, value in my_input.iteritems()}
-    elif isinstance(my_input, list):
-        return [convert(element) for element in my_input]
-    elif isinstance(my_input, unicode):
-        return my_input.encode('utf-8')
-    else:
-        return my_input
+from pyproclust.tools.commonTools import convert
+from pyproclust.protocol.protocolParameters import ProtocolParameters
 
 if __name__ == '__main__':
     
@@ -57,7 +48,8 @@ if __name__ == '__main__':
                 self.wfile.write(json.dumps({"done":False}))
            
         def run_handler(self, data):
-            parameters = convert(json.loads(data))
+            parameters = ProtocolParameters.get_params_from_json(data)
+            print parameters
             protocol = Protocol()
             protocol.run(parameters)
             pass

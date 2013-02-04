@@ -54,6 +54,12 @@ function gather_params(clustering_algorithm_fields){
         
         console.log(params)
         
+        
+        
+        // Defaults
+        // 
+        params["matrix"]["only_ca"] = false;
+        ///
         return {"parameters":params, "warnings":warnings};
 }
 /**

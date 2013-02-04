@@ -1,11 +1,11 @@
 /*
     Prepares and shows the evaluation criteria dialog.
 */
-function criteria_creation_show_dialog(criteria_types, tag_widget_id){
+function criteria_creation_show_dialog(criteria_types, tag_widget_id, template){
     return function(){
         $("<div >", {title: "New Criteria",id:'criteria_creation_dialog'})
         // Add contents to the dialog
-        .append(get_eval_dialog_contents(criteria_types))
+        .append(get_eval_dialog_contents(criteria_types, template))
         // Set up dialog
         .dialog({modal:true, 
                 autoResize:true,
@@ -35,7 +35,7 @@ function criteria_creation_show_dialog(criteria_types, tag_widget_id){
 /*
     Creates the contents of the dialog (using handlebars))
 */
-function get_eval_dialog_contents(criteria_list){
+function get_eval_dialog_contents(criteria_list, template){
     // Gather data
     var data = {criteria:[]};
     for (var i = 0;i < criteria_list.length; i++){
@@ -44,8 +44,8 @@ function get_eval_dialog_contents(criteria_list){
     }
     
     // Render it
-    var source   = $("#dialog_contents_template").html();
-    var template = Handlebars.compile(source);
+    //var source   = $("#dialog_contents_template").html();
+    var template = Handlebars.compile(template);
     return template(data);
 }
 

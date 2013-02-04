@@ -1,0 +1,78 @@
+{
+    "control":{
+        "number_of_processors":null,
+        "algorithm_scheduler_sleep_time":null,
+        "scoring_scheduler_sleep_time":null
+    },
+    "workspace":{
+                 "base": null,
+                 "results": "/results",
+                 "tmp": "/tmp",
+                 "clusterings": "/clusterings",
+                 "refinement_base" : "refinement"
+    },
+    
+    "matrix":{
+                "creation": null,
+                "matrix_path": null,
+                "save_matrix": null,
+                "store_matrix_path" : null,
+                "action": null,
+                "pdb1": null,
+                "pdb2": null,
+                "fit_selection" : null,
+                "rmsd_selection": null,
+                "only_ca": null
+    },
+    
+    "algorithms":{
+                  "gromos":{
+                           "use": null,
+                           "auto": null,
+                           "parameters":[]
+                  },
+                  "spectral":{
+                           "use": null,
+                           "auto": null,
+                           "sigma": [],
+                           "parameters":[]
+                  },
+                  "dbscan":{
+                           "use": null,
+                           "auto": null,
+                           "parameters":[]
+                  },
+                  "hierarchical":{
+                           "use": null,
+                           "auto": null,
+                           "parameters":[]
+                  },
+                  "kmedoids":{
+                           "use": null,
+                           "auto": null,
+                           "parameters":[]
+                  },
+                  "random":{
+                           "use": null,
+                           "auto": null,
+                           "parameters":[]
+                  }
+    },
+    "evaluation":{
+                  "maximum_noise": null,
+                  "minimum_clusters": null,
+                  "maximum_clusters": null,
+                  "minimum_cluster_size":null,
+                  "query_types":[],
+                  "evaluation_criteria":[]
+    },
+    "refinement":{
+                  "use": false,
+                  "step": null,
+                  "minimum_clusters":null,
+                  "maximum_clusters":null
+    },
+    "results":{
+               
+    }
+}

@@ -39,4 +39,35 @@ def get_not_repeated_file_name(path_with_file):
         file_rename = "_"+file_rename
     return directory+"/"+file_rename
     
-
+def vararg_callback(option, opt_str, value, parser):
+    """
+    Parses a list of float numbers. To be used with 'optparse'.
+    Got from: http://docs.python.org/2/library/optparse.html
+    
+    @param option: ...
+    @param opt_str: ...
+    @param value: ...
+    @param parser: ...
+    """
+    assert value is None
+    value = []
+    
+    def floatable(my_str):
+        try:
+            float(my_str)
+            return True
+        except ValueError:
+            return False
+    
+    for arg in parser.rargs:
+        # stop on --foo like options
+        if arg[:2] == "--" and len(arg) > 2:
+            break
+        # stop on -a, but not on -3 or -3.0
+        if arg[:1] == "-" and len(arg) > 1 and not floatable(arg):
+            break
+        value.append(float(arg))
+    
+    del parser.rargs[:len(value)]
+    setattr(parser.values, option.dest, value)
+    

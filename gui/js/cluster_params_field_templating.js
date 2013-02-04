@@ -2,12 +2,15 @@
     Pregenerates all the clustering algorithm parameters fields. we are going to hide/unhide them
     depending if the algorithm is used or not.
 */
-function generate_all_fields(clustering_algorithm_titles, algorithm_parameters){
+function generate_all_fields(clustering_algorithm_titles, algorithm_parameters, template){
     var fields = {};
     
     for (clustering_algorithm in clustering_algorithm_titles){
         var title = clustering_algorithm_titles[clustering_algorithm];
-        fields[clustering_algorithm] = create_clustering_algorithm_field(title, clustering_algorithm, algorithm_parameters);
+        fields[clustering_algorithm] = create_clustering_algorithm_field(title, 
+                                                clustering_algorithm, 
+                                                algorithm_parameters,
+                                                template);
     }
     
     return fields;
@@ -15,7 +18,7 @@ function generate_all_fields(clustering_algorithm_titles, algorithm_parameters){
 /*
     Creates the algorithm parameters field of the 'clustering_algorithm' algorithm.
 */
-function create_clustering_algorithm_field(title, clustering_algorithm, algorithm_parameters){
+function create_clustering_algorithm_field(title, clustering_algorithm, algorithm_parameters, template){
     parameters_field = $("<div>",{
                             class:"clustering_params_field",
                             hidden:'true',
@@ -23,7 +26,7 @@ function create_clustering_algorithm_field(title, clustering_algorithm, algorith
                             id: clustering_algorithm+"_params_field"
                         });
     
-    parameters_field.html(get_contents_for(title, clustering_algorithm, algorithm_parameters));
+    parameters_field.html(get_contents_for(title, clustering_algorithm, algorithm_parameters, template));
     
     return parameters_field;
 }
@@ -31,7 +34,7 @@ function create_clustering_algorithm_field(title, clustering_algorithm, algorith
 /*
     Uses the template to create one of the clustering algorithm fields.
 */
-function get_contents_for(title, clustering_algorithm, algorithm_parameters){
+function get_contents_for(title, clustering_algorithm, algorithm_parameters, template){
     
     var data = {
         "id": clustering_algorithm,
@@ -39,8 +42,8 @@ function get_contents_for(title, clustering_algorithm, algorithm_parameters){
         "properties":algorithm_parameters[clustering_algorithm]
     }
            
-    var source   = $("#basic_algo_field_template").html();
-    var template = Handlebars.compile(source);
+    //var source   = $("#basic_algo_field_template").html();
+    var template = Handlebars.compile(template);
     return template(data);
 }
 

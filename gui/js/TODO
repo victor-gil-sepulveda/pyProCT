@@ -1,0 +1,13 @@
+GENERAL->
+    Programación demasiado funcional.
+    Cambiar nombre y crear paquetes.
+    Reorganizar codigo.
+    Documentar.
+    Cargar templates dinamicamente.
+    Testear.
+    Hacer que python y javascript compartan las mismas definiciones de parametros
+
+'algorithm_paramter_definitions.js" ->
+    Hacer que los parámetros digan también las reglas y como parsear.
+    Extenderlo a los otros parámetros (los generales).
+ 
