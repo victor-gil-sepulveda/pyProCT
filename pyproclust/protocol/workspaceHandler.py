@@ -4,17 +4,22 @@ Created on 19/09/2012
 @author: victor
 '''
 import pyproclust.tools.scriptTools as scripts_common
-import pyproclust.tools.commonTools as common
 import os
 import json
+from pyproclust.gui.observer.Observable import Observable
+import shutil
 
-class WorkspaceHandler(object):
+class WorkspaceHandler(Observable):
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, observer):
+        super(WorkspaceHandler,self).__init__(observer)
+        
+       
         self.data = {
                       "results": parameters["workspace"]["base"]+parameters["workspace"]["results"],
                       "tmp" : parameters["workspace"]["base"]+parameters["workspace"]["tmp"],
-                      "clusterings" : parameters["workspace"]["base"]+parameters["workspace"]["clusterings"]
+                      "clusterings" : parameters["workspace"]["base"]+parameters["workspace"]["clusterings"],
+                      "matrix" : parameters["workspace"]["base"]+parameters["workspace"]["matrix"]
         }
         
         self.do_refinement = parameters["refinement"]["use"]
@@ -32,21 +37,19 @@ class WorkspaceHandler(object):
         return json.dumps(self.data, sort_keys=False, indent=4, separators=(',', ': '))
     
     def create_directories(self, remove_existing = True):
-        common.print_and_flush( "Creating workspace...\n")
+        self.notify("","Creating workspace...")
         for path in self.data:
             if os.path.exists(self.data[path]) and remove_existing:
-                common.print_and_flush(self.data[path]+" exists, removing.\n")
-                os.rmdir(self.data[path])
+                self.notify("Removing Directory",self.data[path])
+                shutil.rmtree(self.data[path])
             scripts_common.create_directory(self.data[path])
         
         if self.do_refinement:
             for path in self.data["refinement"]:
                 if os.path.exists(self.data["refinement"][path]) and remove_existing:
-                    common.print_and_flush(self.data["refinement"][path]+" exists, removing.\n")
-                    os.rmdir(self.data["refinement"][path])
+                    self.notify("Removing Directory",self.data["refinement"][path])
+                    shutil.rmtree(self.data["refinement"][path])
                 scripts_common.create_directory(self.data["refinement"][path])
-        
-        common.print_and_flush( "Done\n")
     
         
             

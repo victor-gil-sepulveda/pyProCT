@@ -29,7 +29,7 @@ class SpectralClusteringAlgorithm(object):
         """
         return  ["PYTHON","NUMPY", "NUMPY_PURE"]
     
-    def __init__(self, condensed_matrix, max_clusters = None, sigma_sq = None, laplacian_calculation_type = "PYTHON", store_W = False, verbose = False):
+    def __init__(self, condensed_matrix, **kwargs):
         """
         Constructor. Calculates the eigenvectors given a dataset distance matrix. The eigenvector distances would be the
         common part for clusterings with different k.
@@ -43,29 +43,44 @@ class SpectralClusteringAlgorithm(object):
         @param store_W: If True the object stores the adjacency matrix. Useful for testing.
         @param verbose: If True some messages will be printed.
         """
-        if not max_clusters is None:
-            self.max_clusters = max_clusters
-        else:
+        
+        try:
+            self.max_clusters = kwargs["max_clusters"]
+        except KeyError:
             self.max_clusters = condensed_matrix.row_length
         
-        if verbose: print "Calculating W ..."
+        try:
+            verbose = kwargs["verbose"]
+        except KeyError:
+            verbose = False
         
-        if not sigma_sq is None:
-            self.sigma_sq = sigma_sq
+        try:
+            self.sigma_sq = kwargs["sigma_sq"]
             W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix, sigma_sq)
-        else:
+        except KeyError:
             W, self.sigma_sq = self.do_sigma_estimation(condensed_matrix)
             if verbose: print "Sigma estimation: ", self.sigma_sq
+        
+        try:
+            store_W = kwargs["store_W"]
+        except KeyError:
+            store_W = False
+        
+        try:
+            laplacian_calculation_type = kwargs["laplacian_calculation_type"]
+            if not laplacian_calculation_type in SpectralClusteringAlgorithm.laplacian_calculation_types():
+                print "[ERROR::SpectralClusteringAlgorithm] Type " ,laplacian_calculation_type, "is not a correct type. Use one of these instead: ", SpectralClusteringAlgorithm.laplacian_calculation_types()
+                exit()
+        except KeyError:
+            laplacian_calculation_type = "PYTHON"
+                
+        if verbose: print "Calculating W ..."
         
         # Zero all negative values (similarities cannot be < 0 )
         W[W<0] = 0.0        
         
         if store_W:
             self.W = numpy.copy(W)
-        
-        if not laplacian_calculation_type in SpectralClusteringAlgorithm.laplacian_calculation_types():
-            print "[ERROR::SpectralClusteringAlgorithm] Type " ,laplacian_calculation_type, "is not a correct type. Use one of these instead: ", SpectralClusteringAlgorithm.laplacian_calculation_types()
-            exit()
         
         L, D = SpectralClusteringAlgorithm.calculate_laplacian(W, condensed_matrix, laplacian_calculation_type, verbose)
         

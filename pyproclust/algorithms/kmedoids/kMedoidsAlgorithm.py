@@ -29,7 +29,7 @@ class KMedoidsAlgorithm(object):
         """
         return  ["GROMOS","RANDOM", "EQUIDISTANT"]
     
-    def __init__(self, condensed_matrix, rand_seed = None):
+    def __init__(self, condensed_matrix, **kwargs):
         """
         Constructor. Sets up some class variables.
         
@@ -37,8 +37,12 @@ class KMedoidsAlgorithm(object):
         @param rand_seed: A number to set the random seed or None if we don't want to set it. Useful
         to be able to reproduce results.
         """
-        if not rand_seed is None:
+        try:
+            rand_seed = kwargs["rand_seed"]
             random.seed(rand_seed)
+        except KeyError:
+            pass
+            
         self.condensed_matrix = condensed_matrix
         self.total_elements = condensed_matrix.row_length
         self.class_list = [0]*condensed_matrix.row_length

@@ -31,6 +31,9 @@ class Test(unittest.TestCase):
         text = "En un lugar de la mancha de cuyo nombre no quiero acordarme"
         self.assertEqual(pyproclust.tools.plotTools.shorten_name(text, max_length = 5), "...darme")
         self.assertEqual(pyproclust.tools.plotTools.shorten_name(text), "... acordarme")
+        
+    def test_shrink_matrix(self):
+        self.fail("TODO")
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

@@ -6,16 +6,19 @@ Created on 19/09/2012
 import pyproclust.tools.commonTools as common
 from pyproclust.tools.pdbTools import get_number_of_frames
 from pyRMSD.utils.proteinReading import Reader
+from pyproclust.gui.observer.Observable import Observable
 
-class TrajectoryHandler(object):
+class TrajectoryHandler(Observable):
 
-    def __init__(self, parameters):
+    def __init__(self, parameters, observer):
+        super(TrajectoryHandler,self).__init__(observer)
+        
         if parameters["matrix"]["action"] == "clustering":
-            self.pdbs = [self.do_pdb_dic(parameters["matrix"]["pdb1"])]
+            self.pdbs = [self.__do_pdb_dic(parameters["matrix"]["pdb1"])]
             
         elif parameters["matrix"]["action"] == "comparison":
-            self.pdbs = [self.do_pdb_dic(parameters["matrix"]["pdb1"]),
-                         self.do_pdb_dic(parameters["matrix"]["pdb2"])]
+            self.pdbs = [self.__do_pdb_dic(parameters["matrix"]["pdb1"]),
+                         self.__do_pdb_dic(parameters["matrix"]["pdb2"])]
             
         else:
             common.print_and_flush( "[ERROR] not known action. Exiting...\n")
@@ -25,6 +28,7 @@ class TrajectoryHandler(object):
         for pdb_description in self.pdbs:
             reader = reader.readThisFile(pdb_description["source"])
         
+        self.notify("Loading","Loading Trajectories")
         if parameters["matrix"]["only_ca"]:
             reader = reader.gettingOnlyCAs()
         
@@ -33,10 +37,7 @@ class TrajectoryHandler(object):
         self.number_of_conformations = reader.numberOfFrames
         self.number_of_atoms = reader.numberOfAtoms
         
-        self.pdb1_number_of_conformations = get_number_of_frames(self.pdb1)
-        self.pdb2_number_of_conformations = get_number_of_frames(self.pdb2)
-    
-    def do_pdb_dic(self,pdb):
+    def __do_pdb_dic(self,pdb):
         return {
                   "source":pdb,
                   "conformations": get_number_of_frames(pdb)

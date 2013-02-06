@@ -23,94 +23,88 @@ from pyproclust.tools.plotTools import matrixToImage
 from pyproclust.htmlreport.htmlReport import HTMLReport
 from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproclust.tools.pdbTools import get_number_of_frames
+from pyproclust.gui.observer.Observable import Observable
+from pyproclust.protocol.TimerHandler import TimerHandler
 #from pyproclust.protocol.serialProcessPool import SerialProcessPool
 
 
-class Protocol(object):
+class Protocol(Observable):
 
-    def __init__(self):
-        self.htmlReport = HTMLReport()
+    def __init__(self, observer):
+        super(Protocol,self).__init__(observer)
         
     def run(self, parameters):
         
         #####################
-        # Create workspace 
-        #####################
-        self.workspaceHandler = WorkspaceHandler(parameters)
-        self.workspaceHandler.create_directories()
-
-        #####################
         # Start timing 
         #####################
-        global_time_start = time.time()
+        self.timer = TimerHandler()
+        self.timer.start("Global")
+        
+        #####################
+        # Create workspace 
+        #####################
+        self.workspaceHandler = WorkspaceHandler(parameters, self.observer)
+        self.workspaceHandler.create_directories()
 
         #####################
         # Loading trajectory 
         #####################
-        self.trajectoryHandler = TrajectoryHandler(parameters)
-        self.htmlReport.report["Trajectories"] = self.trajectoryHandler
-        return
+        self.timer.start("Trajectory Loading")
+        self.trajectoryHandler = TrajectoryHandler(parameters, self.observer)
+        self.timer.stop("Trajectory Loading")
+        
         ##############################
         # Obtaining the distance matrix
         ##############################
-        time_start = time.time()
-        self.matrixHandler = MatrixHandler(self.workspaceHandler.matrix_path)
-        
-        if protocol_params.shallWeCalculateDistanceMatrix():
-            
-            self.matrixHandler.createMatrix(self.trajectoryHandler.coordsets)
-            
-            if protocol_params.store_matrix_path != None:
-                matrix_complete_path = self.workspaceHandler.matrix_path +"/"+protocol_params.store_matrix_path
-                self.matrixHandler.saveMatrix(matrix_complete_path)
-                time_end = time.time()
-                self.htmlReport.report["Timing"] +='Creating and saving the matrix took %0.3f s\n' % (time_end-time_start)
-            else:
-                time_end = time.time()
-                self.htmlReport.report["Timing"] +='Creating the matrix took %0.3f s\n' % (time_end-time_start)
+        self.matrixHandler = MatrixHandler(self.workspaceHandler["matrix"])
+        if parameters["matrix"]["creation"] == "load":
+            self.timer.start("Matrix Loading")
+            self.matrixHandler.loadMatrix(self.parameters["matrix_path"])
+            self.timer.stop("Matrix Loading")
+        elif parameters["matrix"]["creation"] == "calculate":
+            self.timer.start("Matrix Calculation")
+            self.matrixHandler.createMatrix(self.trajectoryHandler.coordsets,"QTRFIT_OMP_CALCULATOR")
+            self.timer.stop("Matrix Calculation")
         else:
-            matrix_complete_path = self.workspaceHandler.matrix_path +"/"+protocol_params.matrix_file
-            common.print_and_flush( "We don't need to calculate the distance matrix because it is provided in: " +matrix_complete_path+"\n")
-            self.matrixHandler.loadMatrix(matrix_complete_path)
-            time_end = time.time()
-            self.htmlReport.report["Timing"] += 'Loading the matrix took %0.3f s\n' % (time_end-time_start)
+            print "[Error] Incorrect matrix creation option: "+parameters["matrix"]["creation"]
+            return 
+           
+        if parameters["matrix"]["save_matrix"]:
+            self.timer.start("Matrix Save")
+            self.matrixHandler.saveMatrix(parameters["store_matrix_path"])
+            self.timer.stop("Matrix Save")
         
-        self.htmlReport.report["Matrix Handler"] = self.matrixHandler
         ############################################
         # Distribution analysis
         ############################################
-        if protocol_params.shallWeCompareTrajectories():
-            common.print_and_flush("Calculating rmsd distributions and KL divergence...")
-            time_end = time.time()
-            klDiv = KullbackLeiblerDivergence(protocol_params.pdb1,\
-                                              protocol_params.pdb2,\
-                                              get_number_of_frames(protocol_params.pdb1),
-                                              get_number_of_frames(protocol_params.pdb2),
-                                              self.matrixHandler.distance_matrix)
-            
-            klDiv.plot_distributions(self.workspaceHandler.matrix_path+"/rmsd_distrib")
-            klDiv.save_to_file(self.workspaceHandler.matrix_path+"/rmsd_distrib")
-            
-            self.htmlReport.report["KL"] = klDiv
-            self.htmlReport.report["Timing"] += 'Calculating RMSDs distribution and KL Divergence took %0.3f s\n' % (time_end-time_start)
-            common.print_and_flush(" Done\n")
+        if parameters["matrix"]["action"] == "comparison":
+            self.timer.start("KL divergence")
+            klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)
+            klDiv.save(self.workspaceHandler["matrix"]+"/kullback_liebler_divergence")
+            self.timer.stop("KL divergence")
+        print self.timer.get_elapsed()
         
         #########################
         # Matrix plot
         #########################
-        matrixToImage(self.matrixHandler.distance_matrix,self.workspaceHandler.matrix_path+"/matrix_plot.png")
+        self.timer.start("Matrix Imaging")
+        matrixToImage(self.matrixHandler.distance_matrix,
+                      self.workspaceHandler["matrix"]+"/matrix_plot.png",
+                      max_dim = 1000,
+                      observer = self.observer)
+        self.timer.stop("Matrix Imaging")
         
         ############################
         # Clustering exploration
         ############################
-        time_start = time.time()
-        do_clustering_exploration(protocol_params, get_algorithm_scheduler(protocol_params),\
+        self.timer.start("Clustering Exploration")
+        do_clustering_exploration(parameters, get_algorithm_scheduler(parameters),\
                                         self.matrixHandler.distance_matrix,\
                                         self.matrixHandler.max_dist, self.matrixHandler.mean_dist,\
                                         self.workspaceHandler.clusterings_path, self.htmlReport)
-        time_end = time.time()
-        self.htmlReport.report["Timing"] += 'Clustering generation took %0.3f s\n' % (time_end-time_start)
-                
+        self.timer.stop("Clustering Exploration")
+        return  
         ####################################
         # Load created clusterings from disk
         ####################################

@@ -13,7 +13,7 @@ class GromosAlgorithm(object):
     '''
     TODOC
     '''
-    def __init__(self,condensed_matrix):
+    def __init__(self,condensed_matrix, **kwargs):
         self.condensed_matrix = condensed_matrix
     
     def perform_clustering(self,kwargs):

@@ -9,37 +9,69 @@ import matplotlib.pyplot as plt
 import pylab
 import ImageFont
 from pyRMSD.condensedMatrix import CondensedMatrix
+import math
 
-def matrixToImage(condensed_distance_matrix, matrix_image_file):
+def shrink_matrix(this_matrix, to_have_this_size):
+    max_dim = to_have_this_size
+    row_dim = this_matrix.row_length
+    
+    box_size = int(math.ceil(row_dim/max_dim))
+    number_of_boxes = int(math.ceil(row_dim /box_size))
+    box_mid = int(math.ceil(box_size/2.))
+    max_dim = number_of_boxes * box_size
+    print "Box size, mid", box_size, box_mid, max_dim, row_dim, number_of_boxes
+
+    tmp_condensed = CondensedMatrix(numpy.zeros((number_of_boxes*(number_of_boxes-1))/2., dtype=numpy.float))
+    
+    for k in range(0, max_dim, box_size):
+        for l in range(0, max_dim, box_size):
+            values = []
+            for i in range(-box_mid, box_mid):
+                for j in range(-box_mid, box_mid):
+                    if(k+i > 0 and l+j > 0 and k+i < max_dim and l+j < max_dim):
+                        if k+i == l+j:
+                            values.append(0)
+                        else:    
+                            values.append(this_matrix[k+i,l+j])
+            if(k/box_size != l/box_size):
+                if values != []:
+                    tmp_condensed[int(k/box_size), int(l/box_size)] = numpy.mean(values)
+                else:
+                    tmp_condensed[int(k/box_size), int(l/box_size)] = 0
+    return tmp_condensed
+
+def matrixToImage(condensed_distance_matrix, matrix_image_file, max_dim = 1000, observer = None):
     """
     Generates a plot of the distance matrix given as argument and stores it into disk.
     
     @param condensed_distance_matrix: Is the matrix (CondensedMatrix) from which we want to create
     the image.
+    
     @param matrix_image_file: The path of the image file to create (with file extension).
+    
+    @param max_dim: Maximum dimensions of the image. If the matrix is bigger it is rescaled.
     """
-    # Normalize
-    contents = condensed_distance_matrix.get_data()
-    _max = numpy.max(contents)
-    _min = numpy.min(contents)
     
-    norm_contents = (contents - _min) / (_max - _min)
+    if condensed_distance_matrix.row_length > max_dim:
+        if not observer is None:
+            observer.notify("Matrix To Image","Reescale","Dimension of the matrix ("+str(condensed_distance_matrix.row_length)+") is bigger than"+
+            " the maximum dimension for imaging ("+str(max_dim)+")")
+        matrix = shrink_matrix(condensed_distance_matrix, max_dim)
+    else:
+        matrix = condensed_distance_matrix
     
-    norm_condensed = CondensedMatrix(norm_contents)
-    _max = numpy.max(norm_contents)
-    _min = numpy.min(norm_contents)
-    
-    complete = numpy.zeros([norm_condensed.row_length,norm_condensed.row_length] ,dtype=numpy.float)
-    
-    for i in range(norm_condensed.row_length-1):
-        for j in range(i+1,norm_condensed.row_length):
-            complete[i][j] = norm_condensed[i,j]
-            complete[j][i] = norm_condensed[i,j]
+    print matrix.row_length
+    complete = numpy.zeros([ matrix.row_length]*2, dtype=numpy.float)
 
-    fig = plt.figure()
-    plt.gray()
-    ax = fig.add_subplot(111)
-    ax.imshow(complete, interpolation='nearest')
+    for i in range(matrix.row_length-1):
+        for j in range(i+1,matrix.row_length):
+            complete[i][j] = matrix[i,j]
+            complete[j][i] = matrix[i,j]
+
+    plt.clf()
+    imgplot = plt.imshow(complete, interpolation='nearest')
+    imgplot.set_cmap('gray')
+    plt.colorbar()
     plt.savefig(matrix_image_file)
     
 def pieChartCreation(graph_size, fracs, name1, name2, colors):

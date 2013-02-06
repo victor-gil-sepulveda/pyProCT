@@ -11,7 +11,7 @@ class FakeDistributionRandomClusteringAlgorithm(object):
     '''
     '''
 
-    def __init__(self,condensed_matrix):
+    def __init__(self,condensed_matrix,  **kwargs):
         '''
         Constructor
         '''

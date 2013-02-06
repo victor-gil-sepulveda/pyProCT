@@ -6,6 +6,7 @@
     },
     "workspace":{
                  "base": null,
+                 "matrix":"/matrix",
                  "results": "/results",
                  "tmp": "/tmp",
                  "clusterings": "/clusterings",

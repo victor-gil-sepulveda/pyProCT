@@ -16,7 +16,7 @@ class DBSCANAlgorithm(object):
     Implementation of the DBSCAN algorithm (Ester et al. KDD-96)
     '''
 
-    def __init__(self,condensed_matrix):
+    def __init__(self,condensed_matrix, **kwargs):
         self.condensed_matrix = condensed_matrix
         self.number_of_elements = self.condensed_matrix.get_number_of_rows()
         self.element_class = [PointClassType.UNCLASSIFIED]*self.number_of_elements

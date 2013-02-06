@@ -7,6 +7,7 @@ from pyproclust.tools.pdbTools import get_number_of_frames
 import numpy
 import matplotlib.pyplot as plt
 import math
+import json
 
 def smoothed(distribution,small_value = 1.0e-8):
     """
@@ -36,7 +37,7 @@ class KullbackLeiblerDivergence(object):
     # distribution
     NUM_BINS = 100
     
-    def __init__(self, pdb1, pdb2, number_of_models_1, number_of_models_2, condensedMatrix):
+    def __init__(self, pdb_info, condensedMatrix):
         """
         Class constructor. Does the actual calculation.
         
@@ -46,8 +47,10 @@ class KullbackLeiblerDivergence(object):
         @param number_of_models_2: The number of models of pdb2.
         @param condensedMatrix: The actual calculated matrix.
         """
-        self.pdb1 = pdb1
-        self.pdb2 = pdb2
+        self.pdb1 = pdb_info[0]["source"]
+        self.pdb2 = pdb_info[1]["source"]
+        number_of_models_1 = pdb_info[0]["conformations"]
+        number_of_models_2 = pdb_info[1]["conformations"]
         
         first_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix,0,number_of_models_1)
         second_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix, number_of_models_1, number_of_models_2)
@@ -71,6 +74,14 @@ class KullbackLeiblerDivergence(object):
         
         self.kl1 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram1,self.smoothed_prob_histogram2)
         self.kl2 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram2,self.smoothed_prob_histogram1)
+    
+    def save(self, where):
+        """
+        Saves a plot of the distributions and the actual values of them.
+        @param where: The name of the file without extension (".png" will be appended to the final name). 
+        """
+        image_path = self.plot_distributions(where)
+        return self.to_json(where, image_path)
         
     def plot_distributions(self, where):
         """
@@ -83,14 +94,18 @@ class KullbackLeiblerDivergence(object):
         ax.plot(self.bins2[:self.NUM_BINS],self.smoothed_prob_histogram2, 'r--', linewidth=2)
         ax.grid(True)
         ax.legend([plt.Rectangle((0, 0), 1, 1, fc="b"),plt.Rectangle((0, 0), 1, 1, fc="r")],[self.pdb1,self.pdb2])
-        plt.savefig(where+".png")   
+        plt.savefig(where+".png") 
+        return where+".png"
     
-    def save_to_file(self, where):
+    def to_json(self, where, image_path):
         """
-        Saves the K-L values in a text file.
-        @param where: The name of the file without extension (".txt" will be appended to the final name). 
+        Saves the K-L values in a text file containing its json representation.
+        @param where: The name of the file without extension (".json" will be appended to the final name).
+        @param image_path: Place where we have saved the image with the distribution. 
         """
-        open( where+".txt","w").write("KL Divergence\nt1 on t2: %f\nt2 on t1: %f"%(self.kl1,self.kl2))
+        pre_json_dic = {"kl1":self.kl1,"kl2":self.kl2,"image":image_path}
+        open( where+".json","w").write(json.dumps({"kl1":self.kl1,"kl2":self.kl2,"image":image_path}, indent=4, separators=(',', ': ')))
+        return pre_json_dic
     
     @classmethod
     def get_probability_histogram(cls,data,bin_range,num_bins):
