@@ -25,6 +25,7 @@ from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import
 from pyproclust.tools.pdbTools import get_number_of_frames
 from pyproclust.gui.observer.Observable import Observable
 from pyproclust.protocol.TimerHandler import TimerHandler
+from pyproclust.protocol.exploration.clusteringExplorator import ClusteringExplorator
 #from pyproclust.protocol.serialProcessPool import SerialProcessPool
 
 
@@ -99,12 +100,10 @@ class Protocol(Observable):
         # Clustering exploration
         ############################
         self.timer.start("Clustering Exploration")
-        do_clustering_exploration(parameters, get_algorithm_scheduler(parameters),\
-                                        self.matrixHandler.distance_matrix,\
-                                        self.matrixHandler.max_dist, self.matrixHandler.mean_dist,\
-                                        self.workspaceHandler.clusterings_path, self.htmlReport)
+        print ClusteringExplorator(parameters, self.matrixHandler, self.workspaceHandler, "Process/Parallel", self.observer).run()
         self.timer.stop("Clustering Exploration")
         return  
+        
         ####################################
         # Load created clusterings from disk
         ####################################

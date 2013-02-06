@@ -196,7 +196,7 @@ class TestClustering(unittest.TestCase):
         
         elements_batch = []
         clusterings_batch = Clustering.load_all_from_directory("data/")
-        for clustering in clusterings_batch:
+        for clustering, filename in clusterings_batch:
             elements_batch.extend(clustering.get_all_clustered_elements())
 
         # And cleans the house

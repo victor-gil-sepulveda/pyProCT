@@ -107,19 +107,19 @@ class ProcessPool(object):
 #        print "No suitable process."
         return None
     
-    def add_process (self,process,name,dependency = []):
+    def add_process (self,process,name,dependencies = []):
         if not name in self.processes.keys():
             self.processes[name] = process
-            self.dependencies[name] = dependency
+            self.dependencies[name] = dependencies
             self.num_added_processes += 1
         else:
             print "[Error ProcessPool::add_process] process already exists:",name
             exit()
             
-    def add_process_internally(self,process_name,description,target_function,function_kwargs,dependency = []):
+    def add_process_internally(self,process_name,description,target_function,function_kwargs,dependencies = []):
         process = Process(target = target_function, name = process_name, kwargs=function_kwargs)
         process.description = description
-        self.add_process(process, process_name, dependency)
+        self.add_process(process, process_name, dependencies)
         
     def next_process_id (self):
         return self.num_added_processes

@@ -13,7 +13,7 @@ import time
 import os
 from pyproclust.tools.scriptTools import create_directory
 from pyproclust.protocol.protocolImplementation import Protocol
-from pyproclust.tools.commonTools import convert
+from pyproclust.tools.commonTools import convert_to_utf8
 from pyproclust.protocol.protocolParameters import ProtocolParameters
 
 if __name__ == '__main__':
@@ -32,14 +32,14 @@ if __name__ == '__main__':
                     }
         
         def file_exists_handler(self, data):
-            data = convert(json.loads(data))
+            data = convert_to_utf8(json.loads(data))
             print data
             self.wfile.write(json.dumps({"exists":os.path.exists(data['location']),
                                          "isfile":os.path.isfile(data['location']),
                                          "isdir":os.path.isdir(data['location'])}))
         
         def create_directory(self,data):
-            data = convert(json.loads(data))
+            data = convert_to_utf8(json.loads(data))
             print data
             try:
                 success = create_directory(data['location'], ensure_writability = True)
@@ -55,7 +55,7 @@ if __name__ == '__main__':
             pass
         
         def save_params_handler(self, data):
-            data = convert(json.loads(data))
+            data = convert_to_utf8(json.loads(data))
             create_directory("scripts")
             my_hash = hashlib.sha1()
             my_hash.update(str(time.time()))

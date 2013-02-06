@@ -199,7 +199,7 @@ class Clustering(object):
         
         @param directory: The directory path.
         
-        @return: The list of loaded clusterings inside this directory.
+        @return: The list of loaded clusterings (with their filenames) inside this directory.
         """
         clusterings = []
         clustering_files = []
@@ -211,7 +211,7 @@ class Clustering(object):
         clustering_files.sort()
         
         for a_file in clustering_files:
-            clusterings.append(cls.load_from_disk(a_file))
+            clusterings.append((cls.load_from_disk(a_file), a_file))
         
         return clusterings
     
