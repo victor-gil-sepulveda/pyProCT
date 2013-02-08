@@ -1,0 +1,12 @@
+{
+    "evaluation": {
+        "maximum_noise": 15,
+        "evaluation_criteria": {},
+        "minimum_cluster_size": 50,
+        "query_types": [],
+        "maximum_clusters": 30,
+        "minimum_clusters": 10
+    }
+    
+    
+}

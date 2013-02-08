@@ -1,0 +1,43 @@
+{
+    "algorithms": {
+        "spectral": {
+            "auto": false,
+            "use": true,
+            "sigma": [],
+            "parameters": []
+        },
+        "dbscan": {
+            "auto": false,
+            "use": true,
+            "parameters": []
+        },
+        "gromos": {
+            "auto": false,
+            "use": true,
+            "parameters": []
+        },
+        "kmedoids": {
+            "auto": false,
+            "use": true,
+            "parameters": []
+        },
+        "random": {
+            "auto": false,
+            "use": true,
+            "parameters": []
+        },
+        "hierarchical": {
+            "auto": false,
+            "use": true,
+            "parameters": []
+        }
+    },
+    "evaluation": {
+        "maximum_noise": 15,
+        "evaluation_criteria": {},
+        "minimum_cluster_size": 50,
+        "query_types": [],
+        "maximum_clusters": 30,
+        "minimum_clusters": 10
+    }
+}

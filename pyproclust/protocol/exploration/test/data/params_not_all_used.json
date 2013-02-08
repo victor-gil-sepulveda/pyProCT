@@ -1,0 +1,100 @@
+{
+    "control": {
+        "number_of_processors": 4,
+        "algorithm_scheduler_sleep_time": 2,
+        "scoring_scheduler_sleep_time": 2
+    },
+    "matrix": {
+        "store_matrix_path": "",
+        "creation": "calculate",
+        "pdb1": "/home/victor/Escritorio/test/ubi_5_clusters.pdb",
+        "pdb2": "/home/victor/Escritorio/test/ubi_9_clusters.pdb",
+        "matrix_path": "",
+        "fit_selection": null,
+        "action": "clustering",
+        "save_matrix": false,
+        "rmsd_selection": "name CA",
+        "only_ca": true
+    },
+    "results": {},
+    "refinement": {
+        "maximum_clusters": "30",
+        "use": false,
+        "minimum_clusters": "10",
+        "step": null
+    },
+    "algorithms": {
+        "spectral": {
+            "auto": null,
+            "use": false,
+            "sigma": [],
+            "parameters": []
+        },
+        "dbscan": {
+            "auto": null,
+            "use": false,
+            "parameters": []
+        },
+        "gromos": {
+            "auto": false,
+            "use": true,
+            "parameters": [
+                {
+                    "cutoff": 0
+                },
+                {
+                    "cutoff": 1
+                },
+                {
+                    "cutoff": 2
+                }]
+        },
+        "kmedoids": {
+            "auto": false,
+            "use": true,
+            "parameters": [
+                {
+                    "seeding_type":"EQUIDISTANT",
+                    "k": 2
+                },
+                {
+                    "seeding_type":"EQUIDISTANT",
+                    "k": 4
+                },
+                {
+                    "seeding_type":"EQUIDISTANT",
+                    "k": 6
+                },
+                {
+                    "seeding_type":"EQUIDISTANT",
+                    "k": 8
+                }]
+        },
+        "random": {
+            "auto": null,
+            "use": false,
+            "parameters": []
+        },
+        "hierarchical": {
+            "auto": null,
+            "use": false,
+            "parameters": []
+        }
+    },
+    "workspace": {
+        "tmp": "/tmp",
+        "matrix":"/matrix",
+        "refinement_base": "refinement",
+        "base": "/home/victor/Escritorio/test",
+        "results": "/results",
+        "clusterings": "/clusterings"
+    },
+    "evaluation": {
+        "maximum_noise": 15,
+        "evaluation_criteria": {},
+        "minimum_cluster_size": 50,
+        "query_types": [],
+        "maximum_clusters": 30,
+        "minimum_clusters": 10
+    }
+}

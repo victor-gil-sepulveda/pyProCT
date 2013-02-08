@@ -3,8 +3,6 @@ Created on 21/05/2012
 
 @author: victor
 '''
-from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
-
 def calculate_coarse_grain_cutofffs(grain, max_dist):
     """
     Generates a cutoff list dividing the range from 0 to max_dist in grain parts.

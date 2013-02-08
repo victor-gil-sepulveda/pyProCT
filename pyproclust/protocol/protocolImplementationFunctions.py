@@ -5,7 +5,6 @@ Created on 20/09/2012
 '''
 import pyproclust.tools.commonTools as common
 import pyproclust.tools.pdbTools as pdb_tools
-from pyproclust.protocol.processPool import ProcessPool
 import pickle
 from pyproclust.clustering.filtering.clusteringFilter import ClusteringFilter
 from pyproclust.clustering.analysis.picklingParallelAnalysisRunner import PicklingParallelAnalysisRunner
@@ -39,9 +38,6 @@ def save_most_representative(protocol_params, clustering, distance_matrix, tmp_d
     file_handler_in.close()
     file_handler_out.close()
 
-def get_algorithm_scheduler(protocol_params):
-    return ProcessPool(protocol_params.number_of_processors, protocol_params.algorithm_scheduler_sleep_time)
-#        return SerialProcessPool()
   
 def save_results(protocol_params,directory,string_results,results_pack):
     if (protocol_params.report_file != ""):
@@ -54,15 +50,13 @@ def save_results(protocol_params,directory,string_results,results_pack):
     else:
         print string_results
         
-def do_clustering_filtering(prefiltered_clusterings,protocol_params,non_filtered_clusterings, number_of_elements):
-    common.print_and_flush("We start the filtering with "+str( len (non_filtered_clusterings))+" clusterings.\n")
-    cfilter = ClusteringFilter(protocol_params)
-    filtered_clusterings, not_selected_clusterings = cfilter.doClusteringFiltering(non_filtered_clusterings,number_of_elements)
-    common.print_and_flush("We end with " +str(len(filtered_clusterings))+" clusterings\n")
-    return filtered_clusterings, not_selected_clusterings
-
-def clustering_scoring(already_filtered_clusterings,protocol_params,condensed_matrix,pdb_structure):
-    analyzer = PicklingParallelAnalysisRunner(protocol_params.number_of_processors,protocol_params.scoring_scheduler_sleep_time)
+def clustering_scoring(clustering_info_structures, parameters, condensed_matrix, pdb_structure):
+    
+    analyzer = PicklingParallelAnalysisRunner(scheduling_tools.build_scheduler("Process/Parallel",
+                                                           parameters["control"]["algorithm_scheduler_sleep_time"],
+                                                           self.observer,
+                                                           parameters["control"]["number_of_processors"])
+    
     AnalysisPopulator(analyzer, condensed_matrix, pdb_structure,protocol_params.evaluation_types)
     for c in already_filtered_clusterings:
         analyzer.run_analysis_for(c)

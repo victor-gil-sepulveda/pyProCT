@@ -3,11 +3,11 @@ Created on 19/09/2012
 
 @author: victor
 '''
-import pyproclust.tools.scriptTools as scripts_common
 import os
 import json
-from pyproclust.gui.observer.Observable import Observable
 import shutil
+import pyproclust.tools.scriptTools as scripts_common
+from pyproclust.protocol.observer.observable import Observable
 
 class WorkspaceHandler(Observable):
 

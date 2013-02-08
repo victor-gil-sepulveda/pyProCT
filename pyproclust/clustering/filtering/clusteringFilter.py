@@ -9,61 +9,95 @@ class ClusteringFilter(object):
     This class implements functions to get a list of clusterings and return a list
     of filtered clusterings (hopefully smaller).
     """
-    def __init__(self, params):
-        '''
-        'params' has to define: 
-            params.min_clusters - Min number of clusters allowed for a clustering
-            params.max_clusters - Max number of clusters allowed for a clustering
-            params.min_cluster_size - Min number of elements per cluster (clusters
-                                    with less than this will be treated as noise)
-            params.max_noise - Max percentage of noise allowed (non clustered elements)
-        '''
-        self.params = params
     
-    def doClusteringFiltering(self,clusterings,total_num_elements):
+    def __init__(self, evaluation_parameters, distance_matrix):
         """
-        Eliminates the clusters whose parameters are not in the range we have
-        defined in this parameters instance. total_num_elements is the number
-        of elements of the dataset.
-        """
-        selected_clusterings =  []
-        not_selected_clusterings = []
+        Constructor.
         
-        for c in clusterings:
-            reasons = self.__clusteringIsAllowed(c,total_num_elements)
-            if(reasons==""):
-                selected_clusterings.append(c)
+        @param evaluation_parameters: Structure that at least defines: 
+            - evaluation_parameters['minimum_clusters'] : Minimum number of clusters allowed for a clustering.
+            - evaluation_parameters['maximum_clusters'] : Maximum number of clusters allowed for a clustering.
+            - evaluation_parameters['minimum_cluster_size'] : Minimum number of elements per cluster (clusters
+              with less than this will be treated as noise).
+            - evaluation_parameters['maximum_noise'] : Max percentage of noise allowed (non clustered elements).
+            
+        @param distance_matrix: Is the current distance matrix.
+        """
+        self.evaluation_parameters = evaluation_parameters
+        
+        #'total_number_of_elements' is the total number of elements of the dataset (which may coincide or not
+        #with the number of clustered elements).
+        self.total_number_of_elements = distance_matrix.row_length
+    
+    def filter(self, clusterings):
+        """
+        Eliminates the clusters whose parameters are not in the range we have defined in the script evaluation parameters. 
+        
+        @param clusterings: Is a clustering_info dictionary indexed by clustering_id
+        
+        @return: A tuple containing the clustering_info structures of the selected and not selected clusterings. These last
+        with their reasons for not having been selected.
+        """
+        selected_clusterings =  {}
+        not_selected_clusterings = {}
+        
+        for clustering_id in clusterings:
+            reasons = self.check_clustering(clusterings[clustering_id]["clustering"])
+            
+            if(reasons == []):
+                selected_clusterings[clustering_id] = clusterings[clustering_id]
             else:
-                not_selected_clusterings.append((c,reasons))
+                not_selected_clusterings[clustering_id] = clusterings[clustering_id]
+                not_selected_clusterings[clustering_id]["reasons"] = reasons
+        
         return selected_clusterings, not_selected_clusterings
     
-    def __numClustersInRange(self,num_clusters):
+    def check_num_clusters_in_range(self, clustering):
         """
-        Used to see if a clustering has a number of clusters in range.
-        """
-        return num_clusters>=self.params.min_clusters and num_clusters<=self.params.max_clusters
-    
-    def __clusteringIsAllowed(self,clustering,total_num_elements):
-        """
-        Decides if one clustering is inside the defined params, and
-        returns a reason of why not otherwise.
-        'clustering' is the clustering to study and 'total_num_elements' is 
-        the total number of elements of the dataset (which may coincide or not
-        with the number of clustered elements).
-        """
-        reason = ""
-        # First we must eliminate the noise
-        clustering.eliminate_noise(self.params.min_cluster_size)
+        Used to see if a clustering has a number of clusters in the range defined by script's evaluation parameters.
         
+        @param clustering: The clustering to be checked.
+        
+        @return: The reasons of not being selected (if any).
+        """
         num_clusters = len(clustering.clusters)
-        num_elements = clustering.total_number_of_elements
-        noise_level = 100 - (float(num_elements) / total_num_elements) *  100
         
-        if not self.__numClustersInRange(num_clusters):
-            reason += "Out num. clusters range:[%d, %d] with %d clusters\n"%(self.params.min_clusters,self.params.max_clusters,num_clusters)
+        if num_clusters <  self.evaluation_parameters["minimum_clusters"]:
+            return [{"reason":"TOO_FEW_CLUSTERS","data":{"minimum":self.evaluation_parameters["minimum_clusters"],"current":num_clusters}}]
         
-        if noise_level >= self.params.max_noise:
-            reason += "Too much noise (max = %.3f%%) with %.3f%% of noise\n"%(self.params.max_noise, noise_level)
-        if reason != "":
-            print reason
-        return reason 
+        if num_clusters >  self.evaluation_parameters["maximum_clusters"]:
+            return [{"reason":"TOO_MUCH_CLUSTERS","data":{"maximum":self.evaluation_parameters["maximum_clusters"],"current":num_clusters}}]
+       
+        return []
+    
+    def check_noise_level(self, clustering):
+        """
+        Does the noise level check.
+        
+        @param clustering: The clustering to be checked.
+        
+        @return: The reasons of not being selected (if any).
+        """
+        noise_level = 100 - (float(clustering.total_number_of_elements) / self.total_number_of_elements) *  100
+        
+        if noise_level > self.evaluation_parameters['maximum_noise']:
+            return  [{"reason":"TOO_MUCH_NOISE","data":{"maximum":self.evaluation_parameters["maximum_noise"],"current":noise_level}}]
+        else:
+            return []
+        
+    def check_clustering(self, clustering):
+        """
+        Decides if one clustering is inside the defined parameters, and returns the reasons of why not otherwise.
+        
+        @param clustering: The clustering to be checked.
+        
+        @return: The reasons of not being selected (if any).
+        """
+        # First we must eliminate the noise
+        clustering.eliminate_noise(self.evaluation_parameters["minimum_cluster_size"])
+        
+        # Then, look for reasons to reject this clustering
+        reasons = self.check_num_clusters_in_range(clustering)
+        reasons.extend(self.check_noise_level(clustering))
+
+        return reasons 

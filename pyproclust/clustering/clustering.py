@@ -195,7 +195,7 @@ class Clustering(object):
     @classmethod
     def load_all_from_directory(cls, directory):
         """
-        Loads all clusterings in a directory.
+        Loads all clusterings residing in a directory.
         
         @param directory: The directory path.
         

@@ -3,12 +3,12 @@ Created on 29/05/2012
 
 @author: victor
 '''
-from pyproclust.protocol.processPool import ProcessPool
-from multiprocessing.process import Process
-from multiprocessing import Queue
 import numpy as np
-from pyproclust.clustering.analysis.parallelAnalysis import analysis_to_parallel_analysis
+from multiprocessing import Queue
+from multiprocessing.process import Process
 from pyproclust.clustering.analysis.analysisRunner import AnalysisRunner
+from pyproclust.clustering.analysis.parallelAnalysis import analysis_to_parallel_analysis
+from pyproclust.protocol.scheduling.processParallelScheduler import ProcessParallelScheduler
 
 class ParallelAnalysisRunner(AnalysisRunner):
     def __init__(self,max_number_of_processes):
@@ -16,7 +16,7 @@ class ParallelAnalysisRunner(AnalysisRunner):
         Constructor
         '''
         self.analysis = []
-        self.process_manager = ProcessPool(max_number_of_processes,sleep_time = 30)
+        self.process_manager = ProcessParallelScheduler(max_number_of_processes,sleep_time = 30)
         self.analysis_id =  0
         self.analysis_queues = {}
         self.clusterings = []

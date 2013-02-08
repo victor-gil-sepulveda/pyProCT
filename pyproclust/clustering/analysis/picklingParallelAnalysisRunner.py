@@ -3,56 +3,59 @@ Created on 29/05/2012
 
 @author: victor
 '''
-from pyproclust.protocol.processPool import ProcessPool
-from multiprocessing.process import Process
-from pyproclust.clustering.analysis.analysisRunner import AnalysisRunner
+import os
 import tempfile
 import pickle
-from pyproclust.clustering.analysis.parallelAnalysisRunner import ParallelAnalysisRunner
-import os
+from pyproclust.clustering.analysis.analysisRunner import AnalysisRunner
 
-class PicklingParallelAnalysisRunner(ParallelAnalysisRunner,AnalysisRunner):
+class PicklingParallelAnalysisRunner(AnalysisRunner):
     
-    def __init__(self,max_number_of_processes,sleep_time = 30):
-        '''
+    def __init__(self, scheduler):
+        """
         Constructor
-        '''
+        
+        @param scheduler: A Scheduler instance of any type.
+        """
         AnalysisRunner.__init__(self)
-        self.process_manager = ProcessPool(max_number_of_processes,sleep_time)
+        self.scheduler = scheduler
         self.evaluation_data = []
         self.current_analysis = 0
      
-    def add_analysis(self,analysis):
+    def add_analysis(self, analysis):
         """
         Simply appends one analysis type to be run.
+        
+        @param analysis: An 'analysis_type' string.
         """
-        AnalysisRunner.add_analysis(self,analysis) 
+        AnalysisRunner.add_analysis(self, analysis) 
        
-    def run_analysis_for(self,clustering):
+    def run_analysis_for(self, clustering):
         """
-        Runs all the analysis we have for this clusterization.
+        Runs all the analysis we have in the queue for this clustering.
+        
+        @param clustering: The clustering to be analyzed.
         """
         tmp_file_handler_descriptor , path = tempfile.mkstemp() 
-        self.evaluation_data.append(path)
         
+        self.evaluation_data.append(path)
+
         def run_all_analysis_for_a_cluster(clustering, tmp_file_handler_descriptor):
             tmp_file_handler = os.fdopen(tmp_file_handler_descriptor,'w')
             analysis_results = {}
             for a in self.analysis:
                 analysis_results[a.name] =  a.run(clustering)
-            result = (clustering,analysis_results)
+            result = (clustering, analysis_results)
             pickle.dump(result, tmp_file_handler)
             del analysis_results
             tmp_file_handler.close()
         
-        func_kwargs = {"clustering":clustering,"tmp_file_handler_descriptor":tmp_file_handler_descriptor}
-        process_name = "Evaluation nr. " + str(self.current_analysis)
+        func_kwargs = {
+                       "clustering":clustering,
+                       "tmp_file_handler_descriptor":tmp_file_handler_descriptor
+                       }
+        process_name = "Evaluation " + str(self.current_analysis)
         description = "Analysis of: " + clustering.details
-        self.process_manager.add_process_internally(process_name, description, run_all_analysis_for_a_cluster, func_kwargs)
-        
-#        p = Process(target=run_all_analysis_for_a_cluster, name="Evaluation nr. " + str(self.current_analysis), kwargs=func_kwargs)
-#        p.description = "Analysis of: " + clustering.details
-#        self.process_manager.add_process(p, p.name, [])
+        self.scheduler.add_process(process_name, description, run_all_analysis_for_a_cluster, func_kwargs)
         self.current_analysis += 1
 
     def gen_final_string_and_normalize(self, all_results):
@@ -112,7 +115,7 @@ class PicklingParallelAnalysisRunner(ParallelAnalysisRunner,AnalysisRunner):
         Generates the final string and a repack of the numerical all_results, this time by cluster
          and not by analysis.
         """
-        self.process_manager.consume()
+        self.scheduler.consume()
         
         ordered_clusterings = []
         all_results = {}

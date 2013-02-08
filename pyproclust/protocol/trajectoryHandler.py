@@ -4,9 +4,9 @@ Created on 19/09/2012
 @author: victor
 '''
 import pyproclust.tools.commonTools as common
-from pyproclust.tools.pdbTools import get_number_of_frames
 from pyRMSD.utils.proteinReading import Reader
-from pyproclust.gui.observer.Observable import Observable
+from pyproclust.tools.pdbTools import get_number_of_frames
+from pyproclust.protocol.observer.observable import Observable
 
 class TrajectoryHandler(Observable):
 

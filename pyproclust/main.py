@@ -4,10 +4,10 @@ Created on 04/02/2013
 @author: victor
 '''
 import optparse
-from pyproclust.protocol.protocolParameters import ProtocolParameters
-from pyproclust.protocol.protocolImplementation import Protocol
 import threading
-from pyproclust.gui.observer.observer import Observer
+from pyproclust.protocol.protocolImplementation import Protocol
+from pyproclust.protocol.protocolParameters import ProtocolParameters
+from pyproclust.protocol.observer.observer import Observer
 
 class CmdLinePrinter(threading.Thread):
     

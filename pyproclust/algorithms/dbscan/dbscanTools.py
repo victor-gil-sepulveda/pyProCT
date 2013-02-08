@@ -58,10 +58,12 @@ def kdist(klist,condensed_distance_matrix):
     return result
 
 
-def dbscan_param_space_search(num_elements, max_noise, condensed_distance_matrix):
+def dbscan_param_space_search(max_noise, condensed_distance_matrix):
     """
     Does the search of suitable 
     """
+    num_elements = condensed_distance_matrix.row_length
+    
     # As indicated von Luxburg, 2007) k is in the range log(n)
     klist = k_scale_gen(math.log(num_elements))
     

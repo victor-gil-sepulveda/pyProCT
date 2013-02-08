@@ -9,8 +9,7 @@ from pyproclust.clustering.selection.bestClusteringSelector import BestClusterin
 from pyproclust.clustering.cluster import Cluster
 from pyproclust.clustering.comparison.comparator import Separator
 from pyproclust.protocol.clusteringExplorationFunctions import do_clustering_exploration
-from pyproclust.protocol.protocolImplementationFunctions import get_algorithm_scheduler,\
-    do_clustering_filtering, clustering_scoring
+from pyproclust.protocol.protocolImplementationFunctions import do_clustering_filtering, clustering_scoring
 from pyRMSD.matrixHandler import MatrixHandler
 import numpy
 

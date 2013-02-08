@@ -6,15 +6,18 @@ Created on 16/05/2012
 from multiprocessing import Process
 import time
 from threading import Thread, Lock
+from pyproclust.protocol.observer.observable import Observable
 
-class ProcessLauncher(Thread):
-    def __init__(self,process,update_guard, processes_dict, running_processes_list, finished_processes_list):
+class ProcessLauncher(Thread, Observable):
+    def __init__(self,process, update_guard, processes_dict, running_processes_list, finished_processes_list, observer = None):
         Thread.__init__(self)
+        Observable.__init__(self,observer)
         self.process = process
         self.update_guard = update_guard
         self.processes_dict_proxy = processes_dict
         self.currently_running_processes_list_proxy = running_processes_list
         self.finished_processes_proxy = finished_processes_list
+        
         
     def run(self):
         # Update lists (process will start to run, and will no longer be available
@@ -24,10 +27,26 @@ class ProcessLauncher(Thread):
         del self.processes_dict_proxy[self.process.name]
         self.update_guard.release()
         
+        # Notify the process starts
+        self.update_guard.acquire()
+        self.notify("Process Begin", {
+                                        "process": self.process.name,
+                                        "description": self.process.description                                       
+        })
+        self.update_guard.release()
+        
         # Start the process
         self.process.start()
         # Wait for termination
         self.process.join()
+        
+        # Notify that the process has ended
+        self.update_guard.acquire()
+        self.notify("Process End", {
+                                        "process": self.process.name,
+                                        "description": self.process.description                                       
+        })
+        self.update_guard.release()
         
         #Update lists
         self.update_guard.acquire()
@@ -35,9 +54,11 @@ class ProcessLauncher(Thread):
         self.finished_processes_proxy.append(self.process.name)
         self.update_guard.release()
     
-class ProcessPool(object):  
+class ProcessParallelScheduler(Observable):  
     
-    def __init__(self,max_processes_at_the_same_time, sleep_time = 30):
+    def __init__(self, max_processes_at_the_same_time, sleep_time = 30, observer = None):
+        super(ProcessParallelScheduler,self).__init__(observer)
+        
         self.finished = []
         self.processes = {}
         self.dependencies = {}
@@ -49,7 +70,6 @@ class ProcessPool(object):
     
     def consume(self):
         while not len(self.finished) == self.num_added_processes:
-            print "--------"
             
             # Run a process
             self.run_next_process()
@@ -60,16 +80,27 @@ class ProcessPool(object):
             # wait
             time.sleep(self.sleep_time) # 1 sec
         
-        print "All processes have finished."
+        self.notify("Ended","")
     
     def list_processes(self):
         self.thread_guard.acquire()
+        
+        process_list = {
+                        "Running":[],
+                        "Idle":[],
+                        "Ended":[]
+        }
+        
         for p in self.currently_running_processes:
-            print "Running:",p.name
+            process_list["Running"].append(p.name)
+        
         for p in self.processes:
-            print "Idle: ", self.processes[p].name
+            process_list["Idle"].append(self.processes[p].name)
+        
         for p in self.finished:
-            print "Ended: ", p
+            process_list["Ended"].append(p)
+        
+        self.notify("Process List", process_list)
         self.thread_guard.release()
     
     def run_next_process(self):
@@ -80,7 +111,7 @@ class ProcessPool(object):
         if process == None:
             self.thread_guard.acquire()
             if len(self.finished) == len(self.processes.keys()):
-                print "No more processes to launch."
+                self.notify("No Process Available", "")
             self.thread_guard.release()
         else:
             self.thread_guard.acquire()
@@ -88,11 +119,15 @@ class ProcessPool(object):
             self.thread_guard.release()
             
             if number_of_processes_being_executed < self.max_processes:
-                print "Launching process:", process.description,".",self.max_processes-len(self.currently_running_processes)-1,"processes left."
-                ProcessLauncher(process, self.thread_guard, self.processes, self.currently_running_processes,  self.finished).start()
+                ProcessLauncher(process, 
+                                self.thread_guard, 
+                                self.processes, 
+                                self.currently_running_processes,  
+                                self.finished, 
+                                self.observer).start()
             
     def get_not_dependant_process(self):
-        for process_name in self.processes.keys():
+        for process_name in sorted(self.processes.keys()):
             if len(self.dependencies[process_name]) == 0:
                 return self.processes[process_name]
             else:
@@ -101,60 +136,22 @@ class ProcessPool(object):
                 for d in self.dependencies[process_name]:
                     if not d in self.finished :
                         found_dependency = True
-                        print "Dependendy found (",process_name ,"):",d
+                        self.notify("Dependency",{"process":process_name,"dependency":d})
                 if not found_dependency:
                     return self.processes[process_name]
 #        print "No suitable process."
         return None
     
-    def add_process (self,process,name,dependencies = []):
-        if not name in self.processes.keys():
-            self.processes[name] = process
-            self.dependencies[name] = dependencies
+    def add_process(self, process_name, description, target_function, function_kwargs, dependencies = []):
+        if not process_name in self.processes.keys():
+            process = Process(target = target_function, name = process_name, kwargs=function_kwargs)
+            process.description = description
+            self.processes[process_name] = process
+            self.dependencies[process_name] = dependencies
             self.num_added_processes += 1
         else:
-            print "[Error ProcessPool::add_process] process already exists:",name
+            print "[Error ProcessPool::add_process] process already exists:", process_name
             exit()
-            
-    def add_process_internally(self,process_name,description,target_function,function_kwargs,dependencies = []):
-        process = Process(target = target_function, name = process_name, kwargs=function_kwargs)
-        process.description = description
-        self.add_process(process, process_name, dependencies)
         
     def next_process_id (self):
         return self.num_added_processes
-    
-# Some complex Tests
-if __name__ == "__main__":
-    def test_without_params():
-        print "Sleeping 6 seconds"
-        time.sleep(6)
-        print "Done" 
-    
-    def test_with_params(seconds):
-        print "Sleeping %d seconds"%(seconds)
-        time.sleep(seconds)
-        print "Done"
-    
-    p1 = Process(target = test_without_params,name = "Process 1")
-    p1.description = "First process"
-    p2 = Process(target = test_with_params,name = "Process 2",kwargs={"seconds":15})
-    p2.description = "Second process"
-    p3 = Process(target = test_with_params,name = "Process 3",kwargs={"seconds":10})
-    p3.description = "Third process"
-
-    # Without dependencies!
-#    pool = ProcessPool(2)
-#    pool.add_process(p1, p1.name)
-#    pool.add_process(p2, p2.name)
-#    pool.add_process(p3, p3.name)
-#    pool.consume()
-    
-    
-    # And with dependencies!
-    pool = ProcessPool(2)
-    pool.add_process(p2, p2.name,[p1.name])
-    pool.add_process(p1, p1.name)
-    pool.add_process(p3, p3.name,[p1.name])
-    # This may obligue p1 to be executed and finished alone
-    pool.consume()
