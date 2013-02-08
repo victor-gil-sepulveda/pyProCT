@@ -19,7 +19,7 @@ class Analysis(object):
                                     # of stored results.
         self.other_params = other_params
 
-    def run(self, clusterization):
+    def run(self, clustering):
         """
         Runs one analysis function and appends the result to the results string.
         It the result of the function is not an sring, it converts the result to a 
@@ -28,9 +28,9 @@ class Analysis(object):
         result = None
         
         if self.other_params:
-            result = self.analysis_function(clusterization,self.other_params)
+            result = self.analysis_function(clustering,self.other_params)
         else:
-            result = self.analysis_function(clusterization)
+            result = self.analysis_function(clustering)
         
         try:     
             self.results_string +="%.3f\t"%(result)

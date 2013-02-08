@@ -3,6 +3,7 @@ Created on 08/01/2013
 
 @author: victor
 '''
+import time
 import numpy
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.clustering.cluster import Cluster
@@ -11,7 +12,6 @@ from  pyproclust.clustering.metrics.cython.normNCut import CythonNCut
 from pyproclust.clustering.metrics.cython.boundedCohesion import CythonBoundedCohesionCalculator
 from pyproclust.clustering.metrics.cython.meanMinimumDistance import CythonMeanMinimumDistanceCalculator
 from pyproclust.clustering.metrics.cython.silhouette import CythonSilhouetteCoefficientCalculator
-import time
 from pyproclust.clustering.metrics.graphMetrics import NCut
 from pyproclust.clustering.metrics.boundedCohesion import BoundedCohesionCalculator
 from pyproclust.clustering.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator

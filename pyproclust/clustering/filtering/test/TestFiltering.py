@@ -12,9 +12,9 @@ class ClusteringMock(object):
         self.total_number_of_elements = number_of_elements
         self.clusters = range(number_of_clusters)
     
-    def eliminate_noise(self, param):
+    def eliminate_noise(self, max_noise):
         pass
-
+    
 class MatrixMock(object):
     def __init__(self, number_of_elements):
         self.row_length = number_of_elements

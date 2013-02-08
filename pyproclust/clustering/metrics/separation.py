@@ -3,7 +3,6 @@ Created on 09/01/2013
 
 @author: victor
 '''
-import numpy
 from pyproclust.clustering.metrics.cohesion import CohesionCalculator
 
 class SeparationCalculator(object):
