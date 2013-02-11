@@ -20,15 +20,26 @@ from pyproclust.clustering.metrics.meanMinimumDistance import MeanMinimumDistanc
 
 class AnalysisPopulator(object):
     
-    def __init__(self, matrix_handler, trajectory_handler):
+    def __init__(self, matrix_handler, trajectory_handler, parameters):
         """
         Class creator.
+        
+        @param matrix_handler: Is the matrix handler object, or any object containing a .distance_matrix value.
+        
+        @param trajectory_handler: Is the trajectory handler object, with structural info.
+        
+        @param parameters: The script parameters containing a correct 'evaluation' section. 
         """
         self.build_all_analysis(matrix_handler, trajectory_handler)
+        self.parameters = parameters
     
     def build_all_analysis(self, matrix_handler, trajectory_handler):
         """
-         Create an instance of all possible analysis. If you're not able to create it... you're not able to use it. 
+        Create an instance of all possible analysis. If you're not able to create it... you're not able to use it. 
+        
+        @param matrix_handler: Is the matrix handler object, or any object containing a .distance_matrix value.
+        
+        @param trajectory_handler: Is the trajectory handler object, with structural info.
         """
         distance_matrix = matrix_handler.distance_matrix
         
@@ -68,21 +79,21 @@ class AnalysisPopulator(object):
         # PCA
         self.all_possible_analysis["PCAanalysis"] = Analysis("PCAanalysis", self.analysis_function_pca, trajectory_handler)
    
-    def populate_analyzer(self, analyzer, parameters):
+    def get_analysis_list(self):
         """
-        Adds all needed analysis to the analyzer instance.
-               
-        @param analyzer: An Analyzer-Like instance (for instance PicklingAnalysisRunner)
+        Generates the list of required analyzers.
+        """
+        analysys_list = []
         
-        @param parameters: The script parameters containing a correct 'evaluation' section. 
-        """
-        analysis_types = AnalysisPopulator.get_query_and_evaluation_analysis_types(parameters)
+        analysis_types = AnalysisPopulator.get_query_and_evaluation_analysis_types(self.parameters)
         
         for analysis_type in analysis_types:
             if analysis_type in self.all_possible_analysis:
-                analyzer.add_analysis(self.all_possible_analysis[analysis_type])
+                analysys_list.append(self.all_possible_analysis[analysis_type])
             else:
                 print "[WARNING]", analysis_type, "is not an allowed analysis type"
+        
+        return analysys_list
    
     @classmethod
     def get_query_and_evaluation_analysis_types(self, parameters):
@@ -151,7 +162,7 @@ class AnalysisPopulator(object):
         """
         Returns the percent of noise elements in the dataset.
         """
-        return 100-(clustering.total_number_of_elements/float(total_elements))*100
+        return 100.-(clustering.total_number_of_elements/float(total_elements))*100.
     
     def analysis_function_mean_cluster_size(self,clustering):
         """

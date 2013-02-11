@@ -13,6 +13,8 @@ from pyproclust.protocol.trajectoryHandler import TrajectoryHandler
 from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproclust.protocol.exploration.clusteringExplorator import ClusteringExplorator
 from pyproclust.clustering.filtering.clusteringFilter import ClusteringFilter
+from pyproclust.clustering.analysis.picklingAnalysisRunner import PicklingAnalysisRunner
+from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 
 
 class Protocol(Observable):
@@ -49,10 +51,12 @@ class Protocol(Observable):
             self.timer.start("Matrix Loading")
             self.matrixHandler.loadMatrix(self.evaluation_parameters["matrix_path"])
             self.timer.stop("Matrix Loading")
+            
         elif parameters["matrix"]["creation"] == "calculate":
             self.timer.start("Matrix Calculation")
             self.matrixHandler.createMatrix(self.trajectoryHandler.coordsets,"QTRFIT_OMP_CALCULATOR")
             self.timer.stop("Matrix Calculation")
+            
         else:
             print "[Error] Incorrect matrix creation option: "+parameters["matrix"]["creation"]
             return 
@@ -92,7 +96,8 @@ class Protocol(Observable):
                                            scheduling_tools.build_scheduler("Process/Parallel",
                                                            parameters["control"]["algorithm_scheduler_sleep_time"],
                                                            self.observer,
-                                                           parameters["control"]["number_of_processors"]), self.observer).run()
+                                                           parameters["control"]["number_of_processors"]), 
+                                           self.observer).run()
         self.notify("Clusterings Created", {"number_of_clusters":len(clusterings)})
         self.timer.stop("Clustering Exploration")
         
@@ -100,22 +105,29 @@ class Protocol(Observable):
         # First filtering
         ######################
         self.timer.start("Clustering Filtering")
-        selected_clusterings, not_selected_clusterings = ClusteringFilter(parameters["evaluation"]).filter(clusterings,
-                                                                                            self.matrixHandler.distance_matrix.row_length)
+        selected_clusterings, not_selected_clusterings = ClusteringFilter(parameters["evaluation"], 
+                                                                          self.matrixHandler).filter(clusterings)
+            
         self.notify("Filter", {"selected":selected_clusterings,"not_selected":not_selected_clusterings})
         self.timer.stop("Clustering Filtering")
         
-        if len(selected_clusterings) == []:
+        if selected_clusterings == []:
             self.notify("SHUTDOWN", "The clustering search gave no clusterings. Relax evaluation constraints.")
         else:      
-            
             ######################
             # Clustering scoring
             ######################
+            analyzer = PicklingAnalysisRunner(scheduling_tools.build_scheduler("Process/Parallel",
+                                                           parameters["control"]["algorithm_scheduler_sleep_time"],
+                                                           self.observer,
+                                                           parameters["control"]["number_of_processors"]),
+                                              parameters,
+                                              selected_clusterings,
+                                              AnalysisPopulator(self.matrixHandler, self.trajectoryHandler))
             
-            string_results, results_pack = clustering_scoring(filtered_clusters,protocol_params,self.matrixHandler.distance_matrix,\
-                                                              self.trajectoryHandler.pdb_structure)
- 
+            analyzer.evaluate()
+            
+            print selected_clusterings
 #             ######################
 #             # Bake up results
 #             ######################

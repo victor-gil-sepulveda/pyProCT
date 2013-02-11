@@ -6,9 +6,6 @@ Created on 20/09/2012
 import pyproclust.tools.commonTools as common
 import pyproclust.tools.pdbTools as pdb_tools
 import pickle
-from pyproclust.clustering.filtering.clusteringFilter import ClusteringFilter
-from pyproclust.clustering.analysis.picklingParallelAnalysisRunner import PicklingParallelAnalysisRunner
-from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 
 def save_most_representative(protocol_params, clustering, distance_matrix, tmp_directory,results_directory):
     medoids= []
@@ -49,15 +46,3 @@ def save_results(protocol_params,directory,string_results,results_pack):
         result_pack_file_handler.close()
     else:
         print string_results
-        
-def clustering_scoring(clustering_info_structures, parameters, condensed_matrix, pdb_structure):
-    
-    analyzer = PicklingParallelAnalysisRunner(scheduling_tools.build_scheduler("Process/Parallel",
-                                                           parameters["control"]["algorithm_scheduler_sleep_time"],
-                                                           self.observer,
-                                                           parameters["control"]["number_of_processors"])
-    
-    AnalysisPopulator(analyzer, condensed_matrix, pdb_structure,protocol_params.evaluation_types)
-    for c in already_filtered_clusterings:
-        analyzer.run_analysis_for(c)
-    return  analyzer.generate_report()

@@ -7,18 +7,10 @@ import unittest
 from pyproclust.clustering.cluster import Cluster
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 from pyproclust.clustering.clustering import Clustering
-
-
-class AnalyzerMock:
-    def __init__(self):
-        self.analysis_queue = []
-    
-    def add_analysis(self, analysis):
-        self.analysis_queue.append(analysis)
         
 class AnalysisPopulatorMock(AnalysisPopulator):
-    def __init__(self):
-        AnalysisPopulator.__init__(self,"one","two")
+    def __init__(self ,parameters):
+        AnalysisPopulator.__init__(self, "", "", parameters)
     
     def build_all_analysis(self, one, two):
         self.all_possible_analysis = {
@@ -82,11 +74,7 @@ class TestAnalysisPopulator(unittest.TestCase):
             ['CythonMinimumMeanSeparation', 'NumClusters',  'CythonMirrorCohesion', 'NoiseLevel', 'CythonSilhouette'])
       
     def test_populate_analyzer(self):
-        analyzer = AnalyzerMock()
-        analysisPopulator = AnalysisPopulatorMock()
-        
-        analysisPopulator.populate_analyzer(analyzer, 
-        {
+        queue = AnalysisPopulatorMock({
             "evaluation": {
                             "evaluation_criteria": {
                                                     "criteria_0": [
@@ -113,32 +101,32 @@ class TestAnalysisPopulator(unittest.TestCase):
                                             "Analysis4"
                             ]
                            }
-        })
+        }).get_analysis_list()
         
-        self.assertItemsEqual(analyzer.analysis_queue, ["Analysis Object 1", "Analysis Object 2", "Analysis Object 3", "Analysis Object 4"])
+        self.assertItemsEqual(queue, ["Analysis Object 1", "Analysis Object 2", "Analysis Object 3", "Analysis Object 4"])
     
     def test_num_clusters(self):
-        analysisPopulator = AnalysisPopulatorMock()
+        analysisPopulator = AnalysisPopulatorMock("")
         self.assertEquals(5,analysisPopulator.analysis_function_num_clusters(ClusteringMock(5, 1000)))
      
     def test_total_elems(self):
-        analysisPopulator = AnalysisPopulatorMock()
+        analysisPopulator = AnalysisPopulatorMock("")
         self.assertEquals(1000,analysisPopulator.analysis_function_total_elements(ClusteringMock(5, 1000)))
      
     def test_top_4(self):
-        analysisPopulator = AnalysisPopulatorMock()
+        analysisPopulator = AnalysisPopulatorMock("")
         self.assertEqual(95, analysisPopulator.analysis_function_top_4(ClusteringMock(5, 1000)))
  
     def test_top_percent(self):
-        analysisPopulator = AnalysisPopulatorMock()
+        analysisPopulator = AnalysisPopulatorMock("")
         self.assertEqual(0, analysisPopulator.analysis_function_top_percent(ClusteringMock(5, 1000)))
       
     def test_details(self):
-        analysisPopulator = AnalysisPopulatorMock()
+        analysisPopulator = AnalysisPopulatorMock("")
         self.assertEqual("ClusteringMock", analysisPopulator.analysis_function_details(ClusteringMock(5, 1000)))
      
     def test_noise_level(self):
-        analysisPopulator = AnalysisPopulatorMock()
+        analysisPopulator = AnalysisPopulatorMock("")
         self.assertEqual(25, analysisPopulator.analysis_function_noise_level(ClusteringMock(5, 750),1000))
          
     def test_mean_cluster_size(self):
@@ -148,7 +136,7 @@ class TestAnalysisPopulator(unittest.TestCase):
                         Cluster(6,[6,11,12,15]),
                         Cluster(9,[9,10,14])]
         clustering = Clustering(clusters, "Test Clustering")
-        analysisPopulator = AnalysisPopulatorMock()
+        analysisPopulator = AnalysisPopulatorMock("")
         self.assertEqual(4, analysisPopulator.analysis_function_mean_cluster_size(clustering))
     
 if __name__ == "__main__":

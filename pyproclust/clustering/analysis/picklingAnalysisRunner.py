@@ -30,16 +30,25 @@ def run_all_analysis_for_a_clustering(clustering_id, clustering, tmp_file_handle
 
 class PicklingAnalysisRunner():
     
-    def __init__(self, scheduler, parameters):
+    def __init__(self, scheduler, parameters, clustering_info, populator):
         """
         Constructor
         
-        @param scheduler: A Scheduler instance of any type.
+        @param scheduler: A Scheduler instance of any type to control the execution of analysis.
+        
+        @param parameters: General script parameters.
+        
+        @param clustering_info: a 'clustering_info' structure (dictionary that for each 'clustering_id' has a structure
+        with all the info of one clustering. 
+        
+        @param populator: An 'AnalysisPopulator'-like instance to add the needed analysis.
+        
         """
-        self.analysis = []
+        self.analysis = populator.get_analysis_list()
         self.scheduler = scheduler
         self.evaluation_data = []
         self.current_analysis = 0
+        self.clustering_info = clustering_info
     
     def add_analysis(self, analysis):
         """
@@ -91,7 +100,7 @@ class PicklingAnalysisRunner():
 
     def recover_evaluation_data(self, clustering_info):
         """
-        Unpickles all the pickled results and builds structures to start the real evaluation.
+        Unpickles all the pickled results and builds the structures needed to start the bes clustering selection pipeline.
         """
         for path in self.evaluation_data:
             tmp_file_handler = open(path,"r")
@@ -102,22 +111,12 @@ class PicklingAnalysisRunner():
                     
     def evaluate(self):
         """
-        Generates the final string and a repack of the numerical all_results, this time by cluster
-         and not by analysis.
+        Runs all analysis for all clusterings in the clustering_info structure and recovers the results of this
+        analsis to attach them into the clustering_info structure.
         """
+        self.run_analysis_for_all_clusterings(self.clustering_info)
         self.scheduler.consume()
-        
-        ordered_clusterings = []
-        all_results = {}
-        self.recover_evaluation_data(ordered_clusterings, all_results)
-        
-        # Generate string and normalize
-        final_string = self.gen_final_string_and_normalize(all_results)
-        
-        # Repack results
-        repacked_results = self.repack_results(ordered_clusterings, all_results)    
-        
-        return final_string, repacked_results
+        self.recover_evaluation_data(self.clustering_info)
     
     def gen_final_string_and_normalize(self, all_results):
         """
@@ -147,8 +146,8 @@ class PicklingAnalysisRunner():
         for i in range(len(ordered_clusterings)):
             clustering = ordered_clusterings[i]
             analysis_dic = {}
-            for ana_name in all_results.keys():
-                analysis_dic[ana_name] = all_results[ana_name][i]
+            for analysis_name in all_results.keys():
+                analysis_dic[analysis_name] = all_results[analysis_name][i]
             repacked_results.append((clustering, analysis_dic))
         
         return repacked_results

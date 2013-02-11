@@ -10,7 +10,7 @@ class ClusteringFilter(object):
     of filtered clusterings (hopefully smaller).
     """
     
-    def __init__(self, evaluation_parameters, distance_matrix):
+    def __init__(self, evaluation_parameters, matrix_handler):
         """
         Constructor.
         
@@ -27,7 +27,7 @@ class ClusteringFilter(object):
         
         #'total_number_of_elements' is the total number of elements of the dataset (which may coincide or not
         #with the number of clustered elements).
-        self.total_number_of_elements = distance_matrix.row_length
+        self.total_number_of_elements = matrix_handler.distance_matrix.row_length
     
     def filter(self, clusterings):
         """

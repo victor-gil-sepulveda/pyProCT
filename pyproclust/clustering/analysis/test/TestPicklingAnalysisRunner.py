@@ -26,16 +26,23 @@ class ClusteringMock():
         
 class SchedulerMock():
     def __init__(self):
-        self.queue = [] 
+        self.queue = []
         
     def add_process(self, process_name, description, run_all_analysis_for_a_clustering, func_kwargs):
         self.queue.append((process_name, description, run_all_analysis_for_a_clustering, func_kwargs))
+        
+class PopulatorMock():
+    def __init__(self):
+        pass
+    
+    def get_analysis_list(self):
+        return []
 
 class TestPicklingAnalysisRunner(unittest.TestCase):
     
     def test_run_analysis_for(self):
         scheduler = SchedulerMock()
-        prunner = PicklingAnalysisRunner(scheduler, {})
+        prunner = PicklingAnalysisRunner(scheduler, "", {}, PopulatorMock())
         
         prunner.run_analysis_for_a_clustering("clustering1",
                                               {
@@ -59,7 +66,7 @@ class TestPicklingAnalysisRunner(unittest.TestCase):
         self.assertEqual(description, 'Evaluation of algorithm2 clustering (clustering1) with parameters: {}')
         
         scheduler = SchedulerMock()
-        prunner = PicklingAnalysisRunner(scheduler, {})
+        prunner = PicklingAnalysisRunner(scheduler, "", {}, PopulatorMock())
         prunner.run_analysis_for_all_clusterings({
                                                "clustering1":{
                                                               "type":"algorithm2",
@@ -95,7 +102,7 @@ class TestPicklingAnalysisRunner(unittest.TestCase):
         clustering_ids = ['Clustering 1','Clustering 3','Clustering 2', 'Clustering 4']
          
         scheduler = SchedulerMock()
-        prunner = PicklingAnalysisRunner(scheduler, {})
+        prunner = PicklingAnalysisRunner(scheduler, "", {}, PopulatorMock())
 
         for clustering_id in clustering_ids:
             tmp_file_handler_descriptor , path = tempfile.mkstemp() 
@@ -111,38 +118,38 @@ class TestPicklingAnalysisRunner(unittest.TestCase):
                             'Clustering 3':{                                            
                             },
                             'Clustering 2':{                                            
-                            }, 
+                            },
                             'Clustering 4':{
                             }
-                           }
+        }
         
         prunner.recover_evaluation_data(clustering_info)
         
         expected = {
-                    'Clustering 4': {
+                    'Clustering 1': {
                                      'evaluation': {
-                                                    'Second analysis': 'Analysis Second performed for Clustering 4', 
-                                                    'First analysis': 'Analysis First performed for Clustering 4'
+                                                    'First analysis': 'Analysis First performed for Clustering 1',
+                                                    'Second analysis': 'Analysis Second performed for Clustering 1'
                                                     }
-                    }, 
+                    },
                     'Clustering 2': {
                                      'evaluation': {
-                                                    'Second analysis': 'Analysis Second performed for Clustering 2', 
-                                                    'First analysis': 'Analysis First performed for Clustering 2'
+                                                    'First analysis': 'Analysis First performed for Clustering 2',
+                                                    'Second analysis': 'Analysis Second performed for Clustering 2' 
                                                     }
                     }, 
                     'Clustering 3': {
                                      'evaluation': {
-                                                    'Second analysis': 'Analysis Second performed for Clustering 3', 
-                                                    'First analysis': 'Analysis First performed for Clustering 3'
+                                                    'First analysis': 'Analysis First performed for Clustering 3',
+                                                    'Second analysis': 'Analysis Second performed for Clustering 3'
                                                     }
                     }, 
-                    'Clustering 1': {
+                    'Clustering 4': {
                                      'evaluation': {
-                                                    'Second analysis': 'Analysis Second performed for Clustering 1', 
-                                                    'First analysis': 'Analysis First performed for Clustering 1'
+                                                    'First analysis': 'Analysis First performed for Clustering 4',
+                                                    'Second analysis': 'Analysis Second performed for Clustering 4'
                                                     }
-                    }
+                    } 
         }
         
         self.assertDictEqual(expected,clustering_info)
