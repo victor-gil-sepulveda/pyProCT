@@ -6,6 +6,35 @@ Created on 20/09/2012
 import pyproclust.tools.commonTools as common
 import pyproclust.tools.pdbTools as pdb_tools
 import pickle
+import json
+
+
+def save_cluster_info(filename, cluster_info):
+    """
+    Pickles the cluster_info structure which (depending at which point of the protocol this function is called) may have
+    all needed info.
+    """
+    file_handler = open(filename+".bin", "w")
+    pickle.dump(cluster_info, file_handler)
+    file_handler.close()
+    
+def save_best_clusters_and_scores(best_clustering_id, best_criteria_id, all_scores, filename):
+    """
+    Gathers all the important scoring 
+    """
+    scoring_dic = {
+                  "best_cluster": best_clustering_id,
+                  "best_criteria": best_criteria_id,
+                  "best_score": all_scores[best_criteria_id][best_clustering_id],
+                  "scores": all_scores
+    }
+    open(filename+".json","w").write(json.dumps(scoring_dic, sort_keys=True, indent=4, separators=(',', ': ')))
+
+def save_most_representative_with_statistical_significance():
+    pass
+
+# get_medoids(self, distance_matrix)
+# get_proportional_size_representatives(self, number_of_structures, distance_matrix)
 
 def save_most_representative(protocol_params, clustering, distance_matrix, tmp_directory,results_directory):
     medoids= []
@@ -36,13 +65,4 @@ def save_most_representative(protocol_params, clustering, distance_matrix, tmp_d
     file_handler_out.close()
 
   
-def save_results(protocol_params,directory,string_results,results_pack):
-    if (protocol_params.report_file != ""):
-        reports_file_handler = open(directory+"/"+protocol_params.report_file+".txt","w")
-        reports_file_handler.write(string_results)
-        reports_file_handler.close()
-        result_pack_file_handler = open(directory+"/"+protocol_params.report_file+".bin","w")
-        pickle.dump(results_pack,result_pack_file_handler)
-        result_pack_file_handler.close()
-    else:
-        print string_results
+

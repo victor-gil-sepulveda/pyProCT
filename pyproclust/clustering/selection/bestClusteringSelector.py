@@ -52,8 +52,8 @@ class BestClusteringSelector(object):
                 value = scores[criteria_id][clustering_id]
                 if value > best_clustering[0]:
                     best_clustering = (value, (clustering_id,criteria_id))
-        (best_score, (best_clustering_id,best_criteria_id)) = best_clustering
-        return best_clustering_id, best_criteria_id, best_score
+        best_clustering_id,best_criteria_id = best_clustering[1]
+        return best_clustering_id, best_criteria_id, scores
         
     @classmethod
     def get_scores_for_all_clusters_and_criterias(cls, criteria, clustering_info):

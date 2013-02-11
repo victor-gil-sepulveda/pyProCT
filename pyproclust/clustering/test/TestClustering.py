@@ -11,6 +11,19 @@ import cStringIO
 import os
 import numpy
 
+class ClusterMock():
+    def __init__(self, elements):
+        self.elements = elements
+        
+    def calculate_medoid(self, param):
+        return self.elements[0]
+    
+    def get_random_sample(self, n):
+        return self.elements[0:n]
+    
+    def get_size(self):
+        return len(self.elements)
+    
 class TestClustering(unittest.TestCase):
 
     def test_get_percent_population_of_cluster(self):
@@ -68,21 +81,6 @@ class TestClustering(unittest.TestCase):
         clusterization = Clustering(clusters)
         clusters[1].prototype = -20
         self.assertEqual(clusters[1].prototype, clusterization.clusters[1].prototype) 
-      
-    def test_prototypes_and_sort_clusters(self):
-        # Clusters are sorted and the first one is the bigger cluster.
-        clusters =(
-                      Cluster(16,[16]),
-                      Cluster(4,[4,5,6,7,8]),
-                      Cluster(0,[0,1,2,3]),
-                      Cluster(9,[9,10,11,12,13,14,15])
-                  )
-        unordered_prototypes = [16,4,0,9]
-        ordered_prototypes = [9,4,0,16]
-        clusterization = Clustering(clusters)
-        self.assertItemsEqual(unordered_prototypes, clusterization.get_prototypes())
-        clusterization.sort_clusters_by_size()
-        self.assertItemsEqual(ordered_prototypes, clusterization.get_prototypes())
       
     def test_cluster_is_inside(self):
         clusters =(
@@ -153,16 +151,6 @@ class TestClustering(unittest.TestCase):
         clusterization = Clustering(clusters)
         self.assertItemsEqual(sorted( clusterization.get_all_clustered_elements()), range(17))
          
-    def test_write_prototypes(self):
-        clusters =( Cluster(2,[2,16]),
-                    Cluster(5,[4,5,6,7,8]))
-        
-        clusterization = Clustering(clusters)
-        input_file = cStringIO.StringIO(test_data.pdb_1_file_content)
-        output_file = cStringIO.StringIO()
-        clusterization.write_prototypes(input_file,test_data.pdb_1_num_of_models, output_file)
-        self.assertEqual( output_file.getvalue(),test_data.extracted_pdbs_1)
-    
     def test_load_and_save_to_disk(self):
         clusters =(Cluster(16,[16]),
                    Cluster(4,[4,5,6,7,8]),
@@ -215,6 +203,17 @@ class TestClustering(unittest.TestCase):
         self.assertEqual(counter['A'], 3)
         self.assertEqual(counter['B'], 2)
         self.assertEqual(counter['C'], 2)
+    
+    def test_get_medoids(self):
+        clusters = [ClusterMock(range(0,10)),ClusterMock(range(10,50)),ClusterMock(range(50,80)),ClusterMock(range(80,200))]
+        clustering = Clustering(clusters)
+        self.assertItemsEqual(clustering.get_medoids("distance_matrix"),[0, 10, 50, 80])
+    
+    def test_get_proportional_size_representatives(self):
+        clusters = [ClusterMock(range(0,10)),ClusterMock(range(10,50)),ClusterMock(range(50,80)),ClusterMock(range(80,200))]
+        clustering = Clustering(clusters)
+        rep =  clustering.get_proportional_size_representatives(30, "distance_matrix" )
+        self.assertItemsEqual(rep, [0, 0, 10, 10, 11, 12, 13, 14, 50, 50, 51, 52, 53, 80, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96])
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

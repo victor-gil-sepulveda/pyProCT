@@ -7,12 +7,13 @@ from pyproclust.tools.pdbTools import extract_frames_from_trajectory
 from pyproclust.tools import scriptTools
 import pickle
 import os
+import math
 
 class Clustering(object):
     '''
     Class representing the result of a clustering algorithm (a set of clusters).
     '''
-    def __init__(self,clusters, details="", sort = True):
+    def __init__(self, clusters, details="", sort = True):
         '''
         Constructor
         '''
@@ -33,15 +34,6 @@ class Clustering(object):
         self.clusters.append(cluster)
         self.total_number_of_elements += cluster.get_size()
     
-    def get_prototypes(self):
-        """
-        Generates a list of all the prototypes.
-        """
-        prototypes = []
-        for c in self.clusters:
-            prototypes.append(c.prototype)
-        return prototypes
-        
     def get_population_percent_of_cluster(self,i):
         """
         Returns the percentage of elements of this cluster over the number of 
@@ -104,13 +96,6 @@ class Clustering(object):
         
         return clusters_visited
     
-    def write_prototypes(self,source_trajectory_handler,number_of_frames, filename_handler):
-        """
-        Extract cluster prototypes from a source trajectory file handler with 'number_of_frames'
-        frames and write them down in 'filename_handler'
-        """
-        extract_frames_from_trajectory(source_trajectory_handler, number_of_frames, filename_handler, self.get_prototypes())
-        
     def cluster_is_inside(self,cluster):
         """
         Returns True if the cluster 'cluster' is currently in the clusters list.
@@ -234,4 +219,37 @@ class Clustering(object):
                 if t in clustering.details:
                     counter[t] += 1
         return counter
+    
+    def get_medoids(self, distance_matrix):
+        """
+        Returns a list containing the medoids of all clusters.
+        
+        @param distance_matrix: Is the distance matrix used to calculate the clustering.
+        
+        @return: The list of medoids.
+        """
+        medoids= []
+        for c in self.clusters:
+            medoids.append(c.calculate_medoid(distance_matrix))
+        return medoids
+    
+    def get_proportional_size_representatives(self, number_of_structures, distance_matrix):
+        """
+        Returns a list with the medoids and a random sample of cluster elements so that the number of elements
+        of each cluster in the list is proportional to the size of each cluster.
+        
+        @param number_of_structures: Is the final number of elements we want in our list.
+         
+        @param distance_matrix: Is the distance matrix used to calculate the clustering.
+        
+        @return: The list of representative elements.
+        """
+        representatives = []
+        for c in self.clusters:
+            number_of_elements = max(0,int((math.ceil(c.get_size() / float(self.total_number_of_elements)*number_of_structures)))-1) # minus the medoid
+            representatives.extend( c.get_random_sample(number_of_elements))
+        representatives.extend(self.get_medoids(distance_matrix))
+        return representatives
+            
+        
             

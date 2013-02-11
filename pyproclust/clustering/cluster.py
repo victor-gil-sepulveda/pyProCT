@@ -4,6 +4,7 @@ Created on 12/03/2012
 @author: victor
 '''
 import sys
+import random
 
 def cluster_from_tuple(mytuple):
     """
@@ -149,4 +150,20 @@ class Cluster(object):
         Calculates the medoid for all_elements of the cluster.
         """
         return self.calculate_biased_medoid(condensed_distance_matrix,self.all_elements)
+    
+    def get_random_sample(self, n, rand_seed = None):
+        """
+        Returns a random sample of the elements.
+        
+        @param n: Number of random elements to get.
+        
+        @param rand_seed: Seed for the random package. Used for testing (repeteability)
+        
+        @return: A random sample of the cluster elements.
+        """
+        if not rand_seed is None:
+            random.seed(rand_seed)
+        temporary_list = list(self.all_elements)
+        random.shuffle(temporary_list)
+        return temporary_list[0:n]
         

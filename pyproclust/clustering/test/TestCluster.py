@@ -7,7 +7,7 @@ import unittest
 import pyproclust.clustering.test.data as test_data
 from pyproclust.clustering.cluster import Cluster, cluster_from_tuple, get_cluster_sizes, gen_clusters_from_class_list
 import numpy as np
-from pyproclust.matrix.condensedMatrix import CondensedDistanceMatrix
+from pyRMSD.condensedMatrix import CondensedMatrix
 
 class Test(unittest.TestCase):
 
@@ -103,16 +103,21 @@ class Test(unittest.TestCase):
         self.assertNotEquals(cluster,cluster_copy)
     
     def test_calculate_biased_medoid(self):
-        condensed_matrix = CondensedDistanceMatrix([1.0, 4.5, 7.2, 6.7, 
-                                                         8.5, 4.5, 3.6, 
-                                                              7.8, 2.2, 
-                                                                   2.0]) 
+        condensed_matrix = CondensedMatrix([1.0, 4.5, 7.2, 6.7, 
+                                                 8.5, 4.5, 3.6, 
+                                                      7.8, 2.2, 
+                                                           2.0]) 
         c = Cluster(None,[0,2,3,4])
         interesting_elements = [3,4,0]
         self.assertEquals(4, c.calculate_biased_medoid(condensed_matrix,interesting_elements))
         interesting_elements = [4,2,3]
         self.assertEquals(4,c.calculate_biased_medoid(condensed_matrix,interesting_elements))
     
+    def test_random_sample(self):
+        cluster = Cluster(None, range(0,100))
+        
+        self.assertItemsEqual(cluster.get_random_sample(10, 123), [45, 66, 89, 62, 67, 51, 65, 56, 22, 77])
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

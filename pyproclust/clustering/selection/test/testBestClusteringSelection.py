@@ -174,7 +174,8 @@ class Test(unittest.TestCase):
                                  'Clustering 1': 0.54
                                  }
                   }
-        self.assertItemsEqual( BestClusteringSelector.get_best_clustering(scores),  ('Clustering 4', 'criteria 1', 1.4))
+        bclust, bcrit, scores = BestClusteringSelector.get_best_clustering(scores)
+        self.assertItemsEqual( (bclust, bcrit, scores[bcrit][bclust]),  ('Clustering 4', 'criteria 1', 1.4))
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

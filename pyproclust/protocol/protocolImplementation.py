@@ -5,18 +5,18 @@ Created on 21/05/2012
 '''
 from pyRMSD.matrixHandler import MatrixHandler
 from pyproclust.tools.plotTools import matrixToImage
-from pyproclust.protocol.TimerHandler import TimerHandler
+from pyproclust.protocol.handlers.timerHandler import TimerHandler
+from pyproclust.protocol.handlers.workspaceHandler import WorkspaceHandler
+from pyproclust.protocol.handlers.trajectoryHandler import TrajectoryHandler 
 from pyproclust.protocol.observer.observable import Observable
 import pyproclust.protocol.scheduling.tools as scheduling_tools
-from pyproclust.protocol.workspaceHandler import WorkspaceHandler
-from pyproclust.protocol.trajectoryHandler import TrajectoryHandler 
 from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproclust.protocol.exploration.clusteringExplorator import ClusteringExplorator
 from pyproclust.clustering.filtering.clusteringFilter import ClusteringFilter
 from pyproclust.clustering.analysis.picklingAnalysisRunner import PicklingAnalysisRunner
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
-
+import pyproclust.protocol.saveTools as save_tools
 
 class Protocol(Observable):
 
@@ -136,21 +136,19 @@ class Protocol(Observable):
             # Choose the best clustering
             ######################
             self.timer.start("Selection")
-            best_clustering_id, best_criteria_id, best_score = BestClusteringSelector(parameters).choose_best(selected_clusterings)
-            self.notify("BEST", (best_clustering_id, best_criteria_id, best_score))
+            best_clustering_id, best_criteria_id, all_scores = BestClusteringSelector(parameters).choose_best(selected_clusterings)
+            self.notify("BEST", (best_clustering_id, best_criteria_id, all_scores[best_criteria_id][best_clustering_id]))
             self.timer.stop("Selection")
 
-
-#             ######################
-#             # Bake up results
-#             ######################
-#             save_results(protocol_params,self.workspaceHandler.results_path,string_results,results_pack)
-#             self.htmlReport.report["Evaluations"] = results_pack
-# #            result_pack_file_handler = open(self.workspaceHandler.results_path+"/"+protocol_params.report_file+".bin","r")
-# #            results_pack = pickle.load(result_pack_file_handler)
-# #            result_pack_file_handler.close()
-#             
-#             
+            ######################
+            # Save results
+            ######################
+            save_tools.save_cluster_info(self.workspaceHandler["results"]+"/selected", selected_clusterings)
+            save_tools.save_cluster_info(self.workspaceHandler["results"]+"/not_selected", not_selected_clusterings)
+            save_tools.save_best_clusters_and_scores(best_clustering_id, 
+                                                     best_criteria_id, 
+                                                     all_scores, 
+                                                     self.workspaceHandler["results"]+"/scores")
 #             #########################
 #             # Get statistics etc...
 #             #########################
