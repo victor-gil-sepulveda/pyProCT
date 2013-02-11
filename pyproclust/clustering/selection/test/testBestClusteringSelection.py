@@ -9,35 +9,173 @@ from pyproclust.clustering.selection.bestClusteringSelector import BestClusterin
 
 class Test(unittest.TestCase):
 
-    def test_init(self):
-        value_map = {"A":(2.,">"), "B":(1.0,"<")}
-        sel = BestClusteringSelector([value_map])
-        self.assertEqual(sel.calcMaxScoring(value_map),3.)
+    def test_normalize_one_evaluation(self):
+        clustering_info = {
+                           "clustering1":{
+                                          "type":"algorithm2",
+                                          "clustering":"clustering2",
+                                          "parameters":{},
+                                          "evaluation":{
+                                                        "myeval":0.5,
+                                                        "myothereval":1.0
+                                                       }
+                            },
+                           "clustering2":{
+                                          "type":"algorithm1",
+                                          "clustering":"clustering1",
+                                          "parameters":{},
+                                          "evaluation":{
+                                                        "myeval":-0.5,
+                                                        "myothereval":2.0
+                                                        }
+                            },
+                           "clustering3":{
+                                          "type":"algorithm1",
+                                          "clustering":"clustering3",
+                                          "parameters":{},
+                                          "evaluation":{
+                                                        "myeval":0.2,
+                                                        "myothereval":0.0
+                                                        }
+                            }
+        }
+        values_for_myeval = BestClusteringSelector.get_values_for_evaluation_type("myeval", clustering_info)
+        self.assertDictEqual(values_for_myeval, {'clustering1': 0.5, 'clustering3': 0.2, 'clustering2': -0.5})
+        BestClusteringSelector.normalize_one_evaluation_type("myeval", clustering_info)
+        values_for_myeval = BestClusteringSelector.get_values_for_evaluation_type("Normalized_myeval", clustering_info)
+        self.assertDictEqual( values_for_myeval, {'clustering1': 1.0, 'clustering3': 0.7, 'clustering2': 0.0})
     
-    def test_score_clustering(self):
-        value_map  = {"A":(2.,">"), "B":(1.0,"<")}
-        sel = BestClusteringSelector([value_map])
-        # Eval list for clustering
-        self.assertEqual( sel.scoreClustering({"A":0.5,"B":0.7,"C":0.3},value_map), (0.5*2 + (1-0.7)*1)/3)
-    
+    def test_get_score_for_criteria(self):
+        criteria = {
+                    "analysis_1":{
+                                  "action": ">",
+                                  "weight": 1.0
+                                  },
+                    "analysis_2":{
+                                  "action": "<",
+                                  "weight": 0.5
+                                  }
+        }
+        
+        clustering_info = {
+                           'Clustering 1': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 1,
+                                                            'Normalized_analysis_2': 0.3
+                                              }   
+                            },
+                            'Clustering 2': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 0.7,
+                                                            'Normalized_analysis_2': 1.
+                                              }
+                            }, 
+                            'Clustering 3': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 0.6,
+                                                            'Normalized_analysis_2': 0.5
+                                              }
+                            }, 
+                            'Clustering 4': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 0.9,
+                                                            'Normalized_analysis_2': 0.0
+                                              }
+                            } 
+        }
+        
+        self.assertEqual(BestClusteringSelector.get_score_for_criteria("Clustering 1", 
+                                                                      clustering_info,
+                                                                      criteria), 
+                         1.35)
+        
+        self.assertEqual(BestClusteringSelector.get_score_for_criteria("Clustering 4", 
+                                                                      clustering_info,
+                                                                      criteria), 
+                         1.4)
+        
+    def test_get_scores_for_all_clusters_and_criterias(self):
+        criteria = {
+                     "criteria 1":{
+                                "analysis_1":{
+                                              "action": ">",
+                                              "weight": 1.0
+                                              },
+                                "analysis_2":{
+                                              "action": "<",
+                                              "weight": 0.5
+                                              }
+                    },
+                    "criteria 2":{
+                                "analysis_1":{
+                                              "action": ">",
+                                              "weight": 0.4
+                                              },
+                                "analysis_2":{
+                                              "action": "<",
+                                              "weight": 0.2
+                                              }
+                    }
+        }
+        
+        clustering_info = {
+                           'Clustering 1': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 1,
+                                                            'Normalized_analysis_2': 0.3
+                                              }   
+                            },
+                            'Clustering 2': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 0.7,
+                                                            'Normalized_analysis_2': 1.
+                                              }
+                            }, 
+                            'Clustering 3': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 0.6,
+                                                            'Normalized_analysis_2': 0.5
+                                              }
+                            }, 
+                            'Clustering 4': {
+                                             'evaluation': {
+                                                            'Normalized_analysis_1': 0.9,
+                                                            'Normalized_analysis_2': 0.0
+                                              }
+                            } 
+        }
+        # regression, checked
+        self.assertDictEqual({
+                              'criteria 1': {
+                                             'Clustering 4': 1.4, 
+                                             'Clustering 2': 0.7, 
+                                             'Clustering 3': 0.85, 
+                                             'Clustering 1': 1.35}, 
+                              'criteria 2': {
+                                             'Clustering 4': 0.56, 
+                                             'Clustering 2': 0.27999999999999997, 
+                                             'Clustering 3': 0.33999999999999997, 
+                                             'Clustering 1': 0.54
+                                             }
+                              },
+                             BestClusteringSelector.get_scores_for_all_clusters_and_criterias(criteria, clustering_info))
+        
     def test_get_best_clustering(self):
-        value_map  = {"A":(2.,">"), "B":(1.0,"<")}
-        sel = BestClusteringSelector([value_map])
-        results_pack = [("Clustering 1", {"A":0.5,"B":0.7,"C":0.3}),
-                        ("Clustering 2", {"A":0.7,"B":0.3,"C":0.3}),
-                        ("Clustering 3", {"A":0.7,"B":0.7,"C":0.3})]
-        best_score, best_clustering =  sel.chooseBestClustering(results_pack) #@UnusedVariable
-        self.assertEqual("Clustering 2",best_clustering)
-        
-        value_maps  = [{"A":(2.,">"), "B":(1.0,"<")},{"C":(2.0,">")}]
-        sel = BestClusteringSelector(value_maps)
-        results_pack = [("Clustering 1", {"A":0.5,"B":0.7,"C":0.3}),
-                        ("Clustering 2", {"A":0.7,"B":0.3,"C":0.3}),
-                        ("Clustering 3", {"A":0.7,"B":0.7,"C":1.0})]
-        best_score, best_clustering =  sel.chooseBestClustering(results_pack) #@UnusedVariable
-        self.assertEqual("Clustering 3",best_clustering)
-        
-
+        scores = {
+                  'criteria 1': {
+                                 'Clustering 4': 1.4, 
+                                 'Clustering 2': 0.7, 
+                                 'Clustering 3': 0.85, 
+                                 'Clustering 1': 1.35}, 
+                  'criteria 2': {
+                                 'Clustering 4': 0.56, 
+                                 'Clustering 2': 0.28, 
+                                 'Clustering 3': 0.34, 
+                                 'Clustering 1': 0.54
+                                 }
+                  }
+        self.assertItemsEqual( BestClusteringSelector.get_best_clustering(scores),  ('Clustering 4', 'criteria 1', 1.4))
+    
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

@@ -103,11 +103,21 @@ class AnalysisPopulator(object):
         @param parameters: The script parameters.
         """
         queries = parameters["evaluation"]["query_types"]
-        for evaluation_criteria_id in parameters["evaluation"]["evaluation_criteria"]:
-            for subcriteria in parameters["evaluation"]["evaluation_criteria"][evaluation_criteria_id]:
-                queries.append(subcriteria["query"])
+        queries.extend(AnalysisPopulator.get_evaluation_analysis_types(parameters))
         return list(set(queries))
    
+    @classmethod
+    def get_evaluation_analysis_types(self, parameters):
+        """
+        Returns a list formed by the evaluation types present in criteria.
+        
+        @param parameters: The script parameters.
+        """
+        eval_types =[] 
+        for evaluation_criteria_id in parameters["evaluation"]["evaluation_criteria"]:
+            for subcriteria in parameters["evaluation"]["evaluation_criteria"][evaluation_criteria_id]:
+                eval_types.append(subcriteria)
+        return list(set(eval_types))
    
     ########################################################
     # Next we'll find the analysis functions we have programmed until now.

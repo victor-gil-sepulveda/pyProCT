@@ -40,60 +40,56 @@ class ClusteringMock(object):
 class TestAnalysisPopulator(unittest.TestCase):
     
     def test_get_query_and_evaluation_analysis_types(self):
-        self.assertItemsEqual(
-            AnalysisPopulator.
-            get_query_and_evaluation_analysis_types(
-            {
-            "evaluation": {
-                            "evaluation_criteria": {
-                                                    "criteria_0": [
-                                                                    {
-                                                                        "action": ">",
-                                                                        "query": "CythonMirrorCohesion",
-                                                                        "weight": 0.05
-                                                                    },
-                                                                    {
-                                                                        "action": ">",
-                                                                        "query": "CythonMinimumMeanSeparation",
-                                                                        "weight": 0.1
-                                                                    },
-                                                                    {
-                                                                        "action": ">",
-                                                                        "query": "CythonSilhouette",
-                                                                        "weight": 0.15
-                                                                    }
-                                                    ]
-                            },
-                            "query_types": [
-                                            "NumClusters",
-                                            "CythonMinimumMeanSeparation",
-                                            "NoiseLevel"
-                            ]
-                           }
-            }),
+        parameters = {
+                        "evaluation": {
+                                        "evaluation_criteria": {
+                                                                "criteria_0": {
+                                                                               "CythonMirrorCohesion":{
+                                                                                    "action": ">",
+                                                                                    "weight": 0.05
+                                                                                },
+                                                                                "CythonMinimumMeanSeparation":{
+                                                                                    "action": ">",
+                                                                                    "weight": 0.1
+                                                                                },
+                                                                                "CythonSilhouette":{
+                                                                                    "action": ">",
+                                                                                    "weight": 0.15
+                                                                                }
+                                                                }
+                                        },
+                                        "query_types": [
+                                                        "NumClusters",
+                                                        "CythonMinimumMeanSeparation",
+                                                        "NoiseLevel"
+                                        ]
+                                       }
+                        }
+        
+        self.assertItemsEqual( AnalysisPopulator.get_evaluation_analysis_types(parameters),
+            ['CythonMinimumMeanSeparation', 'CythonMirrorCohesion', 'CythonSilhouette'])
+
+        self.assertItemsEqual( AnalysisPopulator.get_query_and_evaluation_analysis_types(parameters),
             ['CythonMinimumMeanSeparation', 'NumClusters',  'CythonMirrorCohesion', 'NoiseLevel', 'CythonSilhouette'])
-      
+
     def test_populate_analyzer(self):
         queue = AnalysisPopulatorMock({
             "evaluation": {
                             "evaluation_criteria": {
-                                                    "criteria_0": [
-                                                                    {
+                                                    "criteria_0": {
+                                                                    "Analysis1":{
                                                                         "action": ">",
-                                                                        "query": "Analysis1",
                                                                         "weight": 0.05
                                                                     },
-                                                                    {
+                                                                    "Analysis2":{
                                                                         "action": ">",
-                                                                        "query": "Analysis2",
                                                                         "weight": 0.1
                                                                     },
-                                                                    {
+                                                                    "Analysis3":{
                                                                         "action": ">",
-                                                                        "query": "Analysis3",
                                                                         "weight": 0.15
                                                                     }
-                                                    ]
+                                                    }
                             },
                             "query_types": [
                                             "Analysis2",

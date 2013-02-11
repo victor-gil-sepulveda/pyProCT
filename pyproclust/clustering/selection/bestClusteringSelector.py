@@ -3,76 +3,151 @@ Created on 07/09/2012
 
 @author: victor
 '''
+from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
+import math
 
 class BestClusteringSelector(object):
     
-    def __init__(self, value_maps):
-        self.cluster_score_value_maps = value_maps
+    def __init__(self, parameters):
+        """
+        Class constructor.
+        
+        @param parameters: The global script parameters.
+        """
+        self.parameters = parameters
+        self.criteria = parameters["evaluation"]["evaluation_criteria"]
     
-    def calcMaxScoring(self,value_map):    
+    def choose_best(self, clustering_info):
         """
-        Calculates the maximum possible scoring to be used in scoring normalization
-        """
-        max_scoring = 0.
-        for key in value_map:
-            max_scoring += value_map[key][0]
-        return max_scoring
+        Normalizes the values of the evaluation scores, then calculates the scores for all clusterings and criteria 
+        and finally chooses the best clustering.
         
-    def chooseBestClustering(self,results_pack):
-        """
-        Calculates the best scoring (and cluster) given a list off value_maps.
-        """
-        if len(self.cluster_score_value_maps) == 0:
-            print "Error choosing the best clustering: there were no params for choosing. Exiting..."
-            exit()
-        best_scores = []
-        all_scores = []
-        for value_map in self.cluster_score_value_maps:
-            scores = self._choose_best_clustering(results_pack,value_map)
-            all_scores.append((value_map,scores))
-            best_scores.append(scores[0])
-            print "Best score for ", value_map, " is ", best_scores[-1][0]
-        best_scores.sort(reverse=True)
-        return best_scores[0], all_scores
+        @param clustering_info: Is the clustering_info structure with clusterings, evaluation info... etc
         
-    def _choose_best_clustering(self,results_pack,value_map):
+        @return: The id of the best clustering with the criteria_id with higher score and the score itself.
         """
-        Returns the best clustering using the data in the parameters and the results_pack.
-        'results_pack' is a list of tuples where each tuple first element is a clustering,
-        and the second element is a dictionary indexed by analysis name with the numerical 
-        value of this analysis for the given clustering. 
-        A score value of 1 says that the best cluster had also the best partial scoring values.
-        """
-        clustering_scores = []
-        for pack in results_pack:
-            clustering = pack[0]
-            eval_list = pack[1]
-            norm_score = self.scoreClustering(eval_list,value_map)
-            clustering_scores.append((norm_score,clustering))
+        evaluation_types = AnalysisPopulator.get_evaluation_analysis_types(self.parameters)
         
-        # Return the higher one
-        clustering_scores.sort(reverse=True)
-        return clustering_scores
+        for evaluation_type in evaluation_types:
+            BestClusteringSelector.normalize_one_evaluation_type(evaluation_type, clustering_info)
+        
+        scores = BestClusteringSelector.get_scores_for_all_clusters_and_criterias(self.criteria,clustering_info)
+        
+        best_clustering_id, criteria_id, score = self.get_best_clustering(scores)
+        
+        return best_clustering_id, criteria_id, score
     
-    def scoreClustering(self,eval_list,value_map):
+    @classmethod
+    def get_best_clustering(cls, scores):
         """
-        Calculates the score for a given evaluation list. An evaluation list is a dictionary that 
-        represents the score of each of the possible metrics for a clustering (and is a value in [0,1]).
-        This functions calculates a [0,1] normalized scoring using this eval list.
+        Selects the clustering with best score.
+        
+        @param scores: A scores list as returned by 'get_scores_for_all_clusters_and_criterias'.
+        
+        @return: The best clustering Id, the criteria with better results and the score itself.
         """
-        score = 0.
-        for value_key in value_map:
-            # It the keys are not defined the program has to crash
-            pair = value_map[value_key]
-            # Example: 
-            # { "NCut":(1.0,">") }
-            multiplier = pair[0]
-            min_or_max = pair[1]
-            val = eval_list[value_key]
-            #PRECONDITION: Values are normalized to 1
-            if min_or_max == ">": # metric to Maximize
-                score += val * multiplier
-            else: # metric to Minimize
-                score += (1-val) * multiplier
-        final_score = score/self.calcMaxScoring(value_map)
-        return final_score
+        best_clustering = (0.0,(None, None))
+        for criteria_id in scores:
+            for clustering_id in scores[criteria_id]:
+                value = scores[criteria_id][clustering_id]
+                if value > best_clustering[0]:
+                    best_clustering = (value, (clustering_id,criteria_id))
+        (best_score, (best_clustering_id,best_criteria_id)) = best_clustering
+        return best_clustering_id, best_criteria_id, best_score
+        
+    @classmethod
+    def get_scores_for_all_clusters_and_criterias(cls, criteria, clustering_info):
+        """
+        Calculates all scores for a group of clusterings and criteria.
+        
+        @param criteria: Collection of criteria to be applied in the score calculation.
+
+        @param clustering_info: The clustering_info structure with this evaluation_type registered in each of the 'evaluation'
+        fields.
+        
+        @return: A double dictionary indexed by criteria id and clustering id with all the (clustering id, criteria id) scores. 
+        """
+        scores = {}
+        for criteria_id in criteria:
+            for clustering_id in clustering_info:
+                try:
+                    scores[criteria_id][clustering_id] = BestClusteringSelector.get_score_for_criteria(clustering_id, 
+                                                                                                     clustering_info, 
+                                                                                                     criteria[criteria_id])
+                except KeyError:                                                                                   
+                    scores[criteria_id] = {clustering_id : BestClusteringSelector.get_score_for_criteria(clustering_id, 
+                                                                                                     clustering_info, 
+                                                                                                     criteria[criteria_id])}
+        return scores
+    
+    @classmethod
+    def get_score_for_criteria(cls, clustering_id, clustering_info, criteria):
+        """
+        Calculates the score for one clustering and one criteria.
+        
+        @param clustering_id: The clustering id of the clustering inside 'clustering_info' we want the score.
+        
+        @param clustering_info: The clustering_info structure with this evaluation_type registered in each of the 'evaluation'
+        fields.
+        
+        @param criteria: Criteria to be applied in the score calculation.
+        
+        @return: The score [0..oo).
+        """
+        evaluation_info = clustering_info[clustering_id]["evaluation"]
+        score = 0.0
+        for evaluation_type in criteria:
+            value = evaluation_info["Normalized_"+evaluation_type]
+            weight = criteria[evaluation_type]["weight"]
+            action = criteria[evaluation_type]["action"]
+            if action == ">": 
+                #Maximize metric
+                score += value * weight
+            elif action == "<": 
+                #Minimize metric
+                score += (1. - value) * weight
+            else:
+                print "[ERROR]Criteria action is not valid ( %s )"%action
+                exit()
+        return score
+    
+    @classmethod
+    def normalize_one_evaluation_type(cls, evaluation_type, clustering_info):
+        """
+        Normalizes all the values of one evaluation type in the clustering_info structure in the range [0..1] 
+        
+        @param evaluation_type: The evaluation type which values we want to normalize.
+        
+        @param clustering_info: The clustering_info structure with this evaluation_type registered in each of the 'evaluation'
+        fields.
+        
+        """
+        all_values = {}
+        valmax  = 0.
+        valmin  = 0.
+        for clustering_id in clustering_info:
+            value = clustering_info[clustering_id]["evaluation"][evaluation_type]
+            valmax = max(valmax,value)
+            valmin = min(valmin,value)
+            all_values[clustering_id] = value
+        
+        for clustering_id in all_values:
+            value = clustering_info[clustering_id]["evaluation"][evaluation_type]
+            clustering_info[clustering_id]["evaluation"]["Normalized_"+evaluation_type] =  math.fabs(value-valmin) / math.fabs(valmax - valmin)
+    
+    @classmethod
+    def get_values_for_evaluation_type(cls, evaluation_type, clustering_info):
+        """
+        Testing helper. Gets all the values of one evaluation type.
+        
+        @param evaluation_type: The evaluation type which values we want to recover.
+        
+        @param clustering_info: The clustering_info structure with this evaluation_type registered in each of the 'evaluation'
+        fields.
+        
+        @return: A dictionary indexed by cluster id with the values for the evaluation named 'evaluation_type'
+        """
+        all_values = {}
+        for clustering_id in clustering_info:
+            all_values[clustering_id] = clustering_info[clustering_id]["evaluation"][evaluation_type]
+        return all_values
