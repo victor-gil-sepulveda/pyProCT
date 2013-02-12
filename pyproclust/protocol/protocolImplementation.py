@@ -149,6 +149,9 @@ class Protocol(Observable):
                                                      best_criteria_id, 
                                                      all_scores, 
                                                      self.workspaceHandler["results"]+"/scores")
+            
+            
+            
 #             #########################
 #             # Get statistics etc...
 #             #########################

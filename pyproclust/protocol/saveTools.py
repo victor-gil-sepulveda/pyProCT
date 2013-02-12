@@ -3,11 +3,10 @@ Created on 20/09/2012
 
 @author: victor
 '''
-import pyproclust.tools.commonTools as common
-import pyproclust.tools.pdbTools as pdb_tools
 import pickle
 import json
-
+import shutil
+import pyproclust.tools.pdbTools as pdb_tools
 
 def save_cluster_info(filename, cluster_info):
     """
@@ -20,7 +19,7 @@ def save_cluster_info(filename, cluster_info):
     
 def save_best_clusters_and_scores(best_clustering_id, best_criteria_id, all_scores, filename):
     """
-    Gathers all the important scoring 
+    Gathers all the important scoring features and writes them to disk.
     """
     scoring_dic = {
                   "best_cluster": best_clustering_id,
@@ -30,37 +29,34 @@ def save_best_clusters_and_scores(best_clustering_id, best_criteria_id, all_scor
     }
     open(filename+".json","w").write(json.dumps(scoring_dic, sort_keys=True, indent=4, separators=(',', ': ')))
 
-def save_most_representative_with_statistical_significance():
-    pass
-
-# get_medoids(self, distance_matrix)
-# get_proportional_size_representatives(self, number_of_structures, distance_matrix)
-
-def save_most_representative(protocol_params, clustering, distance_matrix, tmp_directory,results_directory):
-    medoids= []
-    for c in clustering.clusters:
-        medoids.append(c.calculate_medoid(distance_matrix))
+def save_representatives(representatives, distance_matrix, workspace_handler, trajectory_handler):
+    """
+    Saves a pdb file containing the most representative elements of the clustering.
     
-    temporary_merged_trajectory_path = tmp_directory+"/tmp_merged_trajectory.pdb"
-    file_handler_in = None
-    if protocol_params.shallWeMergetrajectories(): 
-        # We want to merge both trajectories and filter them (we're only interested in alphas right now)
-        common.print_and_flush("Merging trajectories ...")
-        file_handler_in = open(temporary_merged_trajectory_path,"w")
-        pdb1_fh = open(protocol_params.pdb1)
-        pdb2_fh = open(protocol_params.pdb2)
-        common.merge_files([pdb1_fh,pdb2_fh],file_handler_in,False)
-        file_handler_in.close()
-        pdb1_fh.close()
-        pdb2_fh.close()
-        common.print_and_flush(" Done\n")
-        file_handler_in = open(temporary_merged_trajectory_path,"r")
-    else:
-        # We are analyzing only one trajectory
-        file_handler_in = open(protocol_params.pdb1)
+    @param representatives: A list of the representative frames we want to extract.
     
-    file_handler_out = open(results_directory+"/"+protocol_params.most_representative_pdb_file,"w")
-    pdb_tools.extract_frames_from_trajectory(file_handler_in, distance_matrix.row_length, file_handler_out, medoids)
+    @param distance_matrix: The distance matrix used to get the clustering.
+    
+    @param workspace_handler: The workspace handler of this run.
+    
+    @param trajectory_handler: The trajectory handler for this run.
+    """
+    results_directory = workspace_handler["results"]
+    temporary_merged_trajectory_path = workspace_handler["tmp"]+"/tmp_merged_trajectory.pdb"
+    pdbs = trajectory_handler.pdbs
+    
+    # Copy the first one (there's at least one)
+    shutil.copyfile(pdbs[0], temporary_merged_trajectory_path)
+    file_handler_in = open(temporary_merged_trajectory_path,"a")
+    for pdb_file in pdbs[1:]:
+        # Concat the other file
+        file_handler_in.write(open(pdb_file,"r").read())
+    file_handler_in.close()
+    
+    # Add 
+    file_handler_in = open(temporary_merged_trajectory_path,"r")
+    file_handler_out = open(results_directory+"/representatives.pdb","w")
+    pdb_tools.extract_frames_from_trajectory(file_handler_in, distance_matrix.row_length, file_handler_out, representatives)
     file_handler_in.close()
     file_handler_out.close()
 
