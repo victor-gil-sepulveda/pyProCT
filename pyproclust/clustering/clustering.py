@@ -3,11 +3,10 @@ Created on 20/03/2012
 
 @author: victor
 '''
-from pyproclust.tools.pdbTools import extract_frames_from_trajectory
-from pyproclust.tools import scriptTools
-import pickle
 import os
+import pickle
 import math
+from pyproclust.tools import scriptTools
 
 class Clustering(object):
     '''

@@ -48,19 +48,19 @@ class Protocol(Observable):
         # Obtaining the distance matrix
         ##############################
         self.matrixHandler = MatrixHandler(self.workspaceHandler["matrix"])
-        if parameters["matrix"]["creation"] == "load":
+        if parameters["matrix"]["creation"]["type"] == "load":
             self.timer.start("Matrix Loading")
             self.matrixHandler.loadMatrix(self.evaluation_parameters["matrix_path"])
             self.timer.stop("Matrix Loading")
             
-        elif parameters["matrix"]["creation"] == "calculate":
+        elif parameters["matrix"]["creation"]["type"] == "rmsd":
             self.timer.start("Matrix Calculation")
             self.matrixHandler.createMatrix(self.trajectoryHandler.coordsets,"QTRFIT_OMP_CALCULATOR")
             self.timer.stop("Matrix Calculation")
             
         else:
             print "[Error] Incorrect matrix creation option: "+parameters["matrix"]["creation"]
-            return 
+            exit() 
            
         if parameters["matrix"]["save_matrix"]:
             self.timer.start("Matrix Save")

@@ -4,8 +4,8 @@ Created on 19/09/2012
 @author: victor
 '''
 import pyproclust.tools.commonTools as common
+import pyproclust.tools.pdbTools as pdb_tools
 from pyRMSD.utils.proteinReading import Reader
-from pyproclust.tools.pdbTools import get_number_of_frames
 from pyproclust.protocol.observer.observable import Observable
 
 class TrajectoryHandler(Observable):
@@ -13,13 +13,8 @@ class TrajectoryHandler(Observable):
     def __init__(self, parameters, observer):
         super(TrajectoryHandler,self).__init__(observer)
         
-        if parameters["matrix"]["action"] == "clustering":
-            self.pdbs = [self.__do_pdb_dic(parameters["matrix"]["pdb1"])]
-            
-        elif parameters["matrix"]["action"] == "comparison":
-            self.pdbs = [self.__do_pdb_dic(parameters["matrix"]["pdb1"]),
-                         self.__do_pdb_dic(parameters["matrix"]["pdb2"])]
-            
+        if parameters["global"]["action"] in ["comparison", "clustering"]:
+            self.pdbs = [self.__do_pdb_dic(pdb_path) for pdb_path in parameters["global"]["pdbs"]]
         else:
             common.print_and_flush( "[ERROR] not known action. Exiting...\n")
             exit()
@@ -29,8 +24,6 @@ class TrajectoryHandler(Observable):
             reader = reader.readThisFile(pdb_description["source"])
         
         self.notify("Loading","Loading Trajectories")
-        if parameters["matrix"]["only_ca"]:
-            reader = reader.gettingOnlyCAs()
         
         self.coordsets = reader.read()
         
@@ -40,5 +33,5 @@ class TrajectoryHandler(Observable):
     def __do_pdb_dic(self,pdb):
         return {
                   "source":pdb,
-                  "conformations": get_number_of_frames(pdb)
+                  "conformations": pdb_tools.get_number_of_frames(pdb)
         }
