@@ -3,7 +3,6 @@ Created on 21/05/2012
 
 @author: victor
 '''
-from pyRMSD.matrixHandler import MatrixHandler
 from pyproclust.tools.plotTools import matrixToImage
 from pyproclust.protocol.handlers.timerHandler import TimerHandler
 from pyproclust.protocol.handlers.workspaceHandler import WorkspaceHandler
@@ -17,6 +16,7 @@ from pyproclust.clustering.analysis.picklingAnalysisRunner import PicklingAnalys
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
 import pyproclust.protocol.saveTools as save_tools
+from pyproclust.protocol.handlers.matrix.matrixHandler import MatrixHandler
 
 class Protocol(Observable):
 
@@ -47,24 +47,16 @@ class Protocol(Observable):
         ##############################
         # Obtaining the distance matrix
         ##############################
-        self.matrixHandler = MatrixHandler(self.workspaceHandler["matrix"])
-        if parameters["matrix"]["creation"]["type"] == "load":
-            self.timer.start("Matrix Loading")
-            self.matrixHandler.loadMatrix(self.evaluation_parameters["matrix_path"])
-            self.timer.stop("Matrix Loading")
-            
-        elif parameters["matrix"]["creation"]["type"] == "rmsd":
-            self.timer.start("Matrix Calculation")
-            self.matrixHandler.createMatrix(self.trajectoryHandler.coordsets,"QTRFIT_OMP_CALCULATOR")
-            self.timer.stop("Matrix Calculation")
-            
-        else:
-            print "[Error] Incorrect matrix creation option: "+parameters["matrix"]["creation"]
-            exit() 
+        self.matrixHandler = MatrixHandler(parameters["matrix"]["creation"]["type"], parameters)
+        
+        self.timer.start("Matrix Generation")
+        self.matrixHandler.create_matrix(parameters["matrix"]["matrix_path"], parameters)
+        self.matrixHandler.save_statistics(parameters["matrix"]["matrix_path"])
+        self.timer.stop("Matrix Generation")
            
         if parameters["matrix"]["save_matrix"]:
             self.timer.start("Matrix Save")
-            self.matrixHandler.saveMatrix(parameters["store_matrix_path"])
+            self.matrixHandler.save_matrix(parameters["matrix"]["store_matrix_path"])
             self.timer.stop("Matrix Save")
         
         ############################################
