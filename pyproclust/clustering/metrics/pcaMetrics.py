@@ -94,7 +94,10 @@ class PCAMetric(object):
         """
         Calculates the eigenvectors and eigenvalues of a covariance matrix.
         
-        @param covariance_matrix: 
+        @param covariance_matrix: The covariance matrix.
+        
+        @return: The first (bigger) eigenvalue, which gives an idea of the relative importance of the 
+        axis responsible of most of the variance. 
         """
         values, vectors = numpy.linalg.eigh(covariance_matrix)
         revert = list(range(len(values)-1, -1, -1))
@@ -102,5 +105,4 @@ class PCAMetric(object):
         vectors = vectors[:, revert]
         which = values > 1e-8
         eigvals = values[which]
-        print eigvals[0:10]
         return  eigvals[0]

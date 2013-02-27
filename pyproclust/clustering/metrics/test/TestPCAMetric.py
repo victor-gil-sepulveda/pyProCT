@@ -16,7 +16,7 @@ from pyproclust.clustering.clustering import Clustering
 import os
 
 class TrajectoryHandlerStub:
-    def __init__(self,coords,apc):
+    def __init__(self, coords, apc):
         self.coordinates = coords
         self.atoms_per_conformation = apc
 
@@ -47,32 +47,32 @@ class testPCAMetric(unittest.TestCase):
     def test_covariance_matrix_vs_prody(self):
         # do it with PCA metric
         my_cov_matrix = PCAMetric.create_covariance_matrix(testPCAMetric.coordsets)
-        
+         
         # Do it with prody
         pca = prody.PCA('pcametric_pca')
         pca.buildCovariance(testPCAMetric.ensemble)
         prody_cov_matrix = pca._cov
-        
+         
         # Compare
         numpy.testing.assert_almost_equal(my_cov_matrix, prody_cov_matrix,10)
-    
+     
     def test_eigenvalues(self):
         # do it with PCA metric
         my_cov_matrix = PCAMetric.create_covariance_matrix(testPCAMetric.coordsets)
         biggest_eigenvalue = PCAMetric.calculate_biggest_eigenvalue(my_cov_matrix)
-        
+         
         # Do it with prody
         pca = prody.PCA('pcametric_pca')
         pca.buildCovariance(testPCAMetric.ensemble)
         pca.calcModes(n_modes=1)
         self.assertAlmostEqual(pca.getEigvals(), [biggest_eigenvalue],10)
-        
+         
     def test_iterative_superposition(self):
         fcoords = flattenCoords(testPCAMetric.not_iterposed_coordsets)
         PCAMetric.do_iterative_superposition(fcoords, 12, 66)
         res_fcoords = fcoords.reshape((12,66,3))
         numpy.testing.assert_almost_equal(res_fcoords, testPCAMetric.coordsets,12)
-        
+         
     def test_PCA(self):
         """
         Regression test.
