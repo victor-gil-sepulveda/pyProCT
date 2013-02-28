@@ -26,7 +26,10 @@ class testPCAMetric(unittest.TestCase):
         # Generate and read the pdb
         cls.pdb_path = "tmp_pdb.pdb"
         open(cls.pdb_path,"w").write(amber_short_ca_contents);
-        prody.setVerbosity('none')
+        try:
+            prody.setVerbosity('none')
+        except Exception :
+            pass 
         cls.pdb = prody.parsePDB(cls.pdb_path, subset='calpha')
         
         # Save coordsets before superposition
@@ -65,7 +68,7 @@ class testPCAMetric(unittest.TestCase):
         pca = prody.PCA('pcametric_pca')
         pca.buildCovariance(testPCAMetric.ensemble)
         pca.calcModes(n_modes=1)
-        self.assertAlmostEqual(pca.getEigvals(), [biggest_eigenvalue],10)
+        self.assertAlmostEqual(pca.getEigvals()[0], biggest_eigenvalue,10)
          
     def test_iterative_superposition(self):
         fcoords = flattenCoords(testPCAMetric.not_iterposed_coordsets)
