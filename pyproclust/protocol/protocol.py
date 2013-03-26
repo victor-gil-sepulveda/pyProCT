@@ -3,82 +3,21 @@ Created on 21/05/2012
 
 @author: victor
 '''
-from pyproclust.tools.plotTools import matrixToImage
-from pyproclust.protocol.handlers.timerHandler import TimerHandler
-from pyproclust.protocol.handlers.workspaceHandler import WorkspaceHandler
-from pyproclust.protocol.handlers.trajectoryHandler import TrajectoryHandler 
-from pyproclust.protocol.observer.observable import Observable
-import pyproclust.protocol.scheduling.tools as scheduling_tools
-from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
+import pyproclust.driver.scheduling.tools as scheduling_tools
 from pyproclust.protocol.exploration.clusteringExplorator import ClusteringExplorator
 from pyproclust.clustering.filtering.clusteringFilter import ClusteringFilter
 from pyproclust.clustering.analysis.picklingAnalysisRunner import PicklingAnalysisRunner
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
 import pyproclust.protocol.saveTools as save_tools
-from pyproclust.protocol.handlers.matrix.matrixHandler import MatrixHandler
+from pyproclust.driver.observer.observable import Observable
 
-class Protocol(Observable):
+class ClusteringProtocol(Observable):
 
     def __init__(self, observer):
-        super(Protocol,self).__init__(observer)
+        super(ClusteringProtocol, self).__init__(observer)
         
     def run(self, parameters):
-        
-        #####################
-        # Start timing 
-        #####################
-        self.timer = TimerHandler()
-        self.timer.start("Global")
-        
-        #####################
-        # Create workspace 
-        #####################
-        self.workspaceHandler = WorkspaceHandler(parameters, self.observer)
-        self.workspaceHandler.create_directories()
-
-        #####################
-        # Loading trajectory 
-        #####################
-        self.timer.start("Trajectory Loading")
-        self.trajectoryHandler = TrajectoryHandler(parameters, self.observer)
-        self.timer.stop("Trajectory Loading")
-        
-        ##############################
-        # Obtaining the distance matrix
-        ##############################
-        self.matrixHandler = MatrixHandler(parameters["matrix"]["creation"]["type"], parameters)
-        
-        self.timer.start("Matrix Generation")
-        self.matrixHandler.create_matrix(parameters["matrix"]["matrix_path"], parameters)
-        self.matrixHandler.save_statistics(parameters["matrix"]["matrix_path"])
-        self.timer.stop("Matrix Generation")
-           
-        if parameters["matrix"]["save_matrix"]:
-            self.timer.start("Matrix Save")
-            self.matrixHandler.save_matrix(parameters["matrix"]["store_matrix_path"])
-            self.timer.stop("Matrix Save")
-        
-        ############################################
-        # Distribution analysis
-        ############################################
-        if parameters["matrix"]["action"] == "comparison":
-            self.timer.start("KL divergence")
-            klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)
-            klDiv.save(self.workspaceHandler["matrix"]+"/kullback_liebler_divergence")
-            self.timer.stop("KL divergence")
-        print self.timer.get_elapsed()
-        
-        #########################
-        # Matrix plot
-        #########################
-        self.timer.start("Matrix Imaging")
-        matrixToImage(self.matrixHandler.distance_matrix,
-                      self.workspaceHandler["matrix"]+"/matrix_plot.png",
-                      max_dim = 1000,
-                      observer = self.observer)
-        self.timer.stop("Matrix Imaging")
-        
         ############################
         # Clustering exploration
         ############################

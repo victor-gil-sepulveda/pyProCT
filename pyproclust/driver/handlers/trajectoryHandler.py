@@ -6,7 +6,7 @@ Created on 19/09/2012
 import pyproclust.tools.commonTools as common
 import pyproclust.tools.pdbTools as pdb_tools
 from pyRMSD.utils.proteinReading import Reader
-from pyproclust.protocol.observer.observable import Observable
+from pyproclust.driver.observer.observable import Observable
 
 class TrajectoryHandler(Observable):
 
