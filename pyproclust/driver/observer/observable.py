@@ -3,7 +3,7 @@ Created on 04/02/2013
 
 @author: victor
 '''
-from pyproclust.protocol.observer.accumulativeObserver import AccumulativeObserver
+from pyproclust.driver.observer.accumulativeObserver import AccumulativeObserver
 
 class Observable(object):
     '''
