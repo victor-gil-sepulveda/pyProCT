@@ -5,7 +5,7 @@ Created on 07/02/2013
 '''
 import unittest
 from pyproclust.protocol.exploration.clusteringExplorator import ClusteringExplorator
-from pyproclust.protocol.protocolParameters import ProtocolParameters
+from pyproclust.driver.parameters import ProtocolParameters
 
 
 class TestClusteringExplorator(unittest.TestCase):

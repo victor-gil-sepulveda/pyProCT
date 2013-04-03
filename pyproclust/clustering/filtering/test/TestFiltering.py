@@ -14,7 +14,11 @@ class ClusteringMock(object):
     
     def eliminate_noise(self, max_noise):
         pass
-    
+
+class MatrixHandlerMock():
+    def __init__(self,number_of_elements):
+        self.distance_matrix = MatrixMock(number_of_elements)
+        
 class MatrixMock(object):
     def __init__(self, number_of_elements):
         self.row_length = number_of_elements
@@ -26,7 +30,7 @@ class TestFiltering(unittest.TestCase):
                                         "minimum_clusters": 5,
                                         "maximum_clusters": 30,
                                      },
-                                    MatrixMock(1000))
+                                    MatrixHandlerMock(1000))
         
         self.assertItemsEqual(myFilter.check_num_clusters_in_range(ClusteringMock(number_of_clusters = 10, number_of_elements = 1000)), [])
                               
@@ -54,7 +58,7 @@ class TestFiltering(unittest.TestCase):
         myFilter = ClusteringFilter({
                                         "maximum_noise": 15,
                                      },
-                                    MatrixMock(1000))
+                                    MatrixHandlerMock(1000))
         # 10% noise
         self.assertItemsEqual( myFilter.check_noise_level(ClusteringMock(number_of_clusters = 10, number_of_elements = 900)), [])
         
@@ -79,7 +83,7 @@ class TestFiltering(unittest.TestCase):
                                         "minimum_clusters": 5,
                                         "minimum_cluster_size": 50
                                      },
-                                    MatrixMock(1000))
+                                    MatrixHandlerMock(1000))
         
         self.assertItemsEqual( myFilter.check_clustering(ClusteringMock(number_of_clusters = 25, number_of_elements = 900)),[])
         
@@ -108,20 +112,23 @@ class TestFiltering(unittest.TestCase):
                                         "minimum_clusters": 5,
                                         "minimum_cluster_size": 50
                                      },
-                                    MatrixMock(1000))
+                                    MatrixHandlerMock(1000))
         
         clustering_info ={"clustering 1":{
                                        "clustering":ClusteringMock(number_of_clusters = 50, number_of_elements = 800)
                                        },
                           "clustering 2":{
                                        "clustering":ClusteringMock(number_of_clusters = 25, number_of_elements = 900)
+                                       },
+                          "clustering 3":{
+                                       "clustering":ClusteringMock(number_of_clusters = 25, number_of_elements = 900)
                                        }
                           }
         selected, not_selected =  myFilter.filter(clustering_info)
-        
-        self.assert_(len(selected) == 1 and len(not_selected) == 1)
-        self.assertEqual(selected.keys() ,      ["clustering 2"])
-        self.assertEqual(not_selected.keys() ,  ["clustering 1"])
+
+        self.assert_(len(selected) == 2 and len(not_selected) == 1)
+        self.assertItemsEqual(selected.keys() ,      ["clustering 2", "clustering 3"])
+        self.assertItemsEqual(not_selected.keys() ,  ["clustering 1"])
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

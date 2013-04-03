@@ -3,7 +3,7 @@ Created on 13/02/2013
 
 @author: victor
 '''
-import pyRMSD.matrixHandler.MatrixHandler as pyRMSD_MatrixHandler
+from pyRMSD.matrixHandler import MatrixHandler as pyRMSD_MatrixHandler
 from pyproclust.driver.handlers.matrix.rmsdMatrixBuilder import RMSDMatrixBuilder
 from pyproclust.driver.handlers.matrix.euclideanDistanceMatrixBuilder import EuclideanDistanceMatrixBuilder
 
@@ -89,14 +89,14 @@ class MatrixHandler(object):
             
         return self.distance_matrix
     
-    def save_matrix(self, matrix_save_file):
+    def save_matrix(self, matrix_path):
         """
         Writes matrix contents to disk.
         
         @param matrix_save_file: Complete path (with filename) where to save the matrix.
         """
         self.check_matrix_calculated_error()
-        pyRMSD_MatrixHandler.save_matrix(matrix_save_file, self.distance_matrix)
+        pyRMSD_MatrixHandler.save_matrix(matrix_path, self.distance_matrix)
     
     def save_statistics(self, matrix_base_path):
         """

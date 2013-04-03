@@ -5,6 +5,7 @@ Created on 07/09/2012
 '''
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 import math
+import random
 
 class BestClusteringSelector(object):
     
@@ -28,14 +29,18 @@ class BestClusteringSelector(object):
         """
         evaluation_types = AnalysisPopulator.get_evaluation_analysis_types(self.parameters)
         
+        # If there were no criteria defined, then the clustering is randomly selected
+        if evaluation_types == []:
+            return clustering_info[clustering_info.keys()[random.randint(0,len(clustering_info.keys())-1)]]
+        
         for evaluation_type in evaluation_types:
             BestClusteringSelector.normalize_one_evaluation_type(evaluation_type, clustering_info)
         
-        scores = BestClusteringSelector.get_scores_for_all_clusters_and_criterias(self.criteria,clustering_info)
+        scores = BestClusteringSelector.get_scores_for_all_clusters_and_criterias(self.criteria, clustering_info)
         
-        best_clustering_id, criteria_id, score = self.get_best_clustering(scores)
+        best_clustering_id, criteria_id, scores = self.get_best_clustering(scores)
         
-        return best_clustering_id, criteria_id, score
+        return best_clustering_id, criteria_id, scores
     
     @classmethod
     def get_best_clustering(cls, scores):
@@ -52,7 +57,7 @@ class BestClusteringSelector(object):
                 value = scores[criteria_id][clustering_id]
                 if value > best_clustering[0]:
                     best_clustering = (value, (clustering_id,criteria_id))
-        best_clustering_id,best_criteria_id = best_clustering[1]
+        best_clustering_id, best_criteria_id = best_clustering[1]
         return best_clustering_id, best_criteria_id, scores
         
     @classmethod

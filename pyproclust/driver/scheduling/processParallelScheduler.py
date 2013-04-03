@@ -6,7 +6,7 @@ Created on 16/05/2012
 from multiprocessing import Process
 import time
 from threading import Thread, Lock
-from pyproclust.protocol.observer.observable import Observable
+from pyproclust.driver.observer.observable import Observable
 
 class ProcessLauncher(Thread, Observable):
     def __init__(self,process, update_guard, processes_dict, running_processes_list, finished_processes_list, observer = None):

@@ -4,8 +4,8 @@ Created on 16/08/2012
 @author: victor
 '''
 import time
-from pyproclust.protocol.observer.observable import Observable
-from pyproclust.protocol.scheduling.processParallelScheduler import ProcessParallelScheduler
+from pyproclust.driver.observer.observable import Observable
+from pyproclust.driver.scheduling.processParallelScheduler import ProcessParallelScheduler
 
 class SerialProcess(Observable):
     def __init__(self, t, name, kwargs, observer = None):

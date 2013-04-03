@@ -5,9 +5,9 @@ Created on 04/02/2013
 '''
 import optparse
 import threading
-from pyproclust.protocol.protocolImplementation import Protocol
-from pyproclust.protocol.protocolParameters import ProtocolParameters
-from pyproclust.protocol.observer.observer import Observer
+from pyproclust.driver.parameters import ProtocolParameters
+from pyproclust.driver.observer.observer import Observer
+from pyproclust.driver.driver import Driver
 
 class CmdLinePrinter(threading.Thread):
     
@@ -41,14 +41,21 @@ if __name__ == '__main__':
     
     json_script = args[0]
     
-    parameters = ProtocolParameters.get_params_from_json(open(json_script).read())
+    parameters = None
+    try:
+        parameters = ProtocolParameters.get_params_from_json(open(json_script).read())
+    except ValueError, e:
+        print "Malformed json script."
+        print e.message
+        exit()
+        
     observer = Observer()
     
     cmd_thread = CmdLinePrinter(observer)
     cmd_thread.start()
     
     try:
-        Protocol(observer).run(parameters)
+        Driver(observer).run(parameters)
     except:
         cmd_thread.stop()
         raise

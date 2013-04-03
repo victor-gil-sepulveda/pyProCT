@@ -27,6 +27,7 @@ def save_best_clusters_and_scores(best_clustering_id, best_criteria_id, all_scor
                   "best_score": all_scores[best_criteria_id][best_clustering_id],
                   "scores": all_scores
     }
+    
     open(filename+".json","w").write(json.dumps(scoring_dic, sort_keys=True, indent=4, separators=(',', ': ')))
 
 def save_representatives(representatives, distance_matrix, workspace_handler, trajectory_handler):

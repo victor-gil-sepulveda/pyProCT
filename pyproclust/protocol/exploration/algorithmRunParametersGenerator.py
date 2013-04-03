@@ -13,7 +13,7 @@ class AlgorithmRunParametersGenerator(object):
     CLUSTERING_SIZE_STEP = 2
     HIERARCHICAL_REFINEMENT_VALUE = 200
     
-    def __init__(self, parameters, distance_matrix):
+    def __init__(self, parameters, matrix_handler):
         """
         Class creator.
         
@@ -21,7 +21,7 @@ class AlgorithmRunParametersGenerator(object):
         
         @param distance_matrix: The distance matrix we are using.
         """
-        self.distance_matrix = distance_matrix
+        self.distance_matrix = matrix_handler.distance_matrix
         self.parameters = parameters
     
     @classmethod
@@ -54,7 +54,8 @@ class AlgorithmRunParametersGenerator(object):
                          "seeding_max_cutoff": None
                   },
                   "random":{
-                        "num_clusters": None
+                        "num_clusters": None,
+                        
                   }
         }
     
@@ -142,7 +143,8 @@ class AlgorithmRunParametersGenerator(object):
     def get_hierarchical_parameters(self):
         """
         This function creates some parameters to be used with the Hierarchical algorithm. 
-        @return: A tuple with the generated parameters and an empty list corresponding to the clusterings.
+        @return: A tuple with the generated parameters and a list with its corresponding clusterings 
+        (in this case parameters and clusterings are obtained at the same time).
         """
         run_parameters = []
         max_clusters = self.parameters["evaluation"]["maximum_clusters"]
@@ -155,7 +157,12 @@ class AlgorithmRunParametersGenerator(object):
                                                                         min_clusters,
                                                                         max_clusters,
                                                                         AlgorithmRunParametersGenerator.HIERARCHICAL_REFINEMENT_VALUE)
-        (clusterings, cutoffs) = zip(*clusters_and_cutoff) 
+        clusterings = []
+        cutoffs = []
+        for numclusters in clusters_and_cutoff:
+            clusterings.append(clusters_and_cutoff[numclusters][1])
+            cutoffs.append(clusters_and_cutoff[numclusters][0])
+#         (clusterings, cutoffs) = zip(*clusters_and_cutoff)
         
         for cutoff in cutoffs:
             run_parameter = AlgorithmRunParametersGenerator.get_base_parameters()["hierarchical"]

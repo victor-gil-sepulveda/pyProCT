@@ -6,6 +6,7 @@ Created on 13/08/2012
 import numpy
 import pyRMSD.calculators
 from pyRMSD import availableCalculators
+from pyRMSD.RMSDCalculator import RMSDCalculator
 from pyRMSD.utils.proteinReading import flattenCoords
 
 class PCAMetric(object):
@@ -14,7 +15,16 @@ class PCAMetric(object):
     """
     def __init__(self):
         pass
-    
+# Matrix Generation : 5.239
+# Selection : 0.000
+# Clustering Filtering : 0.000
+# Global : 359.361
+# Matrix Imaging : 0.331
+# Trajectory Loading : 1.049
+# Clustering Exploration : 12.378
+# Matrix Save : 0.036
+# Evaluation : 340.323
+
     def evaluate(self, clustering, trajectory_handler):
         """
         Calculates the value of the PCA metric, which is the mean of the largest eigenvalue obtained from the PCA (the one corresponding
@@ -25,21 +35,23 @@ class PCAMetric(object):
         
         @return: the value of the metric.
         """
-        # Now do calculation for each one of the clusters
+        # Pca for each one of the clusters
         pca_mean_val = 0.;
+        copied_coordinates = trajectory_handler.getWorkingCoordinates()
         for c in clustering.clusters:
             # Pick the coordinates (ensuring that we are copying them)
-            coordinates_of_this_cluster_conformations = numpy.array(trajectory_handler.coordinates[c.all_elements])
+            coordinates_of_this_cluster_conformations = copied_coordinates[c.all_elements]
+            calculator = RMSDCalculator(
+                                    coordsets = coordinates_of_this_cluster_conformations,
+                                    calculatorType = "QTRFIT_OMP_CALCULATOR", 
+                                    modifyCoordinates = True)
+            
             
             # Make an iterative superposition (to get the minimum RMSD of all with respect to a mean conformation)
-            coordinates_copy = flattenCoords(coordinates_of_this_cluster_conformations)
-            PCAMetric.do_iterative_superposition( coordinates_copy, 
-                                                 len(coordinates_of_this_cluster_conformations), 
-                                                 trajectory_handler.atoms_per_conformation)
+            calculator.iterativeSuperposition()
             
             # Calculate the covariance matrix
-            coordinates_copy = coordinates_copy.reshape((len(coordinates_of_this_cluster_conformations),trajectory_handler.atoms_per_conformation,3))
-            covariance_matrix = PCAMetric.create_covariance_matrix(coordinates_copy)
+            covariance_matrix = PCAMetric.create_covariance_matrix(coordinates_of_this_cluster_conformations)
             
             # And then the eigenvalue we are interested in
             pca_mean_val += PCAMetric.calculate_biggest_eigenvalue(covariance_matrix)

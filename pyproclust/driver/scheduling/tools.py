@@ -3,8 +3,8 @@ Created on 07/02/2013
 
 @author: victor
 '''
-from pyproclust.protocol.scheduling.processParallelScheduler import ProcessParallelScheduler
-from pyproclust.protocol.scheduling.serialScheduler import SerialScheduler
+from pyproclust.driver.scheduling.processParallelScheduler import ProcessParallelScheduler
+from pyproclust.driver.scheduling.serialScheduler import SerialScheduler
 
 
 def build_scheduler(scheduler_type, sleep_time, observer, max_processes):

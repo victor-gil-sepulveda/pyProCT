@@ -56,7 +56,7 @@ class SpectralClusteringAlgorithm(object):
         
         try:
             self.sigma_sq = kwargs["sigma_sq"]
-            W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix, sigma_sq)
+            W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix, self.sigma_sq)
         except KeyError:
             W, self.sigma_sq = self.do_sigma_estimation(condensed_matrix)
             if verbose: print "Sigma estimation: ", self.sigma_sq
@@ -198,6 +198,8 @@ class SpectralClusteringAlgorithm(object):
         'fully connected graph', as explained in (Luxburg 2007).
         
         @param matrix: The distance matrix for this dataset.
+        
+        @param sigma_sq: Is a cutoff parameter for edge creation.
         
         @return: The adjacency matrix.
         """

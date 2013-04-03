@@ -47,5 +47,14 @@ class TimerHandler(object):
                           "elapsed":self.named_timers[timer].get_elapsed_time()
             })
         return times
+    
+    def __str__(self):
+        rep = ""
+        for timer in self.get_elapsed():
+            rep += "%s : %.3f\n"%(timer["name"], timer["elapsed"]) 
+        return rep
+    
+    def __repr__(self):
+        return self.__str__()
         
         

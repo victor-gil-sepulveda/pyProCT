@@ -15,11 +15,17 @@ from pyproclust.tools.pdbTools import repair_MODEL_ENDMDL_tags
 class Test(unittest.TestCase):
 
     def test_def_get_number_of_frames(self):
-        open("test_pdb_for_counting.pdb","w").write(test_data.pdb_1_file_content)
-        num_models = pyproclust.tools.pdbTools.get_number_of_frames("test_pdb_for_counting.pdb")
-        os.system("rm test_pdb_for_counting.pdb")
+        open("test_pdb_for_counting_1.pdb","w").write(test_data.pdb_1_file_content)
+        num_models = pyproclust.tools.pdbTools.get_number_of_frames("test_pdb_for_counting_1.pdb")
+        os.system("rm test_pdb_for_counting_1.pdb")
         self.assertEqual(num_models,test_data.pdb_1_num_of_models)
 
+    def test_get_number_of_atoms(self):
+        open("test_pdb_for_counting_2.pdb","w").write(test_data.pdb_1_sub2_file_content)
+        num_models = pyproclust.tools.pdbTools.get_number_of_atoms("test_pdb_for_counting_2.pdb")
+        os.system("rm test_pdb_for_counting_2.pdb")
+        self.assertEqual(num_models,test_data.pdb1_num_of_atoms)
+        
     def test_extract_frames_from_trajectory(self):
         input_file = cStringIO.StringIO(test_data.pdb_1_sub2_file_content)
         output = cStringIO.StringIO()
@@ -38,7 +44,8 @@ class Test(unittest.TestCase):
         frames = [1,3]
         pyproclust.tools.pdbTools.extract_frames_from_trajectory(input_file, test_data.pdb_2_num_of_models, output, frames,"MODEL","ENDMDL", keep_header = True)
         self.assertEqual( output.getvalue(),test_data.extracted_pdbs_4)
-        
+    
+    
     def test_write_a_tfile_model_into_other_tfile(self):
         # We'll write the first and third model
         input_file = cStringIO.StringIO(test_data.pdb_1_sub2_file_content)

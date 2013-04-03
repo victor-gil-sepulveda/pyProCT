@@ -30,13 +30,11 @@ def run_all_analysis_for_a_clustering(clustering_id, clustering, tmp_file_handle
 
 class PicklingAnalysisRunner():
     
-    def __init__(self, scheduler, parameters, clustering_info, populator):
+    def __init__(self, scheduler, clustering_info, populator):
         """
         Constructor
         
         @param scheduler: A Scheduler instance of any type to control the execution of analysis.
-        
-        @param parameters: General script parameters.
         
         @param clustering_info: a 'clustering_info' structure (dictionary that for each 'clustering_id' has a structure
         with all the info of one clustering. 
@@ -118,49 +116,3 @@ class PicklingAnalysisRunner():
         self.scheduler.consume()
         self.recover_evaluation_data(self.clustering_info)
     
-#     def gen_final_string_and_normalize(self, all_results):
-#         """
-#         As it name says, it will generate the final report string for all the analysis.
-#         It also normalizes the numerical arrays in the range [0,1].
-#         """
-#         final_string = ""
-#         for analysis_name in all_results:
-#             analysis_array = all_results[analysis_name] # Write the result string
-#             final_string += self.gen_results_string(analysis_name,analysis_array)+"\n" # Normalize all the numerical results
-#             # Hack!!!
-#             if not analysis_name in ("Number of clusters","Mean cluster size","Noise level"):
-#                 all_results[analysis_name] = self.numerical_results_normalization(analysis_array)
-#             else:
-#                 all_results[analysis_name] = analysis_array
-#         return final_string
-# 
-#     def repack_results(self, ordered_clusterings, all_results):
-#         """
-#         It repacks all the results in a way that each clustering has all its analysis results associated.
-#         This means that the result will be a tuple list where the first element is the clustering from which
-#         we did the analysis, and as second element it has a dictionary with elements of the type:
-#         "analysis name":"normalized value"
-#         Where the normalized value has been normalized over all the evaluations.
-#         """
-#         repacked_results = []
-#         for i in range(len(ordered_clusterings)):
-#             clustering = ordered_clusterings[i]
-#             analysis_dic = {}
-#             for analysis_name in all_results.keys():
-#                 analysis_dic[analysis_name] = all_results[analysis_name][i]
-#             repacked_results.append((clustering, analysis_dic))
-#         
-#         return repacked_results
-# 
-# 
-#     def gen_results_string(self, analysis_name, analysis_array):
-#         """
-#         Generates the report string for one analysis.
-#         """
-#         line =  analysis_name + "\t"
-#         for i in range(len(analysis_array)):
-#             line += str(analysis_array[i])+"\t"
-#         return line
-#        
-#         
-#     

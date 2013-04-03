@@ -4,6 +4,7 @@ Created on 28/02/2012
 @author: victor
 '''
 pdb_1_num_of_models = 7
+pdb1_num_of_atoms = 5
 pdb_1_file_content = """MODEL        0
 ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            
 ATOM      4  CA  PHE     4      -8.605   2.189  -0.292  1.00  1.00            

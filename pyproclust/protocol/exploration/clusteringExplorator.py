@@ -5,7 +5,7 @@ Created on 05/02/2013
 '''
 import os
 from pyproclust.clustering.clustering import Clustering
-from pyproclust.protocol.observer.observable import Observable
+from pyproclust.driver.observer.observable import Observable
 from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm
 from pyproclust.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
 from pyproclust.algorithms.random.RandomAlgorithm import RandomClusteringAlgorithm
@@ -71,8 +71,6 @@ class ClusteringExplorator(Observable):
         self.current_clustering_id = 0
         self.parameters_generator = parameters_generator
         self.scheduler = scheduler
-#         self.parameters_generator = AlgorithmRunParametersGenerator(self.parameters, 
-#                                                                     self.matrix_handler.distance_matrix)
     
     @classmethod
     def get_used_algorithms(cls, parameters):
@@ -199,18 +197,16 @@ class ClusteringExplorator(Observable):
         @return: An instance of an algorithm of type 'algorithm_type'.
         """
         distance_matrix = self.matrix_handler.distance_matrix
-        
-        # We need to set number of clusters for performance and to get sigma
-        algorithm_execution_parameters = {"max_clusters":self.parameters["evaluation"]["maximum_clusters"]}
-        try:
+        algorithm_execution_parameters = {}
+        if algorithm_type == "spectral":
+            # We need to set number of clusters for performance and to get sigma
+            algorithm_execution_parameters["max_clusters"] = self.parameters["evaluation"]["maximum_clusters"]
             algorithm_execution_parameters["sigma_sq"] = self.parameters["algorithms"]["spectral"]["sigma"]
-        except KeyError:
-            pass
         
         if algorithm_type in ["spectral","dbscan","gromos","kmedoids","random","hierarchical"] :
             return ClusteringExplorator.get_available_algorithms()[algorithm_type](distance_matrix, **algorithm_execution_parameters)
-        
         else:
-            print "[ERROR][ClusteringExplorator::build_algorithms] Not known algorithm type( %s )"%(algorithm_type)
+            print "[ERROR][ClusteringExplorator::build_algorithms] Not known algorithm type ( %s )"%(algorithm_type)
+            self.notify("SHUTDOWN", "Not known algorithm type ( %s )"%(algorithm_type))
             exit()
     

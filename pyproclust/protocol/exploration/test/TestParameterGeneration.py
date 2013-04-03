@@ -4,7 +4,7 @@ Created on 07/02/2013
 @author: victor
 '''
 import unittest
-from pyproclust.protocol.protocolParameters import ProtocolParameters
+from pyproclust.driver.parameters import ProtocolParameters
 from pyproclust.protocol.exploration.algorithmRunParametersGenerator import AlgorithmRunParametersGenerator
 
 class MatrixMock:

@@ -24,13 +24,35 @@ def get_number_of_frames(pdb_file):
     Uses the 'egrep' shell command to count the number of times MODEL appears in the trajectory file, which will be indeed
     the number of different structures.
     
-    @param pdb_file: The pdb file (path) from which the number of frames will be counting.
+    @param pdb_file: The pdb file (path) from which the number of frames will be counted.
     
     @return: The number of MODEL tags found.
     """
     process = subprocess.Popen(["egrep","-c",''"^MODEL"'',pdb_file],stdout=subprocess.PIPE)
     lines = process.stdout.readlines()
     return int(lines[0])
+
+def get_number_of_atoms(pdb_file):
+    """
+    Counts the number of ATOM and HETATM entries in the first model of a pdb file.
+    
+    @param pdb_file: The pdb file (path) from which the number of atoms will be counted.
+    
+    @return: The number of atoms found in the first frame.
+    """
+    handler = open(pdb_file,"r")
+    number_of_models = 0
+    number_of_atoms = 0
+    for line in handler:
+        
+        if line[0:5] == "MODEL":
+            number_of_models += 1
+            if number_of_models > 1:
+                break
+
+        if number_of_models == 1 and (line[0:4] == "ATOM" or line[0:6] == "HETATM"):
+            number_of_atoms += 1
+    return number_of_atoms
 
 def read_to_TAG(file_input_handler, TAG):
     """
