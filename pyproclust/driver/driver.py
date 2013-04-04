@@ -3,15 +3,17 @@ Created on Mar 26, 2013
 
 @author: victor
 '''
+import os
 from pyproclust.driver.handlers.timerHandler import TimerHandler
 from pyproclust.driver.handlers.workspaceHandler import WorkspaceHandler
 from pyproclust.driver.handlers.trajectoryHandler import TrajectoryHandler
 from pyproclust.driver.handlers.matrix.matrixHandler import MatrixHandler
 from pyproclust.driver.observer.observable import Observable
 import pyproclust.tools.plotTools as plotTools
-from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
-import os
 from pyproclust.protocol.protocol import ClusteringProtocol
+import pyproclust.protocol.saveTools as saveTools
+from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
+from pyproclust.driver.compressor.compressor import Compressor
 
 class Driver(Observable):
     def __init__(self, observer):
@@ -49,6 +51,9 @@ class Driver(Observable):
         self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"],parameters["matrix"]["filename"]))
         self.timer.stop("Matrix Save")
 
+
+        action_type = parameters["global"]["action"]["type"]
+        
         #########################
         # Matrix plot
         #########################
@@ -57,7 +62,7 @@ class Driver(Observable):
                                   os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"]),
                                   max_dim = parameters["matrix"]["image"]["dimension"],
                                   observer = self.observer)
-        
+         
         self.timer.stop("Matrix Imaging")
         
         ##############################
@@ -73,13 +78,22 @@ class Driver(Observable):
             print "[FATAL ClusteringProtocol::run] The clustering search found no clusterings. Exiting..."
             exit()
         
-        print best_clustering
+        ##############################
+        # Saving representatives
+        ##############################
+        saveTools.save_representatives(best_clustering["clustering"].get_medoids(self.matrixHandler.distance_matrix), 
+                                       "representatives",
+                                       self.workspaceHandler, 
+                                       self.trajectoryHandler)
+        
         ##############################
         # Specialized post-processing
         ##############################
-        action = parameters["global"]["action"]
         
-        if action == "comparison":
+        if action_type == "clustering":
+            pass
+        
+        elif action_type == "comparison":
             ############################################
             # Distribution analysis
             ############################################
@@ -88,12 +102,17 @@ class Driver(Observable):
             klDiv.save(os.path.join(self.workspaceHandler["matrix"],"kullback_liebler_divergence"))
             self.timer.stop("KL divergence")
         
-        elif action == "clustering":
-            pass
-        
-        elif action == "compression":
-            pass
-        
+        elif action_type == "compression":
+            ############################################
+            # Compress
+            ############################################
+            self.timer.start("Compression")
+            compressor = Compressor(parameters["global"]["action"]["parameters"])
+            compressor.compress(best_clustering["clustering"], "compressed_pdb",
+                               self.workspaceHandler, 
+                               self.trajectoryHandler,
+                               self.matrixHandler)
+            self.timer.stop("Compression")
         
         self.timer.stop("Global")
         print self.timer

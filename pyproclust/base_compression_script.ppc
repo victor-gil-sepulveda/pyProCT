@@ -1,0 +1,139 @@
+{
+	"workspace": {
+				"base": "/home/victor/Escritorio/test",
+				"results": "results",
+				"tmp": "tmp",
+				"clusterings": "clusterings",
+				"refinement": "refinement",
+				"matrix": "matrix"
+	},
+	
+	"global":{
+		"action": {
+					"type":"compression",
+					"parameters":{
+							"final_number_of_frames": 800		
+					}
+		},
+		"pdbs":[
+			"/home/victor/Escritorio/test/ubi_2_clusters.pdb",
+			"/home/victor/Escritorio/test/ubi_5_clusters.pdb",
+			"/home/victor/Escritorio/test/ubi_9_clusters.pdb"
+		]
+	},
+	
+	"matrix": {
+                "method": "rmsd",
+				"parameters":{
+					"fit_selection": "all",
+					"calc_selection": "",
+					"calculator_type": "QTRFIT_OMP_CALCULATOR"
+                },
+                "filename": "matrix",
+                "image":{
+                	"filename":"matrix_plot.png",
+                	"dimension":1000
+                }
+    },
+    
+    "clustering":{
+    
+    	"control":{
+    		"number_of_processors": 4,
+    		"algorithm_scheduler_sleep_time":5,
+    		"evaluation_scheduler_sleep_time":30
+    	},
+    	
+    	"algorithms": {
+    	
+	        "spectral": {
+	            "auto": false,
+	            "use": true,
+	            "sigma": 1.0,
+	            "parameters": []
+	        },
+	        
+	        "dbscan": {
+	            "auto": false,
+	            "use": true,
+	            "parameters": []
+	        },
+	        
+	        "gromos": {
+	            "auto": false,
+	            "use": true,
+	            "parameters": []
+	        },
+	        
+	        "kmedoids": {
+	            "auto": false,
+	            "use": true,
+	            "parameters": [{
+	            				"k":14,
+                         		"seeding_type":"EQUIDISTANT"
+                         		}]
+	        },
+	        
+	        "random": {
+	            "auto": false,
+	            "use": true,
+	            "parameters": []
+	        },
+	        
+	        "hierarchical": {
+	            "auto": false,
+	            "use": true,
+	            "parameters": []
+	        }
+	    },
+	    
+	    "evaluation": {
+	        "maximum_noise": 15,
+	        "evaluation_criteria": {
+		        "criteria_0": {
+	                
+	                "CythonSilhouette":{
+	                    "action": ">",
+	                    "weight": 0.9
+	                },
+	                
+	                "NormNCut":{
+	                    "action": ">",
+	                    "weight": 0.3
+	                }
+	            } ,
+	            "criteria_1": {
+	                
+	                "CythonSilhouette":{
+	                    "action": ">",
+	                    "weight": 0.8
+	                },
+	                
+	                "CythonMirrorCohesion":{
+	                    "action": ">",
+	                    "weight": 0.2
+	                },
+	                
+	                "NormNCut":{
+	                    "action": ">",
+	                    "weight": 0.1
+	                }
+	            } 
+            },
+	        "minimum_cluster_size": 50,
+	        "query_types": [
+			        "NumClusters",
+		            "NoiseLevel"
+	        ],
+	        "maximum_clusters": 14,
+	        "minimum_clusters": 14
+	    },
+    	
+    	"refinement":{
+			"use": false
+		}
+    }
+    
+}
+	
+	

@@ -7,6 +7,7 @@ import pickle
 import json
 import shutil
 import pyproclust.tools.pdbTools as pdb_tools
+import os.path
 
 def save_cluster_info(filename, cluster_info):
     """
@@ -30,34 +31,36 @@ def save_best_clusters_and_scores(best_clustering_id, best_criteria_id, all_scor
     
     open(filename+".json","w").write(json.dumps(scoring_dic, sort_keys=True, indent=4, separators=(',', ': ')))
 
-def save_representatives(representatives, distance_matrix, workspace_handler, trajectory_handler):
+def save_representatives(representatives, pdb_name, workspace_handler, trajectory_handler):
     """
     Saves a pdb file containing the most representative elements of the clustering.
     
     @param representatives: A list of the representative frames we want to extract.
-    
-    @param distance_matrix: The distance matrix used to get the clustering.
     
     @param workspace_handler: The workspace handler of this run.
     
     @param trajectory_handler: The trajectory handler for this run.
     """
     results_directory = workspace_handler["results"]
-    temporary_merged_trajectory_path = workspace_handler["tmp"]+"/tmp_merged_trajectory.pdb"
+    temporary_merged_trajectory_path = os.path.join(workspace_handler["tmp"],"tmp_merged_trajectory.pdb")
     pdbs = trajectory_handler.pdbs
     
     # Copy the first one (there's at least one)
-    shutil.copyfile(pdbs[0], temporary_merged_trajectory_path)
+    shutil.copyfile(pdbs[0]["source"], temporary_merged_trajectory_path)
     file_handler_in = open(temporary_merged_trajectory_path,"a")
     for pdb_file in pdbs[1:]:
         # Concat the other file
-        file_handler_in.write(open(pdb_file,"r").read())
+        file_handler_in.write(open(pdb_file["source"],"r").read())
     file_handler_in.close()
     
     # Add 
     file_handler_in = open(temporary_merged_trajectory_path,"r")
-    file_handler_out = open(results_directory+"/representatives.pdb","w")
-    pdb_tools.extract_frames_from_trajectory(file_handler_in, distance_matrix.row_length, file_handler_out, representatives)
+    file_handler_out = open(os.path.join(results_directory,"%s.pdb"%pdb_name),"w")
+    print "REPRESENTATIVES ", representatives
+    pdb_tools.extract_frames_from_trajectory(file_handler_in, 
+                                             pdb_tools.get_number_of_frames(temporary_merged_trajectory_path),
+                                             file_handler_out, 
+                                             representatives)
     file_handler_in.close()
     file_handler_out.close()
 

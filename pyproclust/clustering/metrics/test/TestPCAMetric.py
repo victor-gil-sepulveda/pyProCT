@@ -19,6 +19,9 @@ class TrajectoryHandlerStub:
     def __init__(self, coords, apc):
         self.coordinates = coords
         self.atoms_per_conformation = apc
+    
+    def getWorkingCoordinates(self):
+        return self.coordinates
 
 class testPCAMetric(unittest.TestCase):
     @classmethod
@@ -70,20 +73,14 @@ class testPCAMetric(unittest.TestCase):
         pca.calcModes(n_modes=1)
         self.assertAlmostEqual(pca.getEigvals()[0], biggest_eigenvalue,10)
          
-    def test_iterative_superposition(self):
-        fcoords = flattenCoords(testPCAMetric.not_iterposed_coordsets)
-        PCAMetric.do_iterative_superposition(fcoords, 12, 66)
-        res_fcoords = fcoords.reshape((12,66,3))
-        numpy.testing.assert_almost_equal(res_fcoords, testPCAMetric.coordsets,12)
-         
     def test_PCA(self):
         """
         Regression test.
         """
         trajectory_handler = TrajectoryHandlerStub(testPCAMetric.not_iterposed_coordsets,66)
         clustering = Clustering([Cluster(None,range(6)),Cluster(None,range(6,12))], "a clustering")
-        pcaMetric = PCAMetric()
-        self.assertAlmostEquals(pcaMetric.evaluate(clustering, trajectory_handler), 1.42774868808, 10)
+        pcaMetric = PCAMetric(trajectory_handler)
+        self.assertAlmostEquals(pcaMetric.evaluate(clustering), 1.42774868808, 10)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

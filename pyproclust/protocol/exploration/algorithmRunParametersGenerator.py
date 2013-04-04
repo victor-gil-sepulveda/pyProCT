@@ -113,7 +113,7 @@ class AlgorithmRunParametersGenerator(object):
         run_parameters = []
         max_clusters = self.parameters["evaluation"]["maximum_clusters"]
         min_clusters = self.parameters["evaluation"]["minimum_clusters"]
-        sizes = range(min_clusters,max_clusters,AlgorithmRunParametersGenerator.CLUSTERING_SIZE_STEP)
+        sizes = range(min_clusters,max_clusters+1,AlgorithmRunParametersGenerator.CLUSTERING_SIZE_STEP)
         for one_size in sizes:
             run_parameter = AlgorithmRunParametersGenerator.get_base_parameters()["spectral"]
             run_parameter["k"]  = one_size
@@ -130,7 +130,7 @@ class AlgorithmRunParametersGenerator(object):
         run_parameters = []
         max_clusters = self.parameters["evaluation"]["maximum_clusters"]
         min_clusters = self.parameters["evaluation"]["minimum_clusters"]
-        sizes = range(min_clusters,max_clusters,AlgorithmRunParametersGenerator.CLUSTERING_SIZE_STEP)
+        sizes = range(min_clusters,max_clusters+1,AlgorithmRunParametersGenerator.CLUSTERING_SIZE_STEP)
         for one_size in sizes:
             run_parameter = AlgorithmRunParametersGenerator.get_base_parameters()["kmedoids"]
             run_parameter["k"]  = one_size
@@ -162,7 +162,6 @@ class AlgorithmRunParametersGenerator(object):
         for numclusters in clusters_and_cutoff:
             clusterings.append(clusters_and_cutoff[numclusters][1])
             cutoffs.append(clusters_and_cutoff[numclusters][0])
-#         (clusterings, cutoffs) = zip(*clusters_and_cutoff)
         
         for cutoff in cutoffs:
             run_parameter = AlgorithmRunParametersGenerator.get_base_parameters()["hierarchical"]
@@ -197,7 +196,7 @@ class AlgorithmRunParametersGenerator(object):
         run_parameters = []
         max_clusters = self.parameters["evaluation"]["maximum_clusters"]
         min_clusters = self.parameters["evaluation"]["minimum_clusters"]
-        sizes = range(min_clusters,max_clusters,AlgorithmRunParametersGenerator.CLUSTERING_SIZE_STEP)
+        sizes = range(min_clusters,max_clusters+1,AlgorithmRunParametersGenerator.CLUSTERING_SIZE_STEP)
         for one_size in sizes:
             run_parameter = AlgorithmRunParametersGenerator.get_base_parameters()["random"]
             run_parameter["num_clusters"]  = one_size

@@ -9,9 +9,16 @@
 	},
 	
 	"global":{
-		"action": "clustering",
+		"action": {
+					"type":"comparison",
+					"parameters":{
+									
+					}
+		},
 		"pdbs":[
-			"/home/victor/Escritorio/test/ubi_5_clusters.pdb"
+			"/home/victor/Escritorio/test/ubi_2_clusters.pdb",
+			"/home/victor/Escritorio/test/ubi_5_clusters.pdb",
+			"/home/victor/Escritorio/test/ubi_9_clusters.pdb"
 		]
 	},
 	
@@ -34,7 +41,7 @@
     	"control":{
     		"number_of_processors": 4,
     		"algorithm_scheduler_sleep_time":5,
-    		"evaluation_scheduler_sleep_time":5
+    		"evaluation_scheduler_sleep_time":30
     	},
     	
     	"algorithms": {
@@ -59,9 +66,13 @@
 	        },
 	        
 	        "kmedoids": {
-	            "auto": true,
+	            "auto": false,
 	            "use": true,
-	            "parameters": []
+	            "parameters": [{
+	            				"k":14,
+                         		"seeding_type":"EQUIDISTANT"
+                         		}
+                         	  ]
 	        },
 	        
 	        "random": {
@@ -87,11 +98,6 @@
 	                    "weight": 0.9
 	                },
 	                
-	                "PCAanalysis":{
-	                    "action": "<",
-	                    "weight": 1
-	                },
-	                
 	                "NormNCut":{
 	                    "action": ">",
 	                    "weight": 0.3
@@ -102,11 +108,6 @@
 	                "CythonSilhouette":{
 	                    "action": ">",
 	                    "weight": 0.8
-	                },
-	                
-	                "PCAanalysis":{
-	                    "action": "<",
-	                    "weight": 1
 	                },
 	                
 	                "CythonMirrorCohesion":{
@@ -125,8 +126,8 @@
 			        "NumClusters",
 		            "NoiseLevel"
 	        ],
-	        "maximum_clusters": 6,
-	        "minimum_clusters": 2
+	        "maximum_clusters": 14,
+	        "minimum_clusters": 14
 	    },
     	
     	"refinement":{

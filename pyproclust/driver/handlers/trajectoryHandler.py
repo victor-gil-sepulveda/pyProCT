@@ -113,4 +113,4 @@ class TrajectoryHandler(Observable):
             selection_coordsets = self.bookmarking["selections"][selection_string]
         
         return selection_coordsets
-        
+    

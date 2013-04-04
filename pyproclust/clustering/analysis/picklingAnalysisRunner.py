@@ -6,6 +6,7 @@ Created on 29/05/2012
 import os
 import tempfile
 import pickle
+from pyproclust.driver.handlers.timerHandler import TimerHandler
 
 def run_all_analysis_for_a_clustering(clustering_id, clustering, tmp_file_handler_descriptor, analysis):
     """
@@ -18,6 +19,8 @@ def run_all_analysis_for_a_clustering(clustering_id, clustering, tmp_file_handle
     @param tmp_file_handler_descriptor: The file handler of the temporary file created to hold the results.
     
     @param analysis: A list of all the analysis we want to perform.s
+    
+    @param observer: An observer to communicate messages.
     """
     tmp_file_handler = os.fdopen(tmp_file_handler_descriptor,'w')
     analysis_results = {}
@@ -27,6 +30,7 @@ def run_all_analysis_for_a_clustering(clustering_id, clustering, tmp_file_handle
     pickle.dump(result, tmp_file_handler)
     del analysis_results
     tmp_file_handler.close()
+    
 
 class PicklingAnalysisRunner():
     

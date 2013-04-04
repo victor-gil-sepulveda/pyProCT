@@ -202,8 +202,8 @@ class AnalysisPopulator(object):
         return calculator.evaluate(clustering, condensed_matrix)
         
     def analysis_function_pca(self,clustering, trajectory_handler):
-        calculator = PCAMetric()
-        return calculator.evaluate(clustering, trajectory_handler)
+        calculator = PCAMetric(trajectory_handler)
+        return calculator.evaluate(clustering)
         
     def analysis_function_cython_cohesion(self, clustering, distance_matrix):
         """

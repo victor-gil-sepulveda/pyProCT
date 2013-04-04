@@ -77,13 +77,12 @@ class ClusteringProtocol(Observable):
         ######################
         self.timer.start("Selection")
         best_clustering_id, best_criteria_id, all_scores = BestClusteringSelector(clustering_parameters).choose_best(selected_clusterings)
-        self.notify("BEST", (best_clustering_id, best_criteria_id, all_scores[best_criteria_id][best_clustering_id]))
         self.timer.stop("Selection")
 
         ######################
         # Save results
         ######################
-        save_tools.save_cluster_info(os.path.join(workspaceHandler["results"], "selected"), selected_clusterings)
+        save_tools.save_cluster_info(os.path.join(workspaceHandler["results"],"selected"), selected_clusterings)
         save_tools.save_cluster_info(os.path.join(workspaceHandler["results"],"not_selected") , not_selected_clusterings)
         
         save_tools.save_best_clusters_and_scores(best_clustering_id, 
@@ -93,15 +92,6 @@ class ClusteringProtocol(Observable):
         
         return selected_clusterings[best_clustering_id]
             
-#             #########################
-#             # Get statistics etc...
-#             #########################
-#             if protocol_params.most_representative_pdb_file != "":
-#                 save_most_representative(protocol_params,best_clustering,\
-#                                         matrixHandler.distance_matrix,\
-#                                         workspaceHandler.tmp_path,\
-#                                         workspaceHandler.results_path)
-#             
 #             
 #             analyzer = ClusteringStatisticalAnalyzer(best_clustering,\
 #                                                      protocol_params.pdb1,\

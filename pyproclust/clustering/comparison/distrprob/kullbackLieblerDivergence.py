@@ -3,11 +3,11 @@ Created on 20/08/2012
 
 @author: victor
 '''
-from pyproclust.tools.pdbTools import get_number_of_frames
 import numpy
 import matplotlib.pyplot as plt
 import math
 import json
+import os.path
 
 def smoothed(distribution,small_value = 1.0e-8):
     """
@@ -35,46 +35,76 @@ class KullbackLeiblerDivergence(object):
     
     # Number of bins that the histogram will have when calculating the
     # distribution
-    NUM_BINS = 100
+    NUM_BINS = 200
     
     def __init__(self, pdb_info, condensedMatrix):
         """
         Class constructor. Does the actual calculation.
         
-        @param pdb1: Complete path of the pdb file used in first place to build the distance matrix.
-        @param pdb2: The same for the second pdb.
-        @param number_of_models_1: The number of models of pdb1 (usually with get_number_of_frames(pdb1)).
-        @param number_of_models_2: The number of models of pdb2.
+        @param pdb_info: An structure containing paths and other useful data about the pdbs being used.
         @param condensedMatrix: The actual calculated matrix.
         """
-        self.pdb1 = pdb_info[0]["source"]
-        self.pdb2 = pdb_info[1]["source"]
-        number_of_models_1 = pdb_info[0]["conformations"]
-        number_of_models_2 = pdb_info[1]["conformations"]
+        self.pdb_info = pdb_info
         
-        first_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix,0,number_of_models_1)
-        second_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix, number_of_models_1, number_of_models_2)
+        # Getting submatrices.
+        submatrices = {}
+        next_first_element = 0
+        for pdb in pdb_info:
+            submatrices[pdb["source"]] = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix, next_first_element, pdb["conformations"])
+            next_first_element += pdb["conformations"]
         
-        max_of_submatrices = max(numpy.max(first_pdb_submatrix),numpy.max(second_pdb_submatrix))
-        min_of_submatrices = min(numpy.min(first_pdb_submatrix),numpy.min(second_pdb_submatrix))
-        distribution_range = (min_of_submatrices, max_of_submatrices)
+        # Getting max and min values
+        max_vals = []
+        min_vals = []
+        for pdb in pdb_info:
+            max_vals.append(numpy.max(submatrices[pdb["source"]]))
+            min_vals.append(numpy.min(submatrices[pdb["source"]]))
         
-        prob_histogram1, self.bins1 = KullbackLeiblerDivergence.get_probability_histogram(\
-                                                                                          first_pdb_submatrix,\
-                                                                                          distribution_range,\
-                                                                                          KullbackLeiblerDivergence.NUM_BINS)
+        distribution_range = (numpy.min(min_vals), numpy.max(max_vals))
         
-        prob_histogram2, self.bins2 = KullbackLeiblerDivergence.get_probability_histogram(\
-                                                                                          second_pdb_submatrix,\
-                                                                                          distribution_range,\
-                                                                                          KullbackLeiblerDivergence.NUM_BINS)
-
-        self.smoothed_prob_histogram1 = smoothed(prob_histogram1)
-        self.smoothed_prob_histogram2 = smoothed(prob_histogram2)
+        # Generate histograms
+        self.histograms = {}
+        for pdb in pdb_info:
+            prob_histogram, bins =  KullbackLeiblerDivergence.get_probability_histogram(submatrices[pdb["source"]],
+                                                                                   distribution_range,
+                                                                                   KullbackLeiblerDivergence.NUM_BINS)
+            self.histograms[pdb["source"]] =(smoothed(prob_histogram), bins)
         
-        self.kl1 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram1,self.smoothed_prob_histogram2)
-        self.kl2 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram2,self.smoothed_prob_histogram1)
-    
+        # Calculate KL values
+        self.KL_matrix = numpy.zeros((len(pdb_info),len(pdb_info)))
+        for i in range(len(pdb_info)-1):
+            for j in range(i+1,len(pdb_info)):
+                self.KL_matrix[i][j] = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.histograms[pdb_info[i]["source"]][0],
+                                                                                       self.histograms[pdb_info[j]["source"]][0])
+                self.KL_matrix[j][i] = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.histograms[pdb_info[j]["source"]][0],
+                                                                                       self.histograms[pdb_info[i]["source"]][0])
+        
+#         self.pdb1 = pdb_info[0]["source"]
+#         self.pdb2 = pdb_info[1]["source"]
+#         number_of_models_1 = pdb_info[0]["conformations"]
+#         number_of_models_2 = pdb_info[1]["conformations"]
+#         
+#         first_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix,0,number_of_models_1)
+#         second_pdb_submatrix = KullbackLeiblerDivergence.get_matrix_data(condensedMatrix, number_of_models_1, number_of_models_2)
+#         
+#         max_of_submatrices = max(numpy.max(first_pdb_submatrix),numpy.max(second_pdb_submatrix))
+#         min_of_submatrices = min(numpy.min(first_pdb_submatrix),numpy.min(second_pdb_submatrix))
+#         distribution_range = (min_of_submatrices, max_of_submatrices)
+#         
+#         prob_histogram1, self.bins1 = KullbackLeiblerDivergence.get_probability_histogram(first_pdb_submatrix,
+#                                                                                           distribution_range,
+#                                                                                           KullbackLeiblerDivergence.NUM_BINS)
+#         
+#         prob_histogram2, self.bins2 = KullbackLeiblerDivergence.get_probability_histogram(second_pdb_submatrix,
+#                                                                                           distribution_range,
+#                                                                                           KullbackLeiblerDivergence.NUM_BINS)
+# 
+#         self.smoothed_prob_histogram1 = smoothed(prob_histogram1)
+#         self.smoothed_prob_histogram2 = smoothed(prob_histogram2)
+#         
+#         self.kl1 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram1,self.smoothed_prob_histogram2)
+#         self.kl2 = KullbackLeiblerDivergence.kullback_leibler_divergence_calculation(self.smoothed_prob_histogram2,self.smoothed_prob_histogram1)
+#     
     def save(self, where):
         """
         Saves a plot of the distributions and the actual values of them.
@@ -88,13 +118,24 @@ class KullbackLeiblerDivergence(object):
         Saves a plot of the distributions.
         @param where: The name of the file without extension (".png" will be appended to the final name). 
         """
+#         fig = plt.figure()
+#         ax = fig.add_subplot(111)
+#         ax.plot(self.bins1[:self.NUM_BINS],self.smoothed_prob_histogram1, 'b--', linewidth=2)
+#         ax.plot(self.bins2[:self.NUM_BINS],self.smoothed_prob_histogram2, 'r--', linewidth=2)
+#         ax.grid(True)
+#         ax.legend([plt.Rectangle((0, 0), 1, 1, fc="b"),plt.Rectangle((0, 0), 1, 1, fc="r")],[self.pdb1,self.pdb2])
+#         plt.savefig(where+".png")
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.plot(self.bins1[:self.NUM_BINS],self.smoothed_prob_histogram1, 'b--', linewidth=2)
-        ax.plot(self.bins2[:self.NUM_BINS],self.smoothed_prob_histogram2, 'r--', linewidth=2)
+        for pdb in self.pdb_info:
+            smoothed_his, bins  =  self.histograms[pdb["source"]] 
+            ax.plot(bins[:self.NUM_BINS],smoothed_his, linewidth = 2, label= os.path.basename(pdb["source"]))
+
         ax.grid(True)
-        ax.legend([plt.Rectangle((0, 0), 1, 1, fc="b"),plt.Rectangle((0, 0), 1, 1, fc="r")],[self.pdb1,self.pdb2])
-        plt.savefig(where+".png") 
+#         ax.legend([plt.Rectangle((0, 0), 1, 1, fc="b"),plt.Rectangle((0, 0), 1, 1, fc="r")],[self.pdb1,self.pdb2])
+        plt.legend(prop={'size':6})
+        plt.savefig(where+".png")
+ 
         return where+".png"
     
     def to_json(self, where, image_path):
@@ -103,9 +144,25 @@ class KullbackLeiblerDivergence(object):
         @param where: The name of the file without extension (".json" will be appended to the final name).
         @param image_path: Place where we have saved the image with the distribution. 
         """
-        pre_json_dic = {"kl1":self.kl1,"kl2":self.kl2,"image":image_path}
-        open( where+".json","w").write(json.dumps({"kl1":self.kl1,"kl2":self.kl2,"image":image_path}, indent=4, separators=(',', ': ')))
-        return pre_json_dic
+#         pre_json_dic = {"kl1":self.kl1,"kl2":self.kl2,"image":image_path}
+#         for pdb in self.pdb_info:
+#         open( where+".json","w").write(json.dumps({"kl1":self.kl1,"kl2":self.kl2,"image":image_path}, indent=4, separators=(',', ': ')))
+#         return pre_json_dic
+        pre_json = []
+        for i in range(len(self.pdb_info)-1):
+            for j in range(i+1,len(self.pdb_info)):
+                pre_json.append({
+                                 "A":self.pdb_info[i],
+                                 "B":self.pdb_info[j],
+                                 "KL": self.KL_matrix[i][j] 
+                                 })
+                pre_json.append({
+                                 "A":self.pdb_info[j],
+                                 "B":self.pdb_info[i],
+                                 "KL": self.KL_matrix[j][i] 
+                                 })
+                
+        open( where+".json","w").write(json.dumps(pre_json, indent=4, separators=(',', ': ')))
     
     @classmethod
     def get_probability_histogram(cls,data,bin_range,num_bins):
