@@ -12,7 +12,8 @@
 		"action": {
 					"type":"compression",
 					"parameters":{
-							"final_number_of_frames": 800		
+						"type":"KMEDOIDS",
+						"final_number_of_frames": 800		
 					}
 		},
 		"pdbs":[
