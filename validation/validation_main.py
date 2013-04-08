@@ -21,8 +21,6 @@ from pyproclust.tools.scriptTools import create_directory
 """
 Script for visual validation of algorithms.
 """
-
-
 def build_algorithms(matrix):
     algorithms = {
                   "GROMOS":GromosAlgorithm(matrix),

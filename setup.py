@@ -4,6 +4,8 @@ Created on 25/02/2013
 @author: victor
 '''
 from distutils.core import setup, Extension
+import numpy
+import distutils.sysconfig
 
 setup(name='pyProClust',
       version='1.0',
@@ -40,6 +42,10 @@ setup(name='pyProClust',
                 'pyproclust.driver.scheduling',
                 'pyproclust.driver.compressor'
       ],
+      
+      include_dirs = [numpy.get_include(),
+                      distutils.sysconfig.get_python_inc()],
+      
       ext_modules=[
                    Extension('pyproclust.clustering.metrics.cython.normNCut',[
                                 'pyproclust/clustering/metrics/cython/normNCut.c'                         
