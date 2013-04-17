@@ -5,15 +5,13 @@ Created on 19/09/2012
 '''
 import pyproclust.tools.commonTools as common
 import pyproclust.tools.pdbTools as pdb_tools
-from pyRMSD.utils.proteinReading import Reader
 from pyproclust.driver.observer.observable import Observable
-import prody 
+import prody
 
 class TrajectoryHandler(Observable):
 
     def __init__(self, gobal_parameters, observer):
         """
-        
         """
         super(TrajectoryHandler,self).__init__(observer)
         
@@ -24,16 +22,7 @@ class TrajectoryHandler(Observable):
             self.notify("SHUTDOWN","No pdbs defined in script.")
             exit()
             
-        reader = Reader("PRODY_READER")
-        for pdb_description in self.pdbs:
-            reader = reader.readThisFile(pdb_description["source"])
-        
         self.notify("Loading","Loading Trajectories")
-        
-        self.coordsets = reader.read()
-        
-        self.number_of_conformations = reader.numberOfFrames
-        self.number_of_atoms = reader.numberOfAtoms
         
         # Bookmarking
         self.bookmarking = { 
@@ -41,6 +30,10 @@ class TrajectoryHandler(Observable):
                              "selections": {}
         }
     
+        self.coordsets = self.getJoinedPDB().getCoordsets()
+        self.number_of_conformations = self.coordsets.shape[0]
+        self.number_of_atoms = self.coordsets.shape[1]
+        
     @classmethod
     def get_pdb_data(cls, pdb):
         """
