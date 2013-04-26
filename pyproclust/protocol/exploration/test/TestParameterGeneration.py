@@ -7,6 +7,10 @@ import unittest
 from pyproclust.driver.parameters import ProtocolParameters
 from pyproclust.protocol.exploration.algorithmRunParametersGenerator import AlgorithmRunParametersGenerator
 
+class MatrixHandlerMock:
+    def __init__(self, matrix):
+        self.distance_matrix = matrix
+
 class MatrixMock:
     def __init__(self):
         self.row_length = 2000
@@ -22,7 +26,7 @@ class TestParameterGeneration(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         parameters = ProtocolParameters.get_default_params("data/params.json")
-        cls.parametersGenerator = AlgorithmRunParametersGenerator(parameters, MatrixMock())
+        cls.parametersGenerator = AlgorithmRunParametersGenerator(parameters,MatrixHandlerMock(MatrixMock()))
 
     def test_get_gromos_parameters(self):
         expected = ([{'cutoff': 0.25}, 
@@ -47,7 +51,8 @@ class TestParameterGeneration(unittest.TestCase):
                      {'k': 22, 'use_k_medoids': True}, 
                      {'k': 24, 'use_k_medoids': True}, 
                      {'k': 26, 'use_k_medoids': True}, 
-                     {'k': 28, 'use_k_medoids': True}], [])
+                     {'k': 28, 'use_k_medoids': True},
+                     {'k': 30, 'use_k_medoids': True}], [])
 
         self.assertItemsEqual(expected,TestParameterGeneration.parametersGenerator.get_spectral_parameters())
      
@@ -61,7 +66,8 @@ class TestParameterGeneration(unittest.TestCase):
                      {'seeding_type': 'GROMOS', 'k': 22, 'seeding_max_cutoff': 2.5}, 
                      {'seeding_type': 'GROMOS', 'k': 24, 'seeding_max_cutoff': 2.5}, 
                      {'seeding_type': 'GROMOS', 'k': 26, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 28, 'seeding_max_cutoff': 2.5}], [])
+                     {'seeding_type': 'GROMOS', 'k': 28, 'seeding_max_cutoff': 2.5},
+                     {'seeding_type': 'GROMOS', 'k': 30, 'seeding_max_cutoff': 2.5}], [])
 
         self.assertItemsEqual(expected, TestParameterGeneration.parametersGenerator.get_kmedoids_parameters())
      
@@ -75,7 +81,8 @@ class TestParameterGeneration(unittest.TestCase):
                      {'num_clusters': 22}, 
                      {'num_clusters': 24}, 
                      {'num_clusters': 26}, 
-                     {'num_clusters': 28}], [])
+                     {'num_clusters': 28},
+                     {'num_clusters': 30}], [])
 
         self.assertItemsEqual(expected, TestParameterGeneration.parametersGenerator.get_random_parameters())
     

@@ -32,9 +32,9 @@ class ClusteringProtocol(Observable):
                                             workspaceHandler,
                                             scheduling_tools.build_scheduler(
                                                                            "Process/Parallel",
-                                                                           clustering_parameters["control"]["algorithm_scheduler_sleep_time"],
+                                                                           clustering_parameters["clustering"]["control"]["algorithm_scheduler_sleep_time"],
                                                                            self.observer,
-                                                                           clustering_parameters["control"]["number_of_processors"]), 
+                                                                           clustering_parameters["clustering"]["control"]["number_of_processors"]), 
                                             AlgorithmRunParametersGenerator(
                                                                             clustering_parameters,
                                                                             matrixHandler),
@@ -61,9 +61,9 @@ class ClusteringProtocol(Observable):
         ######################
         self.timer.start("Evaluation")
         analyzer = PicklingAnalysisRunner(scheduling_tools.build_scheduler("Process/Parallel",
-                                                       clustering_parameters["control"]["evaluation_scheduler_sleep_time"],
+                                                       clustering_parameters["clustering"]["control"]["evaluation_scheduler_sleep_time"],
                                                        self.observer,
-                                                       clustering_parameters["control"]["number_of_processors"]),
+                                                       clustering_parameters["clustering"]["control"]["number_of_processors"]),
                                           selected_clusterings,
                                           AnalysisPopulator(matrixHandler, 
                                                             trajectoryHandler,
@@ -79,6 +79,7 @@ class ClusteringProtocol(Observable):
         best_clustering_id, best_criteria_id, all_scores = BestClusteringSelector(clustering_parameters).choose_best(selected_clusterings)
         self.timer.stop("Selection")
 
+        print best_clustering_id, best_criteria_id, all_scores
         ######################
         # Save results
         ######################

@@ -67,7 +67,8 @@ class ClusteringExplorator(Observable):
         
         self.matrix_handler = matrix_handler
         self.workspace_handler = workspace_handler
-        self.parameters = parameters
+        self.clustering_parameters = parameters["clustering"]
+        self.evaluation_parameters = parameters["evaluation"]
         self.current_clustering_id = 0
         self.parameters_generator = parameters_generator
         self.scheduler = scheduler
@@ -97,7 +98,7 @@ class ClusteringExplorator(Observable):
         @return: A dictionary 'clustering_info' structures indexed by clustering ID. Each of these structures
         contains one generated clustering as well as the algorithm type and parameters used to get it.
         """
-        used_algorithms = ClusteringExplorator.get_used_algorithms(self.parameters)
+        used_algorithms = ClusteringExplorator.get_used_algorithms(self.clustering_parameters)
         
         # Generate all clustering + info structures
         clusterings_info = {}
@@ -124,20 +125,20 @@ class ClusteringExplorator(Observable):
         @return: The 'clustering info' structure as defined by  AlgorithmRunParametersGenerator::get_parameters_for_type.
         """
         
-        algorithm_data = self.parameters["algorithms"][algorithm_type]
+        algorithm_data = self.clustering_parameters["algorithms"][algorithm_type]
         
         # The algorithm we are going to use
         algorithm = self.build_algorithm(algorithm_type)
-        
-        # A list with all the parameters for diverse runs
-        algorithm_run_params = algorithm_data["parameters"]
         
         # If not parameters were given we have to get the better ones
         clusterings = []
         
         if algorithm_data["auto"]:
             algorithm_run_params, clusterings =  self.parameters_generator.get_parameters_for_type(algorithm_type)
-            
+        else:
+            # A list with all the parameters for diverse runs
+            algorithm_run_params = algorithm_data["parameters"]
+         
         clusterings_info =  self.generate_clustering_info(algorithm_type, algorithm_run_params, clusterings)
         
         # Sometimes getting the best parameters imply getting the clusterings themselves
@@ -200,8 +201,8 @@ class ClusteringExplorator(Observable):
         algorithm_execution_parameters = {}
         if algorithm_type == "spectral":
             # We need to set number of clusters for performance and to get sigma
-            algorithm_execution_parameters["max_clusters"] = self.parameters["evaluation"]["maximum_clusters"]
-            algorithm_execution_parameters["sigma_sq"] = self.parameters["algorithms"]["spectral"]["sigma"]
+            algorithm_execution_parameters["max_clusters"] = self.evaluation_parameters["maximum_clusters"]
+            algorithm_execution_parameters["sigma_sq"] = self.clustering_parameters["algorithms"]["spectral"]["sigma"]
         
         if algorithm_type in ["spectral","dbscan","gromos","kmedoids","random","hierarchical"] :
             return ClusteringExplorator.get_available_algorithms()[algorithm_type](distance_matrix, **algorithm_execution_parameters)

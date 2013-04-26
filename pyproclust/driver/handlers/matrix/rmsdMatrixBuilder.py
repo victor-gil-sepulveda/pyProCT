@@ -22,16 +22,17 @@ class RMSDMatrixBuilder(object):
         @return: The created matrix.
         """
 
-        fit_selection_coordsets = trajectory_handler.getSelection(matrix_creation_parameters["fit_selection"])
-        trajectory_handler.setWorkingCoordinates(matrix_creation_parameters["fit_selection"])
+        fit_selection_string = matrix_creation_parameters["fit_selection"]
+        fit_selection_coordsets = trajectory_handler.getSelection(fit_selection_string)
+        trajectory_handler.setWorkingCoordinates(fit_selection_string)
         calculator = RMSDCalculator(coordsets = fit_selection_coordsets,
                                     calculatorType = "QTRFIT_OMP_CALCULATOR", 
                                     modifyCoordinates = False)
         
         # Apply calculation selection if needed
         calc_selection_string = matrix_creation_parameters["calc_selection"]
-        if calc_selection_string != "":
-            calc_selection_coordsets = trajectory_handler.getSelection(matrix_creation_parameters["calc_selection"])
+        if calc_selection_string != "" and calc_selection_string != fit_selection_string:
+            calc_selection_coordsets = trajectory_handler.getSelection(calc_selection_string)
             trajectory_handler.setWorkingCoordinates(calc_selection_string)
             calculator.setCalculationCoordinates(calc_selection_coordsets)
         
