@@ -70,7 +70,7 @@ class Driver(Observable):
         # Do the actual clustering
         ##############################
         
-        best_clustering = ClusteringProtocol(self.timer, self.observer).run(parameters["clustering"],
+        best_clustering = ClusteringProtocol(self.timer, self.observer).run(parameters,
                                                                             self.matrixHandler,
                                                                             self.workspaceHandler,
                                                                             self.trajectoryHandler)
