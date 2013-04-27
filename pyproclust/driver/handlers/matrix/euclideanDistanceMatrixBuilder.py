@@ -24,7 +24,7 @@ class EuclideanDistanceMatrixBuilder(object):
         #pdb = trajectory_handler.getJoinedPDB()
         
         # Build calculator with fitting coordinate sets
-        fit_selection_coordsets = trajectory_handler.getSelection(matrix_creation_parameters["fit_selection"])
+        fit_selection_coordsets = trajectory_handler.getSelection(matrix_creation_parameters["dist_fit_selection"])
         calculator = RMSDCalculator(
                                     coordsets = fit_selection_coordsets,
                                     calculatorType = "QTRFIT_OMP_CALCULATOR", 

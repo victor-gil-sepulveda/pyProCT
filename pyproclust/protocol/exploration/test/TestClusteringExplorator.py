@@ -19,7 +19,7 @@ class TestClusteringExplorator(unittest.TestCase):
                               ClusteringExplorator.get_used_algorithms(parameters))
     
     def test_generate_clustering_info(self):
-        explorator = ClusteringExplorator([],None, None, None, None)
+        explorator = ClusteringExplorator({"evaluation":{},"clustering":{}},None, None, None, None)
         run_parameters = []
         for i in range(10):
             run_parameters.append({"lol":i})
