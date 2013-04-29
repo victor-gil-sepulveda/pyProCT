@@ -43,6 +43,7 @@ class Driver(Observable):
         # Distance Matrix Generation
         ##############################
         self.matrixHandler = MatrixHandler(parameters["matrix"])
+        self.notify("Matrix calculation",[])
         self.timer.start("Matrix Generation")
         self.matrixHandler.create_matrix(self.trajectoryHandler)
         self.matrixHandler.save_statistics( self.workspaceHandler["matrix"])
@@ -69,7 +70,7 @@ class Driver(Observable):
         ##############################
         # Do the actual clustering
         ##############################
-        
+        print "performing protocol"
         best_clustering = ClusteringProtocol(self.timer, self.observer).run(parameters,
                                                                             self.matrixHandler,
                                                                             self.workspaceHandler,

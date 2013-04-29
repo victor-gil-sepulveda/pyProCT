@@ -53,9 +53,9 @@ class ClusteringProtocol(Observable):
         self.notify("Filter", {"selected":selected_clusterings,"not_selected":not_selected_clusterings})
         self.timer.stop("Clustering Filtering")
         
-        if selected_clusterings == []:
+        if selected_clusterings == {}:
             return None
-            
+        print "SELECTED", selected_clusterings
         ######################
         # Clustering scoring
         ######################
@@ -79,7 +79,7 @@ class ClusteringProtocol(Observable):
         best_clustering_id, best_criteria_id, all_scores = BestClusteringSelector(clustering_parameters).choose_best(selected_clusterings)
         self.timer.stop("Selection")
 
-        print best_clustering_id, best_criteria_id, all_scores
+        print "BC",best_clustering_id, best_criteria_id, all_scores
         ######################
         # Save results
         ######################
