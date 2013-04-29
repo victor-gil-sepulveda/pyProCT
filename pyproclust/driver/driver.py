@@ -58,14 +58,14 @@ class Driver(Observable):
         #########################
         # Matrix plot
         #########################
-#         self.timer.start("Matrix Imaging")
-#         plotTools.matrixToImage(  self.matrixHandler.distance_matrix,
-#                                   os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"]),
-#                                   max_dim = parameters["matrix"]["image"]["dimension"],
-#                                   observer = self.observer)
-#           
-#         self.timer.stop("Matrix Imaging")
-#         exit()
+        if "image" in parameters["matrix"].keys() :
+            self.timer.start("Matrix Imaging")
+            plotTools.matrixToImage(  self.matrixHandler.distance_matrix,
+                                      os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"]),
+                                      max_dim = parameters["matrix"]["image"]["dimension"],
+                                      observer = self.observer)
+               
+            self.timer.stop("Matrix Imaging")
          
         ##############################
         # Do the actual clustering
