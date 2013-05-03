@@ -14,6 +14,7 @@ from pyproclust.protocol.protocol import ClusteringProtocol
 import pyproclust.protocol.saveTools as saveTools
 from pyproclust.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproclust.driver.compressor.compressor import Compressor
+from pyproclust.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 
 class Driver(Observable):
     def __init__(self, observer):
@@ -71,30 +72,44 @@ class Driver(Observable):
         # Do the actual clustering
         ##############################
         print "performing protocol"
-        best_clustering = ClusteringProtocol(self.timer, self.observer).run(parameters,
+        clustering_results = ClusteringProtocol(self.timer, self.observer).run(parameters,
                                                                             self.matrixHandler,
                                                                             self.workspaceHandler,
                                                                             self.trajectoryHandler)
-        if best_clustering is None:
-            self.notify("SHUTDOWN", "The clustering search found no clusterings. Relax evaluation constraints.")
-            print "[FATAL ClusteringProtocol::run] The clustering search found no clusterings. Exiting..."
-            exit()
+        best_clustering_id, selected, not_selected, scores = (None, {},{},{})
+        best_clustering = None
         
-        ##############################
-        # Saving representatives
-        ##############################
-        saveTools.save_representatives(best_clustering["clustering"].get_medoids(self.matrixHandler.distance_matrix), 
-                                       "representatives",
-                                       self.workspaceHandler, 
-                                       self.trajectoryHandler)
-        
+        if clustering_results[0] is not None:
+            best_clustering_id, selected, not_selected, scores = clustering_results
+            best_clustering = selected[best_clustering_id]
+            
         ##############################
         # Specialized post-processing
         ##############################
-        
         if action_type == "clustering":
-            pass
-        
+            #################################
+            # Saving results
+            #################################
+            json_results = ClusteringResultsGatherer().gather(self.timer, self.trajectoryHandler, clustering_results)
+            open(os.path.join(self.workspaceHandler["results"],"results.json"),"w").write(json_results)
+            
+            #################################
+            # Abort if no clusters found
+            #################################
+            if best_clustering is None:
+                self.notify("SHUTDOWN", "The clustering search found no clusterings. Relax evaluation constraints.")
+                print "[FATAL ClusteringProtocol::run] The clustering search found no clusterings. Exiting..."
+                exit()
+                
+            ##############################
+            # Saving representatives
+            ##############################
+            saveTools.save_representatives(best_clustering["clustering"].get_medoids(self.matrixHandler.distance_matrix), 
+                                           "representatives",
+                                           self.workspaceHandler, 
+                                           self.trajectoryHandler)
+            self.timer.stop("Global")
+            
         elif action_type == "comparison":
             ############################################
             # Distribution analysis
@@ -103,6 +118,7 @@ class Driver(Observable):
             klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)
             klDiv.save(os.path.join(self.workspaceHandler["matrix"],"kullback_liebler_divergence"))
             self.timer.stop("KL divergence")
+            self.timer.stop("Global")
         
         elif action_type == "compression":
             ############################################
@@ -115,7 +131,7 @@ class Driver(Observable):
                                self.trajectoryHandler,
                                self.matrixHandler)
             self.timer.stop("Compression")
+            self.timer.stop("Global")
         
-        self.timer.stop("Global")
         print self.timer
         

@@ -55,7 +55,7 @@ class ClusteringProtocol(Observable):
         
         if selected_clusterings == {}:
             return None
-        print "SELECTED", selected_clusterings
+
         ######################
         # Clustering scoring
         ######################
@@ -91,7 +91,7 @@ class ClusteringProtocol(Observable):
                                                  all_scores, 
                                                  os.path.join(workspaceHandler["results"],"scores"))
         
-        return selected_clusterings[best_clustering_id]
+        return best_clustering_id, selected_clusterings, not_selected_clusterings, all_scores
             
 #             
 #             analyzer = ClusteringStatisticalAnalyzer(best_clustering,\

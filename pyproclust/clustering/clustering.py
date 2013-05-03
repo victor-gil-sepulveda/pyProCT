@@ -249,6 +249,17 @@ class Clustering(object):
             representatives.extend( c.get_random_sample(number_of_elements))
         representatives.extend(self.get_medoids(distance_matrix))
         return representatives
-            
+    
+    def to_dic(self):
+        """
+        Converts this clustering into a dictionary (to be used with json serializers).
+        """
+        clustering_dic = {}
+        clustering_dic["total_number_of_elements"] = self.total_number_of_elements
+        clustering_dic["number_of_clusters"] = len(self.clusters)
+        clustering_dic["clusters"] = []
+        for cluster in self.clusters:
+            clustering_dic["clusters"].append(cluster.to_dic())
+        return clustering_dic
         
             

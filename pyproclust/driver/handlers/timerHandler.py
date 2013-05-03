@@ -31,22 +31,24 @@ class TimerHandler(object):
 
     def __init__(self):
         self.named_timers = {}
-    
+        self.timer_list = []
+        
     def start(self,name):
         self.named_timers[name] = Timer()
         self.named_timers[name].start()
+        self.timer_list.append((name,self.named_timers[name]))
         
     def stop(self, name):
         self.named_timers[name].stop()
     
     def get_elapsed(self):
-        times = []
-        for timer in self.named_timers:
-            times.append({
-                          "name":timer,
-                          "elapsed":self.named_timers[timer].get_elapsed_time()
+        timers = []
+        for name, timer in self.timer_list:
+            timers.append({
+                          "name":name,
+                          "elapsed":timer.get_elapsed_time()
             })
-        return times
+        return timers
     
     def __str__(self):
         rep = ""

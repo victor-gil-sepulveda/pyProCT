@@ -58,7 +58,6 @@ class Cluster(object):
     '''
     most_representative_element = None
     all_elements = []
-    distance_calculator = []
     
     def __init__(self, prototype , elements):
         '''
@@ -166,4 +165,23 @@ class Cluster(object):
         temporary_list = list(self.all_elements)
         random.shuffle(temporary_list)
         return temporary_list[0:n]
-        
+    
+    def to_dic(self):
+        """
+        Converts this cluster into a dictionary (to be used with json serializers).
+        """
+        elements = sorted([int(self.all_elements[i]) for i in range(len(self.all_elements))])
+        print elements
+        elements.append(-1) #capping
+        str_elements = ""
+        start = elements[0]
+        for i in range(1,len(elements)):
+            if elements[i-1] != elements[i]-1 :
+                if elements[i-1] == start:
+                    str_elements += str(start)+", "
+                    start = elements[i]
+                else:
+                    str_elements += str(start)+":"+str(elements[i-1])+", "
+                    start = elements[i]
+                    
+        return {"elements":str_elements[:-2]}

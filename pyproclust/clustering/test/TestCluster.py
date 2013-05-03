@@ -117,6 +117,15 @@ class Test(unittest.TestCase):
         cluster = Cluster(None, range(0,100))
         
         self.assertItemsEqual(cluster.get_random_sample(10, 123), [45, 66, 89, 62, 67, 51, 65, 56, 22, 77])
+        
+    def test_to_dic(self):
+        true_clusters = [Cluster(0,[0,4,5,7,13]),
+                         Cluster(1,[1,16,17,18]),
+                         Cluster(2,[2,3,8,19]),
+                         Cluster(6,[6,11,12,15]),
+                         Cluster(9,[9,10,14])]
+        for c in true_clusters:
+            print c.to_dic()
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
