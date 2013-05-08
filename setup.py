@@ -40,7 +40,9 @@ setup(name='pyProClust',
                 'pyproclust.driver.handlers.matrix',
                 'pyproclust.driver.observer',
                 'pyproclust.driver.scheduling',
-                'pyproclust.driver.compressor'
+                'pyproclust.driver.compressor',
+                'pyproclust.driver.results',
+                
       ],
       
       include_dirs = [numpy.get_include(),

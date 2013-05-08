@@ -68,7 +68,7 @@ class MatrixHandler(object):
         if not self.matrix_parameters["method"] in ["load","rmsd","distance"]:
             print "[Error] Incorrect matrix creation option: %s"%self.matrix_parameters["method"]
             exit()
-    
+        
     def create_matrix(self, trajectory_handler):
         """
         Generates a matrix with the method used in the handler creation.
@@ -105,7 +105,7 @@ class MatrixHandler(object):
         @param matrix_base_path: The folder where to save the 'statistics.json' file.
         """
         self.check_matrix_calculated_error()
-        pyRMSD_MatrixHandler.save_statistics(matrix_base_path, self.distance_matrix)
+        return pyRMSD_MatrixHandler.save_statistics(matrix_base_path, self.distance_matrix)
     
     def check_matrix_calculated_error(self):
         """

@@ -31,7 +31,7 @@ class ClusteringResultsGatherer(object):
     def __init__(self):
         pass
     
-    def gather(self, timer_handler, trajectory_handler, clustering_results):
+    def gather(self, timer_handler, trajectory_handler, clustering_results, files):
         results = {}
         results["timing"] = timer_handler.get_elapsed()
         results["trajectories"] = trajectory_handler.pdbs
@@ -39,12 +39,11 @@ class ClusteringResultsGatherer(object):
         results["selected"] = clustering_results[1]
         results["scores"] = clustering_results[3]
         results["best_clustering"] = clustering_results[0]
-        
-        
+        results["files"] = files
+
         serializer = SerializerRegistry()
         serializer.add(Clustering)
         serializer.add(Cluster)
-        
         return json.dumps(results, 
                           sort_keys=False, 
                           indent=4, 
