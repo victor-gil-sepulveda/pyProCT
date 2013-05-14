@@ -102,7 +102,7 @@ class Driver(Observable):
         # Specialized post-processing
         ##############################
         action_type = parameters["global"]["action"]["type"]
-        if action_type == "clustering" or action_type == "clustering_advanced":
+        if action_type == "clustering" or action_type == "advanced":
             self.timer.stop("Global")
 
             #################################
