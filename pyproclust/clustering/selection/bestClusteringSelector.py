@@ -40,7 +40,7 @@ class BestClusteringSelector(object):
         
         best_clustering_id, criteria_id, scores = self.get_best_clustering(scores)
         
-        return best_clustering_id, criteria_id, scores
+        return best_clustering_id, scores
     
     @classmethod
     def get_best_clustering(cls, scores):

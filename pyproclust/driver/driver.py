@@ -106,16 +106,7 @@ class Driver(Observable):
             self.timer.stop("Global")
 
             #################################
-            # Saving results
-            #################################
-            json_results = ClusteringResultsGatherer().gather(self.timer, 
-                                                              self.trajectoryHandler, 
-                                                              clustering_results,
-                                                              self.generatedFiles)
-            open(os.path.join(self.workspaceHandler["results"],"results.json"),"w").write(json_results)
-            
-            #################################
-            # Abort if no clusters found
+            # Abort if no clusters were found
             #################################
             if best_clustering is None:
                 self.notify("SHUTDOWN", "The clustering search found no clusterings. Relax evaluation constraints.")
@@ -125,10 +116,27 @@ class Driver(Observable):
             ##############################
             # Saving representatives
             ##############################
-            saveTools.save_representatives(best_clustering["clustering"].get_medoids(self.matrixHandler.distance_matrix), 
+            medoids = best_clustering["clustering"].get_medoids(self.matrixHandler.distance_matrix)
+            # Set prototypes (medoids are ordered)
+            for i in range(len(best_clustering["clustering"].clusters)):
+                best_clustering["clustering"].clusters[i].prototype = medoids[i]
+            saveTools.save_representatives(medoids, 
                                            "representatives",
                                            self.workspaceHandler, 
                                            self.trajectoryHandler)
+
+            #################################
+            # Results are saved to a file
+            #################################
+            json_results = ClusteringResultsGatherer().gather(self.timer, 
+                                                              self.trajectoryHandler, 
+                                                              self.workspaceHandler,
+                                                              clustering_results,
+                                                              self.generatedFiles)
+            
+            
+            open(os.path.join(self.workspaceHandler["results"],"results.json"),"w").write(json_results)
+            
             
         elif action_type == "comparison":
             ############################################

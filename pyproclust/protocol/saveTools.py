@@ -9,28 +9,6 @@ import shutil
 import pyproclust.tools.pdbTools as pdb_tools
 import os.path
 
-def save_cluster_info(filename, cluster_info):
-    """
-    Pickles the cluster_info structure which (depending at which point of the protocol this function is called) may have
-    all needed info.
-    """
-    file_handler = open(filename+".bin", "w")
-    pickle.dump(cluster_info, file_handler)
-    file_handler.close()
-    
-def save_best_clusters_and_scores(best_clustering_id, best_criteria_id, all_scores, filename):
-    """
-    Gathers all the important scoring features and writes them to disk.
-    """
-    scoring_dic = {
-                  "best_cluster": best_clustering_id,
-                  "best_criteria": best_criteria_id,
-                  "best_score": all_scores[best_criteria_id][best_clustering_id],
-                  "scores": all_scores
-    }
-    
-    open(filename+".json","w").write(json.dumps(scoring_dic, sort_keys=True, indent=4, separators=(',', ': ')))
-
 def save_representatives(representatives, pdb_name, workspace_handler, trajectory_handler):
     """
     Saves a pdb file containing the most representative elements of the clustering.
@@ -56,11 +34,12 @@ def save_representatives(representatives, pdb_name, workspace_handler, trajector
     # Add 
     file_handler_in = open(temporary_merged_trajectory_path,"r")
     file_handler_out = open(os.path.join(results_directory,"%s.pdb"%pdb_name),"w")
-    print "REPRESENTATIVES ", representatives
-    pdb_tools.extract_frames_from_trajectory(file_handler_in, 
-                                             pdb_tools.get_number_of_frames(temporary_merged_trajectory_path),
-                                             file_handler_out, 
-                                             representatives)
+
+    pdb_tools.extract_frames_from_trajectory(file_handler_in = file_handler_in, 
+                                             number_of_frames = pdb_tools.get_number_of_frames(temporary_merged_trajectory_path),
+                                             file_handler_out = file_handler_out, 
+                                             frames_to_save = representatives,
+                                             use_frame_number_as_model = True)
     file_handler_in.close()
     file_handler_out.close()
 

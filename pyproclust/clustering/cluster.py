@@ -146,9 +146,9 @@ class Cluster(object):
  
     def calculate_medoid(self,condensed_distance_matrix):
         """
-        Calculates the medoid for all_elements of the cluster.
+        Calculates the medoid for all_elements of the cluster and updates the prototype.
         """
-        return self.calculate_biased_medoid(condensed_distance_matrix,self.all_elements)
+        return self.calculate_biased_medoid(condensed_distance_matrix, self.all_elements)
     
     def get_random_sample(self, n, rand_seed = None):
         """
@@ -170,6 +170,7 @@ class Cluster(object):
         """
         Converts this cluster into a dictionary (to be used with json serializers).
         """
+        json_dic = {}
         elements = sorted([int(self.all_elements[i]) for i in range(len(self.all_elements))])
         print elements
         elements.append(-1) #capping
@@ -183,5 +184,9 @@ class Cluster(object):
                 else:
                     str_elements += str(start)+":"+str(elements[i-1])+", "
                     start = elements[i]
-                    
-        return {"elements":str_elements[:-2]}
+        json_dic["elements"] =str_elements[:-2]
+        
+        if self.prototype is not None:
+            json_dic["prototype"] = int(self.prototype)
+            
+        return json_dic

@@ -9,9 +9,7 @@ from pyproclust.clustering.filtering.clusteringFilter import ClusteringFilter
 from pyproclust.clustering.analysis.picklingAnalysisRunner import PicklingAnalysisRunner
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
-import pyproclust.protocol.saveTools as save_tools
 from pyproclust.driver.observer.observable import Observable
-import os
 from pyproclust.protocol.exploration.algorithmRunParametersGenerator import AlgorithmRunParametersGenerator
 
 class ClusteringProtocol(Observable):
@@ -76,21 +74,9 @@ class ClusteringProtocol(Observable):
         # Choose the best clustering
         ######################
         self.timer.start("Selection")
-        best_clustering_id, best_criteria_id, all_scores = BestClusteringSelector(clustering_parameters).choose_best(selected_clusterings)
+        best_clustering_id, all_scores = BestClusteringSelector(clustering_parameters).choose_best(selected_clusterings)
         self.timer.stop("Selection")
 
-        print "BC",best_clustering_id, best_criteria_id, all_scores
-        ######################
-        # Save results
-        ######################
-        save_tools.save_cluster_info(os.path.join(workspaceHandler["results"],"selected"), selected_clusterings)
-        save_tools.save_cluster_info(os.path.join(workspaceHandler["results"],"not_selected") , not_selected_clusterings)
-        
-        save_tools.save_best_clusters_and_scores(best_clustering_id, 
-                                                 best_criteria_id, 
-                                                 all_scores, 
-                                                 os.path.join(workspaceHandler["results"],"scores"))
-        
         return best_clustering_id, selected_clusterings, not_selected_clusterings, all_scores
             
 #             
@@ -115,13 +101,6 @@ class ClusteringProtocol(Observable):
 #             big_plot.save(workspaceHandler.results_path+"/analysis_plot_big.png")
 #             small_plot.save(workspaceHandler.results_path+"/analysis_plot_small.png")
 #             
-#         global_time_end = time.time()
-#         self.htmlReport.report["Timing"] += 'All the process took %0.3f s\n' % (global_time_end-global_time_start)
-#         
-#         time_file = open(workspaceHandler.tmp_path+"/timing.txt","w")
-#         time_file.write(self.htmlReport.report["Timing"])
-#         time_file.close()
-#         
 #         
 #         #HTML REPORT
 #         html_file = open(workspaceHandler.results_path+"/report.html","w")
