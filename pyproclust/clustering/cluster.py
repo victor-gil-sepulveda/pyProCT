@@ -61,9 +61,10 @@ class Cluster(object):
     
     def __init__(self, prototype , elements):
         '''
-        TODO: DOCUMENT
+        TODOC
         '''
         self.set_elements(elements)
+        self.id = ""
         try:
             self.set_prototype(prototype)
         except TypeError:
@@ -172,7 +173,6 @@ class Cluster(object):
         """
         json_dic = {}
         elements = sorted([int(self.all_elements[i]) for i in range(len(self.all_elements))])
-        print elements
         elements.append(-1) #capping
         str_elements = ""
         start = elements[0]
@@ -190,3 +190,21 @@ class Cluster(object):
             json_dic["prototype"] = int(self.prototype)
             
         return json_dic
+    
+    @classmethod
+    def from_dic(cls, cluster_dic):
+        """
+        Creates a cluster from a cluster dictionary describing it (as reverse operation of
+        'to_dic').
+        """
+        proto = cluster_dic["prototype"]
+        values_string_parts = cluster_dic["elements"].split(",");
+        elements = []
+        for value_part in values_string_parts:
+            if ":" in value_part:
+                [ini,end] = value_part.split(":")
+                elements.extend(range(int(ini),int(end)+1))
+            else:
+                elements.append(int(value_part))
+        return Cluster(proto, elements)
+        

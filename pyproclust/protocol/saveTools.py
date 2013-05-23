@@ -42,6 +42,7 @@ def save_representatives(representatives, pdb_name, workspace_handler, trajector
                                              use_frame_number_as_model = True)
     file_handler_in.close()
     file_handler_out.close()
-
+    
+    return os.path.join(results_directory,"%s.pdb"%pdb_name)
   
 

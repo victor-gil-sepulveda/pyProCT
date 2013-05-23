@@ -5,7 +5,6 @@ Created on 04/04/2013
 '''
 import pyproclust.protocol.saveTools as saveTools
 import math
-from pyproclust.algorithms.kmedoids import kMedoidsAlgorithm
 from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproclust.protocol.refinement.refinementProtocol import redefine_clusters_with_map,\
     recreate_matrix
@@ -29,7 +28,8 @@ class Compressor(object):
         
         else:
             print "[ERROR Compressor::compress] The compression type does not exist (%s)"%(self.type)
-        saveTools.save_representatives(representatives, pdb_name, workspace_handler, trajectory_handler)
+        
+        return saveTools.save_representatives(representatives, pdb_name, workspace_handler, trajectory_handler)
     
     def __naive_compression(self, clustering, matrix_handler):
         """

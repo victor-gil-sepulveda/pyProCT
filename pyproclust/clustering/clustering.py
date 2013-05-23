@@ -7,6 +7,7 @@ import os
 import pickle
 import math
 from pyproclust.tools import scriptTools
+from pyproclust.clustering.cluster import Cluster
 
 class Clustering(object):
     '''
@@ -30,6 +31,8 @@ class Clustering(object):
         Adds a cluster to the clusterization.
         """
         self.sorted = False
+        # Add cluster_id
+        cluster.id = "cluster_"+str(len(self.clusters))
         self.clusters.append(cluster)
         self.total_number_of_elements += cluster.get_size()
     
@@ -261,5 +264,17 @@ class Clustering(object):
         for cluster in self.clusters:
             clustering_dic["clusters"].append(cluster.to_dic())
         return clustering_dic
-        
+    
+    @classmethod
+    def from_dic(cls, clustering_dic):
+        """
+        Creates a clustering from a clustering dictionary describing it (as reverse operation of
+        'to_dic').
+        """
+        clusters_dic = clustering_dic["clusters"];
+        clusters = []
+        for cluster_dic in clusters_dic:
+            clusters.append(Cluster.from_dic(cluster_dic))
+            
+        return Clustering(clusters)
             

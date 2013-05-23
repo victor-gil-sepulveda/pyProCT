@@ -124,8 +124,38 @@ class Test(unittest.TestCase):
                          Cluster(2,[2,3,8,19]),
                          Cluster(6,[6,11,12,15]),
                          Cluster(9,[9,10,14])]
-        for c in true_clusters:
-            print c.to_dic()
+        
+        dic_clusters = [
+                        {'prototype': 0, 'elements': '0, 4:5, 7, 13'},
+                        {'prototype': 1, 'elements': '1, 16:18'},
+                        {'prototype': 2, 'elements': '2:3, 8, 19'},
+                        {'prototype': 6, 'elements': '6, 11:12, 15'},
+                        {'prototype': 9, 'elements': '9:10, 14'}
+                        ]
+        
+        for i in range(len(true_clusters)):
+            self.assertDictEqual(Cluster.to_dic(true_clusters[i]), dic_clusters[i])
+            
+    def test_from_dic(self):
+        clusters = [
+                    {
+                        "prototype": 400,
+                        "elements": "400:410, 0, 1 ,2,3"
+                    },
+                    {
+                        "prototype": 500,
+                        "elements": "4,500:510, 5, 6:10, 11"
+                    }
+                ]
+        
+        expected_elements =[
+                            [400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 0, 1, 2, 3],
+                            [4, 500, 501, 502, 503, 504, 505, 506, 507, 508, 509, 510, 5, 6, 7, 8, 9, 10, 11]
+                            ]
+        
+        for i in range(len(clusters)):
+            self.assertEqual(Cluster.from_dic(clusters[i]).all_elements, expected_elements[i])
+                    
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
