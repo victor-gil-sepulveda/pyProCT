@@ -50,7 +50,15 @@ class ClusteringFilter(object):
                 not_selected_clusterings[clustering_id] = clusterings[clustering_id]
                 not_selected_clusterings[clustering_id]["reasons"] = reasons
         
+        # Now check that all the clusters are different
+        
         return selected_clusterings, not_selected_clusterings
+    
+    def check_is_not_repeated(self, clustering, all_clusterings):
+        for other_clustering in all_clusterings:
+            if clustering == all_clusterings[other_clustering]:
+                return [{"reason":"EQUAL_TO_OTHER_CLUSTERING","data":{"id":other_clustering}}]
+        return []
     
     def check_num_clusters_in_range(self, clustering):
         """
