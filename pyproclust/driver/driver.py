@@ -133,7 +133,8 @@ class Driver(Observable):
                                            "representatives",
                                            self.workspaceHandler, 
                                            self.trajectoryHandler)
-            self.generatedFiles.append({"description":"Cluster central conformations", "path":representatives_path,"type":"png"})
+            
+            self.generatedFiles.append({"description":"Cluster central conformations", "path":representatives_path,"type":"pdb"})
 
             #################################
             # Results are saved to a file

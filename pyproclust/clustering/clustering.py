@@ -277,4 +277,22 @@ class Clustering(object):
             clusters.append(Cluster.from_dic(cluster_dic))
             
         return Clustering(clusters)
+    
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            my_dic_clusters_elems = [x["elements"] for x in self.to_dic()["clusters"]]
+            other_dic_clusters_elems = [x["elements"] for x in other.to_dic()["clusters"]]
+            
+            if len(my_dic_clusters_elems) != len(other_dic_clusters_elems):
+                return False
+            else:
+                for cluster_elems in my_dic_clusters_elems:
+                    if not cluster_elems in other_dic_clusters_elems:
+                        return False
+                return True
+        else:
+            return False
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
             

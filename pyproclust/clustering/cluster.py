@@ -188,7 +188,10 @@ class Cluster(object):
         
         if self.prototype is not None:
             json_dic["prototype"] = int(self.prototype)
-            
+        
+        if self.id != "":
+            json_dic["id"] = self.id
+        
         return json_dic
     
     @classmethod
@@ -197,7 +200,16 @@ class Cluster(object):
         Creates a cluster from a cluster dictionary describing it (as reverse operation of
         'to_dic').
         """
-        proto = cluster_dic["prototype"]
+        if "prototype" in cluster_dic:
+            proto = cluster_dic["prototype"]
+        else:
+            proto = None
+        
+        if "id" in cluster_dic:
+            cid = cluster_dic["id"]
+        else:
+            cid = None
+        
         values_string_parts = cluster_dic["elements"].split(",");
         elements = []
         for value_part in values_string_parts:
@@ -206,5 +218,9 @@ class Cluster(object):
                 elements.extend(range(int(ini),int(end)+1))
             else:
                 elements.append(int(value_part))
-        return Cluster(proto, elements)
+        
+        cluster = Cluster(proto, elements)
+        cluster.id = cid
+        
+        return cluster
         
