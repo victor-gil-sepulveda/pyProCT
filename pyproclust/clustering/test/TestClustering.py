@@ -214,6 +214,39 @@ class TestClustering(unittest.TestCase):
         clustering = Clustering(clusters)
         rep =  clustering.get_proportional_size_representatives(30, "distance_matrix" )
         self.assertItemsEqual(rep, [0, 0, 10, 10, 11, 12, 13, 14, 50, 50, 51, 52, 53, 80, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96])
+    
+    def test_to_dic(self):
+        clustering =Clustering([Cluster(16,[16]),
+                                 Cluster(9,[9,10,11,12,13,14,15]),
+                                 Cluster(0,[0,1,2,3]),
+                                 Cluster(4,[4,5,6,7,8])])
+        self.assertDictEqual(clustering.to_dic(),
+                             {'clusters': [{'prototype': 9, 'elements': '9:15', 'id': 'cluster_1'}, 
+                                           {'prototype': 4, 'elements': '4:8', 'id': 'cluster_3'}, 
+                                           {'prototype': 0, 'elements': '0:3', 'id': 'cluster_2'}, 
+                                           {'prototype': 16, 'elements': '16', 'id': 'cluster_0'}], 
+                              'total_number_of_elements': 17, 
+                              'number_of_clusters': 4})
+    
+    def test_equality(self):
+        clusteringA =Clustering([Cluster(16,[16]),
+                                 Cluster(4,[4,5,6,7,8]),
+                                 Cluster(0,[0,1,2,3]),
+                                 Cluster(9,[9,10,11,12,13,14,15])])
+        
+        clusteringB =Clustering([Cluster(16,[16]),
+                                 Cluster(9,[9,10,11,12,13,14,15]),
+                                 Cluster(0,[0,1,2,3]),
+                                 Cluster(4,[4,5,6,7,8])])
+        
+        clusteringC =Clustering([Cluster(13,[13]),
+                                 Cluster(9,[9,10,11,12,16,14,15]),
+                                 Cluster(0,[0,1]),
+                                 Cluster(4,[2,3,4,5,6,7,8])])
+        
+        self.assertEqual(clusteringA, clusteringB)
+        self.assertNotEqual(clusteringA, clusteringC)
+        
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
