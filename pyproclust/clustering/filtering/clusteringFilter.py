@@ -29,6 +29,22 @@ class ClusteringFilter(object):
         #with the number of clustered elements).
         self.total_number_of_elements = matrix_handler.distance_matrix.row_length
     
+    def add_filtered_clustering(self, selected, not_selected, clusterings, clustering_id, reasons):
+        """
+        Adds a clustering to selected or not_selected arrays depending on if the rejection reasons
+        array is empty or not.
+        @param selected: The 'clustering info' dictionary with accepted clusterings.
+        @param not_selected: The 'clustering info' dictionary with rejected clusterings.
+        @param clusterings: The 'clustering info' dictionary.
+        @param clustering_id: Is the id in a 'clustering info' dictionary of the clustering being checked.
+        @param reasons: Rejection reasons array.
+        """
+        if(reasons == []):
+            selected[clustering_id] = clusterings[clustering_id]
+        else:
+            not_selected[clustering_id] = clusterings[clustering_id]
+            not_selected[clustering_id]["reasons"] = reasons
+    
     def filter(self, clusterings):
         """
         Eliminates the clusters whose parameters are not in the range we have defined in the script evaluation parameters. 
@@ -38,19 +54,51 @@ class ClusteringFilter(object):
         @return: A tuple containing the clustering_info structures of the selected and not selected clusterings. These last
         with their reasons for not having been selected.
         """
-        selected_clusterings =  {}
+        selected_clusterings = {}
         not_selected_clusterings = {}
         
+        # Filterings based in clustering analysis 
         for clustering_id in clusterings:
             reasons = self.check_clustering(clusterings[clustering_id]["clustering"])
-            
-            if(reasons == []):
-                selected_clusterings[clustering_id] = clusterings[clustering_id]
-            else:
-                not_selected_clusterings[clustering_id] = clusterings[clustering_id]
-                not_selected_clusterings[clustering_id]["reasons"] = reasons
+            self.add_filtered_clustering(selected_clusterings,
+                                         not_selected_clusterings,
+                                         clusterings,
+                                         clustering_id,
+                                         reasons)
         
-        return selected_clusterings, not_selected_clusterings
+        return self.filter_repeated(selected_clusterings, not_selected_clusterings)
+    
+    def filter_repeated(self, selected_clusterings, not_selected_clusterings):
+        """
+        Checks if the clustering is already inside 'all_clusterings', returning a rejection reason in this case.
+        
+        @param clustering_id: The clustering id to be tested.
+        @param all_clusterings: The array containing all the 'clustering info' dictionaries.
+        
+        @return: The new selected and not selected 'clustering info' arrays
+        """
+        new_selected = {}
+        selected_ids = selected_clusterings.keys()
+        
+        for i in range(len(selected_ids)):
+            clustering_id = selected_ids[i]
+            clustering = selected_clusterings[clustering_id]["clustering"]
+            reasons = []
+            
+            for j in range(i+1,len(selected_ids)):
+                other_clustering_id = selected_ids[j]
+                other_clustering = selected_clusterings[other_clustering_id]["clustering"]
+                if clustering == other_clustering:
+                    reasons = [{"reason":"EQUAL_TO_OTHER_CLUSTERING","data":{"id":other_clustering_id}}]
+                    break
+                
+            self.add_filtered_clustering(new_selected,
+                                         not_selected_clusterings,
+                                         selected_clusterings,
+                                         clustering_id,
+                                         reasons)
+             
+        return new_selected, not_selected_clusterings
     
     def check_num_clusters_in_range(self, clustering):
         """

@@ -282,7 +282,6 @@ class Clustering(object):
         if isinstance(other, self.__class__):
             my_dic_clusters_elems = [x["elements"] for x in self.to_dic()["clusters"]]
             other_dic_clusters_elems = [x["elements"] for x in other.to_dic()["clusters"]]
-            
             if len(my_dic_clusters_elems) != len(other_dic_clusters_elems):
                 return False
             else:

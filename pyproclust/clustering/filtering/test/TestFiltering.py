@@ -14,6 +14,12 @@ class ClusteringMock(object):
     
     def eliminate_noise(self, max_noise):
         pass
+    
+    def __eq__(self, other):
+        return self.number_of_clusters == other.number_of_clusters and self.total_number_of_elements == other.total_number_of_elements
+    
+    def __neq__(self, other):
+        return not self == other
 
 class MatrixHandlerMock():
     def __init__(self,number_of_elements):
@@ -76,6 +82,8 @@ class TestFiltering(unittest.TestCase):
                                           }
                                  }
                                 ])
+        
+        
     def test_check_clustering(self): 
         myFilter = ClusteringFilter({
                                         "maximum_noise": 15,
@@ -104,7 +112,26 @@ class TestFiltering(unittest.TestCase):
                                            }
                                   }
                                  ])
+    
+    def test_filter_repeated(self):
+        clustering_info ={"clustering 1":{
+                                       "clustering":ClusteringMock(number_of_clusters = 50, number_of_elements = 800)
+                                       },
+                          "clustering 2":{
+                                       "clustering":ClusteringMock(number_of_clusters = 25, number_of_elements = 900)
+                                       },
+                          "clustering 3":{
+                                       "clustering":ClusteringMock(number_of_clusters = 25, number_of_elements = 900)
+                                       }
+                          }
 
+        myFilter = ClusteringFilter({},MatrixHandlerMock(1000))
+        sel, not_sel = myFilter.filter_repeated(clustering_info,{})
+        self.assertItemsEqual(sel.keys(),["clustering 1","clustering 3"])
+        self.assertItemsEqual(not_sel.keys(),["clustering 2"])
+        self.assertDictEqual(not_sel["clustering 2"]["reasons"][0],
+                             {'reason': 'EQUAL_TO_OTHER_CLUSTERING', 'data': {'id': 'clustering 3'}})
+        
     def test_filter(self):
         myFilter = ClusteringFilter({
                                         "maximum_noise": 15,
@@ -122,13 +149,16 @@ class TestFiltering(unittest.TestCase):
                                        },
                           "clustering 3":{
                                        "clustering":ClusteringMock(number_of_clusters = 25, number_of_elements = 900)
+                                       },
+                          "clustering 4":{
+                                       "clustering":ClusteringMock(number_of_clusters = 31, number_of_elements = 900)
                                        }
                           }
+        
         selected, not_selected =  myFilter.filter(clustering_info)
-
-        self.assert_(len(selected) == 2 and len(not_selected) == 1)
-        self.assertItemsEqual(selected.keys() ,      ["clustering 2", "clustering 3"])
-        self.assertItemsEqual(not_selected.keys() ,  ["clustering 1"])
+        self.assert_(len(selected) == 1 and len(not_selected) == 3)
+        self.assertItemsEqual(selected.keys() ,      [ "clustering 3"])
+        self.assertItemsEqual(not_selected.keys() ,  ["clustering 1","clustering 2","clustering 4",])
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
