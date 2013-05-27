@@ -5,6 +5,7 @@ Created on 07/02/2013
 '''
 import unittest
 from pyproclust.driver.parameters import ProtocolParameters
+from pyRMSD.condensedMatrix import CondensedMatrix
 import pyproclust.algorithms.gromos.parametersGeneration as gromosParametersGeneration
 import pyproclust.algorithms.kmedoids.parametersGeneration as kmedoidsParametersGeneration
 import pyproclust.algorithms.random.parametersGeneration as randomParametersGeneration
@@ -29,21 +30,32 @@ class TestParameterGeneration(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         cls.parameters = ProtocolParameters.get_default_params("data/params.json")
+        distances = [94, 6, 43, 14, 96,
+                        18, 59, 54, 69,
+                            56, 96, 69,
+                                54, 50,
+                                     8]
+        cls.matrix_1 = CondensedMatrix(distances)
 
     def test_get_gromos_parameters(self):
-        expected = ([{'cutoff': 0.25}, 
-                     {'cutoff': 0.5}, 
-                     {'cutoff': 0.75}, 
-                     {'cutoff': 1.0}, 
-                     {'cutoff': 1.25}, 
-                     {'cutoff': 1.5}, 
-                     {'cutoff': 1.75}, 
-                     {'cutoff': 2.0}, 
-                     {'cutoff': 2.25}], [])
+        expected = ([{'cutoff': 8.15},
+                    {'cutoff': 16.3},
+                    {'cutoff': 24.45},
+                    {'cutoff': 32.6},
+                    {'cutoff': 40.75},
+                    {'cutoff': 48.9},
+                    {'cutoff': 57.05},
+                    {'cutoff': 65.2},
+                    {'cutoff': 73.35},
+                    {'cutoff': 81.5},
+                    {'cutoff': 89.65}], [])
         
         parametersGenerator = gromosParametersGeneration.ParametersGenerator(self.parameters, 
-                                                                             MatrixHandlerMock(MatrixMock()))
-        self.assertItemsEqual(expected, parametersGenerator.get_parameters())
+                                                                             MatrixHandlerMock(self.matrix_1),
+                                                                             10)
+        parameters = parametersGenerator.get_parameters()[0]
+        for i in  range(len(parameters)):
+            self.assertAlmostEqual(parameters[i]["cutoff"], expected[0][i]["cutoff"]) 
     
     def test_get_spectral_parameters(self):
         expected = ([{'k': 10, 'use_k_medoids': True}, 
