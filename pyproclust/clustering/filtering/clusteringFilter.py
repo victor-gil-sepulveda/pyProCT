@@ -100,6 +100,12 @@ class ClusteringFilter(object):
              
         return new_selected, not_selected_clusterings
     
+    def check_is_not_repeated(self, clustering, all_clusterings):
+        for other_clustering in all_clusterings:
+            if clustering == all_clusterings[other_clustering]:
+                return [{"reason":"EQUAL_TO_OTHER_CLUSTERING","data":{"id":other_clustering}}]
+        return []
+    
     def check_num_clusters_in_range(self, clustering):
         """
         Used to see if a clustering has a number of clusters in the range defined by script's evaluation parameters.
