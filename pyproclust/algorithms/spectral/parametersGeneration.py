@@ -4,7 +4,6 @@ Created on 27/05/2013
 @author: victor
 '''
 class ParametersGenerator(object):
-    CLUSTERING_SIZE_STEP = 2
     
     def __init__(self, parameters, matrix_handler):
         """
@@ -16,7 +15,11 @@ class ParametersGenerator(object):
         """
         self.distance_matrix = matrix_handler.distance_matrix
         self.parameters = parameters
-    
+        max_gen_clusterings = float(parameters["clustering"]["algorithms"]["spectral"]["max"])
+        self.num_clusters_step = int((parameters["evaluation"]["maximum_clusters"] - parameters["evaluation"]["minimum_clusters"]) / max_gen_clusterings)
+        if self.num_clusters_step < 1:
+            self.num_clusters_step = 1
+            
     @classmethod
     def get_base_parameters(cls):
         """
@@ -38,7 +41,7 @@ class ParametersGenerator(object):
         run_parameters = []
         max_clusters = self.parameters["evaluation"]["maximum_clusters"]
         min_clusters = self.parameters["evaluation"]["minimum_clusters"]
-        sizes = range(min_clusters,max_clusters+1,ParametersGenerator.CLUSTERING_SIZE_STEP)
+        sizes = range(min_clusters,max_clusters+1,self.num_clusters_step)
         for one_size in sizes:
             run_parameter = ParametersGenerator.get_base_parameters()
             run_parameter["k"]  = one_size

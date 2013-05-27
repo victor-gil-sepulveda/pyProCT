@@ -1,4 +1,17 @@
 {
+	"clustering":{
+		"algorithms":{
+				"spectral": {
+	                "max": 10
+	            },
+	            "gromos": {
+	                "max": 10
+	            },
+	            "kmedoids": {
+	            	"max": 10
+	            }
+		}
+	},
     "evaluation": {
         "maximum_noise": 15,
         "evaluation_criteria": {},

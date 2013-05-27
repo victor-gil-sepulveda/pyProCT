@@ -71,7 +71,7 @@ def dbscan_param_space_search(max_noise, condensed_distance_matrix):
 
     number_of_elements = condensed_distance_matrix.row_length
 
-    index_of_noise_limit =  int(number_of_elements -(max_noise*0.01*number_of_elements))
+    index_of_noise_limit =  int(number_of_elements - (max_noise*0.01*number_of_elements))
 
     params = []
     

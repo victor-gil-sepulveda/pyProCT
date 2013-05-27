@@ -51,8 +51,7 @@ class TestParameterGeneration(unittest.TestCase):
                     {'cutoff': 89.65}], [])
         
         parametersGenerator = gromosParametersGeneration.ParametersGenerator(self.parameters, 
-                                                                             MatrixHandlerMock(self.matrix_1),
-                                                                             10)
+                                                                             MatrixHandlerMock(self.matrix_1))
         parameters = parametersGenerator.get_parameters()[0]
         for i in  range(len(parameters)):
             self.assertAlmostEqual(parameters[i]["cutoff"], expected[0][i]["cutoff"]) 
@@ -75,17 +74,17 @@ class TestParameterGeneration(unittest.TestCase):
         self.assertItemsEqual(expected,parametersGenerator.get_parameters())
      
     def test_get_kmedoids_parameters(self):
-        expected = ([{'seeding_type': 'GROMOS', 'k': 10, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 12, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 14, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 16, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 18, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 20, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 22, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 24, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 26, 'seeding_max_cutoff': 2.5}, 
-                     {'seeding_type': 'GROMOS', 'k': 28, 'seeding_max_cutoff': 2.5},
-                     {'seeding_type': 'GROMOS', 'k': 30, 'seeding_max_cutoff': 2.5}], [])
+        expected = ([{'seeding_type': 'EQUIDISTANT', 'k': 10, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 12, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 14, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 16, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 18, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 20, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 22, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 24, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 26, 'seeding_max_cutoff': None}, 
+                     {'seeding_type': 'EQUIDISTANT', 'k': 28, 'seeding_max_cutoff': None},
+                     {'seeding_type': 'EQUIDISTANT', 'k': 30, 'seeding_max_cutoff': None}], [])
         
         parametersGenerator = kmedoidsParametersGeneration.ParametersGenerator(self.parameters, 
                                                                              MatrixHandlerMock(MatrixMock()))

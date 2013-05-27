@@ -7,7 +7,7 @@ import numpy
 
 class ParametersGenerator(object):
     
-    def __init__(self, parameters, matrix_handler, max_gen_clusterings = 25):
+    def __init__(self, parameters, matrix_handler):
         """
         Class creator.
         
@@ -17,7 +17,7 @@ class ParametersGenerator(object):
         """
         self.distance_matrix = matrix_handler.distance_matrix
         self.parameters = parameters
-        self.max_gen_clusterings = max_gen_clusterings
+        self.max_gen_clusterings = parameters["clustering"]["algorithms"]["gromos"]["max"]
     
     @classmethod
     def get_base_parameters(cls):
@@ -77,7 +77,6 @@ class ParametersGenerator(object):
         This function creates some parameters to be used with Gromos. 
         @return: A tuple with the generated parameters and an empty list corresponding to the clusterings.
         """
-        
         most_separated = self.get_most_separated_elements()
         central_element =  self.get_most_separated_from_two_elements(most_separated["elements"][0],most_separated["elements"][1])
         

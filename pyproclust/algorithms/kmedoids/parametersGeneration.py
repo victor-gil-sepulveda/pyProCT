@@ -17,6 +17,10 @@ class ParametersGenerator(object):
         """
         self.distance_matrix = matrix_handler.distance_matrix
         self.parameters = parameters
+        max_gen_clusterings = float(parameters["clustering"]["algorithms"]["kmedoids"]["max"])
+        self.num_clusters_step = int((parameters["evaluation"]["maximum_clusters"] - parameters["evaluation"]["minimum_clusters"]) / max_gen_clusterings)
+        if self.num_clusters_step < 1:
+            self.num_clusters_step = 1
     
     @classmethod
     def get_base_parameters(cls):
@@ -40,12 +44,11 @@ class ParametersGenerator(object):
         run_parameters = []
         max_clusters = self.parameters["evaluation"]["maximum_clusters"]
         min_clusters = self.parameters["evaluation"]["minimum_clusters"]
-        sizes = range(min_clusters,max_clusters+1,ParametersGenerator.CLUSTERING_SIZE_STEP)
+        sizes = range(min_clusters,max_clusters+1,self.num_clusters_step)
         for one_size in sizes:
             run_parameter = ParametersGenerator.get_base_parameters()
             run_parameter["k"]  = one_size
-            run_parameter["seeding_type"] = "GROMOS"
-            run_parameter["seeding_max_cutoff"] = self.distance_matrix.calculateMean()
+            run_parameter["seeding_type"] = "EQUIDISTANT"
             run_parameters.append(run_parameter)
         
         return run_parameters, []

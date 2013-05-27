@@ -59,7 +59,7 @@ class ClusteringExplorator(Observable):
         @param scheduler: An instance of a Scheduler like object
         
         @param parameters_generator: An instance of AlgorithmRunParametersGenerator, in charge of generating automatically the
-        parameters needed for the exploration if those are not givenn.
+        parameters needed for the exploration if those are not given.
         
         @param observer: The observer object for this Observable.
         """
