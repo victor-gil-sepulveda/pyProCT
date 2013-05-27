@@ -7,6 +7,7 @@ from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import Hierarchica
 import pyproclust.algorithms.hierarchical.hierarchicalTools as  hierarchicalTools
 
 class ParametersGenerator(object):
+    HIERARCHICAL_REFINEMENT_VALUE = 200
     
     def __init__(self, parameters, matrix_handler):
         """

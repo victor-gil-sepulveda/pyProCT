@@ -27,3 +27,4 @@ class ProtocolParameters():
     def get_default_params(cls, source):
         return ProtocolParameters.get_params_from_json(open(source,"r").read())
     
+    
