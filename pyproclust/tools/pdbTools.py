@@ -112,14 +112,14 @@ def write_a_tfile_model_into_other_tfile(file_in_handler,
         file_out_handler.write("ENDMDL\n")
     
 
-def extract_frames_from_trajectory(file_handler_in, 
+def extract_frames_from_trajectory_sequentially(file_handler_in, 
                                    number_of_frames, 
                                    file_handler_out, 
                                    frames_to_save, 
                                    INITIAL_TAG="MODEL", 
                                    END_TAG="ENDMDL", 
                                    keep_header = False,
-                                   use_frame_number_as_model = False):
+                                   write_frame_number_instead_of_correlative_model_number = False):
     """
     It extracts some frames from one trajectory and writes them down in an opened file handler.
     
@@ -132,16 +132,16 @@ def extract_frames_from_trajectory(file_handler_in,
     @param END_TAG: Is the last tag in a model, after the pdb atom data. Usually is "ENDMDL" or "TER".
     @param keep_header: Will try to keep any header previous to INITIAL_TAG, such as "REMARK" lines.
     @param use_frame_number_as_model: If true, it will use the number of frame in 'frames_to_save' as model number
-    in the new file.
+    in the new file. If not, models of the new file will have sequential numbering.
     """
     current = 0
     for i in range(number_of_frames):
         if i in frames_to_save:
             write = True
-            if not use_frame_number_as_model:
-                current = current + 1
+            if write_frame_number_instead_of_correlative_model_number:
+                current = i
             else:
-                current = i 
+                current = current + 1
         else:
             write = False
         write_a_tfile_model_into_other_tfile(file_handler_in,
@@ -149,7 +149,7 @@ def extract_frames_from_trajectory(file_handler_in,
                                              current,
                                              INITIAL_TAG,
                                              END_TAG,
-                                             not write, 
+                                             not write,
                                              keep_header)
 
 def create_CA_file(file_handler_in, file_handler_out):
@@ -179,7 +179,7 @@ def get_model_boundaries(input_pdb_handler):
     reading_model = False
     last_atom_serial = -1
     for line in input_pdb_handler:
-        if line[0:4] == "ATOM":
+        if line[0:4] == "ATOM" or line[0:4] == "HETA":
             atom_serial = int(line[5:11])
             # if the atom serial number decreases suddenly, it means we are starting
             # to read another frame of the trajectory, so we have to finish the last
@@ -202,7 +202,7 @@ def get_model_boundaries(input_pdb_handler):
 
 def repair_MODEL_ENDMDL_tags(input_pdb_handler, output_pdb_handler, boundaries):
     """
-    Uses the previously discovered partition with 'get_MODEL_ENDMDL_boundaries' to add the necessary MODEL, 
+    Uses the previously discovered partition with 'get_model_boundaries' to add the necessary MODEL, 
     ENDMDL tags for each of its discovered models.
     
     @param input_pdb: Is the pdb file handler we want to repair.
@@ -222,3 +222,28 @@ def repair_MODEL_ENDMDL_tags(input_pdb_handler, output_pdb_handler, boundaries):
             output_pdb_handler.write("ENDMDL\n")        
             current_boundary += 1
         line_number += 1
+
+def grab_existing_frame_from_trajectory(trajectory_file_handler, output_file_handler, model_number):
+    """
+    Extracts a model of a trajectory and writes it into another file. The model must exists in the trajectory,
+    otherwise the behavior will be undefined.
+    
+    @param trajectory_file_handler: Opened file handler containing the whole trajectory.
+    
+    @param output_file_handler: Opened file handler to write resulting model.
+    
+    @param model_number: The model we want to extract from the trajectory. It MUST exist.
+    """
+    write_model = False
+    
+    for line in trajectory_file_handler:
+        if line[0:5] == "MODEL":
+            if int(line[5:]) == model_number:
+                write_model = True
+        
+        if write_model == True:
+            output_file_handler.write(line)
+        
+        if write_model == True and  line[0:6] == "ENDMDL":
+            write_model = False
+    

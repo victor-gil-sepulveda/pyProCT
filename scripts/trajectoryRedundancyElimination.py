@@ -13,7 +13,7 @@ import sys
 import pyRMSD.RMSD
 import prody.proteins
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproclust.tools.pdbTools import extract_frames_from_trajectory
+from pyproclust.tools.pdbTools import extract_frames_from_trajectory_sequentially
 import pickle 
                                                                                                                                                 
 if __name__ == '__main__':
@@ -54,7 +54,7 @@ if __name__ == '__main__':
     print "Writing..."
     traj_handler_in = open(trajectory_pdb,"r")
     traj_handler_out = open(final_trajectory_pdb,"w")
-    extract_frames_from_trajectory(traj_handler_in,matrix.row_length,traj_handler_out,final_conformations)
+    extract_frames_from_trajectory_sequentially(traj_handler_in,matrix.row_length,traj_handler_out,final_conformations)
     traj_handler_in.close()
     traj_handler_out.close()
     

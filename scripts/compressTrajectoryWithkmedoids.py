@@ -11,7 +11,7 @@ import optparse
 import prody.proteins
 from pyRMSD.matrixHandler import MatrixHandler
 from pyproclust.algorithms.kmedoids.kMedoids import KMedoids
-from pyproclust.tools.pdbTools import extract_frames_from_trajectory
+from pyproclust.tools.pdbTools import extract_frames_from_trajectory_sequentially
 import random
 import math
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
     sys.stdout.flush()
     traj_handler_in = open(options.pdb_in,"r")
     traj_handler_out = open(options.pdb_out,"w")
-    extract_frames_from_trajectory(traj_handler_in,matrixHandler.distance_matrix.row_length,traj_handler_out, centers, "MODEL","ENDMDL",keep_header = True)
+    extract_frames_from_trajectory_sequentially(traj_handler_in,matrixHandler.distance_matrix.row_length,traj_handler_out, centers, "MODEL","ENDMDL",keep_header = True)
     traj_handler_in.close()
     traj_handler_out.close()
     

@@ -9,7 +9,8 @@ import pyproclust.tools.test.data as test_data
 import os
 import cStringIO
 import numpy
-from pyproclust.tools.pdbTools import repair_MODEL_ENDMDL_tags
+from pyproclust.tools.pdbTools import repair_MODEL_ENDMDL_tags,\
+    grab_existing_frame_from_trajectory
 
 
 class Test(unittest.TestCase):
@@ -26,23 +27,23 @@ class Test(unittest.TestCase):
         os.system("rm test_pdb_for_counting_2.pdb")
         self.assertEqual(num_models,test_data.pdb1_num_of_atoms)
         
-    def test_extract_frames_from_trajectory(self):
+    def test_extract_frames_from_trajectory_sequentially(self):
         input_file = cStringIO.StringIO(test_data.pdb_1_sub2_file_content)
         output = cStringIO.StringIO()
         frames = [2,5]
-        pyproclust.tools.pdbTools.extract_frames_from_trajectory(input_file, test_data.pdb_1_num_of_models , output, frames,"MODEL","TER")
+        pyproclust.tools.pdbTools.extract_frames_from_trajectory_sequentially(input_file, test_data.pdb_1_num_of_models , output, frames,"MODEL","TER")
         self.assertEqual( output.getvalue(),test_data.extracted_pdbs_1)
         
         input_file = cStringIO.StringIO(test_data.pdb_2_file_content)
         output = cStringIO.StringIO()
         frames = [1,3]
-        pyproclust.tools.pdbTools.extract_frames_from_trajectory(input_file, test_data.pdb_2_num_of_models, output, frames,"MODEL","ENDMDL")
+        pyproclust.tools.pdbTools.extract_frames_from_trajectory_sequentially(input_file, test_data.pdb_2_num_of_models, output, frames,"MODEL","ENDMDL")
         self.assertEqual( output.getvalue(),test_data.extracted_pdbs_3)
         
         input_file = cStringIO.StringIO(test_data.pdb_2_file_content)
         output = cStringIO.StringIO()
         frames = [1,3]
-        pyproclust.tools.pdbTools.extract_frames_from_trajectory(input_file, test_data.pdb_2_num_of_models, output, frames,"MODEL","ENDMDL", keep_header = True)
+        pyproclust.tools.pdbTools.extract_frames_from_trajectory_sequentially(input_file, test_data.pdb_2_num_of_models, output, frames,"MODEL","ENDMDL", keep_header = True)
         self.assertEqual( output.getvalue(),test_data.extracted_pdbs_4)
     
     
@@ -95,6 +96,12 @@ ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00
         boundaries = [[1, 5], [8, 12], [15, 19], [22, 26], [29, 33], [36, 40], [43, 45]]
         repair_MODEL_ENDMDL_tags(input_pdb_handler, output_file_handler, boundaries)
         self.assertEqual(output_file_handler.getvalue(), test_data.pdb_1_file_content)
+        
+    def test_grab_existing_frames_from_trajectory(self):
+        input_pdb_handler = cStringIO.StringIO(test_data.proto_pdb)
+        output_file_handler = cStringIO.StringIO()
+        grab_existing_frame_from_trajectory(input_pdb_handler, output_file_handler, 48)
+        self.assertEqual(test_data.proto_48_pdb, output_file_handler.getvalue())
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

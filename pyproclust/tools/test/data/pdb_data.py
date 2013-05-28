@@ -215,3 +215,133 @@ ATOM      6  CA  LYP     6      -5.228   5.331  -5.451  1.00  4.00
 ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  4.00            
 ENDMDL
 """
+
+premerged_pdb_1 = """MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  2.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00            
+ENDMDL
+"""
+
+premerged_pdb_2 = """MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  3.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  3.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  4.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  4.00            
+ENDMDL
+"""
+
+premerged_pdb_3 = """MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  5.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  5.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  6.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  6.00            
+ENDMDL
+"""
+
+merged_pdb = """MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  2.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00            
+ENDMDL
+MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  3.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  3.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  4.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  4.00            
+ENDMDL
+MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  5.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  5.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  6.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  6.00            
+ENDMDL
+"""
+
+merged_renumbered_pdb = """MODEL        0
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00            
+ENDMDL
+MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  2.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  3.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  3.00            
+ENDMDL
+MODEL        3
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  4.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  4.00            
+ENDMDL
+MODEL        4
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  5.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  5.00            
+ENDMDL
+MODEL        5
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  6.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  6.00            
+ENDMDL
+"""
+
+merged_1_5 = """MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  2.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00            
+ENDMDL
+MODEL        5
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  6.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  6.00            
+ENDMDL
+"""
+
+merged_1_5_correlative = """MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  2.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  6.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  6.00            
+ENDMDL
+"""
+
+proto_pdb = """MODEL      100
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00            
+ENDMDL
+MODEL       26
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  2.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00            
+ENDMDL
+MODEL       48
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  3.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  3.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  4.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  4.00            
+ENDMDL
+MODEL       56
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  5.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  5.00            
+ENDMDL
+"""
+
+proto_48_pdb = """MODEL       48
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  3.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  3.00            
+ENDMDL
+"""

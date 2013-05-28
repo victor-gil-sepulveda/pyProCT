@@ -130,11 +130,13 @@ class Driver(Observable):
                 best_clustering["clustering"].clusters[i].prototype = medoids[i]
             
             representatives_path = saveTools.save_representatives(medoids, 
-                                           "representatives",
-                                           self.workspaceHandler, 
-                                           self.trajectoryHandler)
+                                                                   "representatives",
+                                                                   self.workspaceHandler, 
+                                                                   self.trajectoryHandler,
+                                                                   do_merged_files_have_correlative_models = True,
+                                                                   write_frame_number_instead_of_correlative_model_number = True)
             
-            self.generatedFiles.append({"description":"Cluster central conformations", "path":representatives_path,"type":"pdb"})
+            self.generatedFiles.append({"description":"Cluster central conformations", "path":representatives_path, "type":"pdb"})
 
             #################################
             # Results are saved to a file
