@@ -147,9 +147,9 @@ class Driver(Observable):
                                                               clustering_results,
                                                               self.generatedFiles)
             
-            
-            open(os.path.join(self.workspaceHandler["results"],"results.json"),"w").write(json_results)
-            
+            results_path = os.path.join(self.workspaceHandler["results"],"results.json")
+            open(results_path,"w").write(json_results)
+            self.generatedFiles.append({"description":"Results file", "path":results_path, "type":"text"})
             
         elif action_type == "comparison":
             ############################################
