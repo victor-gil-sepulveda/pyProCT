@@ -29,7 +29,12 @@ class Compressor(object):
         else:
             print "[ERROR Compressor::compress] The compression type does not exist (%s)"%(self.type)
         
-        return saveTools.save_representatives(representatives, pdb_name, workspace_handler, trajectory_handler)
+        return saveTools.save_representatives(representatives, 
+                                              pdb_name, 
+                                              workspace_handler, 
+                                              trajectory_handler,
+                                              do_merged_files_have_correlative_models=True,
+                                              write_frame_number_instead_of_correlative_model_number=False)
     
     def __naive_compression(self, clustering, matrix_handler):
         """
@@ -63,11 +68,12 @@ class Compressor(object):
 #             print "KMEDOIDS:: EXPECTED", expected_cluster_elements, cluster_size, clustering.total_number_of_elements, self.parameters["final_number_of_frames"]
             new_clustering = kmedoids.perform_clustering({
                                                       "k": expected_cluster_elements,
-                                                      "seeding_type": "RANDOM"
+                                                      "seeding_type": "EQUIDISTANT"
             })
             
 #             print "NEW CLUSTERING SIZE  clusters: %d  elements: %d"%(len(new_clustering.clusters), new_clustering.total_number_of_elements)
             
+            # reverse the remapping and add it to representatives
             remapped_representatives = new_clustering.get_medoids(remapped_matrix)
             fake_cluster = Cluster(None, remapped_representatives)
             
