@@ -29,15 +29,15 @@ class Test(unittest.TestCase):
         cls.matrix_2 = CondensedMatrix(distances)
     
     def test_get_most_separated_elements(self):
-        pg = ParametersGenerator({},MatrixHandlerMock(self.matrix_1))
+        pg = ParametersGenerator({"clustering":{"algorithms":{"gromos":{"max":25}}}},MatrixHandlerMock(self.matrix_1))
         self.assertDictEqual(pg.get_most_separated_elements(), {'elements': (0, 5), 'value': 96.0})
-        pg = ParametersGenerator({},MatrixHandlerMock(self.matrix_2))
+        pg = ParametersGenerator({"clustering":{"algorithms":{"gromos":{"max":25}}}},MatrixHandlerMock(self.matrix_2))
         self.assertDictEqual(pg.get_most_separated_elements(), {'elements': (3, 4), 'value': 90.0})
 
     def test_get_most_separated_from_two_elements(self):
-        pg = ParametersGenerator({},MatrixHandlerMock(self.matrix_1))
+        pg = ParametersGenerator({"clustering":{"algorithms":{"gromos":{"max":25}}}},MatrixHandlerMock(self.matrix_1))
         self.assertDictEqual( pg.get_most_separated_from_two_elements(0, 5), {'mean_value': 81.5, 'element': 1, 'value': 94.0,})
-        pg = ParametersGenerator({},MatrixHandlerMock(self.matrix_2))
+        pg = ParametersGenerator({"clustering":{"algorithms":{"gromos":{"max":25}}}},MatrixHandlerMock(self.matrix_2))
         self.assertDictEqual( pg.get_most_separated_from_two_elements(3, 4),{'mean_value': 77.0, 'element': 5, 'value': 89.0})
         
 if __name__ == "__main__":
