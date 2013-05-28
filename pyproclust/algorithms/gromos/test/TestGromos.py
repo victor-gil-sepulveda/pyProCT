@@ -8,6 +8,7 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.clustering.cluster import cluster_from_tuple, Cluster
 from pyproclust.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
 from pyproclust.algorithms.gromos.gromosAlgorithmTools import eliminate_cluster_from_node_list
+import numpy
 
 class Test(unittest.TestCase):
 
@@ -143,7 +144,17 @@ class Test(unittest.TestCase):
         nodes_left.sort()
         for i in range(len(nodes)):
             self.assertEqual(nodes[i],nodes_left[i])
-
+    
+    def test_specific_case(self):
+        condensed_matrix = CondensedMatrix(list(numpy.load("data/matrix.npy")))
+        gromos_alg = GromosAlgorithm(condensed_matrix)
+        # If we cut below the minimum (1.16 here) You obtain all single element clusters 
+        clustering = gromos_alg.perform_clustering({"cutoff": 1})
+        self.assertEqual(len(clustering.clusters), 200)
+        # Over this value, you will obtain bigger clusters
+        clustering = gromos_alg.perform_clustering({"cutoff": 2})
+        self.assertEqual(len(clustering.clusters), 2)
+        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
