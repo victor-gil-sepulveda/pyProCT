@@ -141,15 +141,16 @@ class Driver(Observable):
             #################################
             # Results are saved to a file
             #################################
+            results_path = os.path.join(self.workspaceHandler["results"],"results.json")
+            self.generatedFiles.append({"description":"Results file", "path":results_path, "type":"text"})
+
             json_results = ClusteringResultsGatherer().gather(self.timer, 
                                                               self.trajectoryHandler, 
                                                               self.workspaceHandler,
                                                               clustering_results,
                                                               self.generatedFiles)
-            
-            results_path = os.path.join(self.workspaceHandler["results"],"results.json")
+            # Results are first added and saved later to avoid metareferences :D
             open(results_path,"w").write(json_results)
-            self.generatedFiles.append({"description":"Results file", "path":results_path, "type":"text"})
             
         elif action_type == "comparison":
             ############################################
