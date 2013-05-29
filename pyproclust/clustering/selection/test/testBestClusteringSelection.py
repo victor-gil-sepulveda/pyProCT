@@ -83,16 +83,15 @@ class Test(unittest.TestCase):
                                               }
                             } 
         }
-        
         self.assertEqual(BestClusteringSelector.get_score_for_criteria("Clustering 1", 
                                                                       clustering_info,
                                                                       criteria), 
-                         1.35)
+                         0.9)
         
-        self.assertEqual(BestClusteringSelector.get_score_for_criteria("Clustering 4", 
+        self.assertAlmostEqual(BestClusteringSelector.get_score_for_criteria("Clustering 4", 
                                                                       clustering_info,
                                                                       criteria), 
-                         1.4)
+                         0.933333333333,12)
         
     def test_get_scores_for_all_clusters_and_criterias(self):
         criteria = {
@@ -144,20 +143,22 @@ class Test(unittest.TestCase):
                                               }
                             } 
         }
+        
         # regression, checked
         self.assertDictEqual({
-                              'criteria 1': {
-                                             'Clustering 4': 1.4, 
-                                             'Clustering 2': 0.7, 
-                                             'Clustering 3': 0.85, 
-                                             'Clustering 1': 1.35}, 
-                              'criteria 2': {
-                                             'Clustering 4': 0.56, 
-                                             'Clustering 2': 0.27999999999999997, 
-                                             'Clustering 3': 0.33999999999999997, 
-                                             'Clustering 1': 0.54
-                                             }
-                              },
+                             'criteria 1': {
+                                            'Clustering 4': 0.9333333333333332, 
+                                            'Clustering 2': 0.4666666666666666, 
+                                            'Clustering 3': 0.5666666666666667, 
+                                            'Clustering 1': 0.9
+                                            }, 
+                             'criteria 2': {
+                                            'Clustering 4': 0.9333333333333332, 
+                                            'Clustering 2': 0.46666666666666656, 
+                                            'Clustering 3': 0.5666666666666665, 
+                                            'Clustering 1': 0.8999999999999999
+                                            }
+                             },
                              BestClusteringSelector.get_scores_for_all_clusters_and_criterias(criteria, clustering_info))
         
     def test_get_best_clustering(self):

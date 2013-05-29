@@ -101,9 +101,11 @@ class BestClusteringSelector(object):
         """
         evaluation_info = clustering_info[clustering_id]["evaluation"]
         score = 0.0
+        accum_weight = 0
         for evaluation_type in criteria:
             value = evaluation_info["Normalized_"+evaluation_type]
             weight = criteria[evaluation_type]["weight"]
+            accum_weight += weight
             action = criteria[evaluation_type]["action"]
             if action == ">": 
                 #Maximize metric
@@ -114,8 +116,8 @@ class BestClusteringSelector(object):
             else:
                 print "[ERROR]Criteria action is not valid ( %s )"%action
                 exit()
-        return score
-    
+        return score / accum_weight
+        
     @classmethod
     def normalize_one_evaluation_type(cls, evaluation_type, clustering_info):
         """
