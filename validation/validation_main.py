@@ -21,13 +21,13 @@ from pyproclust.tools.scriptTools import create_directory
 """
 Script for visual validation of algorithms.
 """
-def build_algorithms(matrix):
+def get_algorithms():
     algorithms = {
-                  "GROMOS":GromosAlgorithm(matrix),
-                  "DBSCAN":DBSCANAlgorithm(matrix),
-                  "K-Medoids":KMedoidsAlgorithm(matrix),
-                  "Hierarchical":HierarchicalClusteringAlgorithm(matrix),
-                  "Spectral":SpectralClusteringAlgorithm(matrix, sigma_sq = None, store_W = True)
+                  "GROMOS":GromosAlgorithm,
+                  "DBSCAN":DBSCANAlgorithm,
+                  "K-Medoids":KMedoidsAlgorithm,
+                  "Hierarchical":HierarchicalClusteringAlgorithm,
+                  "Spectral":SpectralClusteringAlgorithm
                   }
     
     return algorithms
@@ -90,15 +90,19 @@ if __name__ == '__main__':
         print dataset_name
         observations = all_observations[dataset_name] 
         condensed_matrix = condensed_matrices[dataset_name]
-        algorithms = build_algorithms(condensed_matrix)
+        algorithms = get_algorithms()
         ###
         # And use Spectral.W to draw the adjacency graph in order to evaluate its correctness
         ###
-        generate_similarity_network(algorithms["Spectral"].W,observations,30,20,False).save("clustering_images/%s_spectral_network.jpg"%dataset_name,"JPEG")
+        generate_similarity_network(algorithms["Spectral"].W,
+                                    observations,30,20,False).save("clustering_images/%s_spectral_network.jpg"%dataset_name,
+                                         "JPEG")
         ###
-        
         for algorithm_name in algorithms:
-            algorithm = algorithms[algorithm_name]
+            if(algorithm_name == "Spectral"):
+                algorithm = algorithms[algorithm_name](condensed_matrix)
+            else:
+                algorithm = algorithms[algorithm_name](condensed_matrix)
             params_list = params_for_alg_and_dataset[algorithm_name][dataset_name]
             for params in params_list:
                 clustering = algorithm.perform_clustering(params)

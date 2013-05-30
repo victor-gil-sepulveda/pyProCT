@@ -72,7 +72,7 @@ class SpectralClusteringAlgorithm(object):
                 print "[ERROR::SpectralClusteringAlgorithm] Type " ,laplacian_calculation_type, "is not a correct type. Use one of these instead: ", SpectralClusteringAlgorithm.laplacian_calculation_types()
                 exit()
         except KeyError:
-            laplacian_calculation_type = "PYTHON"
+            laplacian_calculation_type = "NUMPY_PURE"
                 
         if verbose: print "Calculating W ..."
         
