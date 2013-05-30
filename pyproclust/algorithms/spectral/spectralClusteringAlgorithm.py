@@ -43,7 +43,7 @@ class SpectralClusteringAlgorithm(object):
         @param store_W: If True the object stores the adjacency matrix. Useful for testing.
         @param verbose: If True some messages will be printed.
         """
-        
+        print "Creating spectral"
         try:
             self.max_clusters = kwargs["max_clusters"]
         except KeyError:
@@ -189,7 +189,6 @@ class SpectralClusteringAlgorithm(object):
             print "Negative percent",number_of_negative_elements/ number_of_elems 
         
         return W, sq_first_approx
-        
         
     @classmethod
     def calculate_adjacency_matrix(cls, matrix, sigma_sq):

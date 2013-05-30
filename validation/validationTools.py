@@ -161,7 +161,7 @@ def draw_triangle(draw, boundaries, color):
     yinf = boundaries[3]
     draw.polygon([(xsup,yinf),(xsup+0.5*(xinf-xsup),ysup),(xinf,yinf)], fill = color)
 
-def show_2D_dataset_clusters(dataset_observations, scale, clusterization, margin = 0, print_numbers = False):
+def show_2D_dataset_clusters(dataset_observations, clusterization, scale, margin = 0, print_numbers = False):
     """
     Generates an image with a 2D dataset drawn, where alll the points belonging to the same
     cluster have the same color, different from the color of the other clusters.

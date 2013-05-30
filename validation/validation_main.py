@@ -14,8 +14,6 @@ from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import Hierarchica
 from pyproclust.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
 from validation.validationTools import params_to_string, dataset_loading_2D,\
     show_2D_dataset_clusters, generate_similarity_network
-from validation.datasets import sigma_sq
-import numpy
 from pyproclust.tools.scriptTools import create_directory
 
 """
@@ -50,8 +48,14 @@ def generate_params_for_alg_and_dataset():
     for dataset_name in data.number_of_clusters:
         num_clusters_list = data.number_of_clusters[dataset_name]
         for num_clusters in num_clusters_list:
-            params["K-Medoids"][dataset_name].append({"k":num_clusters, "seeding_type":"EQUIDISTANT"})
-            params["Spectral"][dataset_name].append({"k":num_clusters, "use_k_medoids": True})
+            params["K-Medoids"][dataset_name].append({"k":num_clusters,
+                                                      "seeding_type":"EQUIDISTANT"})
+            
+            params["Spectral"][dataset_name].append({"store_W":True,
+                                                     "max_clusters":max(num_clusters_list),
+                                                     "sigma_sq":data.sigma_sq[dataset_name],
+                                                     "k":num_clusters,
+                                                     "use_k_medoids": True})
             
     # Params for GROMOS
     for dataset_name in data.number_of_clusters:
@@ -61,7 +65,6 @@ def generate_params_for_alg_and_dataset():
         params["Hierarchical"][dataset_name].append({'cutoff':1.1523})
     
     params["DBSCAN"] = data.DBSCAN_params_sq
-    
     return params
 
 if __name__ == '__main__':
@@ -70,6 +73,7 @@ if __name__ == '__main__':
     condensed_matrices = {}
     all_observations = {}
     create_directory("./clustering_images")
+    # Creation of all matrices
     for dataset_name in data.all_datasets:
         dataset = data.all_datasets[dataset_name]
         # Creating the matrix
@@ -86,28 +90,33 @@ if __name__ == '__main__':
         print "Variance = ",condensed_matrix.calculateVariance()
         print "-----------------------\n"
     
+    # Generation of clusterings
     for dataset_name in data.all_datasets:
         print dataset_name
         observations = all_observations[dataset_name] 
         condensed_matrix = condensed_matrices[dataset_name]
-        algorithms = get_algorithms()
-        ###
-        # And use Spectral.W to draw the adjacency graph in order to evaluate its correctness
-        ###
-        generate_similarity_network(algorithms["Spectral"].W,
-                                    observations,30,20,False).save("clustering_images/%s_spectral_network.jpg"%dataset_name,
-                                         "JPEG")
-        ###
-        for algorithm_name in algorithms:
-            if(algorithm_name == "Spectral"):
-                algorithm = algorithms[algorithm_name](condensed_matrix)
-            else:
-                algorithm = algorithms[algorithm_name](condensed_matrix)
+        
+        for algorithm_name in ["GROMOS","DBSCAN","K-Medoids","Hierarchical","Spectral"]:
             params_list = params_for_alg_and_dataset[algorithm_name][dataset_name]
+            print "\t",algorithm_name
+             
             for params in params_list:
+                print "\t\t",params
+                algorithm = get_algorithms()[algorithm_name](condensed_matrix, **params)
+                if(algorithm_name == "Spectral"):
+                    generate_similarity_network(algorithm.W,
+                                                observations,
+                                                scale = 30,
+                                                margin = 20,
+                                                print_numbers = False).save("clustering_images/%s_spectral_network.jpg"%dataset_name,
+                                                                            "JPEG")
                 clustering = algorithm.perform_clustering(params)
                 image_name = algorithm_name+"_"+dataset_name+"_"+params_to_string(params)
-                show_2D_dataset_clusters(observations, 20, clustering, 20).save("clustering_images/%s.jpg"%image_name,"JPEG")
+                show_2D_dataset_clusters(observations,
+                                         clustering,
+                                         scale = 20,
+                                         margin = 20).save("clustering_images/%s.jpg"%image_name,
+                                                  "JPEG")
     
     print
     print "Done"

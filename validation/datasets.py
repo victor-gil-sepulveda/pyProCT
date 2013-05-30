@@ -907,9 +907,9 @@ all_datasets = {
 
 # From visual inspection
 number_of_clusters = {
-                        'spaeth_01':[3,4,5,6],
-                        'spaeth_02': [],
-                        'spaeth_03': [1,2,3],
+                        'spaeth_01':range(3,7),
+                        'spaeth_02': range(1,10),
+                        'spaeth_03': range(1,4),
                         'spaeth_04': [6],
                         'spaeth_05': [3],
                         'spaeth_06': [3],
@@ -941,6 +941,7 @@ DBSCAN_params_sq = {
                         'spaeth_06': [{"eps":4.8 ,"minpts":3},{"eps":5.3 ,"minpts":3}],
                         'spaeth_07': [{"eps":5.2 ,"minpts":3}], 
                         'spaeth_08': [{"eps":4 ,"minpts":3}], 
-                        'concentric_circles': [{"eps":0.6 ,"minpts":4}]} # Nota: basicamente tenemos que encontrar un buen eps para un
-                                                                         # minpts reducido para que el clustering no se expanda del centro 
-                                                                         # a los circulos concentricos
+                        # Nota concentric_circles: basicamente tenemos que encontrar un buen eps para un
+                        # minpts reducido para que el clustering no se expanda del centro 
+                        # a los circulos concentricos
+                        'concentric_circles': [{"eps":0.6 ,"minpts":4}]} 
