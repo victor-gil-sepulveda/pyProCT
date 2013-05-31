@@ -4,7 +4,7 @@ Created on 20/02/2012
 @author: victor
 '''
 
-import validation.datasets as data
+import validation.algorithms.datasets as data
 import scipy.spatial.distance as distance
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
@@ -12,7 +12,7 @@ from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm
 from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
 from pyproclust.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
-from validation.validationTools import params_to_string, dataset_loading_2D,\
+from validation.algorithms.validationTools import params_to_string, dataset_loading_2D,\
     show_2D_dataset_clusters, generate_similarity_network
 from pyproclust.tools.scriptTools import create_directory
 
