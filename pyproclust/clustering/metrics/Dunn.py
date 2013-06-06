@@ -14,7 +14,7 @@ class DunnCalculator(object):
         dmax = self.max_intercluster_distance(clustering, matrix)
         dunn_index = dmin / dmax
         return dunn_index
-        
+    
     @classmethod
     def min_intracluster_distance(cls, cluster, matrix):
         distances = []
