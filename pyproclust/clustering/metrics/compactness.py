@@ -16,7 +16,6 @@ class CompactnessCalculator(object):
         """
         mean is approximated to medoid 
         """
-               
         update_medoids(clustering, matrix)
         
         global_cluster = Cluster(None, range(matrix.row_length))
@@ -31,7 +30,6 @@ class CompactnessCalculator(object):
         Cmp = sum_ci / (len(clustering.clusters*global_variance))
         
         return Cmp
-            
     
     @classmethod
     def cluster_variance(cls, cluster, matrix):
