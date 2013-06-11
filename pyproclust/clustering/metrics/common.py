@@ -5,9 +5,11 @@ Created on 06/06/2013
 '''
 def get_intra_cluster_distances(cluster, matrix):
     distances = []
+    cluster_elements = cluster.all_elements
     for i in range(len(cluster.all_elements)-1):
         for j in range(i+1,len(cluster.all_elements)):
-            distances.append(matrix[i,j])
+            print(i,j)
+            distances.append(matrix[cluster_elements[i],cluster_elements[j]])
     return distances
 
 def get_inter_cluster_distances(i, j, clusters, matrix):
