@@ -8,7 +8,6 @@ def get_intra_cluster_distances(cluster, matrix):
     cluster_elements = cluster.all_elements
     for i in range(len(cluster.all_elements)-1):
         for j in range(i+1,len(cluster.all_elements)):
-            print(i,j)
             distances.append(matrix[cluster_elements[i],cluster_elements[j]])
     return distances
 
@@ -22,7 +21,7 @@ def get_inter_cluster_distances(i, j, clusters, matrix):
 def get_distances_of_elements_to(from_this, to_those, matrix):
     distances = []
     for element in to_those:
-        distances.append(matrix[from_this][element])
+        distances.append(matrix[from_this,element])
     return distances
 
 def update_medoids(clustering, matrix):

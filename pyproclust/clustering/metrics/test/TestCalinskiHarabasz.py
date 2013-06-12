@@ -13,12 +13,19 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 
 class Test(unittest.TestCase):
 
-
     def test_evaluation(self):
         clusterings = [
                        {
-                        "clustering": Clustering([Cluster(None, [0,1,2,3]),Cluster(None, [4,5])]),
+                        "clustering": Clustering([Cluster(None, [0,1,2,3]), Cluster(None, [4,5])]),
                         "result": 3.74
+                        },
+                       {
+                        "clustering": Clustering([Cluster(None, [0,1]), Cluster(None, [2,3]), Cluster(None, [4,5])]),
+                        "result": 3.705
+                        },
+                       {
+                        "clustering": Clustering([Cluster(None, [0,1]), Cluster(None, [2]), Cluster(None, [3]), Cluster(None, [4,5])]),
+                        "result": 2.91
                         },
                        ]
         
@@ -26,7 +33,7 @@ class Test(unittest.TestCase):
         matrix = CondensedMatrix(CH_table1)
         
         for i in range(len(clusterings)):
-            self.assertEqual(clusterings[i]["result"], calculator.evaluate(clusterings[i]["clustering"], matrix))
+            self.assertAlmostEqual(clusterings[i]["result"], calculator.evaluate(clusterings[i]["clustering"], matrix), 2)
 
 
 if __name__ == "__main__":
