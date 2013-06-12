@@ -16,6 +16,7 @@ from pyproclust.clustering.metrics.boundedCohesion import BoundedCohesionCalcula
 from pyproclust.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
 from pyproclust.clustering.metrics.cohesion import CohesionCalculator
 from pyproclust.clustering.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator
+from pyproclust.clustering.metrics.CalinskiHarabasz import CalinskiHarabaszCalculator
 
 
 class AnalysisPopulator(object):
@@ -61,6 +62,7 @@ class AnalysisPopulator(object):
         self.all_possible_analysis["MirrorCohesion"] = Analysis("MirrorCohesion", self.analysis_function_mirror_bounded_cohesion, distance_matrix)
         self.all_possible_analysis["MinimumMeanSeparation"] = Analysis("MinimumMeanSeparation", self.analysis_function_mean_minimum_distance, distance_matrix)
         self.all_possible_analysis["Silhouette"] = Analysis("Silhouette", self.analysis_function_get_silhouette, distance_matrix)
+        self.all_possible_analysis["Calinski-Harabasz"] = Analysis("Silhouette", self.analysis_function_get_calinsky_harabasz, distance_matrix)
         
         # Cython
         self.all_possible_analysis["CythonMirrorCohesion"] = Analysis("CythonMirrorCohesion", self.analysis_function_cython_cohesion, distance_matrix)
@@ -246,6 +248,10 @@ class AnalysisPopulator(object):
         """
         calculator = SilhouetteCoefficientCalculator()
         return calculator.evaluate(clustering,distance_matrix)
+    
+    def analysis_function_get_calinsky_harabasz(self, clustering, distance_matrix):
+        calculator = CalinskiHarabaszCalculator()
+        return calculator.evaluate(clustering, distance_matrix)
     
     def analysis_function_mirror_bounded_cohesion(self,clustering,distance_matrix):
         """
