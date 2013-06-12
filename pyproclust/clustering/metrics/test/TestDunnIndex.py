@@ -11,7 +11,7 @@ from pyproclust.clustering.metrics.test.data import squared_CH_table1
 from pyRMSD.condensedMatrix import CondensedMatrix
 
 
-class Test(unittest.TestCase):
+class TestDunnIndex(unittest.TestCase):
     
     def test_min_intracluster_distances(self):
         matrix = CondensedMatrix(squared_CH_table1)

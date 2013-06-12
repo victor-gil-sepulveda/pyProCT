@@ -11,7 +11,7 @@ from pyproclust.clustering.cluster import Cluster
 from pyRMSD.condensedMatrix import CondensedMatrix
 
 
-class Test(unittest.TestCase):
+class TestCalinskiHarabasz(unittest.TestCase):
 
     def test_evaluation(self):
         clusterings = [
