@@ -7,8 +7,6 @@ import unittest
 import numpy
 import prody
 
-from pyRMSD.utils.proteinReading import flattenCoords
-
 from pyproclust.tools.test.data.amber_short_ca import amber_short_ca_contents
 from pyproclust.clustering.metrics.pcaMetrics import PCAMetric
 from pyproclust.clustering.cluster import Cluster
