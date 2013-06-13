@@ -5,7 +5,8 @@ Created on 12/06/2013
 '''
 import unittest
 from pyproclust.clustering.metrics.common import get_intra_cluster_distances,\
-    get_inter_cluster_distances, get_distances_of_elements_to, update_medoids
+    get_inter_cluster_distances, get_distances_of_elements_to, update_medoids,\
+    get_inter_cluster_prototype_distances
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.clustering.metrics.test.data import CH_table1, squared_CH_table1
 from pyproclust.clustering.cluster import Cluster
@@ -25,6 +26,11 @@ class Test(unittest.TestCase):
         numpy.testing.assert_equal(get_inter_cluster_distances(0, 1, clusters, matrix), [6.0, 13.0, 6.0, 17.0])
         numpy.testing.assert_equal(get_inter_cluster_distances(1, 2, clusters, matrix), [15.0, 6.0])
         numpy.testing.assert_equal(get_inter_cluster_distances(0, 2, clusters, matrix), [15.0, 21.0])
+    
+    def test_get_inter_cluster_prototype_distances(self):
+        matrix = CondensedMatrix(squared_CH_table1)
+        clusters = [Cluster(2, [1,2]),Cluster(3, [3,4]), Cluster(0, [0,5])]
+        numpy.testing.assert_equal( get_inter_cluster_prototype_distances(clusters, matrix), [6.0, 11.0, 11.0])
     
     def test_get_distances_of_elements_to(self):
         matrix = CondensedMatrix(list(squared_CH_table1))

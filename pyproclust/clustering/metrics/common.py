@@ -18,6 +18,16 @@ def get_inter_cluster_distances(i, j, clusters, matrix):
             distances.append(matrix[cluster_i_element, cluster_j_element])
     return distances
 
+def get_inter_cluster_prototype_distances(clusters, matrix):
+    """
+    Precondition: cluster medoids have been updated.
+    """
+    distances = []
+    for i in range(len(clusters)-1):
+        for j in range(i+1,len(clusters)):
+            distances.append(matrix[clusters[i].prototype,clusters[j].prototype]) 
+    return distances
+
 def get_distances_of_elements_to(from_this, to_those, matrix):
     distances = []
     for element in to_those:
