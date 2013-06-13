@@ -19,15 +19,15 @@ class TestDaviesBouldin(unittest.TestCase):
          
         cls.clusterings = [Clustering([Cluster(None, [0,1,2,3]), Cluster(None, [4,5])]),
                             Clustering([Cluster(None, [0,1]), Cluster(None, [2,3]), Cluster(None, [4,5])])]
- 
-     
+        update_medoids(cls.clusterings[0], cls.matrix)
+        update_medoids(cls.clusterings[0], cls.matrix)
+        
     def test_calculate_average_distances(self):
-        update_medoids(self.clusterings[0], self.matrix)
+        
         self.assertItemsEqual(DaviesBouldinCalculator.calc_average_distances(self.clusterings[0], self.matrix),
                               [7,6])
        
     def test_max_db_term(self):
-        update_medoids(self.clusterings[1], self.matrix)
         numpy.testing.assert_almost_equal( DaviesBouldinCalculator.db_terms_for_cluster(0, [5.0, 6.0, 6.0], self.clusterings[1].clusters, self.matrix),
                              [1.0, 0.7857142857142857], 5)  
         numpy.testing.assert_almost_equal(  DaviesBouldinCalculator.db_terms_for_cluster(1, [5.0, 6.0, 6.0], self.clusterings[1].clusters, self.matrix),
@@ -37,7 +37,6 @@ class TestDaviesBouldin(unittest.TestCase):
         
         
     def test_db_eval(self):
-        update_medoids(self.clusterings[1], self.matrix)
         self.assertAlmostEqual(DaviesBouldinCalculator().evaluate(self.clusterings[1], self.matrix), 0.5686274509803922, 5)
 
 
