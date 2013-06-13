@@ -24,7 +24,7 @@ class GaussianSeparationCalculator(object):
         return Sep
         
     @classmethod
-    def inter_cluster_prototype_distances(cls,clusters, matrix):
+    def inter_cluster_prototype_distances(cls, clusters, matrix):
         distances = []
         for i in range(len(clusters)-1):
             for j in range(i+1,len(clusters)):
