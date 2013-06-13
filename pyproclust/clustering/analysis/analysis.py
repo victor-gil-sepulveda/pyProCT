@@ -22,7 +22,7 @@ class Analysis(object):
     def run(self, clustering):
         """
         Runs one analysis function and appends the result to the results string.
-        It the result of the function is not an sring, it converts the result to a 
+        It the result of the function is not an string, it converts the result to a 
         string.
         """
         result = None
