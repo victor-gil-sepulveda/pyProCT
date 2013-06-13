@@ -18,6 +18,7 @@ from pyproclust.clustering.metrics.cohesion import CohesionCalculator
 from pyproclust.clustering.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator
 from pyproclust.clustering.metrics.CalinskiHarabasz import CalinskiHarabaszCalculator
 from pyproclust.clustering.metrics.Dunn import DunnCalculator
+from pyproclust.clustering.metrics.DaviesBouldin import DaviesBouldinCalculator
 
 
 class AnalysisPopulator(object):
@@ -63,8 +64,10 @@ class AnalysisPopulator(object):
         self.all_possible_analysis["MirrorCohesion"] = Analysis("MirrorCohesion", self.analysis_function_mirror_bounded_cohesion, distance_matrix)
         self.all_possible_analysis["MinimumMeanSeparation"] = Analysis("MinimumMeanSeparation", self.analysis_function_mean_minimum_distance, distance_matrix)
         self.all_possible_analysis["Silhouette"] = Analysis("Silhouette", self.analysis_function_get_silhouette, distance_matrix)
-        self.all_possible_analysis["Calinski-Harabasz"] = Analysis("Silhouette", self.analysis_function_get_calinsky_harabasz, distance_matrix)
-        self.all_possible_analysis["Dunn"] = Analysis("Silhouette", self.analysis_function_get_dunn, distance_matrix)
+        self.all_possible_analysis["Calinski-Harabasz"] = Analysis("Calinski-Harabasz", self.analysis_function_get_calinsky_harabasz, distance_matrix)
+        self.all_possible_analysis["Dunn"] = Analysis("Dunn", self.analysis_function_get_dunn, distance_matrix)
+        self.all_possible_analysis["Davies-Bouldin"] = Analysis("Davies-Bouldin", self.analysis_function_get_davies_bouldin, distance_matrix)
+        
         
         # Cython
         self.all_possible_analysis["CythonMirrorCohesion"] = Analysis("CythonMirrorCohesion", self.analysis_function_cython_cohesion, distance_matrix)
@@ -257,6 +260,10 @@ class AnalysisPopulator(object):
     
     def analysis_function_get_dunn(self, clustering, distance_matrix):
         calculator = DunnCalculator()
+        return calculator.evaluate(clustering, distance_matrix)
+    
+    def analysis_function_get_davies_bouldin(self, clustering, distance_matrix):
+        calculator = DaviesBouldinCalculator()
         return calculator.evaluate(clustering, distance_matrix)
     
     def analysis_function_mirror_bounded_cohesion(self,clustering,distance_matrix):
