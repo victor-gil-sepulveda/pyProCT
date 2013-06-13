@@ -85,7 +85,7 @@ class MatrixHandler(object):
             self.distance_matrix =  RMSDMatrixBuilder.build(trajectory_handler,self.matrix_parameters["parameters"])
             
         elif self.matrix_parameters["method"] == "distance":
-            self.distance_matrix =  EuclideanDistanceMatrixBuilder().build()
+            self.distance_matrix =  EuclideanDistanceMatrixBuilder().build(trajectory_handler,self.matrix_parameters["parameters"])
             
         return self.distance_matrix
     

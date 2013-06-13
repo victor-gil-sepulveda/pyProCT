@@ -28,18 +28,18 @@ class EuclideanDistanceMatrixBuilder(object):
         calculator = RMSDCalculator(
                                     coordsets = fit_selection_coordsets,
                                     calculatorType = "QTRFIT_OMP_CALCULATOR", 
-                                    modifyCoordinates = False)
+                                    modifyCoordinates = True)
         
-        # Superpose iteratively
+        # Superpose iteratively (will modify anyway)
         calculator.iterativeSuperposition()
         
         #Then calculate distances
         body_selection_string = matrix_creation_parameters["body_selection"]
         body_selection_coordsets = trajectory_handler.getSelection(body_selection_string)
         
-        trajectory_handler.setWorkingCoordinates(matrix_creation_parameters["body_selection_string"])
+        trajectory_handler.setWorkingCoordinates(body_selection_string)
         
-        return EuclideanDistanceMatrixBuilder(body_selection_coordsets)
+        return cls.calculate_geom_center(body_selection_coordsets)
     
     @classmethod
     def calculate_geom_center(cls, coordinates):
