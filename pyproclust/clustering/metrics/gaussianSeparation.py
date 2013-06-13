@@ -3,22 +3,36 @@ Created on 06/06/2013
 
 @author: victor
 '''
-from pyproclust.clustering.metrics.common import update_medoids
+from pyproclust.clustering.metrics.common import update_medoids,\
+    get_inter_cluster_prototype_distances
 import numpy
 
 class GaussianSeparationCalculator(object):
+    """
+    Cluster separation index calculation, as defined in "."u and H. Xiong 2002.
+    """
+    TWO_SIGMA_SQUARED = 0.25
+    
     def __init__(self):
         pass
     
     def evaluate(self, clustering, matrix):
         """
+        Calculates the index.
+        @param clustering: The clustering being checked.
+        @param matrix: The condensed matrix containing all distances.
+        @return: The calculated value for the index.
         """
-        TWO_SIGMA_SQUARED = 0.25
-        
-        constant = 1. / (len(clustering.clusters)* (len(clustering.clusters)-1))
-        
         update_medoids(clustering, matrix)
         
-        Sep = constant * numpy.exp(((self.inter_cluster_prototype_distances()**2)/-TWO_SIGMA_SQUARED)).sum()
+        C = len(clustering.clusters)
+        constant = 2. / (C * (C-1)) # x2 as we use only half of the distances  
+        
+        Sep = constant * self.exponential_list_generation(clustering, matrix).sum()
         
         return Sep
+    
+    @classmethod
+    def exponential_list_generation(cls, clustering, matrix):
+        proto_distances = numpy.array(get_inter_cluster_prototype_distances(clustering.clusters, matrix))
+        return numpy.exp(((proto_distances**2)/ -cls.TWO_SIGMA_SQUARED))
