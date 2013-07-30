@@ -225,7 +225,7 @@ def repair_MODEL_ENDMDL_tags(input_pdb_handler, output_pdb_handler, boundaries):
 
 def grab_existing_frame_from_trajectory(trajectory_file_handler, output_file_handler, model_number):
     """
-    Extracts a model of a trajectory and writes it into another file. The model must exists in the trajectory,
+    Extracts a model of a trajectory and writes it into another file. The model must exist in the trajectory,
     otherwise the behavior will be undefined.
     
     @param trajectory_file_handler: Opened file handler containing the whole trajectory.

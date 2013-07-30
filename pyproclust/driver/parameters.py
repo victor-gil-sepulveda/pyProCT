@@ -21,7 +21,7 @@ class ProtocolParameters():
     
     @classmethod
     def get_params_from_json(cls, json_string):
-        return convert_to_utf8(json.loads(json_string));
+        return ProtocolParameters(convert_to_utf8(json.loads(json_string)));
     
     @classmethod
     def get_default_params(cls, source):

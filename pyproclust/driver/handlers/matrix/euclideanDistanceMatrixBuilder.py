@@ -15,28 +15,31 @@ class EuclideanDistanceMatrixBuilder(object):
     @classmethod
     def build(cls, trajectory_handler, matrix_creation_parameters):
         """
+        Will generate the CondensedMatrix filled with the all vs all geometric center distances of the "body_selection" 
+        coordinates (which will usually be a ligand).
         
-        @param trajectory_handler:  
-        @param matrix_creation_parameters: 
+        @param trajectory_handler: The handler containing selection strings, pdb info and coordsets.  
+        @param matrix_creation_parameters: The creation parameters (from the initial script).
         
         @return: The created distances matrix.
         """
-        #pdb = trajectory_handler.getJoinedPDB()
         
-        # Build calculator with fitting coordinate sets
+        # Build calculator with fitting coordinate sets ...
         fit_selection_coordsets = trajectory_handler.getSelection(matrix_creation_parameters["dist_fit_selection"])
-        calculator = RMSDCalculator(
-                                    coordsets = fit_selection_coordsets,
-                                    calculatorType = "QTRFIT_OMP_CALCULATOR", 
-                                    modifyCoordinates = True)
         
-        # Superpose iteratively (will modify anyway)
-        calculator.iterativeSuperposition()
-        
-        #Then calculate distances
+        # and calculation coordsets (we want them to be moved along with the fitting ones)
         body_selection_string = matrix_creation_parameters["body_selection"]
         body_selection_coordsets = trajectory_handler.getSelection(body_selection_string)
         
+        calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR", 
+                 fittingCoordsets = fit_selection_coordsets, 
+                 calculationCoordsets = body_selection_coordsets)
+        
+        # Superpose iteratively (will modify all coordinates)
+        calculator.iterativeSuperposition()
+
+        # Working coordinates are changed to the body coordinates (to be used later for instance
+        # with clustering metrics)        
         trajectory_handler.setWorkingCoordinates(body_selection_string)
         
         return cls.calculate_geom_center(body_selection_coordsets)
@@ -44,7 +47,12 @@ class EuclideanDistanceMatrixBuilder(object):
     @classmethod
     def calculate_geom_center(cls, coordinates):
         """
+        Generates a condensed matrix with the euclidean distances between the geometrical centers of the conformations passed as
+        input.
         
+        @param coordinates: Coordinates set from which calculating the geometrical centers (one geometrical center per conformation).
+        
+        @return: The condensed matrix resulting of calculating all euclidean distances between the aforemetioned centers.
         """
         # Calculate geom center
         centers = coordinates.mean(1)

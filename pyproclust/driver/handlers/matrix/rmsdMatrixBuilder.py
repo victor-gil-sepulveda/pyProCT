@@ -25,9 +25,10 @@ class RMSDMatrixBuilder(object):
         fit_selection_string = matrix_creation_parameters["fit_selection"]
         fit_selection_coordsets = trajectory_handler.getSelection(fit_selection_string)
         trajectory_handler.setWorkingCoordinates(fit_selection_string)
-        calculator = RMSDCalculator(coordsets = fit_selection_coordsets,
-                                    calculatorType = "QTRFIT_OMP_CALCULATOR", 
-                                    modifyCoordinates = False)
+
+
+        calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR",
+                                    fittingCoordsets  = fit_selection_coordsets)
         
         # Apply calculation selection if needed
         calc_selection_string = matrix_creation_parameters["calc_selection"]
@@ -35,6 +36,9 @@ class RMSDMatrixBuilder(object):
             calc_selection_coordsets = trajectory_handler.getSelection(calc_selection_string)
             trajectory_handler.setWorkingCoordinates(calc_selection_string)
             calculator.setCalculationCoordinates(calc_selection_coordsets)
+            calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR",
+                                        fittingCoordsets  = fit_selection_coordsets,
+                                        calculationCoordsets = calc_selection_coordsets)
         
         rmsds = calculator.pairwiseRMSDMatrix()
         
