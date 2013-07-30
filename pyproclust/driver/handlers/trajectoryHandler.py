@@ -10,13 +10,13 @@ import prody
 
 class TrajectoryHandler(Observable):
 
-    def __init__(self, gobal_parameters, observer):
+    def __init__(self, global_parameters, matrix_parameters, observer):
         """
         """
         super(TrajectoryHandler,self).__init__(observer)
         
-        if len(gobal_parameters["pdbs"]) > 0:
-            self.pdbs = [self.get_pdb_data(pdb_path) for pdb_path in gobal_parameters["pdbs"]]
+        if len(global_parameters["pdbs"]) > 0:
+            self.pdbs = [self.get_pdb_data(pdb_path) for pdb_path in global_parameters["pdbs"]]
         else:
             common.print_and_flush( "[ERROR] no pdbs. Exiting...\n")
             self.notify("SHUTDOWN","No pdbs defined in script.")
@@ -34,20 +34,21 @@ class TrajectoryHandler(Observable):
         self.number_of_conformations = self.coordsets.shape[0]
         self.number_of_atoms = self.coordsets.shape[1]
         
+        print global_parameters
         # Store the main selections we can do
         self.fitting_selection = self.calculation_selection = None
         
-        if "fit_selection" in gobal_parameters["matrix"]:
-            self.fitting_selection = gobal_parameters["matrix"]["fit_selection"]
+        if "fit_selection" in matrix_parameters:
+            self.fitting_selection = matrix_parameters["fit_selection"]
         
-        if "dist_fit_selection" in gobal_parameters["matrix"]:
-            self.fitting_selection = gobal_parameters["matrix"]["dist_fit_selection"]
+        if "dist_fit_selection" in matrix_parameters:
+            self.fitting_selection = matrix_parameters["dist_fit_selection"]
         
-        if "rmsd_calc_selection" in gobal_parameters["matrix"]:
-            self.calculation_selection = gobal_parameters["matrix"]["rmsd_calc_selection"]
+        if "rmsd_calc_selection" in matrix_parameters:
+            self.calculation_selection = matrix_parameters["rmsd_calc_selection"]
         
-        if "dist_calc_selection" in gobal_parameters["matrix"]:
-            self.calculation_selection = gobal_parameters["matrix"]["dist_calc_selection"]
+        if "dist_calc_selection" in matrix_parameters:
+            self.calculation_selection = matrix_parameters["dist_calc_selection"]
     
     @classmethod
     def get_pdb_data(cls, pdb):

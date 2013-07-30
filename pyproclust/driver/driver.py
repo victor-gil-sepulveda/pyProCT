@@ -54,7 +54,7 @@ class Driver(Observable):
             # Trajectory Loading
             #####################
             self.timer.start("Trajectory Loading")
-            self.trajectoryHandler = TrajectoryHandler(parameters["global"], self.observer)
+            self.trajectoryHandler = TrajectoryHandler(parameters["global"], parameters["matrix"], self.observer)
             self.timer.stop("Trajectory Loading")
             
             ##############################
