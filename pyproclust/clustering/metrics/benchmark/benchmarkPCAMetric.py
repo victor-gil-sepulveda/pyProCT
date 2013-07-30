@@ -18,7 +18,7 @@ if __name__ == '__main__':
     ######################
     # BENCHMARKING
     ######################
-    prody.setVerbosity('none')
+    prody.confProDy(verbosity='none')#setVerbosity('none')
     print "Loading file..."
     t1 = time.time()
     print "\tUncompressing..."

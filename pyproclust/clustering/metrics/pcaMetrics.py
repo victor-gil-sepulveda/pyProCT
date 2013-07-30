@@ -16,7 +16,8 @@ class PCAMetric(object):
         """
         @param trajectory_handler: The TrajectoryHandler containing the coordinates as prody-like coordsets.
         """
-        self.copied_coordinates = trajectory_handler.getWorkingCoordinates()
+        self.fitting_coordinates = trajectory_handler.getFittingCoordinates()
+        self.calculation_coordinates = trajectory_handler.getCalculationCoordinates()
 
     def evaluate(self, clustering):
         """
@@ -30,17 +31,28 @@ class PCAMetric(object):
         # Pca for each one of the clusters
         pca_mean_val = 0.;
         
+        
+        
         for c in clustering.clusters:
             # Pick the coordinates (ensuring that we are copying them)
-            coordinates_of_this_cluster_conformations = self.copied_coordinates[c.all_elements]
-            calculator = RMSDCalculator(coordsets = coordinates_of_this_cluster_conformations,
-                                        calculatorType = "QTRFIT_OMP_CALCULATOR")
+            fitting_coordinates_of_this_cluster = self.fitting_coordinates[c.all_elements]
+            calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR",
+                                        fittingCoordsets = fitting_coordinates_of_this_cluster)
+            
+            if self.calculation_coordinates is not None:
+                calculation_coordinates_of_this_cluster = self.calculation_coordinates[c.all_elements]
+                calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR",
+                                            fittingCoordsets = fitting_coordinates_of_this_cluster,
+                                            calculationCoordsets = calculation_coordinates_of_this_cluster)
             
             # Make an iterative superposition (to get the minimum RMSD of all with respect to a mean conformation)
             calculator.iterativeSuperposition()
 
             # Calculate the covariance matrix
-            covariance_matrix = PCAMetric.create_covariance_matrix(coordinates_of_this_cluster_conformations)
+            if self.calculation_coordinates is None:
+                covariance_matrix = PCAMetric.create_covariance_matrix(fitting_coordinates_of_this_cluster)
+            else:
+                covariance_matrix = PCAMetric.create_covariance_matrix(calculation_coordinates_of_this_cluster)
             
             # And then the eigenvalue we are interested in
             pca_mean_val += PCAMetric.calculate_biggest_eigenvalue(covariance_matrix)

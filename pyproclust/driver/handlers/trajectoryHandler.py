@@ -34,6 +34,21 @@ class TrajectoryHandler(Observable):
         self.number_of_conformations = self.coordsets.shape[0]
         self.number_of_atoms = self.coordsets.shape[1]
         
+        # Store the main selections we can do
+        self.fitting_selection = self.calculation_selection = None
+        
+        if "fit_selection" in gobal_parameters["matrix"]:
+            self.fitting_selection = gobal_parameters["matrix"]["fit_selection"]
+        
+        if "dist_fit_selection" in gobal_parameters["matrix"]:
+            self.fitting_selection = gobal_parameters["matrix"]["dist_fit_selection"]
+        
+        if "rmsd_calc_selection" in gobal_parameters["matrix"]:
+            self.calculation_selection = gobal_parameters["matrix"]["rmsd_calc_selection"]
+        
+        if "dist_calc_selection" in gobal_parameters["matrix"]:
+            self.calculation_selection = gobal_parameters["matrix"]["dist_calc_selection"]
+    
     @classmethod
     def get_pdb_data(cls, pdb):
         """
@@ -107,3 +122,14 @@ class TrajectoryHandler(Observable):
         
         return selection_coordsets
     
+    def getFittingCoordinates(self):
+        if self.fitting_selection is not None:
+            return self.getSelection(self.fitting_selection)
+        else:
+            return None
+            
+    def getCalculationCoordinates(self):
+        if self.calculation_selection is not None:
+            return self.getSelection(self.calculation_selection)
+        else:
+            return None

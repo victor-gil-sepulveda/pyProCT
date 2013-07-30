@@ -17,10 +17,13 @@ class TrajectoryHandlerStub:
     def __init__(self, coords, apc):
         self.coordinates = coords
         self.atoms_per_conformation = apc
-    
-    def getWorkingCoordinates(self):
-        return self.coordinates
 
+    def getFittingCoordinates(self):
+        return self.coordinates
+            
+    def getCalculationCoordinates(self):
+        return None
+    
 class testPCAMetric(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -28,9 +31,9 @@ class testPCAMetric(unittest.TestCase):
         cls.pdb_path = "tmp_pdb.pdb"
         open(cls.pdb_path,"w").write(amber_short_ca_contents);
         try:
-            prody.setVerbosity('none')
+            prody.confProDy(verbosity='none')#setVerbosity('none')
         except Exception :
-            pass 
+            print "Impossible to silent prody" 
         cls.pdb = prody.parsePDB(cls.pdb_path, subset='calpha')
         
         # Save coordsets before superposition
@@ -78,7 +81,7 @@ class testPCAMetric(unittest.TestCase):
         trajectory_handler = TrajectoryHandlerStub(testPCAMetric.not_iterposed_coordsets,66)
         clustering = Clustering([Cluster(None,range(6)),Cluster(None,range(6,12))], "a clustering")
         pcaMetric = PCAMetric(trajectory_handler)
-        self.assertAlmostEquals(pcaMetric.evaluate(clustering), 1.42774868808, 10)
+        self.assertAlmostEquals(pcaMetric.evaluate(clustering), 1.427748687873, 12)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
