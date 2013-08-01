@@ -24,7 +24,6 @@ class SerializerRegistry(object):
             return dct
         
     def default(self, obj):
-        print "SERIALIZING ", obj, obj.to_dic()
         return obj.to_dic()
 
 class ClusteringResultsGatherer(object):

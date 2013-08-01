@@ -124,21 +124,21 @@ class Cluster(object):
         # Check that elements_into_account is a subset of all_elements
         elem_inters = all_elems_set.intersection(accountable_set)
         if len(elem_inters) != len(elements_into_account):
-            print "[ERROR Cluster::calculate_biased_medoid] 'elements_into_account' is not a subset of the"  
-            print "elements of this cluster."
+            print "[ERROR Cluster::calculate_biased_medoid] 'elements_into_account' is not a subset of the elements of this cluster."  
             exit()
         
         if len(elements_into_account) == 0:
-            return None
+            print "[ERROR Cluster::calculate_biased_medoid] This cluster is empty."  
+            return -1
         
-        min_dist_pair = (sys.maxint, elements_into_account[0])
+        min_dist_pair = (sys.maxint, -1)
         for ei in elements_into_account:
             # Calculate distances for this vs all the others
             # Note that for comparing, the mean is not required,as
             # all have the same amount of elements
             summed_distance = 0
             for ej in elements_into_account:
-                summed_distance = summed_distance +condensed_distance_matrix[ei,ej]
+                summed_distance = summed_distance + condensed_distance_matrix[ei,ej]
             min_dist_pair = min(min_dist_pair,(summed_distance,ei))
         
         medoid_element = min_dist_pair[1]
@@ -199,6 +199,8 @@ class Cluster(object):
         """
         Creates a cluster from a cluster dictionary describing it (as reverse operation of
         'to_dic').
+        
+        @param cluster_dic: The cluster in dictionary form (output of 'to_dic')
         """
         if "prototype" in cluster_dic:
             proto = cluster_dic["prototype"]

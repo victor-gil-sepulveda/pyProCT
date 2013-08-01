@@ -32,45 +32,45 @@ class Driver(Observable):
         self.timer.start("Global")
         
         best_clustering = None
-        if parameters["clustering"]["generation"]["method"] == "generate":
-            #####################
-            # Workspace Creation 
-            #####################
-            self.workspaceHandler = WorkspaceHandler(parameters["workspace"], self.observer)
-            self.workspaceHandler.create_directories()
+        #####################
+        # Workspace Creation 
+        #####################
+        self.workspaceHandler = WorkspaceHandler(parameters["workspace"], self.observer)
+        self.workspaceHandler.create_directories()
             
-            #####################
-            # Saving Parameters 
-            #####################
-            parameters_file_path = os.path.join(self.workspaceHandler["results"],"parameters.json")
-            open(parameters_file_path,"w").write(json.dumps(parameters.params_dic,
-                                                              sort_keys=False,
-                                                              indent=4,
-                                                              separators=(',', ': ')))
-            
-            self.generatedFiles = [{"description":"Parameters file", "path":parameters_file_path,"type":"text"}]
-            
-            #####################
-            # Trajectory Loading
-            #####################
-            self.timer.start("Trajectory Loading")
-            self.trajectoryHandler = TrajectoryHandler(parameters["global"], parameters["matrix"], self.observer)
-            self.timer.stop("Trajectory Loading")
-            
-            ##############################
-            # Distance Matrix Generation
-            ##############################
-            self.matrixHandler = MatrixHandler(parameters["matrix"])
-            self.notify("Matrix calculation",[])
-            self.timer.start("Matrix Generation")
-            self.matrixHandler.create_matrix(self.trajectoryHandler)
-            statistics_file_path = self.matrixHandler.save_statistics(self.workspaceHandler["matrix"])
-            self.generatedFiles.append({"description":"Matrix statistics", "path":statistics_file_path,"type":"text"})
-            self.timer.stop("Matrix Generation")
-            self.timer.start("Matrix Save")
-            self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"],parameters["matrix"]["filename"]))
-            self.timer.stop("Matrix Save")
+        #####################
+        # Saving Parameters 
+        #####################
+        parameters_file_path = os.path.join(self.workspaceHandler["results"],"parameters.json")
+        open(parameters_file_path,"w").write(json.dumps(parameters.params_dic,
+                                                          sort_keys=False,
+                                                          indent=4,
+                                                          separators=(',', ': ')))
+        
+        self.generatedFiles = [{"description":"Parameters file", "path":parameters_file_path,"type":"text"}]
+        
+        #####################
+        # Trajectory Loading
+        #####################
+        self.timer.start("Trajectory Loading")
+        self.trajectoryHandler = TrajectoryHandler(parameters["global"], parameters["matrix"]['parameters'], self.observer)
+        self.timer.stop("Trajectory Loading")
+        
+        ##############################
+        # Distance Matrix Generation
+        ##############################
+        self.matrixHandler = MatrixHandler(parameters["matrix"])
+        self.notify("Matrix calculation",[])
+        self.timer.start("Matrix Generation")
+        self.matrixHandler.create_matrix(self.trajectoryHandler)
+        statistics_file_path = self.matrixHandler.save_statistics(self.workspaceHandler["matrix"])
+        self.generatedFiles.append({"description":"Matrix statistics", "path":statistics_file_path,"type":"text"})
+        self.timer.stop("Matrix Generation")
+        self.timer.start("Matrix Save")
+        self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"],parameters["matrix"]["filename"]))
+        self.timer.stop("Matrix Save")
     
+        if parameters["clustering"]["generation"]["method"] == "generate":
             #########################
             # Matrix plot
             #########################
@@ -102,8 +102,11 @@ class Driver(Observable):
                 pass
                 #SHUTDOWN, NO CLUSTER
         
+        ##############################
+        # Load the clustering
+        ##############################
         if parameters["clustering"]["generation"]["method"] == "load":
-            best_clustering = Clustering.from_dic(parameters["clustering"]["generation"]);
+            best_clustering = {"clustering": Clustering.from_dic(parameters["clustering"]["generation"])}
               
         ##############################
         # Specialized post-processing

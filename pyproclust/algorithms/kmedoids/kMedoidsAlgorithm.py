@@ -17,6 +17,8 @@ class KMedoidsAlgorithm(object):
     dataset). It has 3 different initial seeding implementations.
     """
     
+    MAX_ITERATIONS = 500
+    
     @staticmethod
     def seeding_types():
         """
@@ -68,8 +70,9 @@ class KMedoidsAlgorithm(object):
         current_medoids = self.seeding(self.k, self.seeding_max_cutoff, self.seeding_type)
 #         print "Initial medoids:", current_medoids
         
+        current_iteration = 0
         last_medoids = []
-        while not self.convergence(current_medoids,last_medoids):
+        while not self.convergence(current_medoids,last_medoids) and current_iteration < KMedoidsAlgorithm.MAX_ITERATIONS:
 #             print "Iteration"
             # Update clusters
             self.cluster_update(current_medoids, self.condensed_matrix)
@@ -78,6 +81,7 @@ class KMedoidsAlgorithm(object):
             # Update medoids
             current_medoids = self.update_medoids()
 #             print "Current medoids:", current_medoids
+            current_iteration = current_iteration + 1
     
         algorithm_details = "K-Medoids algorithm with k ="+str(int(self.k))+" and %s initial seeding"%self.seeding_to_str()
         clusters = gen_clusters_from_class_list(self.class_list)
