@@ -4,9 +4,9 @@ Created on 21/05/2012
 @author: victor
 '''
 import pyproclust.driver.scheduling.tools as scheduling_tools
-from pyproclust.protocol.exploration.clusteringExplorator import ClusteringExplorator
+from pyproclust.protocol.exploration.clusteringExplorator import ClusteringExplorer
 from pyproclust.clustering.filtering.clusteringFilter import ClusteringFilter
-from pyproclust.clustering.analysis.picklingAnalysisRunner import PicklingAnalysisRunner
+from pyproclust.clustering.analysis.analysisRunner import AnalysisRunner
 from pyproclust.clustering.analysis.analysisPopulator import AnalysisPopulator
 from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
 from pyproclust.driver.observer.observable import Observable
@@ -24,13 +24,12 @@ class ClusteringProtocol(Observable):
         # Clustering exploration
         ############################
         self.timer.start("Clustering Exploration")
-        clusterings  = ClusteringExplorator(
+        clusterings  = ClusteringExplorer(
                                             clustering_parameters,
                                             matrixHandler,
                                             workspaceHandler,
                                             scheduling_tools.build_scheduler(
-                                                                           "Process/Parallel",
-                                                                           clustering_parameters["clustering"]["control"]["algorithm_scheduler_sleep_time"],
+                                                                           clustering_parameters["clustering"]["control"]["scheduler_type"],
                                                                            self.observer,
                                                                            clustering_parameters["clustering"]["control"]["number_of_processors"]), 
                                             AlgorithmRunParametersGenerator(
@@ -58,8 +57,8 @@ class ClusteringProtocol(Observable):
         # Clustering scoring
         ######################
         self.timer.start("Evaluation")
-        analyzer = PicklingAnalysisRunner(scheduling_tools.build_scheduler("Process/Parallel",
-                                                       clustering_parameters["clustering"]["control"]["evaluation_scheduler_sleep_time"],
+        analyzer = AnalysisRunner(scheduling_tools.build_scheduler(
+                                                       clustering_parameters["clustering"]["control"]["scheduler_type"],
                                                        self.observer,
                                                        clustering_parameters["clustering"]["control"]["number_of_processors"]),
                                           selected_clusterings,
@@ -100,20 +99,3 @@ class ClusteringProtocol(Observable):
 #             
 #             big_plot.save(workspaceHandler.results_path+"/analysis_plot_big.png")
 #             small_plot.save(workspaceHandler.results_path+"/analysis_plot_small.png")
-#             
-#         
-#         #HTML REPORT
-#         html_file = open(workspaceHandler.results_path+"/report.html","w")
-#         html_file.write(self.htmlReport.generateHTML())
-#         html_file.close()
-#         
-#         #IMAGES FOR REPORT
-#         self.htmlReport.report["Image Paths"]["kl"] = workspaceHandler.matrix_path+"/rmsd_distrib.png"
-#         self.htmlReport.report["Image Paths"]["matrix"] = workspaceHandler.matrix_path+"/matrix_plot.png"
-#         self.htmlReport.report["Image Paths"]["clustering_small"] = workspaceHandler.results_path+"/analysis_plot_small.png"
-#         self.htmlReport.report["Image Paths"]["clustering_big"] = workspaceHandler.results_path+"/analysis_plot_big.png"
-#         self.htmlReport.create_thumbnails(workspaceHandler.results_path)
-#     
-#    
-        
-    

@@ -95,7 +95,8 @@ class SpectralClusteringAlgorithm(object):
         
         # We'll only store the vectors we need, usually << N
         self.eigenvectors = self.eigenvectors[:,:self.max_clusters]
-        
+        print "Spectral finished"
+            
     def perform_clustering(self, kwargs):
         """
         Does the actual clustering by doing a k-medoids clustering of the first k eigenvector rows.

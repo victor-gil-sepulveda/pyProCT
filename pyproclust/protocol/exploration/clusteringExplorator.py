@@ -13,7 +13,7 @@ from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
 from pyproclust.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
 
-def run_algorithm(algorithm, algorithm_kwargs, clustering_id, directory):
+def run_algorithm(algorithm, algorithm_kwargs, clustering_id):
     """
     This function launches an execution of one clustering algorithm with its parameters. Used mainly to be 
     scheduled.
@@ -23,13 +23,11 @@ def run_algorithm(algorithm, algorithm_kwargs, clustering_id, directory):
     @param algorithm_kwargs: The parameters needed by the algorithm above to run.
     
     @param clustering_id: An id used to define the resulting clustering.
-    
-    @param directory: Place where we will store the resulting clusterings.
     """
     clustering = algorithm.perform_clustering(algorithm_kwargs)
-    clustering.save_to_disk(directory+"/"+str(clustering_id)+".bin")
+    return (clustering_id, clustering)
 
-class ClusteringExplorator(Observable):
+class ClusteringExplorer(Observable):
 
     @classmethod
     def get_available_algorithms(cls):
@@ -63,7 +61,7 @@ class ClusteringExplorator(Observable):
         
         @param observer: The observer object for this Observable.
         """
-        super(ClusteringExplorator,self).__init__(observer)
+        super(ClusteringExplorer,self).__init__(observer)
         
         self.matrix_handler = matrix_handler
         self.workspace_handler = workspace_handler
@@ -98,20 +96,19 @@ class ClusteringExplorator(Observable):
         @return: A dictionary 'clustering_info' structures indexed by clustering ID. Each of these structures
         contains one generated clustering as well as the algorithm type and parameters used to get it.
         """
-        used_algorithms = ClusteringExplorator.get_used_algorithms(self.clustering_parameters)
+        used_algorithms = ClusteringExplorer.get_used_algorithms(self.clustering_parameters)
         
         # Generate all clustering + info structures
         clusterings_info = {}
         for algorithm_type in used_algorithms:
-            clusterings_info = dict(clusterings_info.items() + self.schedule_algorithm(algorithm_type).items())
+            clusterings_info = dict(clusterings_info.items() + self.schedule_algorithm(algorithm_type).items())# append elements to a dict
         
         # Wait until all processes have finished
-        self.scheduler.consume()
+        clusterings = self.scheduler.run()
         
-        # Load clusterings and put them inside the structure
-        clustering_plus_files = Clustering.load_all_from_directory(self.workspace_handler["clusterings"])
-        for clustering, filename_with_extension in clustering_plus_files:
-            clustering_id = os.path.split(filename_with_extension)[1].split(".")[0]
+        # Put clusterings inside the structure
+        print "OBTAINED CLUSTERINGS",len(clusterings), len(clusterings_info)
+        for clustering_id, clustering in clusterings:
             clusterings_info[clustering_id]["clustering"] = clustering
         
         return clusterings_info
@@ -145,18 +142,20 @@ class ClusteringExplorator(Observable):
         if clusterings == []:
             for clustering_id in clusterings_info:
                 one_clustering_info = clusterings_info[clustering_id]
-                self.scheduler.add_process(clustering_id,
-                                          "Generation of clustering with %s algorithm and id %s"%(
+                self.scheduler.add_task( task_name = clustering_id,
+                                         description = "Generation of clustering with %s algorithm and id %s"%(
                                                                                     one_clustering_info["type"],
                                                                                     clustering_id
                                                                                     ),
-                                          run_algorithm,
-                                                      {
+                                          target_function = run_algorithm,
+                                          function_kwargs = {
                                                        "algorithm":algorithm, 
                                                        "clustering_id":clustering_id, 
-                                                       "algorithm_kwargs":one_clustering_info["parameters"],
-                                                       "directory":self.workspace_handler["clusterings"]
-                                                       })
+                                                       "algorithm_kwargs":one_clustering_info["parameters"]
+                                                       },
+                                          dependencies = {})
+        else:
+            print "CLUSTERINGS ALREADY GENERATED", len(clusterings)
         return clusterings_info
     
     def generate_clustering_info(self, algorithm_type, clustering_parameters, clusterings = []):
@@ -205,9 +204,9 @@ class ClusteringExplorator(Observable):
             algorithm_execution_parameters["sigma_sq"] = self.clustering_parameters["algorithms"]["spectral"]["sigma"]
         
         if algorithm_type in ["spectral","dbscan","gromos","kmedoids","random","hierarchical"] :
-            return ClusteringExplorator.get_available_algorithms()[algorithm_type](distance_matrix, **algorithm_execution_parameters)
+            return ClusteringExplorer.get_available_algorithms()[algorithm_type](distance_matrix, **algorithm_execution_parameters)
         else:
-            print "[ERROR][ClusteringExplorator::build_algorithms] Not known algorithm type ( %s )"%(algorithm_type)
+            print "[ERROR][ClusteringExplorer::build_algorithms] Not known algorithm type ( %s )"%(algorithm_type)
             self.notify("SHUTDOWN", "Not known algorithm type ( %s )"%(algorithm_type))
             exit()
     
