@@ -101,6 +101,17 @@ class ClusteringFilter(object):
         return new_selected, not_selected_clusterings
     
     def check_is_not_repeated(self, clustering, all_clusterings):
+        """
+        Checks that the clustering is not repeated again in the clustering list. Clusterings are 
+        considered equal if their clusters are equal (even if they were generated using different
+        algorithms and / or parameters).
+        
+        @param clustering: The clustering to be checked.
+        
+        @param all_clusterings: The array containing all the 'clustering info' dictionaries.
+        
+        @return: A dictionary with the reasons to discard the clustering if any.
+        """
         for other_clustering in all_clusterings:
             if clustering == all_clusterings[other_clustering]:
                 return [{"reason":"EQUAL_TO_OTHER_CLUSTERING","data":{"id":other_clustering}}]

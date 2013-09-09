@@ -12,14 +12,6 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 import pyRMSD.condensedMatrix
 from pyproclust.driver.handlers.matrix.matrixHandler import MatrixHandler
 
-def only_rank_0(rank):
-    def wrap(function):
-        def wrapped_f(*args):
-            if rank == 0:
-                function(*args)
-            return wrapped_f
-        return wrap
- 
 class MPIDriver(Driver):
     
     def __init__(self, observer):
@@ -98,5 +90,5 @@ class MPIDriver(Driver):
         self.perform_actions(parameters)
         
         self.timer.stop("Global")
-        print self.timer
+        self.notify("MPI-Driver Finished", "\n"+str(self.timer))
         

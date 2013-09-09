@@ -195,5 +195,5 @@ class Driver(Observable):
         self.perform_actions(parameters)
         
         self.timer.stop("Global")
-        print self.timer
+        self.notify("Driver Finished", "\n"+str(self.timer))
         

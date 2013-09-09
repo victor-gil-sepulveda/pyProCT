@@ -34,12 +34,13 @@ if __name__ == '__main__':
     parser = optparse.OptionParser(usage='%prog [--mpi] [--gui] script', version='1.0')
     
     parser.add_option('--mpi', action="store_true",  dest = "use_mpi", help="Add this flag if you want to use MPI-based scheduling.")
+    parser.add_option('--print', action="store_true",  dest = "print_messages", help="Add this flag to print observed messages to stdout.")
     
     options, args = parser.parse_args()
     
     if(len(args)==0):
         parser.error("You need to specify the script to be executed.")
-    
+
     json_script = args[0]
     
     parameters = None
@@ -49,25 +50,22 @@ if __name__ == '__main__':
         print "Malformed json script."
         print e.message
         exit()
-        
+    
     observer = None
+    cmd_thread = None
     if options.use_mpi:
+        from pyproclust.driver.mpidriver import MPIDriver
         observer = MPIObserver()
+        if options.print_messages:
+            cmd_thread = CmdLinePrinter(observer)
+            cmd_thread.start()
+        MPIDriver(observer).run(parameters)
     else:
         observer = Observer()
+        if options.print_messages:
+            cmd_thread = CmdLinePrinter(observer)
+            cmd_thread.start()
+        Driver(observer).run(parameters)
     
-    cmd_thread = CmdLinePrinter(observer)
-    cmd_thread.start()
-    
-    try:
-        if not options.use_mpi:
-            Driver(observer).run(parameters)
-        else:
-            from pyproclust.driver.mpidriver import MPIDriver
-            MPIDriver(observer).run(parameters)
-    except Exception, msg:
-        print msg
+    if options.print_messages:    
         cmd_thread.stop()
-        raise
-
-    cmd_thread.stop()
