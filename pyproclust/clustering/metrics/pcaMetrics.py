@@ -31,17 +31,15 @@ class PCAMetric(object):
         # Pca for each one of the clusters
         pca_mean_val = 0.;
         
-        
-        
         for c in clustering.clusters:
             # Pick the coordinates (ensuring that we are copying them)
             fitting_coordinates_of_this_cluster = self.fitting_coordinates[c.all_elements]
-            calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR",
+            calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                         fittingCoordsets = fitting_coordinates_of_this_cluster)
             
             if self.calculation_coordinates is not None:
                 calculation_coordinates_of_this_cluster = self.calculation_coordinates[c.all_elements]
-                calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR",
+                calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                             fittingCoordsets = fitting_coordinates_of_this_cluster,
                                             calculationCoordsets = calculation_coordinates_of_this_cluster)
             

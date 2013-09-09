@@ -21,8 +21,6 @@ class WorkspaceHandler(Observable):
                       "matrix" : os.path.join(workspace_parameters["base"], workspace_parameters["matrix"])
         }
         
-        
-    
     def __getitem__(self,key):
         return self.data[key]
     
@@ -30,7 +28,7 @@ class WorkspaceHandler(Observable):
         return json.dumps(self.data, sort_keys=False, indent=4, separators=(',', ': '))
     
     def create_directories(self, remove_existing = True):
-        self.notify("","Creating workspace...")
+        self.notify("MSG","Creating workspace...")
         for path in self.data:
             if os.path.exists(self.data[path]) and remove_existing:
                 self.notify("Removing Directory",self.data[path])

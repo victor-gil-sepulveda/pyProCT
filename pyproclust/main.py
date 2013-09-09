@@ -8,6 +8,7 @@ import threading
 from pyproclust.driver.parameters import ProtocolParameters
 from pyproclust.driver.observer.observer import Observer
 from pyproclust.driver.driver import Driver
+from pyproclust.driver.observer.MPIObserver import MPIObserver
 
 class CmdLinePrinter(threading.Thread):
     
@@ -25,14 +26,14 @@ class CmdLinePrinter(threading.Thread):
     
     def run(self):
         while not self.stopped():
-            self.data_source.data_change_event.wait()
-            print self.data_source.data
-            self.data_source.data_change_event.clear()
+            self.data_source.wait()
+            print self.data_source.get_data()
+            self.data_source.clear()
 
 if __name__ == '__main__':
-    parser = optparse.OptionParser(usage='%prog [--nogui] script', version='1.0')
+    parser = optparse.OptionParser(usage='%prog [--mpi] [--gui] script', version='1.0')
     
-    #parser.add_option('-k', action="store", type='int', dest = "k", help="Number of clusters to get.",  metavar = "1")
+    parser.add_option('--mpi', action="store_true",  dest = "use_mpi", help="Add this flag if you want to use MPI-based scheduling.")
     
     options, args = parser.parse_args()
     
@@ -49,14 +50,23 @@ if __name__ == '__main__':
         print e.message
         exit()
         
-    observer = Observer()
+    observer = None
+    if options.use_mpi:
+        observer = MPIObserver()
+    else:
+        observer = Observer()
     
     cmd_thread = CmdLinePrinter(observer)
     cmd_thread.start()
     
     try:
-        Driver(observer).run(parameters)
-    except:
+        if not options.use_mpi:
+            Driver(observer).run(parameters)
+        else:
+            from pyproclust.driver.mpidriver import MPIDriver
+            MPIDriver(observer).run(parameters)
+    except Exception, msg:
+        print msg
         cmd_thread.stop()
         raise
 

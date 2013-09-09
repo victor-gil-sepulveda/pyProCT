@@ -43,16 +43,19 @@ class SpectralClusteringAlgorithm(object):
         @param store_W: If True the object stores the adjacency matrix. Useful for testing.
         @param verbose: If True some messages will be printed.
         """
-        print "Creating spectral"
-        try:
-            self.max_clusters = kwargs["max_clusters"]
-        except KeyError:
-            self.max_clusters = condensed_matrix.row_length
         
         try:
             verbose = kwargs["verbose"]
         except KeyError:
             verbose = False
+
+        if verbose: print "Creating spectral."
+
+        try:
+            self.max_clusters = kwargs["max_clusters"]
+        except KeyError:
+            self.max_clusters = condensed_matrix.row_length
+        
         
         try:
             self.sigma_sq = kwargs["sigma_sq"]
@@ -66,6 +69,7 @@ class SpectralClusteringAlgorithm(object):
         except KeyError:
             store_W = False
         
+
         try:
             laplacian_calculation_type = kwargs["laplacian_calculation_type"]
             if not laplacian_calculation_type in SpectralClusteringAlgorithm.laplacian_calculation_types():
@@ -95,7 +99,7 @@ class SpectralClusteringAlgorithm(object):
         
         # We'll only store the vectors we need, usually << N
         self.eigenvectors = self.eigenvectors[:,:self.max_clusters]
-        print "Spectral finished"
+        if verbose: print "Spectral finished."
             
     def perform_clustering(self, kwargs):
         """

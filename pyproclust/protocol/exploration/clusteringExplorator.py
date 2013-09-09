@@ -107,7 +107,6 @@ class ClusteringExplorer(Observable):
         clusterings = self.scheduler.run()
         
         # Put clusterings inside the structure
-        print "OBTAINED CLUSTERINGS",len(clusterings), len(clusterings_info)
         for clustering_id, clustering in clusterings:
             clusterings_info[clustering_id]["clustering"] = clustering
         
@@ -154,8 +153,6 @@ class ClusteringExplorer(Observable):
                                                        "algorithm_kwargs":one_clustering_info["parameters"]
                                                        },
                                           dependencies = {})
-        else:
-            print "CLUSTERINGS ALREADY GENERATED", len(clusterings)
         return clusterings_info
     
     def generate_clustering_info(self, algorithm_type, clustering_parameters, clusterings = []):

@@ -43,3 +43,9 @@ class Observer(object):
         self.semaphore.release()
         return data
     
+    def wait(self):
+        self.data_change_event.wait()
+    
+    def clear(self):
+        self.data_change_event.clear()
+    

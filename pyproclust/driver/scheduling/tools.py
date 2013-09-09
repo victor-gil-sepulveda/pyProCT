@@ -26,7 +26,7 @@ def build_scheduler(scheduler_type, observer, max_processes):
         return ProcessParallelScheduler(max_processes)
     elif scheduler_type == "MPI/Parallel":
         from pyscheduler.MPIParallelScheduler import MPIParallelScheduler # to avoid unneeded call to mpi_init
-        return MPIParallelScheduler()
+        return MPIParallelScheduler(share_results_with_all_processes=True)
     elif scheduler_type == "Serial":
         return SerialScheduler()
     else:
