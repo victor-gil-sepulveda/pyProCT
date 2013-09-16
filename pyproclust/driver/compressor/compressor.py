@@ -13,7 +13,6 @@ from pyproclust.clustering.cluster import Cluster
 class Compressor(object):
 
     def __init__(self, parameters):
-        
         self.parameters = parameters
         
     def compress(self, clustering, pdb_name, workspace_handler, trajectory_handler, matrix_handler):
@@ -34,7 +33,8 @@ class Compressor(object):
                                               workspace_handler, 
                                               trajectory_handler,
                                               do_merged_files_have_correlative_models=True,
-                                              write_frame_number_instead_of_correlative_model_number=False)
+                                              write_frame_number_instead_of_correlative_model_number=False,
+                                              keep_remarks = self.parameters['keep_remarks'])
     
     def __naive_compression(self, clustering, matrix_handler):
         """

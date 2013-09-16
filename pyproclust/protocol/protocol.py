@@ -29,9 +29,8 @@ class ClusteringProtocol(Observable):
                                             matrixHandler,
                                             workspaceHandler,
                                             scheduling_tools.build_scheduler(
-                                                                           clustering_parameters["clustering"]["control"]["scheduler_type"],
-                                                                           self.observer,
-                                                                           clustering_parameters["clustering"]["control"]["number_of_processors"]), 
+                                                                           clustering_parameters["clustering"]["control"],
+                                                                           self.observer),
                                             AlgorithmRunParametersGenerator(
                                                                             clustering_parameters,
                                                                             matrixHandler),
@@ -58,9 +57,8 @@ class ClusteringProtocol(Observable):
         ######################
         self.timer.start("Evaluation")
         analyzer = AnalysisRunner(scheduling_tools.build_scheduler(
-                                                       clustering_parameters["clustering"]["control"]["scheduler_type"],
-                                                       self.observer,
-                                                       clustering_parameters["clustering"]["control"]["number_of_processors"]),
+                                                       clustering_parameters["clustering"]["control"],
+                                                       self.observer),
                                           selected_clusterings,
                                           AnalysisPopulator(matrixHandler, 
                                                             trajectoryHandler,

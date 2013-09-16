@@ -41,7 +41,6 @@ setup(name='pyProClust',
                 'pyproclust.driver.scheduling',
                 'pyproclust.driver.compressor',
                 'pyproclust.driver.results',
-                
       ],
       
       include_dirs = [numpy.get_include(),

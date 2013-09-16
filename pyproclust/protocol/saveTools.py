@@ -46,7 +46,8 @@ def save_representatives(representatives,
                          workspace_handler,
                          trajectory_holder,
                          do_merged_files_have_correlative_models,
-                         write_frame_number_instead_of_correlative_model_number):
+                         write_frame_number_instead_of_correlative_model_number,
+                         keep_remarks = False):
     """
     Saves a pdb file containing the most representative elements of the clustering.
     
@@ -79,7 +80,8 @@ def save_representatives(representatives,
                                              number_of_frames = pdb_tools.get_number_of_frames(temporary_merged_trajectory_path),
                                              file_handler_out = file_handler_out,
                                              frames_to_save = representatives,
-                                             write_frame_number_instead_of_correlative_model_number = write_frame_number_instead_of_correlative_model_number)
+                                             write_frame_number_instead_of_correlative_model_number = write_frame_number_instead_of_correlative_model_number,
+                                             keep_header = keep_remarks)
     file_handler_in.close()
     file_handler_out.close()
     
