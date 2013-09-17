@@ -63,9 +63,19 @@ class Driver(Observable):
             clustering_results = ClusteringProtocol(self.timer, self.observer).run(parameters, self.matrixHandler, 
                                                                                                 self.workspaceHandler, 
                                                                                                 self.trajectoryHandler)
-            best_clustering, best_clustering_id, selected, not_selected, scores = None, None, {}, {}, {}
-            best_clustering_id, selected, not_selected, scores = clustering_results
-            best_clustering = selected[best_clustering_id]
+            if clustering_results != None:
+                best_clustering = None
+                best_clustering_id, selected, not_selected, scores = clustering_results
+                best_clustering = selected[best_clustering_id]
+            else:
+                self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
+                print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
+                exit()
+            
+            #################################
+            # Results are saved to a file
+            #################################
+            self.save_clustering_results(clustering_results)
         
         ##############################
         # Load the clustering
@@ -78,13 +88,9 @@ class Driver(Observable):
         #################################
         if best_clustering is None:
             self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
-            print "[FATAL ClusteringProtocol::run] Improductive clustering search. Exiting..."
+            print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
             exit()
         
-        #################################
-        # Results are saved to a file
-        #################################
-        self.save_clustering_results(clustering_results)
         
         return best_clustering
 
@@ -148,8 +154,11 @@ class Driver(Observable):
             ############################################
             self.timer.start("Compression")
             compressor = Compressor(parameters["global"]["action"]["parameters"])
-            compressed_file_path = compressor.compress(best_clustering["clustering"], "compressed_pdb", self.workspaceHandler, self.trajectoryHandler, 
-                self.matrixHandler)
+            compressed_file_path = compressor.compress(best_clustering["clustering"], 
+                                                       (lambda params: params['file'] if 'file' in params else "compressed_pdb")(parameters["global"]["action"]["parameters"]), 
+                                                       self.workspaceHandler, 
+                                                       self.trajectoryHandler, 
+                                                       self.matrixHandler)
             self.generatedFiles.append({"description":"Compressed file", 
                                         "path":compressed_file_path, 
                                         "type":"pdb"})

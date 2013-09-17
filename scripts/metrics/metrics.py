@@ -69,28 +69,11 @@
 ##-------------------------------------------
 ## This function will write a single file with the metrics in 'metrics' in colums. 'name' and 'selection' are the file
 ## name to write and the selected records.
-##
-##
-##-------------------------------------------
-##  mean(metric_names, records)
-##-------------------------------------------
-## This is just a proof of concept. The function will return a dictionary with the mean value of the metrics chosen in
-## 'metric_names' of a selection 'records'. This function has NOT BEEN TESTET YET. 
-##
-## Examples:
-##
-## mymeans =  mean("Energy Proc",selection)
-
-## TODO
-##---------
-## Keep coherence of MODEL pdb lines when writing the file.
-## Test Find plateau and mean
-##
 
 
 import sys
 import os
-import math
+import numpy
 
 def toNumber(n):
 	d = 0
@@ -146,7 +129,7 @@ def processFile(filename, records, first):
 					
 		line_number = line_number + 1
 		first = False
-	del records[-1]["body"]["body"][1:-1]
+	del records[-1]["body"][1:-1]
 	file.close()
 
 ## Always use spaces 
@@ -193,7 +176,7 @@ def copyChunck(origin, to, start,end):
 		to.write(lines[i])
 	
 	
-def genSingleTraj(name,records,selection):
+def genSingleTraj(name, records, selection):
 	file = open(name,"w")
 	
 	## Write seqres
@@ -213,21 +196,10 @@ def genSingleTraj(name,records,selection):
 	file.close()
 
 def genMetricsFile(name, metrics, selection):
-	file = open(name,"w")
-	for r in selection:
-		line =""
-		for m in metrics:
-			try:
-				line = line+str(r[m.lower()])+" "
-			except KeyError:
-				line = line+"0 "
-# 		print(line)
-		if line!="":
-			file.write(line+"\n")
-	file.close()
-
+	numpy.savetxt(name, genMetrics(metrics, selection))
+			
 def genMetrics(metrics, selection):
-	metrics = []
+	filtered_metrics = []
 	for r in selection:
 		this_metrics = []
 		for m in metrics:
@@ -235,5 +207,5 @@ def genMetrics(metrics, selection):
 				this_metrics.append(r[m.lower()])
 			except KeyError:
 				this_metrics.append(0)
-		metrics.append(this_metrics)
-	return metrics
+		filtered_metrics.append(this_metrics)
+	return numpy.array(filtered_metrics)

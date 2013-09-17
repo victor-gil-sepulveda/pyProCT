@@ -34,7 +34,7 @@ class Compressor(object):
                                               trajectory_handler,
                                               do_merged_files_have_correlative_models=True,
                                               write_frame_number_instead_of_correlative_model_number=False,
-                                              keep_remarks = self.parameters['keep_remarks'])
+                                              keep_remarks = (lambda params: params['keep_remarks'] if 'keep_remarks' in params else False)(self.parameters))
     
     def __naive_compression(self, clustering, matrix_handler):
         """
