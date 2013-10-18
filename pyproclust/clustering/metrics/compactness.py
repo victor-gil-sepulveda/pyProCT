@@ -19,7 +19,7 @@ class CompactnessCalculator(object):
         update_medoids(clustering, matrix)
         
         # Create a cluster that contains all elements to calculate variances, we'll check even 
-        # non clustered elements for the sake of implicity
+        # non clustered elements for the sake of simplicity
         global_cluster = Cluster(None, range(matrix.row_length))
         global_cluster.prototype = global_cluster.calculate_medoid(matrix)
         global_variance = numpy.var(get_distances_of_elements_to(global_cluster.prototype, 
@@ -29,7 +29,7 @@ class CompactnessCalculator(object):
         
         sum_ci = numpy.sum(variances)
         
-        Cmp = sum_ci / (len(clustering.clusters*global_variance))
+        Cmp = sum_ci / (len(clustering.clusters)*global_variance)
         
         return Cmp
     

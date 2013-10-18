@@ -9,7 +9,7 @@ import numpy
 
 class GaussianSeparationCalculator(object):
     """
-    Cluster separation index calculation, as defined in "."u and H. Xiong 2002.
+    Cluster separation index calculation, as defined in Wu and H. Xiong 2002.
     """
     TWO_SIGMA_SQUARED = 0.25
     

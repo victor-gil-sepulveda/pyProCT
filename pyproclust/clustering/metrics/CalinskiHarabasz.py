@@ -32,7 +32,7 @@ class CalinskiHarabaszCalculator(object):
         update_medoids(clustering, matrix)
         
         # We'll follow the paper expanded formula
-        # First we need the general mean of the squared distances
+        # First we need the global mean of the squared distances
         D = mean(matrix.get_data()**2)
         # A_k calculation
         k = len(clustering.clusters)
