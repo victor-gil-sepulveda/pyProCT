@@ -16,17 +16,14 @@ def send_message_to_observer( observer, tag, task_name):
 
 def build_scheduler(scheduling_options, observer):
     """
-    Factory function for scheduler building.
-    @param scheduler_type: Type of the scheduler to be built:
+    Factory function for scheduler building. Uses parameters to build up to 3 types of scheduler:
         - "Process/Parallel": A scheduler based on 'multiprocessing'. Can execute tasks in parallel.
         - "MPI/Parallel": This one uses MPI to execute tasks in parallel. Only usable with an MPI driver.
         - "Serial": A serial scheduler. Executes its tasks sequentially.
     
-    @param sleep_time: The time to wait until a new task is put into the execution queue.
-    
+    @param scheduling_options: Parameters chunk containing the details of the scheduler to be created (mainly
+    scheduler_type and number_of_processes).
     @param observer: The associated observer (can be None)
-    
-    @param max_processes: Maximum number of simultaneous tasks running.
     
     @return: The scheduler instance.
     """
@@ -58,7 +55,7 @@ def build_scheduler(scheduling_options, observer):
     
     scheduler_type = scheduling_options['scheduler_type']
     if scheduler_type == "Process/Parallel":
-        max_processes = scheduling_options['number_of_processors']
+        max_processes = scheduling_options['number_of_processes']
         return ProcessParallelScheduler(max_processes,external_functions)
     
     elif scheduler_type == "MPI/Parallel":

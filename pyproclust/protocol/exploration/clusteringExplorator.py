@@ -30,7 +30,7 @@ def run_algorithm(algorithm, algorithm_kwargs, clustering_id):
 class ClusteringExplorer(Observable):
 
     @classmethod
-    def get_available_algorithms(cls):
+    def get_clustering_algorithm_class(cls):
         """
         This function returns a dictionary that links a clustering algorithm type with its class creator.
         @return: The aforementioned dictionary. 
@@ -201,7 +201,7 @@ class ClusteringExplorer(Observable):
             algorithm_execution_parameters["sigma_sq"] = self.clustering_parameters["algorithms"]["spectral"]["sigma"]
         
         if algorithm_type in ["spectral","dbscan","gromos","kmedoids","random","hierarchical"] :
-            return ClusteringExplorer.get_available_algorithms()[algorithm_type](distance_matrix, **algorithm_execution_parameters)
+            return ClusteringExplorer.get_clustering_algorithm_class()[algorithm_type](distance_matrix, **algorithm_execution_parameters)
         else:
             print "[ERROR][ClusteringExplorer::build_algorithms] Not known algorithm type ( %s )"%(algorithm_type)
             self.notify("SHUTDOWN", "Not known algorithm type ( %s )"%(algorithm_type))
