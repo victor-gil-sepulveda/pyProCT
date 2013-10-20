@@ -53,13 +53,11 @@ class MatrixHandler(object):
                     parameters:{
                         fit_selection:  String,
                         body_selection: String,
-                        calculator_type: Enum
                     }
                     
                     'fit_selection' is the Prody selection string used to describe the atoms to be superposed.
                     'body_selection' another Prody selection string that describes the element that will be used
                     to get the euclidean distances.
-                    'calculator_type' one of the calculators in pyRMSD.
         """
         self.matrix_parameters = matrix_parameters
         
