@@ -41,9 +41,10 @@ class Driver(Observable):
         statistics_file_path = self.matrixHandler.save_statistics(self.workspaceHandler["matrix"])
         self.generatedFiles.append({"description":"Matrix statistics", "path":statistics_file_path, "type":"text"})
         self.timer.stop("Matrix Generation")
-        self.timer.start("Matrix Save")
-        self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["filename"]))
-        self.timer.stop("Matrix Save")
+        if "filename" in parameters["matrix"]:
+            self.timer.start("Matrix Save")
+            self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["filename"]))
+            self.timer.stop("Matrix Save")
         #########################
         # Matrix plot
         #########################
