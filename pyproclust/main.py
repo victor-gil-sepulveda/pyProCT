@@ -8,7 +8,6 @@ import threading
 from pyproclust.driver.parameters import ProtocolParameters
 from pyproclust.driver.observer.observer import Observer
 from pyproclust.driver.driver import Driver
-from pyproclust.driver.observer.MPIObserver import MPIObserver
 
 class CmdLinePrinter(threading.Thread):
     
@@ -55,6 +54,7 @@ if __name__ == '__main__':
     cmd_thread = None
     if options.use_mpi:
         from pyproclust.driver.mpidriver import MPIDriver
+        from pyproclust.driver.observer.MPIObserver import MPIObserver
         observer = MPIObserver()
         if options.print_messages:
             cmd_thread = CmdLinePrinter(observer)

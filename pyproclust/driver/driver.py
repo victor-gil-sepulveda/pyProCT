@@ -92,7 +92,6 @@ class Driver(Observable):
             print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
             exit()
         
-        
         return best_clustering
 
     def save_clustering_results(self, clustering_results):
