@@ -80,7 +80,7 @@ class ParametersGenerator(object):
         most_separated = self.get_most_separated_elements()
         central_element =  self.get_most_separated_from_two_elements(most_separated["elements"][0],most_separated["elements"][1])
         
-        step = central_element["mean_value"] / self.max_gen_clusterings
+        step = central_element["value"] / self.max_gen_clusterings
         run_parameters = []
         cutoff = step
         while cutoff < central_element["value"]:

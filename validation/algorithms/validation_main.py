@@ -15,7 +15,13 @@ from pyproclust.algorithms.spectral.spectralClusteringAlgorithm import SpectralC
 from validation.algorithms.validationTools import params_to_string, dataset_loading_2D,\
     show_2D_dataset_clusters, generate_similarity_network
 from pyproclust.tools.scriptTools import create_directory
+import pyproclust.algorithms.dbscan.parametersGeneration as DBSParametersGenerator
 
+
+class FakeMatrixHandler:
+    def __init__(self,matrix):
+        self.distance_matrix = matrix
+        
 """
 Script for visual validation of algorithms.
 """
@@ -30,7 +36,7 @@ def get_algorithms():
     
     return algorithms
 
-def generate_params_for_alg_and_dataset():
+def generate_params_for_alg_and_dataset(condensed_matrices):
     
     params = {
               "GROMOS":{},
@@ -56,7 +62,7 @@ def generate_params_for_alg_and_dataset():
                                                      "sigma_sq":data.sigma_sq[dataset_name],
                                                      "k":num_clusters,
                                                      "use_k_medoids": True})
-            
+        
     # Params for GROMOS
     for dataset_name in data.number_of_clusters:
         params["GROMOS"][dataset_name].append({'cutoff':7.0})
@@ -65,11 +71,18 @@ def generate_params_for_alg_and_dataset():
         params["Hierarchical"][dataset_name].append({'cutoff':1.1523})
     
     params["DBSCAN"] = data.DBSCAN_params_sq
+    for dataset_name in data.number_of_clusters:
+        params["DBSCAN"][dataset_name].extend(DBSParametersGenerator.ParametersGenerator({"evaluation":{
+                                                                                                        "maximum_noise":10
+                                                                                                        }
+                                                                                          }
+                                                                                         ,FakeMatrixHandler(condensed_matrices[dataset_name])
+                                              ).get_parameters()[0])
+        
     return params
 
 if __name__ == '__main__':
     
-    params_for_alg_and_dataset = generate_params_for_alg_and_dataset()
     condensed_matrices = {}
     all_observations = {}
     create_directory("./clustering_images")
@@ -77,7 +90,11 @@ if __name__ == '__main__':
     for dataset_name in data.all_datasets:
         dataset = data.all_datasets[dataset_name]
         # Creating the matrix
-        observations = dataset_loading_2D(dataset)
+        if dataset_name == "concentric_circles":
+            observations = dataset_loading_2D(dataset,5)
+        else:
+            observations = dataset_loading_2D(dataset)
+        
         all_observations[dataset_name] = observations
         condensed_matrix_data = distance.pdist(observations)
         condensed_matrix = CondensedMatrix(condensed_matrix_data)
@@ -89,6 +106,8 @@ if __name__ == '__main__':
         print "Mean dist. = ",condensed_matrix.calculateMean()
         print "Variance = ",condensed_matrix.calculateVariance()
         print "-----------------------\n"
+ 
+    params_for_alg_and_dataset = generate_params_for_alg_and_dataset(condensed_matrices)
     
     # Generation of clusterings
     for dataset_name in data.all_datasets:
@@ -117,6 +136,7 @@ if __name__ == '__main__':
                                          scale = 20,
                                          margin = 20).save("clustering_images/%s.jpg"%image_name,
                                                   "JPEG")
+
     
     print
     print "Done"

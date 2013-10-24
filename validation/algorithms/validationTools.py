@@ -27,7 +27,7 @@ def params_to_string(params):
             s += "%s_%s_"%(k, params[k])
     return s[:-1]
 
-def dataset_loading_2D(dataset_string):
+def dataset_loading_2D(dataset_string, scale_factor = 1):
     """
     Creates a list of observations from a 2D dataset.
     """
@@ -36,7 +36,7 @@ def dataset_loading_2D(dataset_string):
     for l in lines:
         try:
             nums = l.split()
-            observations.append((float(nums[0]),float(nums[1])))
+            observations.append((float(nums[0])*scale_factor,float(nums[1])*scale_factor))
         except IndexError:
             pass
         except:
