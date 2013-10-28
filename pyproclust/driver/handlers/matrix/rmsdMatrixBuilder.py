@@ -36,7 +36,6 @@ class RMSDMatrixBuilder(object):
         if calc_selection_string != "" and calc_selection_string != fit_selection_string:
             calc_selection_coordsets = trajectory_handler.getSelection(calc_selection_string)
             trajectory_handler.setWorkingCoordinates(calc_selection_string)
-            calculator.setCalculationCoordinates(calc_selection_coordsets)
             calculator = RMSDCalculator(calculatorType = calculator_type,
                                         fittingCoordsets  = fit_selection_coordsets,
                                         calculationCoordsets = calc_selection_coordsets)

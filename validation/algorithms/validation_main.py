@@ -16,6 +16,7 @@ from validation.algorithms.validationTools import params_to_string, dataset_load
     show_2D_dataset_clusters, generate_similarity_network
 from pyproclust.tools.scriptTools import create_directory
 import pyproclust.algorithms.dbscan.parametersGeneration as DBSParametersGenerator
+import pyproclust.algorithms.gromos.parametersGeneration as GromosParametersGenerator
 
 
 class FakeMatrixHandler:
@@ -69,6 +70,18 @@ def generate_params_for_alg_and_dataset(condensed_matrices):
         params["GROMOS"][dataset_name].append({'cutoff':5.0})
         params["GROMOS"][dataset_name].append({'cutoff':3.0})
         params["Hierarchical"][dataset_name].append({'cutoff':1.1523})
+    for dataset_name in data.number_of_clusters:
+        params["GROMOS"][dataset_name].extend(GromosParametersGenerator.ParametersGenerator({"clustering":{
+                                                                                                           "algorithms":{
+                                                                                                                         "gromos":{
+                                                                                                                                   "max":10
+                                                                                                                                   }
+                                                                                                                         }
+                                                                                                           }
+                                                                                          }
+                                                                                         ,FakeMatrixHandler(condensed_matrices[dataset_name])
+                                              ).get_parameters()[0])
+        
     
     params["DBSCAN"] = data.DBSCAN_params_sq
     for dataset_name in data.number_of_clusters:
