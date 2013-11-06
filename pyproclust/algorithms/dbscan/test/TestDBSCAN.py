@@ -7,7 +7,7 @@ import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm,\
     PointClassType
-from pyproclust.algorithms.dbscan.dbscanTools import kth_elements, kdist,\
+from pyproclust.algorithms.dbscan.dbscanTools import kth_elements_distance, k_dist,\
     k_scale_gen
 import numpy
 
@@ -29,6 +29,12 @@ class Test(unittest.TestCase):
         self.assertItemsEqual(dbscan_alg._DBSCANAlgorithm__eps_neighborhood(6,3),[0, 1, 2, 3, 4, 5, 7, 8])
         self.assertItemsEqual(dbscan_alg._DBSCANAlgorithm__eps_neighborhood(6,2),[0, 1, 3, 4, 5, 7, 8])
         self.assertItemsEqual(dbscan_alg._DBSCANAlgorithm__eps_neighborhood(6,1),[0, 4, 5, 7])
+        self.assertItemsEqual(dbscan_alg._DBSCANAlgorithm__eps_neighborhood(6,1.),[0, 4, 5, 7])
+        
+        self.assertItemsEqual(distances.element_neighbors_within_radius(6,3),[0, 1, 2, 3, 4, 5, 7, 8])
+        self.assertItemsEqual(distances.element_neighbors_within_radius(6,2),[0, 1, 3, 4, 5, 7, 8])
+        self.assertItemsEqual(distances.element_neighbors_within_radius(6,1),[0, 4, 5, 7])
+        self.assertItemsEqual(distances.element_neighbors_within_radius(6,1.),[0, 4, 5, 7])
 
     def test_seed_expansion(self):
         """
@@ -115,17 +121,17 @@ class Test(unittest.TestCase):
                                                                             3.16,   5.10,
                                                                                     2.  ])
         expected = [3.1600000000000001, 5.0999999999999996]
-        result = kth_elements(4,[2,4],distances)
+        result = kth_elements_distance(4,[2,4],distances)
         numpy.testing.assert_array_almost_equal(expected, result, decimal = 3)
         
-    def test_kdist(self):
+    def test_k_dist(self):
         distances = CondensedMatrix([17.46,   9.21,  4.47,  3.16,   4.47,   5.65,   
-                                                     12.36,  5.83,  9.43,  12.52,  15.65,
-                                                             5.,    8.06,  11.18,  13.15,
-                                                                    3.16,   6.35,   8.24,   
-                                                                            3.16,   5.10,
-                                                                                    2.  ])
-        result = kdist([2,4],distances)
+                                             12.36,  5.83,  9.43,  12.52,  15.65,
+                                                     5.,    8.06,  11.18,  13.15,
+                                                            3.16,   6.35,   8.24,   
+                                                                    3.16,   5.10,
+                                                                            2.  ])
+        result = k_dist([2,4],distances)
         # [[  4.47   5.65]
         # [  9.43  12.52]
         # [  8.06  11.18]
@@ -135,9 +141,6 @@ class Test(unittest.TestCase):
         # [  5.1    8.24]]
         expected = [sorted([  4.47,   5.65,   9.43,  12.52,   8.06,  11.18,   4.47]),
                     sorted([  5.83,   3.16,   5.1,    3.16,   6.35,   5.1,    8.24])]
-        numpy.testing.assert_array_almost_equal(result,expected,decimal = 2)
-        
-        result = kdist([2,4],distances)
         numpy.testing.assert_array_almost_equal(result,expected,decimal = 2)
         
     def test_k_scale_gen(self):
