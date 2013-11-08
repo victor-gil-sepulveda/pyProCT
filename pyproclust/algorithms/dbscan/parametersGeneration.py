@@ -46,6 +46,7 @@ class ParametersGenerator(object):
             run_parameter["minpts"] = minpts
             run_parameter["eps"] = eps
             run_parameters.append(run_parameter)
+        print run_parameters
         return run_parameters, []
     
         

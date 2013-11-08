@@ -23,6 +23,7 @@ class ClusteringProtocol(Observable):
         ############################
         # Clustering exploration
         ############################
+        self.notify("Exploration Started", [])
         self.timer.start("Clustering Exploration")
         clusterings  = ClusteringExplorer(
                                             clustering_parameters,

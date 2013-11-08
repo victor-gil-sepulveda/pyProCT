@@ -84,7 +84,7 @@ class MatrixHandler(object):
             
         elif self.matrix_parameters["method"] == "distance":
             self.distance_matrix =  EuclideanDistanceMatrixBuilder().build(trajectory_handler,self.matrix_parameters["parameters"])
-            
+        
         return self.distance_matrix
     
     def save_matrix(self, matrix_path):

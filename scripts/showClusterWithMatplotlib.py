@@ -16,7 +16,7 @@ import matplotlib.cm as cm
 
 def print_cluster_info(clustering_id, results):
     print clustering_id, results["selected"][clustering_id]["clustering"]["number_of_clusters"], \
-    results["selected"][clustering_id]["type"]
+    results["selected"][clustering_id]["type"], "".join([ (str(results["scores"][criteria][clustering_id])+", ") for criteria in results["scores"].keys()])
 
 if __name__ == '__main__':
     parser = optparse.OptionParser(usage='%prog -m <arg> -c <arglist> [-o <arg>]', version='1.0')
@@ -26,6 +26,7 @@ if __name__ == '__main__':
     parser.add_option('-r', action="store", dest = "results_file", help="", metavar = "results.json")
     parser.add_option('-p', action="store", dest = "parameters_file", help="",metavar = "parameters.json")
     parser.add_option('-c', action="store", dest = "clustering_to_see", help="",metavar = "clustering_0001")
+    parser.add_option('--stride', type = "int", action="store", dest = "stride", help="",metavar = "5")
     options, args = parser.parse_args()
     
     params = convert_to_utf8(json.loads(open(options.parameters_file).read()))
@@ -33,16 +34,16 @@ if __name__ == '__main__':
     
     if options.print_list:
         for selected_cluster in results["selected"]:
-            print_cluster_info(selected_cluster)
+            print_cluster_info(selected_cluster,results)
         exit()
     
-    pdb = prody.parsePDB(params["global"]["pdbs"][0])
-    pdb_backbone = pdb.select("name CA").getCoordsets()[0] # "backbone not hetero"
     
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     # Plot protein
+    pdb = prody.parsePDB(params["global"]["pdbs"][0])
     if options.show_protein:
+        pdb_backbone = pdb.select("name CA").getCoordsets()[0] # "backbone not hetero"
         ax.plot(pdb_backbone.T[0], pdb_backbone.T[1], pdb_backbone.T[2])
     
     # Get geometric centers and plot ligands
@@ -61,9 +62,11 @@ if __name__ == '__main__':
     colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
     for cluster in clustering.clusters:
         centers = []
-        for element in cluster.all_elements:
-            coords = ligand_coords[element]
-            centers.append(coords.mean(0))
+        for i,element in enumerate(cluster.all_elements):
+            if options.stride is None or i%options.stride == 0:
+                coords = ligand_coords[element]
+                centers.append(coords.mean(0))
+            
         centers = numpy.array(centers)
         ax.scatter(centers.T[0],centers.T[1],centers.T[2],color=next(colors))
         

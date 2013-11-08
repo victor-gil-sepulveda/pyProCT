@@ -5,7 +5,7 @@ Created on 23/04/2012
 '''
 import numpy
 cimport numpy
-
+import cython
 import math
 
 DOUBLE = numpy.double
@@ -19,50 +19,56 @@ def kth_elements_distance(int element,
                           numpy.ndarray[DOUBLE_t] distances_to_all_other_elements_buffer, 
                           condensed_distance_matrix):
     
+    return cython_kth_elements_distance(element, klist, distances_to_all_other_elements_buffer, condensed_distance_matrix)
+
+cdef numpy.ndarray[DOUBLE_t] cython_kth_elements_distance(int element, 
+                          numpy.ndarray[INT_t] klist, 
+                          numpy.ndarray[DOUBLE_t] distances_to_all_other_elements_buffer, 
+                          condensed_distance_matrix):
+    
     cdef int i
     cdef int k
+    cdef int KLEN = len(klist)
+    cdef int N = condensed_distance_matrix.row_length
+    cdef numpy.ndarray[DOUBLE_t] kth_elems = numpy.empty(KLEN)
     
     # Distances of one element vs all the others
-    for i in range(condensed_distance_matrix.row_length):
+    for i in range(N):
         distances_to_all_other_elements_buffer[i] = condensed_distance_matrix[element,i]
     
     # Pick the kth elements
-    distances_to_all_other_elements_buffer.sort(kind='mergesort')
-    
-    kth_elems = [distances_to_all_other_elements_buffer[k] for k in klist]
+    distances_to_all_other_elements_buffer.sort(kind='quicksort')
+    for i in range(KLEN):
+        k = klist[i]
+        kth_elems[i] = distances_to_all_other_elements_buffer[k]
     
     return kth_elems
 
+@cython.boundscheck(False)
 def k_dist(numpy.ndarray[INT_t] klist, 
            numpy.ndarray[DOUBLE_t] buffer, 
            condensed_distance_matrix):
+    
     cdef int N = condensed_distance_matrix.row_length
-    cdef int KLEN =  len(klist)
-    cdef int i
+    cdef int KLEN = len(klist)
+    cdef int i = 0
+    cdef numpy.ndarray[DOUBLE_t, ndim=2] np_k_dist_matrix = numpy.empty((KLEN,N))
+    print np_k_dist_matrix
     
-    # for all the elements pick their kth elements
-    np_k_dist_matrix = numpy.array([kth_elements_distance(i, klist, buffer,condensed_distance_matrix) for i in range(condensed_distance_matrix.row_length)])
+    # For all the elements and all Ks pick their kth element distances
+    for i in range(N):
+        np_k_dist_matrix[:,i] = cython_kth_elements_distance(i, klist, buffer, condensed_distance_matrix) 
 
-# Now we have:
-# element        k_1 k_2 ... K
-#    1          [ x   x  ... x ]
-#    2          [ x   x  ... x ]
-#    ...
-#    N          [ x   x  ... x ]
+    # Now we have
+    # k         el1  el2 ...  elN
+    # 20      [  x    x  ...    x ]
+    # 40      [  x    x  ...    x ]
+    # ...
+    # KMAX    [  x    x  ...    x ]
     
-# Reshape the matrix
-    np_k_dist_matrix = np_k_dist_matrix.T
-    
-# And now we have
-# k         el1  el2 ...  elN
-# 20      [  x    x  ...    x ]
-# 40      [  x    x  ...    x ]
-# ...
-# KMAX    [  x    x  ...    x ]
-
-# Rows have to be sorted
+    # Rows have to be sorted
     for i in range(KLEN):
-        np_k_dist_matrix[i].sort(kind='mergesort')
+        np_k_dist_matrix[i].sort(kind='quicksort')
         
     return np_k_dist_matrix
 

@@ -41,8 +41,9 @@ class EuclideanDistanceMatrixBuilder(object):
         # Working coordinates are changed to the body coordinates (to be used later for instance
         # with clustering metrics)        
         trajectory_handler.setWorkingCoordinates(body_selection_string)
-        
-        return cls.calculate_geom_center(body_selection_coordsets)
+        distances = cls.calculate_geom_center(body_selection_coordsets)
+        matrix = CondensedMatrix(distances)
+        return matrix
     
     @classmethod
     def calculate_geom_center(cls, coordinates):
@@ -52,10 +53,10 @@ class EuclideanDistanceMatrixBuilder(object):
         
         @param coordinates: Coordinates set from which calculating the geometrical centers (one geometrical center per conformation).
         
-        @return: The condensed matrix resulting of calculating all euclidean distances between the aforemetioned centers.
+        @return: The contents of the condensed matrix resulting of calculating all euclidean distances between the aforemetioned centers.
         """
-        # Calculate geom center
+        # Calculate geom centers
         centers = coordinates.mean(1)
         distances = scipy.spatial.distance.pdist(centers, 'euclidean')
-        return  CondensedMatrix(distances)
+        return  distances
         

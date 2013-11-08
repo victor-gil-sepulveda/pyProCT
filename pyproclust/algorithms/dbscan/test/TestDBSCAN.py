@@ -7,7 +7,9 @@ import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm,\
     PointClassType
-from pyproclust.algorithms.dbscan.dbscanTools import kth_elements_distance, k_dist,\
+# from pyproclust.algorithms.dbscan.dbscanTools import kth_elements_distance, k_dist,\
+#     k_scale_gen
+from pyproclust.algorithms.dbscan.cython.cythonDbscanTools import kth_elements_distance, k_dist,\
     k_scale_gen
 import numpy
 
@@ -16,14 +18,14 @@ class Test(unittest.TestCase):
 
 
     def test_eps_neighborhood(self):
-        distances = CondensedMatrix([ 1, 1, 1, 1, 1, 1, 1, 1,
-                                                 1, 1, 1, 1, 2, 1 ,1,
-                                                    1, 1, 1, 3, 1, 1,
-                                                       1, 1, 2, 1, 1,
-                                                          1, 1, 1, 1,
-                                                             1, 1, 1, 
-                                                                1, 2, 
-                                                                   1])
+        distances = CondensedMatrix([ 1., 1., 1., 1., 1., 1., 1., 1.,
+                                         1., 1., 1., 1., 2., 1. ,1.,
+                                            1., 1., 1., 3., 1., 1.,
+                                               1., 1., 2., 1., 1.,
+                                                  1., 1., 1., 1.,
+                                                     1., 1., 1.,
+                                                        1., 2.,
+                                                           1.])
         dbscan_alg = DBSCANAlgorithm(distances)
         
         self.assertItemsEqual(dbscan_alg._DBSCANAlgorithm__eps_neighborhood(6,3),[0, 1, 2, 3, 4, 5, 7, 8])
@@ -61,10 +63,10 @@ class Test(unittest.TestCase):
                 0
                       
         """
-        distances = CondensedMatrix([ 0, 0, 2, 2, 
-                                                 0, 2, 2,
-                                                    2, 2,
-                                                       0])
+        distances = CondensedMatrix([ 0., 0., 2., 2., 
+                                         0., 2., 2.,
+                                            2., 2.,
+                                               0.])
         dbscan_alg = DBSCANAlgorithm(distances)
         eps = 1.0
         minpts = 2
@@ -88,10 +90,10 @@ class Test(unittest.TestCase):
         self.assertItemsEqual(expected_classes, dbscan_alg.element_class)
         
     def test_dbscan(self):
-        distances = CondensedMatrix([ 0, 0, 2, 2, 
-                                                 0, 2, 2,
-                                                    2, 2,
-                                                       0])
+        distances = CondensedMatrix([ 0., 0., 2., 2., 
+                                         0., 2., 2.,
+                                            2., 2.,
+                                               0.])
         dbscan_alg = DBSCANAlgorithm(distances)
         eps = 1.0
         minpts = 2
@@ -115,13 +117,14 @@ class Test(unittest.TestCase):
         
     def test_kth_elements(self):
         distances = CondensedMatrix([17.46,   9.21,  4.47,  3.16,   4.47,   5.65,   
-                                                     12.36,  5.83,  9.43,  12.52,  15.65,
-                                                             5.,    8.06,  11.18,  13.15,
-                                                                    3.16,   6.35,   8.24,   
-                                                                            3.16,   5.10,
-                                                                                    2.  ])
+                                             12.36,  5.83,  9.43,  12.52,  15.65,
+                                                     5.,    8.06,  11.18,  13.15,
+                                                            3.16,   6.35,   8.24,   
+                                                                    3.16,   5.10,
+                                                                            2.  ])
+        buffer = numpy.empty(distances.row_length)
         expected = [3.1600000000000001, 5.0999999999999996]
-        result = kth_elements_distance(4,[2,4],distances)
+        result = kth_elements_distance(4,numpy.array([2,4]),buffer,distances)
         numpy.testing.assert_array_almost_equal(expected, result, decimal = 3)
         
     def test_k_dist(self):
@@ -131,7 +134,8 @@ class Test(unittest.TestCase):
                                                             3.16,   6.35,   8.24,   
                                                                     3.16,   5.10,
                                                                             2.  ])
-        result = k_dist([2,4],distances)
+        buffer = numpy.empty(distances.row_length)
+        result = k_dist(numpy.array([2,4]), buffer, distances)
         # [[  4.47   5.65]
         # [  9.43  12.52]
         # [  8.06  11.18]
@@ -139,19 +143,15 @@ class Test(unittest.TestCase):
         # [  3.16   5.1 ]
         # [  3.16   6.35]
         # [  5.1    8.24]]
-        expected = [sorted([  4.47,   5.65,   9.43,  12.52,   8.06,  11.18,   4.47]),
-                    sorted([  5.83,   3.16,   5.1,    3.16,   6.35,   5.1,    8.24])]
+        expected = [sorted([  4.47,   9.43,  8.06,    4.47,   3.16,   3.16,   5.1]),
+                    sorted([  5.65,  12.52, 11.18,    5.83,   5.1,    6.35,   8.24])]
         numpy.testing.assert_array_almost_equal(result,expected,decimal = 2)
         
     def test_k_scale_gen(self):
-        self.assertItemsEqual(k_scale_gen(100),[2, 4, 8, 16, 32, 64])
-        self.assertItemsEqual( k_scale_gen(7),[2, 4])
-        self.assertItemsEqual( k_scale_gen(0),[2])
+        self.assertItemsEqual( k_scale_gen(100),    [2, 4, 8, 16, 32, 64])
+        self.assertItemsEqual( k_scale_gen(7),      [2, 4])
+        self.assertItemsEqual( k_scale_gen(0),      [2])
     
-    
-
-        
-        
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testDBSCAN']
     unittest.main()

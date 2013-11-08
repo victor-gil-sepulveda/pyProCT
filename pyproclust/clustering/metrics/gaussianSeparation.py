@@ -34,5 +34,6 @@ class GaussianSeparationCalculator(object):
     
     @classmethod
     def exponential_list_generation(cls, clustering, matrix):
+        # May not work if prototypes are not defined :S
         proto_distances = numpy.array(get_inter_cluster_prototype_distances(clustering.clusters, matrix))
         return numpy.exp(((proto_distances**2)/ -cls.TWO_SIGMA_SQUARED))
