@@ -44,7 +44,8 @@ class DBSCANAlgorithm(object):
         """
         Secondary loop.
         """
-        seeds = self.__eps_neighborhood(current_element,eps)
+#         seeds = self.__eps_neighborhood(current_element,eps)
+        seeds = self.condensed_matrix.element_neighbors_within_radius(current_element,eps)
         if len(seeds) < minpts:
             self.element_class[current_element] = PointClassType.NOISE
             return False
@@ -60,9 +61,19 @@ class DBSCANAlgorithm(object):
         Performs iteratively a graph generation algorithm. Two nodes are connected
         if the node is a core node and the other is in its eps-neighborhood.
         """
+#         while len(seeds) > 0:
+#             current = seeds.pop()
+#             extra_seeds = self.__eps_neighborhood(current, eps)
+#             if len(extra_seeds) >= minpts:
+#                 for s in extra_seeds:
+#                     if self.element_class[s] in [PointClassType.UNCLASSIFIED, PointClassType.NOISE]:
+#                         if self.element_class[s] == PointClassType.UNCLASSIFIED:
+#                             seeds.append(s)
+#                         self.element_class[s] = current_cluster_id
+        seeds = list(seeds)
         while len(seeds) > 0:
             current = seeds.pop()
-            extra_seeds = self.__eps_neighborhood(current, eps)
+            extra_seeds = self.condensed_matrix.element_neighbors_within_radius(current, eps)
             if len(extra_seeds) >= minpts:
                 for s in extra_seeds:
                     if self.element_class[s] in [PointClassType.UNCLASSIFIED, PointClassType.NOISE]:

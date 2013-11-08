@@ -43,7 +43,7 @@ class SpectralClusteringAlgorithm(object):
         @param store_W: If True the object stores the adjacency matrix. Useful for testing.
         @param verbose: If True some messages will be printed.
         """
-        
+        verbose = True
         try:
             verbose = kwargs["verbose"]
         except KeyError:
@@ -55,7 +55,6 @@ class SpectralClusteringAlgorithm(object):
             self.max_clusters = kwargs["max_clusters"]
         except KeyError:
             self.max_clusters = condensed_matrix.row_length
-        
         
         try:
             self.sigma_sq = kwargs["sigma_sq"]

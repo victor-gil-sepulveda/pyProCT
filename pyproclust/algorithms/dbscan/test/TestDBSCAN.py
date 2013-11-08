@@ -8,24 +8,23 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm,\
     PointClassType
 # from pyproclust.algorithms.dbscan.dbscanTools import kth_elements_distance, k_dist,\
-#     k_scale_gen
+#     k_scale_gen, zhou_adaptative_determination,dbscan_param_space_search
 from pyproclust.algorithms.dbscan.cython.cythonDbscanTools import kth_elements_distance, k_dist,\
-    k_scale_gen
+    k_scale_gen,dbscan_param_space_search,zhou_adaptative_determination
 import numpy
-
 
 class Test(unittest.TestCase):
 
 
     def test_eps_neighborhood(self):
         distances = CondensedMatrix([ 1., 1., 1., 1., 1., 1., 1., 1.,
-                                         1., 1., 1., 1., 2., 1. ,1.,
-                                            1., 1., 1., 3., 1., 1.,
-                                               1., 1., 2., 1., 1.,
-                                                  1., 1., 1., 1.,
-                                                     1., 1., 1.,
-                                                        1., 2.,
-                                                           1.])
+                                          1., 1., 1., 1., 2., 1. ,1.,
+                                              1., 1., 1., 3., 1., 1.,
+                                                  1., 1., 2., 1., 1.,
+                                                      1., 1., 1., 1.,
+                                                          1., 1., 1.,
+                                                              1., 2.,
+                                                                  1.])
         dbscan_alg = DBSCANAlgorithm(distances)
         
         self.assertItemsEqual(dbscan_alg._DBSCANAlgorithm__eps_neighborhood(6,3),[0, 1, 2, 3, 4, 5, 7, 8])
@@ -148,9 +147,38 @@ class Test(unittest.TestCase):
         numpy.testing.assert_array_almost_equal(result,expected,decimal = 2)
         
     def test_k_scale_gen(self):
-        self.assertItemsEqual( k_scale_gen(100),    [2, 4, 8, 16, 32, 64])
-        self.assertItemsEqual( k_scale_gen(7),      [2, 4])
-        self.assertItemsEqual( k_scale_gen(0),      [2])
+        self.assertItemsEqual( k_scale_gen(100),    [2, 4, 8, 16, 32, 64,128])
+        self.assertItemsEqual( k_scale_gen(7),      [2, 4, 8])
+        self.assertItemsEqual( k_scale_gen(0),      [])
+        
+    def test_zhou_adaptative_determination(self):
+        distances = CondensedMatrix([ 0., 0., 2., 2., 
+                                          0., 2., 2.,
+                                              2., 2.,
+                                                  0.])
+        
+        self.assertItemsEqual(zhou_adaptative_determination(distances),[(1.0, 1.2)])
+        
+    def test_dbscan_param_space_search(self):
+        distances = CondensedMatrix([ 0., 0., 2., 2., 2.,
+                                          0., 2., 2., 3.,
+                                              2., 2., 3.,
+                                                  4., 4.,
+                                                      0.])
+        k_list = numpy.array([2,4])
+        
+        N = distances.row_length #5
+        
+        kdist_matrix = numpy.array([[1.,2.,3.,4.,5.,6.],
+                                    [5.,6.,7.,8.,9.,7.]])
+        
+        param_pairs = dbscan_param_space_search(   90, # 90# noise
+                                                   2,
+                                                   N,
+                                                   k_list,
+                                                   kdist_matrix)
+        
+        self.assertItemsEqual(param_pairs, [(2, 1.0), (4, 5.0), (2, 3.0), (4, 7.0), (2, 5.0), (4, 9.0)])
     
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testDBSCAN']

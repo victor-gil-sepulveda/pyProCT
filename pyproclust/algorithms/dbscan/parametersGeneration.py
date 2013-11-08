@@ -4,6 +4,10 @@ Created on 27/05/2013
 @author: victor
 '''
 import pyproclust.algorithms.dbscan.dbscanTools as dbscanTools
+from pyproclust.algorithms.dbscan.cython.cythonDbscanTools import k_scale_gen,\
+    k_dist, zhou_adaptative_determination
+import numpy
+import math
 
 class ParametersGenerator(object):
     
@@ -39,14 +43,30 @@ class ParametersGenerator(object):
         run_parameters = []
         
         # (minpts, eps tuples)
-        dbscan_param_pairs = dbscanTools.dbscan_param_space_search(self.parameters["evaluation"]["maximum_noise"], 
-                                                                   self.distance_matrix)
+        if "max" in self.parameters["clustering"]["algorithms"]["dbscan"]:
+            max_eps_tries = self.parameters["clustering"]["algorithms"]["dbscan"]["max"]
+        else:
+            max_eps_tries = 10
+        
+        num_elements = self.distance_matrix.row_length
+        klist = k_scale_gen(math.log(num_elements))
+        buffer = numpy.empty(num_elements)
+        kdist_matrix = k_dist(klist, buffer, self.distance_matrix)
+        
+        dbscan_param_pairs = dbscanTools.dbscan_param_space_search(self.parameters["evaluation"]["maximum_noise"],
+                                                                   max_eps_tries,
+                                                                   num_elements,
+                                                                   klist,
+                                                                   kdist_matrix) +\
+                            zhou_adaptative_determination(self.distance_matrix)
+                                
         for (minpts, eps) in dbscan_param_pairs:
             run_parameter = ParametersGenerator.get_base_parameters()
             run_parameter["minpts"] = minpts
             run_parameter["eps"] = eps
             run_parameters.append(run_parameter)
         print run_parameters
+        exit()
         return run_parameters, []
     
         
