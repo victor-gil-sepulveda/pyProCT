@@ -84,8 +84,9 @@ class TestSpectralClustering(unittest.TestCase):
         points = [(0,0),(0,1),(0,-1),(1,0),
                   (3,0),(3,1),
                   (6,0),(7,0),(7,1),(7,-1)]
+        
         matrix = CondensedMatrix(pdist(points))
-        s_algo = SpectralClusteringAlgorithm(matrix, 3,  verbose = True)
+        s_algo = SpectralClusteringAlgorithm(matrix, max_clusters = 3,  verbose = True)
         clusters = s_algo.perform_clustering({"k":3}).clusters
         
         for c in clusters:
@@ -101,7 +102,7 @@ class TestSpectralClustering(unittest.TestCase):
         points = [(0,0), (0,-1), (6,1), (6,0), (1,0)]
         
         matrix = CondensedMatrix(pdist(points))
-        s_algo = SpectralClusteringAlgorithm(matrix, 2, sigma_sq = 0.5, verbose = True)
+        s_algo = SpectralClusteringAlgorithm(matrix, max_clusters = 2, sigma_sq = 0.5, verbose = True)
         clusters = s_algo.perform_clustering({"k":2}).clusters
         
         for c in clusters:

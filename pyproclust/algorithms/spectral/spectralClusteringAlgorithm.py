@@ -11,6 +11,7 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.clustering.cluster import gen_clusters_from_class_list
 import scipy.cluster.vq
 from pyproclust.clustering.clustering import Clustering
+from pyproclust.algorithms.dbscan.cython.cythonDbscanTools import kth_elements_distance
 
 class SpectralClusteringAlgorithm(object):
     '''
@@ -60,14 +61,15 @@ class SpectralClusteringAlgorithm(object):
             self.sigma_sq = kwargs["sigma_sq"]
             W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix, self.sigma_sq)
         except KeyError:
-            W, self.sigma_sq = self.do_sigma_estimation(condensed_matrix)
-            if verbose: print "Sigma estimation: ", self.sigma_sq
+            W, sigmas= self.local_sigma_W_estimation(condensed_matrix)
+            self.sigma_sq = numpy.mean(sigmas)
+            print sigmas
+            if verbose: print "Sigma estimation (mean of local sigmas): ", self.sigma_sq
         
         try:
             store_W = kwargs["store_W"]
         except KeyError:
             store_W = False
-        
 
         try:
             laplacian_calculation_type = kwargs["laplacian_calculation_type"]
@@ -125,9 +127,11 @@ class SpectralClusteringAlgorithm(object):
         if use_k_medoids:
             # The row vectors we have are in R^k (so k length)
             eigen_distances = CondensedMatrix(pdist(self.eigenvectors[:,:k]))
-            k_medoids_args = {"k":k,
+            k_medoids_args = {
+                              "k":k,
                               "seeding_max_cutoff":-1,
-                              "seeding_type": "EQUIDISTANT"}
+                              "seeding_type": "EQUIDISTANT"
+                              }
             k_medoids_alg = KMedoidsAlgorithm(eigen_distances)
             clustering = k_medoids_alg.perform_clustering(k_medoids_args)
             clustering.details = algorithm_details
@@ -172,27 +176,35 @@ class SpectralClusteringAlgorithm(object):
             print "[ERROR SpectralClusteringAlgorithm::calculate_laplacian] Not defined laplacian calculator type: ", laplacian_calculation_type
             exit()
     
-    def do_sigma_estimation(self,matrix):
+    def local_sigma_W_estimation(self,matrix):
         """
-        Does a first sigma approximation so that at most a 10% of the elements are lower than 0.
+        Calculates local sigma estimation following Zelnik and Perona 
         
         @param matrix: The distance matrix for this dataset.
         
         @return: The adjacency matrix with the chosen sigma estimation.
         
         """
-        sq_first_approx = matrix.calculateVariance() / matrix.calculateMax() # Possible lower bound
-        W = SpectralClusteringAlgorithm.calculate_adjacency_matrix( matrix, sq_first_approx)
-        number_of_elems = float(matrix.row_length ** 2)
-        number_of_negative_elements = len(W[W<0].flatten())
-        print "Negative percent",number_of_negative_elements,number_of_elems,number_of_negative_elements / number_of_elems 
-        while number_of_negative_elements / number_of_elems > 0.1 :
-            sq_first_approx += 0.5
-            W = SpectralClusteringAlgorithm.calculate_adjacency_matrix( matrix, sq_first_approx)
-            number_of_negative_elements  = float(len(W[W<0].flatten()))
-            print "Negative percent",number_of_negative_elements/ number_of_elems 
+        N = matrix.row_length
+        K = 7 # as stated in the paper
         
-        return W, sq_first_approx
+        sigma = numpy.empty(N)
+        buffer = numpy.empty(N)
+        
+        # Finding local sigmas
+        for i in range(N):
+            sigma[i] = kth_elements_distance(i, numpy.array([K]), buffer, matrix)[0]
+        
+        # generating W
+        W_tmp = numpy.empty((matrix.row_length,)*2, dtype = numpy.float16)
+        for i in range(N):
+            for j in range(i, N):
+                sigma_ij = float(sigma[i]*sigma[j])
+                sq_distance = matrix[i,j]**2
+                W_tmp[i,j] = (sq_distance)/(sigma_ij)
+                W_tmp[j,i] = W_tmp[i,j]
+        W_tmp = numpy.exp(-W_tmp).astype(numpy.float16)
+        return W_tmp, sigma
         
     @classmethod
     def calculate_adjacency_matrix(cls, matrix, sigma_sq):
