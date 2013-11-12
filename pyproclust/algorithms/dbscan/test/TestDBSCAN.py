@@ -66,27 +66,30 @@ class Test(unittest.TestCase):
                                          0., 2., 2.,
                                             2., 2.,
                                                0.])
+        N = distances.row_length
         dbscan_alg = DBSCANAlgorithm(distances)
         eps = 1.0
         minpts = 2
-        dbscan_alg._DBSCANAlgorithm__seed_expansion(1, eps, minpts, [2])
-        expected_classes = [1,1,1,PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED ]
-        self.assertItemsEqual(expected_classes, dbscan_alg.element_class)
         
-        dbscan_alg.element_class = [PointClassType.UNCLASSIFIED]*5
-        dbscan_alg._DBSCANAlgorithm__seed_expansion(2, eps, minpts, [3])
+        elements_class = [PointClassType.UNCLASSIFIED]*N 
+        dbscan_alg._DBSCANAlgorithm__seed_expansion(1, eps, minpts, [2], elements_class)
+        expected_classes = [1,1,1,PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED ]
+        self.assertItemsEqual(expected_classes, elements_class)
+        
+        elements_class = [PointClassType.UNCLASSIFIED]*N 
+        dbscan_alg._DBSCANAlgorithm__seed_expansion(2, eps, minpts, [3], elements_class)
         expected_classes = [PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED ]
-        self.assertItemsEqual(expected_classes, dbscan_alg.element_class)
+        self.assertItemsEqual(expected_classes, elements_class)
         
         minpts = 1
-        dbscan_alg._DBSCANAlgorithm__seed_expansion(2, eps, minpts, [3])
+        dbscan_alg._DBSCANAlgorithm__seed_expansion(2, eps, minpts, [3], elements_class)
         expected_classes = [PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED,PointClassType.UNCLASSIFIED, 2, 2]
-        self.assertItemsEqual(expected_classes, dbscan_alg.element_class)
+        self.assertItemsEqual(expected_classes, elements_class)
         
-        dbscan_alg.element_class = [PointClassType.UNCLASSIFIED]*5
-        dbscan_alg._DBSCANAlgorithm__seed_expansion(1, eps, minpts, [2,4])
+        elements_class = [PointClassType.UNCLASSIFIED]*N 
+        dbscan_alg._DBSCANAlgorithm__seed_expansion(1, eps, minpts, [2,4], elements_class)
         expected_classes = [1, 1, 1, 1, 1]
-        self.assertItemsEqual(expected_classes, dbscan_alg.element_class)
+        self.assertItemsEqual(expected_classes, elements_class)
         
     def test_dbscan(self):
         distances = CondensedMatrix([ 0., 0., 2., 2., 
@@ -96,23 +99,25 @@ class Test(unittest.TestCase):
         dbscan_alg = DBSCANAlgorithm(distances)
         eps = 1.0
         minpts = 2
-        dbscan_alg.perform_clustering(kwargs = {"eps":eps, "minpts":minpts})
-        expected = [1, 1, 1, 0, 0]
-        self.assertItemsEqual(dbscan_alg.element_class,expected)
+        clustering = dbscan_alg.perform_clustering(kwargs = {"eps":eps, "minpts":minpts})
+        expected = [1, 1, 1]
+        self.assertItemsEqual(clustering.gen_class_list(starts_with = 1), expected)
         dbscan_alg.element_class = [PointClassType.UNCLASSIFIED]*5
         eps = 1.0
         minpts = 1
-        dbscan_alg.perform_clustering(kwargs = {"eps":eps, "minpts":minpts})
-        self.assertItemsEqual(dbscan_alg.element_class,[1, 1, 1, 2, 2])
+        clustering = dbscan_alg.perform_clustering(kwargs = {"eps":eps, "minpts":minpts})
+        self.assertItemsEqual(clustering.gen_class_list(starts_with = 1),[1, 1, 1, 2, 2])
         
     def test_dbscan_regression_mini(self):
-        distances = CondensedMatrix([ 12.36931688,   5.83095189,   9.43398113,  12.52996409,  15.65247584,
-                                             17.4642492,    9.21954446,   4.47213595,   3.16227766,   4.47213595,
-                                             5.65685425,   5.,           8.06225775,  11.18033989,  13.15294644,
-                                             3.16227766,   6.32455532,   8.24621125,   3.16227766,   5.09901951,   2.  ])
+        distances = CondensedMatrix([    12.36931688,   5.83095189,   9.43398113,  12.52996409,  15.65247584,  17.4642492,    
+                                                        9.21954446,   4.47213595,   3.16227766,   4.47213595,   5.65685425,   
+                                                                      5.,           8.06225775,  11.18033989,  13.15294644,
+                                                                                    3.16227766,   6.32455532,   8.24621125,   
+                                                                                                  3.16227766,   5.09901951,   
+                                                                                                                2.  ])
         dbscan_alg = DBSCANAlgorithm(distances)
-        dbscan_alg.perform_clustering(kwargs = {"eps":4.0, "minpts":3})
-        self.assertItemsEqual(dbscan_alg.element_class,[0, 1, 0, 1, 1, 1, 0])
+        clustering = dbscan_alg.perform_clustering(kwargs = {"eps":4.0, "minpts":3})
+        self.assertItemsEqual(clustering.gen_class_list(starts_with = 1),[-1, 1, -1, 1, 1, 1]) #[0, 1, 0, 1, 1, 1, 0]
         
     def test_kth_elements(self):
         distances = CondensedMatrix([17.46,   9.21,  4.47,  3.16,   4.47,   5.65,   
@@ -156,8 +161,10 @@ class Test(unittest.TestCase):
                                           0., 2., 2.,
                                               2., 2.,
                                                   0.])
-        
-        self.assertItemsEqual(zhou_adaptative_determination(distances),[(1.0, 1.2)])
+        buffer = numpy.empty(distances.row_length)
+        k_dist_matrix = k_dist(numpy.array([2,4]), buffer, distances)
+        zhou_params =  zhou_adaptative_determination(k_dist_matrix, distances)
+        self.assertItemsEqual(zhou_params,[(1.0, 0.8), (4.0, 2.0)])
         
     def test_dbscan_param_space_search(self):
         distances = CondensedMatrix([ 0., 0., 2., 2., 2.,

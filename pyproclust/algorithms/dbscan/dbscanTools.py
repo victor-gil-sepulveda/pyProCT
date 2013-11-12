@@ -55,7 +55,7 @@ def dbscan_param_space_search(max_noise, max_eps_tries, number_of_elements, klis
 
     #MIN_NOISE = 5%
     index_for_min_noise = max(0, int(number_of_elements - 0.05*number_of_elements))
-    index_for_max_noise =  int(number_of_elements - (min(max_noise+2.5,100)*0.01*number_of_elements))
+    index_for_max_noise =  int(number_of_elements - (min(max_noise,100)*0.01*number_of_elements))
     noise_stride = (index_for_min_noise - index_for_max_noise) / max_eps_tries
     
     params = []
@@ -79,10 +79,16 @@ def k_scale_gen(max_elements):
     
     return numpy.array([2**i for i in range(1,range_max)])
 
-def zhou_adaptative_determination(matrix):
+def zhou_adaptative_determination(kdist_matrix, matrix):
     """
     From Zhou et al. 2012 at Journal of Information and Computational Science
     """
-    Eps = matrix.calculateMean()
-    Minpts = math.floor(numpy.sum([0]+[len(matrix.element_neighbors_within_radius(i,Eps)) for i in range(matrix.row_length)]) / matrix.row_length)
-    return [(Minpts,Eps)]
+    N = matrix.row_length
+    parameters = []
+    Eps_estimations = numpy.mean(kdist_matrix, 1)
+    
+    for Eps in Eps_estimations:
+        Minpts = math.floor(numpy.sum([0]+[len(matrix.element_neighbors_within_radius(i,Eps)) for i in range(N)]) / N)
+        parameters.append((Minpts,Eps))
+        
+    return parameters

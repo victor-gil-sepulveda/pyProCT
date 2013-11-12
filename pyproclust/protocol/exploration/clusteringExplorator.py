@@ -196,10 +196,12 @@ class ClusteringExplorer(Observable):
         distance_matrix = self.matrix_handler.distance_matrix
         algorithm_execution_parameters = {}
         if algorithm_type == "spectral":
-            # We need to set number of clusters for performance and to get sigma
+            # We need to set number of clusters for performance and we get sigma if defined
             algorithm_execution_parameters["max_clusters"] = self.evaluation_parameters["maximum_clusters"]
-            algorithm_execution_parameters["sigma_sq"] = self.clustering_parameters["algorithms"]["spectral"]["sigma"]
-        
+            if "sigma" in self.clustering_parameters["algorithms"]["spectral"]:
+                algorithm_execution_parameters["sigma_sq"] = self.clustering_parameters["algorithms"]["spectral"]["sigma"]
+            # else it calculates its own sigma
+            
         if algorithm_type in ["spectral","dbscan","gromos","kmedoids","random","hierarchical"] :
             return ClusteringExplorer.get_clustering_algorithm_class()[algorithm_type](distance_matrix, **algorithm_execution_parameters)
         else:

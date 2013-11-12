@@ -58,15 +58,14 @@ class ParametersGenerator(object):
                                                                    num_elements,
                                                                    klist,
                                                                    kdist_matrix) +\
-                            zhou_adaptative_determination(self.distance_matrix)
+                            zhou_adaptative_determination(kdist_matrix, self.distance_matrix)
                                 
         for (minpts, eps) in dbscan_param_pairs:
             run_parameter = ParametersGenerator.get_base_parameters()
             run_parameter["minpts"] = minpts
             run_parameter["eps"] = eps
             run_parameters.append(run_parameter)
-        print run_parameters
-        exit()
+        
         return run_parameters, []
     
         

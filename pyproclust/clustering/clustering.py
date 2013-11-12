@@ -133,12 +133,12 @@ class Clustering(object):
         for c in to_eliminate:       
             self.eliminate_cluster(c)
             
-    def gen_class_list(self):
+    def gen_class_list(self, starts_with = 0):
         """
         Generates a class list from a clustering.
         """
         class_list = [-1]*(max(self.get_all_clustered_elements())+1)
-        j = 0
+        j = starts_with
         for c in self.clusters:
             for n in c.all_elements:
                 class_list[n] = j   

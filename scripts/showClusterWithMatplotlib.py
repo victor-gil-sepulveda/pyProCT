@@ -14,9 +14,12 @@ from pyproclust.clustering.clustering import Clustering
 import optparse
 import matplotlib.cm as cm
 
-def print_cluster_info(clustering_id, results):
-    print clustering_id, results["selected"][clustering_id]["clustering"]["number_of_clusters"], \
-    results["selected"][clustering_id]["type"], "".join([ (str(results["scores"][criteria][clustering_id])+", ") for criteria in results["scores"].keys()])
+def print_cluster_info(selection_class,clustering_id, results):
+    print clustering_id, results[selection_class][clustering_id]["clustering"]["number_of_clusters"], results[selection_class][clustering_id]["type"], 
+    if selection_class == "selected":
+        print "".join([ (str(results["scores"][criteria][clustering_id])+", ") for criteria in results["scores"].keys()]),
+
+    print results[selection_class][clustering_id]["parameters"]
 
 if __name__ == '__main__':
     parser = optparse.OptionParser(usage='%prog -m <arg> -c <arglist> [-o <arg>]', version='1.0')
@@ -26,6 +29,7 @@ if __name__ == '__main__':
     parser.add_option('-r', action="store", dest = "results_file", help="", metavar = "results.json")
     parser.add_option('-p', action="store", dest = "parameters_file", help="",metavar = "parameters.json")
     parser.add_option('-c', action="store", dest = "clustering_to_see", help="",metavar = "clustering_0001")
+    parser.add_option('--all', action="store_true", dest = "all_clusterings", help="",metavar = "")
     parser.add_option('--stride', type = "int", action="store", dest = "stride", help="",metavar = "5")
     options, args = parser.parse_args()
     
@@ -33,8 +37,15 @@ if __name__ == '__main__':
     results = convert_to_utf8(json.loads(open(options.results_file).read()))
     
     if options.print_list:
+        print "SELECTED"
+        print "========"
         for selected_cluster in results["selected"]:
-            print_cluster_info(selected_cluster,results)
+            print_cluster_info("selected",selected_cluster,results)
+        if options.all_clusterings:
+            print "NOT SELECTED"
+            print "============"
+            for not_selected_cluster in results["not_selected"]:
+                print_cluster_info("not_selected",not_selected_cluster,results)
         exit()
     
     
@@ -52,10 +63,15 @@ if __name__ == '__main__':
     # Get clustering
     if options.clustering_to_see is None:
         options.clustering_to_see = results["best_clustering"]
-    clustering = Clustering.from_dic(results["selected"][options.clustering_to_see]["clustering"])
+    try:
+        clustering = Clustering.from_dic(results["selected"][options.clustering_to_see]["clustering"])
+        # Print some info
+        print_cluster_info("selected", options.clustering_to_see, results)
+    except:
+        clustering = Clustering.from_dic(results["not_selected"][options.clustering_to_see]["clustering"])
+        # Print some info
+        print_cluster_info("not_selected", options.clustering_to_see, results)
     
-    # Print some info
-    print_cluster_info(options.clustering_to_see, results)
     
     
     # Show all clusters
