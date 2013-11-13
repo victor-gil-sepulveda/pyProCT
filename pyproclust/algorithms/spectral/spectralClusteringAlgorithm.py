@@ -12,6 +12,7 @@ from pyproclust.clustering.cluster import gen_clusters_from_class_list
 import scipy.cluster.vq
 from pyproclust.clustering.clustering import Clustering
 from pyproclust.algorithms.dbscan.cython.cythonDbscanTools import kth_elements_distance
+from pyproclust.algorithms.spectral.cython.spectralTools import local_sigma_W_estimation
 
 class SpectralClusteringAlgorithm(object):
     '''
@@ -44,12 +45,12 @@ class SpectralClusteringAlgorithm(object):
         @param store_W: If True the object stores the adjacency matrix. Useful for testing.
         @param verbose: If True some messages will be printed.
         """
-        verbose = True
         try:
             verbose = kwargs["verbose"]
         except KeyError:
             verbose = False
 
+        verbose = True
         if verbose: print "Creating spectral."
 
         try:
@@ -61,9 +62,9 @@ class SpectralClusteringAlgorithm(object):
             self.sigma_sq = kwargs["sigma_sq"]
             W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix, self.sigma_sq)
         except KeyError:
-            W, sigmas= self.local_sigma_W_estimation(condensed_matrix)
+            print "Starting sigma estimation"
+            W, sigmas= local_sigma_W_estimation(condensed_matrix)
             self.sigma_sq = numpy.mean(sigmas)
-            print sigmas
             if verbose: print "Sigma estimation (mean of local sigmas): ", self.sigma_sq
         
         try:
@@ -82,14 +83,17 @@ class SpectralClusteringAlgorithm(object):
         if verbose: print "Calculating W ..."
         
         # Zero all negative values (similarities cannot be < 0 )
-        W[W<0] = 0.0        
+        #W[W<0] = 0.0        
         
         if store_W:
+            if verbose: print "Storing W ..."
             self.W = numpy.copy(W)
         
+        if verbose: print "Calculating Laplacian ..."
         L, D = SpectralClusteringAlgorithm.calculate_laplacian(W, condensed_matrix, laplacian_calculation_type, verbose)
         
         # Eigenvector i is v[:,i]
+        if verbose: print "Calculating Eigenvectors ..."
         eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
         # We can try with scipy.sparse.linalg.eigs as the matrix is sparse
 #         eigenvalues, self.eigenvectors = scipy.sparse.linalg.eigs(L, k = self.max_clusters, M = D,which ='SM',return_eigenvectors = True)
@@ -99,7 +103,7 @@ class SpectralClusteringAlgorithm(object):
         self.eigenvectors = self.eigenvectors[:, idx]
         
         # We'll only store the vectors we need, usually << N
-        self.eigenvectors = self.eigenvectors[:,:self.max_clusters]
+        self.eigenvectors = numpy.array(self.eigenvectors[:,:self.max_clusters])
         if verbose: print "Spectral finished."
             
     def perform_clustering(self, kwargs):
@@ -176,36 +180,6 @@ class SpectralClusteringAlgorithm(object):
             print "[ERROR SpectralClusteringAlgorithm::calculate_laplacian] Not defined laplacian calculator type: ", laplacian_calculation_type
             exit()
     
-    def local_sigma_W_estimation(self,matrix):
-        """
-        Calculates local sigma estimation following Zelnik and Perona 
-        
-        @param matrix: The distance matrix for this dataset.
-        
-        @return: The adjacency matrix with the chosen sigma estimation.
-        
-        """
-        N = matrix.row_length
-        K = 7 # as stated in the paper
-        
-        sigma = numpy.empty(N)
-        buffer = numpy.empty(N)
-        
-        # Finding local sigmas
-        for i in range(N):
-            sigma[i] = kth_elements_distance(i, numpy.array([K]), buffer, matrix)[0]
-        
-        # generating W
-        W_tmp = numpy.empty((matrix.row_length,)*2, dtype = numpy.float16)
-        for i in range(N):
-            for j in range(i, N):
-                sigma_ij = float(sigma[i]*sigma[j])
-                sq_distance = matrix[i,j]**2
-                W_tmp[i,j] = (sq_distance)/(sigma_ij)
-                W_tmp[j,i] = W_tmp[i,j]
-        W_tmp = numpy.exp(-W_tmp).astype(numpy.float16)
-        return W_tmp, sigma
-        
     @classmethod
     def calculate_adjacency_matrix(cls, matrix, sigma_sq):
         """

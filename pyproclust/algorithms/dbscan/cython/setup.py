@@ -10,4 +10,4 @@ import numpy as np
 setup(
     cmdclass = {'build_ext': build_ext},
     include_dirs = [np.get_include()], 
-    ext_modules = [Extension("cythonDbscanTools", ["cythonDbscanTools.pyx"],extra_compile_args=["-O3"])])
+    ext_modules = [Extension("cythonDbscanTools", ["cythonDbscanTools.pyx"],extra_compile_args=["-O3","-ffast-math"])])

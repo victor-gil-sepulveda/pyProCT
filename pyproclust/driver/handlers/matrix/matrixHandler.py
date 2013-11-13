@@ -112,4 +112,5 @@ class MatrixHandler(object):
         if self.distance_matrix is None:
             print "[ERROR][MatrixHandler::save_statistics] Matrix is not been calculated yet."
             exit()
+        
     

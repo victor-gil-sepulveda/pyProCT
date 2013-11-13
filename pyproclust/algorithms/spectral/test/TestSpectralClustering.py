@@ -90,7 +90,6 @@ class TestSpectralClustering(unittest.TestCase):
         clusters = s_algo.perform_clustering({"k":3}).clusters
         
         for c in clusters:
-            print c
             self.assertIn(c.all_elements, [[0, 1, 2, 3],[6, 7, 8, 9],[4, 5]])
 
     def test_naive_case_2(self):
@@ -106,7 +105,6 @@ class TestSpectralClustering(unittest.TestCase):
         clusters = s_algo.perform_clustering({"k":2}).clusters
         
         for c in clusters:
-            print c
             self.assertIn(c.all_elements, [[0,1,4],[2,3]])
         
 if __name__ == "__main__":

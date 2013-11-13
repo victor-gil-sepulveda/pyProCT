@@ -10,8 +10,8 @@ import numpy as np
 setup(
     cmdclass = {'build_ext': build_ext},
     include_dirs = [np.get_include()], 
-    ext_modules = [Extension("boundedCohesion", ["boundedCohesion.pyx"],extra_compile_args=["-O3"]),
-    Extension("silhouette", ["silhouette.pyx"],extra_compile_args=["-O3"]),
-    Extension("meanMinimumDistance", ["meanMinimumDistance.pyx"],extra_compile_args=["-O3"]),
-    Extension("normNCut", ["normNCut.pyx"],extra_compile_args=["-O3"])
+    ext_modules = [Extension("boundedCohesion", ["boundedCohesion.pyx"],extra_compile_args=["-O3","-ffast-math"]),
+    Extension("silhouette", ["silhouette.pyx"],extra_compile_args=["-O3","-ffast-math"]),
+    Extension("meanMinimumDistance", ["meanMinimumDistance.pyx"],extra_compile_args=["-O3","-ffast-math"]),
+    Extension("normNCut", ["normNCut.pyx"],extra_compile_args=["-O3","-ffast-math"])
     ])

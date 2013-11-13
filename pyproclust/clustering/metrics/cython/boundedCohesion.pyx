@@ -17,7 +17,7 @@ cdef class CythonBoundedCohesionCalculator(object):
         pass
     
     @cython.boundscheck(False)
-    cpdef double evaluate(self,clustering,condensed_distance_matrix)  except *:
+    cpdef double evaluate(self, clustering, condensed_distance_matrix)  except *:
         cdef double weight,cohesion,max_cohesion
         cdef int size, i, j, total_number_of_elements
         

@@ -21,6 +21,7 @@ from pyproclust.clustering.metrics.Dunn import DunnCalculator
 from pyproclust.clustering.metrics.DaviesBouldin import DaviesBouldinCalculator
 from pyproclust.clustering.metrics.gaussianSeparation import GaussianSeparationCalculator
 from pyproclust.clustering.metrics.separation import SeparationCalculator
+from pyproclust.clustering.metrics.compactness import CompactnessCalculator
 
 
 class AnalysisPopulator(object):
@@ -78,7 +79,8 @@ class AnalysisPopulator(object):
                                                                 {"class":DaviesBouldinCalculator,"matrix":distance_matrix})
         self.all_possible_analysis["GaussianSeparation"] = Analysis("GaussianSeparation", self.evaluate_with_calculator, 
                                                                     {"class":GaussianSeparationCalculator,"matrix":distance_matrix})
-        
+        self.all_possible_analysis["Compactness"] = Analysis("GaussianSeparation", self.evaluate_with_calculator, 
+                                                                    {"class":CompactnessCalculator,"matrix":distance_matrix})
         
         # Cython
         self.all_possible_analysis["CythonMirrorCohesion"] = Analysis("CythonMirrorCohesion", self.evaluate_with_calculator, 
