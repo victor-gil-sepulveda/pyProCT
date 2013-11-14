@@ -20,7 +20,7 @@ class CompactnessCalculator(object):
         
         # Create a cluster that contains all elements to calculate variances, we'll check even 
         # non clustered elements for the sake of simplicity
-        global_cluster = Cluster(None, range(matrix.row_length))
+        global_cluster = Cluster(None, clustering.get_all_clustered_elements())
         global_cluster.prototype = global_cluster.calculate_medoid(matrix)
         global_variance = numpy.var(get_distances_of_elements_to(global_cluster.prototype, 
                                                                  global_cluster.all_elements, 

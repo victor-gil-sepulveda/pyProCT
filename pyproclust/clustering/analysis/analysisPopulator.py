@@ -9,10 +9,10 @@ from pyproclust.clustering.analysis.analysis import Analysis
 from pyproclust.clustering.metrics.graphMetrics import NCut, RatioCut, MinMaxCut
 from pyproclust.clustering.metrics.pcaMetrics import PCAMetric
 from pyproclust.clustering.metrics.cython.normNCut import CythonNCut
-from pyproclust.clustering.metrics.cython.boundedCohesion import CythonBoundedCohesionCalculator
+from pyproclust.clustering.metrics.cython.boundedCohesion import CythonMirrorCohesionCalculator
 from pyproclust.clustering.metrics.cython.silhouette import CythonSilhouetteCoefficientCalculator
 from pyproclust.clustering.metrics.cython.meanMinimumDistance import CythonMeanMinimumDistanceCalculator
-from pyproclust.clustering.metrics.boundedCohesion import BoundedCohesionCalculator
+from pyproclust.clustering.metrics.boundedCohesion import MirrorCohesionCalculator
 from pyproclust.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
 from pyproclust.clustering.metrics.cohesion import CohesionCalculator
 from pyproclust.clustering.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator
@@ -62,9 +62,12 @@ class AnalysisPopulator(object):
         self.all_possible_analysis["NoiseLevel"] = Analysis("Noise level", self.analysis_function_noise_level, distance_matrix.row_length)
         
         # Evaluators
-        self.all_possible_analysis["MirrorCohesion"] = Analysis("MirrorCohesion", self.analysis_function_mirror_bounded_cohesion, distance_matrix)
+        self.all_possible_analysis["MirrorCohesion"] = Analysis("MirrorCohesion", self.evaluate_with_calculator, 
+                                                          {"class":MirrorCohesionCalculator,"matrix":distance_matrix})
+        
         self.all_possible_analysis["Cohesion"] = Analysis("Cohesion", self.evaluate_with_calculator, 
                                                           {"class":CohesionCalculator,"matrix":distance_matrix})
+        
         self.all_possible_analysis["Separation"] = Analysis("Separation", self.evaluate_with_calculator, 
                                                             {"class":SeparationCalculator,"matrix":distance_matrix})
         self.all_possible_analysis["MinimumMeanSeparation"] = Analysis("MinimumMeanSeparation", self.evaluate_with_calculator, 
@@ -79,12 +82,12 @@ class AnalysisPopulator(object):
                                                                 {"class":DaviesBouldinCalculator,"matrix":distance_matrix})
         self.all_possible_analysis["GaussianSeparation"] = Analysis("GaussianSeparation", self.evaluate_with_calculator, 
                                                                     {"class":GaussianSeparationCalculator,"matrix":distance_matrix})
-        self.all_possible_analysis["Compactness"] = Analysis("GaussianSeparation", self.evaluate_with_calculator, 
+        self.all_possible_analysis["Compactness"] = Analysis("Compactness", self.evaluate_with_calculator, 
                                                                     {"class":CompactnessCalculator,"matrix":distance_matrix})
         
         # Cython
         self.all_possible_analysis["CythonMirrorCohesion"] = Analysis("CythonMirrorCohesion", self.evaluate_with_calculator, 
-                                                                      {"class":CythonBoundedCohesionCalculator,"matrix":distance_matrix})
+                                                                      {"class":CythonMirrorCohesionCalculator,"matrix":distance_matrix})
         self.all_possible_analysis["CythonMinimumMeanSeparation"] = Analysis("CythonMinimumMeanSeparation", self.evaluate_with_calculator, 
                                                                              {"class":CythonMeanMinimumDistanceCalculator,"matrix":distance_matrix})
         self.all_possible_analysis["CythonSilhouette"] = Analysis("CythonSilhouette", self.evaluate_with_calculator, 
@@ -218,13 +221,6 @@ class AnalysisPopulator(object):
         calculator = key_args['class']()
         return calculator.evaluate(clustering, key_args['matrix'])
         
-    def analysis_function_mirror_bounded_cohesion(self,clustering,distance_matrix):
-        """
-        Calculates the mirror bounded cohesion of a clustering.
-        """
-        calculator = BoundedCohesionCalculator()
-        return 1-calculator.evaluate(clustering,distance_matrix)
-    
     def analysis_function_pca(self,clustering, trajectory_handler):
         calculator = PCAMetric(trajectory_handler)
         return calculator.evaluate(clustering)

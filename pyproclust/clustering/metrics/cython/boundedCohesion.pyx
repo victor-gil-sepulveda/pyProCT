@@ -11,8 +11,9 @@ import numpy
 cimport numpy
 cimport cython
 numpy.import_array()
+from pyproclust.tools.matrixTools import get_submatrix
 
-cdef class CythonBoundedCohesionCalculator(object):
+cdef class CythonMirrorCohesionCalculator(object):
     def __init__(self):
         pass
     
@@ -21,10 +22,13 @@ cdef class CythonBoundedCohesionCalculator(object):
         cdef double weight,cohesion,max_cohesion
         cdef int size, i, j, total_number_of_elements
         
-        total_number_of_elements = clustering.total_number_of_elements
-
-        if clustering.total_number_of_elements > 0:
-            max_cohesion = numpy.sum(condensed_distance_matrix.get_data())/total_number_of_elements
+        clustered_elements = sorted(clustering.get_all_clustered_elements())
+        number_of_clustered_elements = len(clustered_elements)
+        if number_of_clustered_elements > 0:
+            distances = get_submatrix(condensed_distance_matrix, clustered_elements)
+            max_cohesion = numpy.sum(distances.get_data())/number_of_clustered_elements
+            del distances
+            
             total_cohesion = 0
             for c in clustering.clusters:
                 size = c.get_size()
@@ -34,6 +38,6 @@ cdef class CythonBoundedCohesionCalculator(object):
                     for j in range(i+1,size):
                         cohesion = cohesion + condensed_distance_matrix[c[i],c[j]]
                 total_cohesion +=  weight*cohesion
-            return total_cohesion / max_cohesion
+            return 1 - (total_cohesion / max_cohesion)
         else:
             return 0.

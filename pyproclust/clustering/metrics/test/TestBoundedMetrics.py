@@ -7,11 +7,12 @@ import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproclust.clustering.clustering import Clustering
 from pyproclust.clustering.cluster import Cluster
-from pyproclust.clustering.metrics.boundedCohesion import BoundedCohesionCalculator
+from pyproclust.clustering.metrics.boundedCohesion import MirrorCohesionCalculator
+from pyproclust.clustering.metrics.cython.boundedCohesion import CythonMirrorCohesionCalculator
 from pyproclust.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
 
 class TestBoundedMetrics(unittest.TestCase):
-    def test_mirrored_bounded_cohesion(self):
+    def test_bounded_cohesion(self):
         
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,
                                             5., 6., 7., 
@@ -21,13 +22,53 @@ class TestBoundedMetrics(unittest.TestCase):
         clusters = [Cluster(None, elements=[0,1,2]),
                       Cluster(None, elements=[3,4])]
         clustering = Clustering(clusters)
-        calculator = BoundedCohesionCalculator()
+        calculator = MirrorCohesionCalculator()
         
         # cohesion of cluster 1: 1/3 * 8 
         # cohesion of cluster 2: 1/2 * 10
         # max_cohesion =  11 (1/5 * 55)
         # final cohesion = 0.696945
-        self.assertAlmostEqual(0.696945,calculator.evaluate(clustering, distances),places = 4)
+        self.assertAlmostEqual(1-0.696945,calculator.evaluate(clustering, distances),places = 4)
+        
+    def test_bounded_cohesion_with_noise(self):
+        # Element 2 is treated as noise
+        distances =  CondensedMatrix([ 1., 2., 3., 4.,
+                                           5., 6., 7.,
+                                               8., 9.,
+                                                  10.])
+        
+        clusters = [Cluster(None, elements=[0,1]),
+                      Cluster(None, elements=[3,4])]
+        clustering = Clustering(clusters)
+        calculator = MirrorCohesionCalculator()
+        #[ 1.   3.   4.   
+        #       6.   7.  
+        #           10.]
+        # cohesion of cluster 1: 1/2 
+        # cohesion of cluster 2: 1/2 * 10
+        # max_cohesion:  7.75 = (1/4 * 31)
+        # final cohesion: 0.7096774193548387
+        self.assertAlmostEqual(1-0.7096774193548387, calculator.evaluate(clustering, distances), places = 4)
+        
+    def test_cython_bounded_cohesion_with_noise(self):
+        # Element 2 is treated as noise
+        distances =  CondensedMatrix([ 1., 2., 3., 4.,
+                                           5., 6., 7.,
+                                               8., 9.,
+                                                  10.])
+        
+        clusters = [Cluster(None, elements=[0,1]),
+                      Cluster(None, elements=[3,4])]
+        clustering = Clustering(clusters)
+        calculator = CythonMirrorCohesionCalculator()
+        #[ 1.   3.   4.   
+        #       6.   7.  
+        #           10.]
+        # cohesion of cluster 1: 1/2 
+        # cohesion of cluster 2: 1/2 * 10
+        # max_cohesion:  7.75 = (1/4 * 31)
+        # final cohesion: 0.7096774193548387
+        self.assertAlmostEqual(1-0.7096774193548387, calculator.evaluate(clustering, distances), places = 4)   
     
     def test_get_average_distance(self):
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,

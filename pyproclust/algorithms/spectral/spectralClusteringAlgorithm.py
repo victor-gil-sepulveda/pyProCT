@@ -5,6 +5,7 @@ Created on 14/08/2012
 '''
 import numpy
 import scipy.linalg
+import scipy.sparse.linalg
 from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from scipy.spatial.distance import pdist
 from pyRMSD.condensedMatrix import CondensedMatrix
@@ -58,6 +59,8 @@ class SpectralClusteringAlgorithm(object):
         except KeyError:
             self.max_clusters = condensed_matrix.row_length
         
+        if verbose: print "Calculating W ..."
+
         try:
             self.sigma_sq = kwargs["sigma_sq"]
             W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(condensed_matrix, self.sigma_sq)
@@ -80,10 +83,6 @@ class SpectralClusteringAlgorithm(object):
         except KeyError:
             laplacian_calculation_type = "NUMPY_PURE"
                 
-        if verbose: print "Calculating W ..."
-        
-        # Zero all negative values (similarities cannot be < 0 )
-        #W[W<0] = 0.0        
         
         if store_W:
             if verbose: print "Storing W ..."
@@ -92,18 +91,27 @@ class SpectralClusteringAlgorithm(object):
         if verbose: print "Calculating Laplacian ..."
         L, D = SpectralClusteringAlgorithm.calculate_laplacian(W, condensed_matrix, laplacian_calculation_type, verbose)
         
+        
+        # Zero all negative values (W is always >0 (1/e^x)
+#         if verbose: print "Applying threshold and querying sparsity ..."
+#         THRESHOLD = 0.01
+#         L[L<THRESHOLD] = 0   
+#         N = condensed_matrix.row_length     
+#         if len(L == 0) >  (N*N)/2:
+        
         # Eigenvector i is v[:,i]
         if verbose: print "Calculating Eigenvectors ..."
-        eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
+#         eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
         # We can try with scipy.sparse.linalg.eigs as the matrix is sparse
 #         eigenvalues, self.eigenvectors = scipy.sparse.linalg.eigs(L, k = self.max_clusters, M = D,which ='SM',return_eigenvectors = True)
+        eigenvalues, self.eigenvectors = scipy.linalg.eigh(a=L, b=D, eigvals = (0,self.max_clusters),overwrite_a = True, overwrite_b = True)
         
         # Order eigenvectors by eigenvalue (from lowest to biggest)
         idx = eigenvalues.real.argsort()
         self.eigenvectors = self.eigenvectors[:, idx]
         
         # We'll only store the vectors we need, usually << N
-        self.eigenvectors = numpy.array(self.eigenvectors[:,:self.max_clusters])
+        self.eigenvectors = numpy.copy(self.eigenvectors[:,:self.max_clusters])
         if verbose: print "Spectral finished."
             
     def perform_clustering(self, kwargs):
