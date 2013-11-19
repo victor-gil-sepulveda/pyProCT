@@ -100,10 +100,10 @@ class Driver(Observable):
         results_path = os.path.join(self.workspaceHandler["results"], "results.json")
         self.generatedFiles.append({"description":"Results file", "path":results_path, "type":"text"})
         json_results = ClusteringResultsGatherer().gather(self.timer, 
-            self.trajectoryHandler, 
-            self.workspaceHandler, 
-            clustering_results, 
-            self.generatedFiles)
+                                                            self.trajectoryHandler, 
+                                                            self.workspaceHandler, 
+                                                            clustering_results, 
+                                                            self.generatedFiles)
         # Results are first added and saved later to avoid metareferences :D
         open(results_path, "w").write(json_results)
     
@@ -131,21 +131,34 @@ class Driver(Observable):
             except:
                 pass
             
-            #If clustering conformations, add rmsd displacement to best cluster
-            try:
-                if not "body_selection" in parameters["matrix"]:
-                    global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
-                    global_cluster.prototype = global_cluster.calculate_medoid(self.matrixHandler.distance_matrix)
-                    best_clustering["rmsd_displacements"] = {
-                                                             "global":CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
-                                                                                                             global_cluster)
-                                                             }
-                    clusters = best_clustering["clustering"].clusters
-                    for i in range(len(clusters)):
-                        best_clustering["rmsd_displacements"][clusters[i].id] = CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
-                                                                                                             clusters[i])
-            except Exception:
-                print "Impossible to calculate CA displacements"
+            #Saver CA mean squared displacement of best cluster
+            #TODO: REFACTORING
+#             try:
+            if parameters["matrix"]["method"] == "rmsd":
+                global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
+                global_cluster.prototype = global_cluster.calculate_medoid(self.matrixHandler.distance_matrix)
+                CA_mean_square_displacements= {
+                                               "global":list(CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
+                                                                                               global_cluster))
+                                               }
+                clusters = best_clustering["clustering"].clusters
+                for i in range(len(clusters)):
+                    # Calculate and convert to list (to serialize)
+                    CA_mean_square_displacements[clusters[i].id] = list(CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
+                                                                                                 clusters[i]))
+                
+                displacements_path = os.path.join(self.workspaceHandler["results"], "CA_displacements.json")
+                
+                self.generatedFiles.append({"description":"Alpha Carbon mean square displacements.", 
+                                    "path":displacements_path, 
+                                    "type":"text"})
+                    
+                open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements, 
+                                                      sort_keys=False, 
+                                                      indent=4, 
+                                                      separators=(',', ': ')))
+#             except Exception:
+#                 print "Impossible to calculate CA displacements"
             
             representatives_path = saveTools.save_representatives(medoids, 
                                                                   "representatives", 
