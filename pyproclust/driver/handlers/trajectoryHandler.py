@@ -73,20 +73,21 @@ class TrajectoryHandler(Observable):
         @return: The prody object with all read coordsets for certain selection.
         """
         merged_pdb = None
-        try:
-            for pdb_data in self.pdbs:
-                pdb = prody.parsePDB(pdb_data["source"])
-                if merged_pdb is None:
-                    merged_pdb = pdb
-                else:
-                    for coordset in pdb.getCoordsets():
-                        merged_pdb.addCoordset(coordset)
-        except Exception, e:
-            print "[ERROR TrajectroyHandler::getJoinedPDB] fatal error reading pdbs.\nError: %s\n Program will halt now ..."%e.message
-            self.notify("SHUTDOWN", "Fatal error reading pdbs.")
-            exit()
+        if not "pdb" in self.bookmarking:
+            try:
+                for pdb_data in self.pdbs:
+                    pdb = prody.parsePDB(pdb_data["source"])
+                    if merged_pdb is None:
+                        merged_pdb = pdb
+                    else:
+                        for coordset in pdb.getCoordsets():
+                            merged_pdb.addCoordset(coordset)
+                self.bookmarking["pdb"] = merged_pdb
+            except Exception, e:
+                print "[ERROR TrajectroyHandler::getJoinedPDB] fatal error reading pdbs.\nError: %s\n Program will halt now ..."%e.message
+                self.notify("SHUTDOWN", "Fatal error reading pdbs.")
+                exit()
         
-        self.bookmarking["pdb"] = merged_pdb
         return self.bookmarking["pdb"]
     
     def setWorkingCoordinates(self, selection_string):
