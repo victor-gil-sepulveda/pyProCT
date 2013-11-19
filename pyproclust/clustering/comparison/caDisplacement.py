@@ -11,7 +11,6 @@ def calc_norms(coordsets, reference):
     norms = numpy.sqrt(numpy.sum(conf_minus_ref**2,2))
     return numpy.mean(norms,0)
 
-#trajectory_handler.getJoinedPDB()
 def CA_mean_square_displacement_of_cluster(alpha_carbons_trajectory_pdb, cluster):
     if len(alpha_carbons_trajectory_pdb) != 0:
         reference = alpha_carbons_trajectory_pdb.getCoordsets()[cluster.prototype]

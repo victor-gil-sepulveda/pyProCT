@@ -55,7 +55,7 @@ def dbscan_param_space_search(max_noise, max_eps_tries, number_of_elements, klis
 
     #MIN_NOISE = 5%
     index_for_min_noise = max(0, int(number_of_elements - 0.05*number_of_elements))
-    index_for_max_noise =  int(number_of_elements - (min(max_noise,100)*0.01*number_of_elements))
+    index_for_max_noise =  int(number_of_elements - (min(max_noise,100)*0.01*number_of_elements)-1)
     noise_stride = (index_for_min_noise - index_for_max_noise) / max_eps_tries
     
     params = []

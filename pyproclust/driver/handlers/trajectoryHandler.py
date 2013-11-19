@@ -73,7 +73,7 @@ class TrajectoryHandler(Observable):
         @return: The prody object with all read coordsets for certain selection.
         """
         merged_pdb = None
-        if not "pdb" in self.bookmarking:
+        if self.bookmarking["pdb"] is None:
             try:
                 for pdb_data in self.pdbs:
                     pdb = prody.parsePDB(pdb_data["source"])

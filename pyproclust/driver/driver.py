@@ -17,6 +17,8 @@ from pyproclust.driver.compressor.compressor import Compressor
 from pyproclust.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 import json
 from pyproclust.clustering.clustering import Clustering
+from pyproclust.clustering.comparison.caDisplacement import CA_mean_square_displacement_of_cluster
+from pyproclust.clustering.cluster import Cluster
 
 class Driver(Observable):
     
@@ -128,6 +130,22 @@ class Driver(Observable):
                 keep_remarks = parameters["global"]["action"]["parameters"]["keep_remarks"]
             except:
                 pass
+            
+            #If clustering conformations, add rmsd displacement to best cluster
+            try:
+                if not "body_selection" in parameters["matrix"]:
+                    global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
+                    global_cluster.prototype = global_cluster.calculate_medoid(self.matrixHandler.distance_matrix)
+                    best_clustering["rmsd_displacements"] = {
+                                                             "global":CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
+                                                                                                             global_cluster)
+                                                             }
+                    clusters = best_clustering["clustering"].clusters
+                    for i in range(len(clusters)):
+                        best_clustering["rmsd_displacements"][clusters[i].id] = CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
+                                                                                                             clusters[i])
+            except Exception:
+                print "Impossible to calculate CA displacements"
             
             representatives_path = saveTools.save_representatives(medoids, 
                                                                   "representatives", 

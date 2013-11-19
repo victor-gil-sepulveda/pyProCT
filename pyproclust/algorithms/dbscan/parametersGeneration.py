@@ -3,7 +3,7 @@ Created on 27/05/2013
 
 @author: victor
 '''
-import pyproclust.algorithms.dbscan.dbscanTools as dbscanTools
+import pyproclust.algorithms.dbscan.cython.cythonDbscanTools as dbscanTools
 from pyproclust.algorithms.dbscan.cython.cythonDbscanTools import k_scale_gen,\
     k_dist, zhou_adaptative_determination
 import numpy
