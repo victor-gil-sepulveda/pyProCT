@@ -62,6 +62,8 @@ class Driver(Observable):
         ##############################
         # Do the actual clustering
         ##############################
+        clustering_results = None
+        
         if parameters["clustering"]["generation"]["method"] == "generate":
             clustering_results = ClusteringProtocol(self.timer, self.observer).run(parameters, self.matrixHandler, 
                                                                                                 self.workspaceHandler, 
@@ -75,11 +77,6 @@ class Driver(Observable):
                 print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
                 exit()
             
-            #################################
-            # Results are saved to a file
-            #################################
-            self.save_clustering_results(clustering_results)
-        
         ##############################
         # Load the clustering
         ##############################
@@ -94,7 +91,7 @@ class Driver(Observable):
             print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
             exit()
         
-        return best_clustering
+        return best_clustering, clustering_results
 
     def save_clustering_results(self, clustering_results):
         results_path = os.path.join(self.workspaceHandler["results"], "results.json")
@@ -149,9 +146,11 @@ class Driver(Observable):
                 
                 displacements_path = os.path.join(self.workspaceHandler["results"], "CA_displacements.json")
                 
-                self.generatedFiles.append({"description":"Alpha Carbon mean square displacements.", 
-                                    "path":displacements_path, 
-                                    "type":"text"})
+                self.generatedFiles.append({
+                                            "description":"Alpha Carbon mean square displacements", 
+                                            "path":displacements_path, 
+                                            "type":"text"
+                })
                     
                 open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements, 
                                                       sort_keys=False, 
@@ -203,8 +202,13 @@ class Driver(Observable):
             self.timer.stop("Compression")
 
     def perform_actions(self, parameters):
-        best_clustering = self.get_best_clustering(parameters)
+        best_clustering, clustering_results = self.get_best_clustering(parameters)
         self.postprocess(parameters, best_clustering)
+        #################################
+        # Results are saved to a file
+        #################################
+        self.save_clustering_results(clustering_results)
+        
             
     def run(self, parameters):
         

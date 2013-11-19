@@ -34,10 +34,11 @@ class ClusteringResultsGatherer(object):
         results = {}
         results["timing"] = timer_handler.get_elapsed()
         results["trajectories"] = trajectory_handler.pdbs
-        results["not_selected"] = clustering_results[2]
-        results["selected"] = clustering_results[1]
-        results["scores"] = clustering_results[3]
-        results["best_clustering"] = clustering_results[0]
+        if(clustering_results is not None):
+            results["best_clustering"] = clustering_results[0]
+            results["selected"] = clustering_results[1]
+            results["not_selected"] = clustering_results[2]
+            results["scores"] = clustering_results[3]
         results["files"] = files
         results["workspace"] = workspace_handler.data
 
