@@ -30,23 +30,27 @@ class PCAMetric(object):
         """
         # Pca for each one of the clusters
         pca_mean_val = 0.;
-        
+        MAX_ELEMENTS = 3000
         for c in clustering.clusters:
+            # Pick the coordinates (ensuring that we are copying them)
+            element_indexes = c.all_elements
             ###################
             # Performance hack
             ###################
-            
-            
-            
+            # As it can be very slow for big clusters (i.e. > 3k elements) we'll compress this clusters 
+            # before calculating PCA. It should increase variance but will allow calculations.
+            # It should use the kmedoids compressor
+            if len(c.all_elements) > MAX_ELEMENTS:
+                element_indexes = c.get_random_sample(MAX_ELEMENTS)
             ###################
             
-            # Pick the coordinates (ensuring that we are copying them)
-            fitting_coordinates_of_this_cluster = self.fitting_coordinates[c.all_elements]
+            fitting_coordinates_of_this_cluster = self.fitting_coordinates[element_indexes]
+            
             calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                         fittingCoordsets = fitting_coordinates_of_this_cluster)
             
             if self.calculation_coordinates is not None:
-                calculation_coordinates_of_this_cluster = self.calculation_coordinates[c.all_elements]
+                calculation_coordinates_of_this_cluster = self.calculation_coordinates[element_indexes]
                 calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                             fittingCoordsets = fitting_coordinates_of_this_cluster,
                                             calculationCoordsets = calculation_coordinates_of_this_cluster)
