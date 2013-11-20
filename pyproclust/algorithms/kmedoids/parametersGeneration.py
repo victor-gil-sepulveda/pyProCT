@@ -3,9 +3,10 @@ Created on 27/05/2013
 
 @author: victor
 '''
+import math
 class ParametersGenerator(object):
     
-    CLUSTERING_SIZE_STEP = 2
+    MAX_CLUSTERING_PARAMETERS = 15.
     
     def __init__(self, parameters, matrix_handler):
         """
@@ -15,10 +16,15 @@ class ParametersGenerator(object):
         
         @param distance_matrix: The distance matrix we are using.
         """
-        self.distance_matrix = matrix_handler.distance_matrix
         self.parameters = parameters
-        max_gen_clusterings = float(parameters["clustering"]["algorithms"]["kmedoids"]["max"])
-        self.num_clusters_step = int((parameters["evaluation"]["maximum_clusters"] - parameters["evaluation"]["minimum_clusters"]) / max_gen_clusterings)
+        
+        if "max" in parameters["clustering"]["algorithms"]["kmedoids"]:
+            max_gen_clusterings = float(parameters["clustering"]["algorithms"]["kmedoids"]["max"])
+        else:
+            max_gen_clusterings = ParametersGenerator.MAX_CLUSTERING_PARAMETERS
+            print max_gen_clusterings
+            
+        self.num_clusters_step = int(math.ceil((parameters["evaluation"]["maximum_clusters"] - parameters["evaluation"]["minimum_clusters"]) / max_gen_clusterings))
         if self.num_clusters_step < 1:
             self.num_clusters_step = 1
     

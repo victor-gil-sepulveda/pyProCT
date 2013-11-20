@@ -28,9 +28,10 @@ class PCAMetric(object):
         
         @return: the value of the metric.
         """
+        print "PCA started"
         # Pca for each one of the clusters
         pca_mean_val = 0.;
-        MAX_ELEMENTS = 3000
+        MAX_ELEMENTS = 1000
         for c in clustering.clusters:
             # Pick the coordinates (ensuring that we are copying them)
             element_indexes = c.all_elements
@@ -66,7 +67,7 @@ class PCAMetric(object):
             
             # And then the eigenvalue we are interested in
             pca_mean_val += PCAMetric.calculate_biggest_eigenvalue(covariance_matrix)
-
+        print "PCA finished"
         return  pca_mean_val /clustering.total_number_of_elements
     
     @classmethod
