@@ -19,6 +19,8 @@ import json
 from pyproclust.clustering.clustering import Clustering
 from pyproclust.clustering.comparison.caDisplacement import CA_mean_square_displacement_of_cluster
 from pyproclust.clustering.cluster import Cluster
+from pyRMSD.RMSDCalculator import RMSDCalculator
+import numpy
 
 class Driver(Observable):
     
@@ -134,15 +136,28 @@ class Driver(Observable):
             if parameters["matrix"]["method"] == "rmsd":
                 global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
                 global_cluster.prototype = global_cluster.calculate_medoid(self.matrixHandler.distance_matrix)
+                ca_pdb_coordsets =numpy.copy(self.trajectoryHandler.getJoinedPDB().select("name CA").getCoordsets())
+                calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
+                                                fittingCoordsets = ca_pdb_coordsets)
+                calculator.iterativeSuperposition()
                 CA_mean_square_displacements= {
-                                               "global":list(CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
-                                                                                               global_cluster))
+                                               "global":list(CA_mean_square_displacement_of_cluster(ca_pdb_coordsets,\
+                                                                                                    global_cluster))
                                                }
                 clusters = best_clustering["clustering"].clusters
                 for i in range(len(clusters)):
+                    cluster = clusters[i]
+                    # Pick the coordinates (ensuring that we are copying them)
+                    fitting_coordinates_of_this_cluster = ca_pdb_coordsets[cluster.all_elements]
+                    calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
+                                                fittingCoordsets = fitting_coordinates_of_this_cluster)
+                    
+                    # Make an iterative superposition (to get the minimum RMSD of all with respect to a mean conformation)
+                    calculator.iterativeSuperposition()
+                    
                     # Calculate and convert to list (to serialize)
-                    CA_mean_square_displacements[clusters[i].id] = list(CA_mean_square_displacement_of_cluster(self.trajectoryHandler.getJoinedPDB(),\
-                                                                                                 clusters[i]))
+                    CA_mean_square_displacements[cluster.id] = list(CA_mean_square_displacement_of_cluster(ca_pdb_coordsets,\
+                                                                                                           cluster))
                 
                 displacements_path = os.path.join(self.workspaceHandler["results"], "CA_displacements.json")
                 
