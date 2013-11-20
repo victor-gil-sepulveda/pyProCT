@@ -7,12 +7,12 @@ from pyscheduler.serialScheduler import SerialScheduler
 from pyscheduler.processParallelScheduler import ProcessParallelScheduler
 import time, datetime
 
-def send_message_to_observer( observer, tag, task_name):
-    timestamp = datetime.datetime.fromtimestamp(time.time()).strftime('[%H:%M:%S]')
-    if task_name is not None:
-        observer.notify("Scheduler", tag, task_name+" "+timestamp)
+def send_message_to_observer( observer, tag, info):
+    if info is not None:
+        info["timestamp"] = datetime.datetime.fromtimestamp(time.time()).strftime('[%H:%M:%S]')
+        observer.notify("Scheduler", tag, info)
     else:
-        observer.notify("Scheduler", tag, timestamp)
+        observer.notify("Scheduler", tag, "")
 
 def build_scheduler(scheduling_options, observer):
     """
@@ -49,6 +49,13 @@ def build_scheduler(scheduling_options, observer):
                                              'kwargs':{
                                                        'observer':observer,
                                                        'tag':'Scheduler Ended'
+                                                       }
+                                             },
+                          'scheduling_started':{
+                                             'function':send_message_to_observer,
+                                             'kwargs':{
+                                                       'observer':observer,
+                                                       'tag':'Scheduler Starts'
                                                        }
                                              }
                           }

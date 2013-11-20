@@ -32,6 +32,14 @@ class PCAMetric(object):
         pca_mean_val = 0.;
         
         for c in clustering.clusters:
+            ###################
+            # Performance hack
+            ###################
+            
+            
+            
+            ###################
+            
             # Pick the coordinates (ensuring that we are copying them)
             fitting_coordinates_of_this_cluster = self.fitting_coordinates[c.all_elements]
             calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
