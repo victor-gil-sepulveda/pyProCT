@@ -28,7 +28,6 @@ class PCAMetric(object):
         
         @return: the value of the metric.
         """
-        print "PCA started"
         # Pca for each one of the clusters
         pca_mean_val = 0.;
         MAX_ELEMENTS = 1000
@@ -43,6 +42,7 @@ class PCAMetric(object):
             # It should use the kmedoids compressor
             if len(c.all_elements) > MAX_ELEMENTS:
                 element_indexes = c.get_random_sample(MAX_ELEMENTS)
+                print "[PCA] Random sampling too big cluster to improve performance (%d elements -> %d elements)."%(len(c.all_elements),MAX_ELEMENTS)
             ###################
             
             fitting_coordinates_of_this_cluster = self.fitting_coordinates[element_indexes]
