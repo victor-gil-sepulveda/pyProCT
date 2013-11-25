@@ -105,6 +105,8 @@ class TrajectoryHandler(Observable):
             return self.bookmarking["selections"][selection_string];
     
     def getSelection(self, selection_string):
+    	#returns coordsets
+        
         if self.bookmarking["pdb"] is None:
             self.getJoinedPDB()
         

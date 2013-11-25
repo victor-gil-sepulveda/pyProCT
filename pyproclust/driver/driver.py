@@ -21,9 +21,10 @@ from pyproclust.clustering.comparison.caDisplacement import CA_mean_square_displ
 from pyproclust.clustering.cluster import Cluster
 from pyRMSD.RMSDCalculator import RMSDCalculator
 import numpy
+import matplotlib.cm as cm
 
 class Driver(Observable):
-    
+
     def __init__(self, observer):
         super(Driver, self).__init__(observer)
         self.generatedFiles = []
@@ -65,10 +66,10 @@ class Driver(Observable):
         # Do the actual clustering
         ##############################
         clustering_results = None
-        
+
         if parameters["clustering"]["generation"]["method"] == "generate":
-            clustering_results = ClusteringProtocol(self.timer, self.observer).run(parameters, self.matrixHandler, 
-                                                                                                self.workspaceHandler, 
+            clustering_results = ClusteringProtocol(self.timer, self.observer).run(parameters, self.matrixHandler,
+                                                                                                self.workspaceHandler,
                                                                                                 self.trajectoryHandler)
             if clustering_results != None:
                 best_clustering = None
@@ -78,13 +79,13 @@ class Driver(Observable):
                 self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
                 print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
                 exit()
-            
+
         ##############################
         # Load the clustering
         ##############################
         if parameters["clustering"]["generation"]["method"] == "load":
             best_clustering = {"clustering":Clustering.from_dic(parameters["clustering"]["generation"])}
-            
+
         #################################
         # Abort if no clusters were found
         #################################
@@ -92,29 +93,29 @@ class Driver(Observable):
             self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
             print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
             exit()
-        
+
         return best_clustering, clustering_results
 
     def save_clustering_results(self, clustering_results):
         results_path = os.path.join(self.workspaceHandler["results"], "results.json")
         self.generatedFiles.append({"description":"Results file", "path":results_path, "type":"text"})
-        json_results = ClusteringResultsGatherer().gather(self.timer, 
-                                                            self.trajectoryHandler, 
-                                                            self.workspaceHandler, 
-                                                            clustering_results, 
+        json_results = ClusteringResultsGatherer().gather(self.timer,
+                                                            self.trajectoryHandler,
+                                                            self.workspaceHandler,
+                                                            clustering_results,
                                                             self.generatedFiles)
         # Results are first added and saved later to avoid metareferences :D
         open(results_path, "w").write(json_results)
-    
-    
+
+
 
     def postprocess(self, parameters, best_clustering):
         ##############################
         # Specialized post-processing
         ##############################
         action_type = parameters["global"]["action"]["type"]
-        
-        if action_type == "clustering" or action_type == "advanced": 
+
+        if action_type == "clustering" or action_type == "advanced":
             ##############################
             # Saving representatives
             ##############################
@@ -123,13 +124,13 @@ class Driver(Observable):
             # Set prototypes and ids (medoids are ordered)
             for i in range(len(best_clustering["clustering"].clusters)):
                 best_clustering["clustering"].clusters[i].prototype = medoids[i]
-            
+
             keep_remarks = False
             try:
                 keep_remarks = parameters["global"]["action"]["parameters"]["keep_remarks"]
             except:
                 pass
-            
+
             #Saver CA mean squared displacement of best cluster
             #TODO: REFACTORING
 #             try:
@@ -151,42 +152,98 @@ class Driver(Observable):
                     fitting_coordinates_of_this_cluster = ca_pdb_coordsets[cluster.all_elements]
                     calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                                 fittingCoordsets = fitting_coordinates_of_this_cluster)
-                    
+
                     # Make an iterative superposition (to get the minimum RMSD of all with respect to a mean conformation)
                     calculator.iterativeSuperposition()
-                    
+
                     # Calculate and convert to list (to serialize)
                     CA_mean_square_displacements[cluster.id] = list(CA_mean_square_displacement_of_cluster(ca_pdb_coordsets,\
                                                                                                            cluster))
-                
+
                 displacements_path = os.path.join(self.workspaceHandler["results"], "CA_displacements.json")
-                
+
                 self.generatedFiles.append({
-                                            "description":"Alpha Carbon mean square displacements", 
-                                            "path":displacements_path, 
+                                            "description":"Alpha Carbon mean square displacements",
+                                            "path":displacements_path,
                                             "type":"text"
                 })
-                    
-                open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements, 
-                                                      sort_keys=False, 
-                                                      indent=4, 
+
+                open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements,
+                                                      sort_keys=False,
+                                                      indent=4,
                                                       separators=(',', ': ')))
 #             except Exception:
 #                 print "Impossible to calculate CA displacements"
-            
-            representatives_path = saveTools.save_representatives(medoids, 
-                                                                  "representatives", 
-                                                                  self.workspaceHandler, 
-                                                                  self.trajectoryHandler, 
-                                                                  do_merged_files_have_correlative_models=True, 
+
+            if parameters["matrix"]["method"] == "distance":
+            	# TODO: Superpose again
+
+            	centers_path = os.path.join(self.workspaceHandler["results"], "selection_centers.json")
+
+                self.generatedFiles.append({
+                                            "description":"Centers of the selection used to calculate distances",
+                                            "path":centers_path,
+                                            "type":"text"
+                })
+
+                clustering = best_clustering["clustering"]
+                ligand_coords = self.trajectoryHandler.getSelection(parameters["matrix"]["parameters"]["body_selection"])
+
+                centers_contents={}
+                centers = []
+                # Superpose and center coords
+
+                # Center coords
+                #for i in range(len(ligand_coords)):
+                #    ligand_coords[i] -= ligand_coords[i].mean(0)
+
+                # Get Bounding Box
+                [max_x,max_y,max_z] = numpy.max(numpy.max(ligand_coords,1),0)
+                [min_x,min_y,min_z] = numpy.min(numpy.min(ligand_coords,1),0)
+                centers_contents["bounding_box"] = [  [max_x, max_y, max_z],
+                                            [max_x, max_y, min_z],
+                                            [max_x, min_y, max_z],
+                                            [max_x, min_y, min_z],
+                                            [min_x, max_y, max_z],
+                                            [min_x, max_y, min_z],
+                                            [min_x, min_y, max_z],
+                                            [min_x, min_y, min_z]]
+#for p1 in ["max_x","min_x"]:
+#    for p2 in ["max_y","min_y"]:
+#        for p3 in ["max_z","min_z"]:
+#            print "[%s, %s, %s],"%(p1,p2,p3)
+#
+                colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
+                centers_contents["points"]
+                for cluster in clustering.clusters:
+                    centers = []
+                    for i,element in enumerate(cluster.all_elements):
+                        coords = ligand_coords[element]
+                        centers.append(list(coords.mean(0)))
+                    centers_contents["points"][cluster.id] = {}
+                    centers_contents["points"][cluster.id]["prototype"] = list(ligand_coords[cluster.prototype].mean(0))
+                    centers_contents["points"][cluster.id]["centers"] = centers
+                    centers_contents["points"][cluster.id]["color"] = list(next(colors))[0:3]
+
+                open(centers_path,"w").write(json.dumps(centers_contents,
+                                                      sort_keys=False,
+                                                      indent=4,
+                                                      separators=(',', ': ')))
+
+
+            representatives_path = saveTools.save_representatives(medoids,
+                                                                  "representatives",
+                                                                  self.workspaceHandler,
+                                                                  self.trajectoryHandler,
+                                                                  do_merged_files_have_correlative_models=True,
                                                                   write_frame_number_instead_of_correlative_model_number=True,
                                                                   keep_remarks = keep_remarks )
-            self.generatedFiles.append({"description":"Cluster central conformations", 
-                                        "path":representatives_path, 
+            self.generatedFiles.append({"description":"Cluster central conformations",
+                                        "path":representatives_path,
                                         "type":"pdb"})
             self.timer.stop("Representatives")
-        
-        elif action_type == "comparison": 
+
+        elif action_type == "comparison":
             ############################################
             # Distribution analysis
             ############################################
@@ -195,24 +252,24 @@ class Driver(Observable):
             kl_file_path = os.path.join(self.workspaceHandler["matrix"], "kullback_liebler_divergence")
             klDiv.save(kl_file_path)
             matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"])
-            self.generatedFiles.append({"description":"Kullback-Leibler divergence", 
-                                        "path":matrix_image_file_path, 
+            self.generatedFiles.append({"description":"Kullback-Leibler divergence",
+                                        "path":matrix_image_file_path,
                                         "type":"text"})
             self.timer.stop("KL divergence")
-            
-        elif action_type == "compression": 
+
+        elif action_type == "compression":
             ############################################
             # Compress
             ############################################
             self.timer.start("Compression")
             compressor = Compressor(parameters["global"]["action"]["parameters"])
-            compressed_file_path = compressor.compress(best_clustering["clustering"], 
-                                                       (lambda params: params['file'] if 'file' in params else "compressed_pdb")(parameters["global"]["action"]["parameters"]), 
-                                                       self.workspaceHandler, 
-                                                       self.trajectoryHandler, 
+            compressed_file_path = compressor.compress(best_clustering["clustering"],
+                                                       (lambda params: params['file'] if 'file' in params else "compressed_pdb")(parameters["global"]["action"]["parameters"]),
+                                                       self.workspaceHandler,
+                                                       self.trajectoryHandler,
                                                        self.matrixHandler)
-            self.generatedFiles.append({"description":"Compressed file", 
-                                        "path":compressed_file_path, 
+            self.generatedFiles.append({"description":"Compressed file",
+                                        "path":compressed_file_path,
                                         "type":"pdb"})
             self.timer.stop("Compression")
 
@@ -223,43 +280,43 @@ class Driver(Observable):
         # Results are saved to a file
         #################################
         self.save_clustering_results(clustering_results)
-        
-            
+
+
     def run(self, parameters):
-        
+
         #####################
-        # Start timing 
+        # Start timing
         #####################
         self.timer = TimerHandler()
         self.timer.start("Global")
-        
+
         #####################
-        # Workspace Creation 
+        # Workspace Creation
         #####################
         self.create_workspace(parameters)
-            
+
         #####################
-        # Saving Parameters 
+        # Saving Parameters
         #####################
         self.save_parameters_file(parameters)
-        
+
         #####################
         # Trajectory Loading
         #####################
         self.timer.start("Trajectory Loading")
         self.trajectoryHandler = TrajectoryHandler(parameters["global"], parameters["matrix"]['parameters'], self.observer)
         self.timer.stop("Trajectory Loading")
-        
+
         ##############################
         # Distance Matrix Generation
         ##############################
         self.create_matrix(parameters)
-    
+
         ##############################
         # Actions
         ##############################
         self.perform_actions(parameters)
-        
+
         self.timer.stop("Global")
         self.notify("Driver Finished", "\n"+str(self.timer))
-        
+
