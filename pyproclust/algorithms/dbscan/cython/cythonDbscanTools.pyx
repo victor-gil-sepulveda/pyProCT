@@ -18,61 +18,61 @@ ctypedef numpy.double_t DOUBLE_t
 INT = numpy.double
 ctypedef numpy.int_t INT_t
 
-def kth_elements_distance(int element, 
-                          numpy.ndarray[INT_t] klist, 
-                          numpy.ndarray[DOUBLE_t] distances_to_all_other_elements_buffer, 
+def kth_elements_distance(int element,
+                          numpy.ndarray[INT_t] klist,
+                          numpy.ndarray[DOUBLE_t] distances_to_all_other_elements_buffer,
                           condensed_distance_matrix):
-    
+
     return cython_kth_elements_distance(element, klist, distances_to_all_other_elements_buffer, condensed_distance_matrix)
 
-cdef numpy.ndarray[DOUBLE_t] cython_kth_elements_distance(int element, 
-                          numpy.ndarray[INT_t] klist, 
-                          numpy.ndarray[DOUBLE_t] distances_to_all_other_elements_buffer, 
+cdef numpy.ndarray[DOUBLE_t] cython_kth_elements_distance(int element,
+                          numpy.ndarray[INT_t] klist,
+                          numpy.ndarray[DOUBLE_t] distances_to_all_other_elements_buffer,
                           condensed_distance_matrix):
-    
+
     cdef int i
     cdef int k
     cdef int KLEN = len(klist)
     cdef int N = condensed_distance_matrix.row_length
     cdef numpy.ndarray[DOUBLE_t] kth_elems = numpy.empty(KLEN)
-    
+
     # Distances of one element vs all the others
     for i in range(N):
         distances_to_all_other_elements_buffer[i] = condensed_distance_matrix[element,i]
-    
+
     # Pick the kth elements
     distances_to_all_other_elements_buffer.sort(kind='quicksort')
     for i in range(KLEN):
         k = klist[i]
         kth_elems[i] = distances_to_all_other_elements_buffer[k]
-    
+
     return kth_elems
 
 @cython.boundscheck(False)
-def k_dist(numpy.ndarray[INT_t] klist, 
+def k_dist(numpy.ndarray[INT_t] klist,
            numpy.ndarray[DOUBLE_t] buffer,
            condensed_distance_matrix):
-    
+
     cdef int N = condensed_distance_matrix.row_length
     cdef int KLEN = len(klist)
     cdef int i = 0
     cdef numpy.ndarray[DOUBLE_t, ndim=2] np_k_dist_matrix = numpy.empty((KLEN,N))
-    
+
     # For all the elements and all Ks pick their kth element distances
     for i in range(N):
-        np_k_dist_matrix[:,i] = cython_kth_elements_distance(i, klist, buffer, condensed_distance_matrix) 
-    
+        np_k_dist_matrix[:,i] = cython_kth_elements_distance(i, klist, buffer, condensed_distance_matrix)
+
     # Now we have
     # k         el1  el2 ...  elN
     # 20      [  x    x  ...    x ]
     # 40      [  x    x  ...    x ]
     # ...
     # KMAX    [  x    x  ...    x ]
-    
+
     # Rows have to be sorted
     for i in range(KLEN):
         np_k_dist_matrix[i].sort(kind='quicksort')
-        
+
     return np_k_dist_matrix
 
 def dbscan_param_space_search(max_noise, max_eps_tries, number_of_elements, klist, kdist_matrix):
@@ -85,17 +85,17 @@ def dbscan_param_space_search(max_noise, max_eps_tries, number_of_elements, klis
     #MIN_NOISE = 5%
     index_for_min_noise = max(0, int(number_of_elements - 0.05*number_of_elements))
     index_for_max_noise =  int(number_of_elements - (min(max_noise,100)*0.01*number_of_elements)-1)
-    noise_stride = (index_for_min_noise - index_for_max_noise) / max_eps_tries
-    
+    noise_stride = max(1,(index_for_min_noise - index_for_max_noise) / max_eps_tries)
+
     params = []
     for i in range(index_for_max_noise, index_for_min_noise, noise_stride):
         for j in range(len(klist)):
             params.append((klist[j],kdist_matrix[j][i]))
-    
+
     del kdist_matrix
-    
+
     return params
-    
+
 def k_scale_gen(max_elements):
     """
     Generates a list of ks as powers of 2.
@@ -105,7 +105,7 @@ def k_scale_gen(max_elements):
         range_max = int(math.ceil(math.log(max_elements,2)))+1
     except ValueError:
         return []
-    
+
     return numpy.array([2**i for i in range(1,range_max)])
 
 def zhou_adaptative_determination(numpy.ndarray[DOUBLE_t, ndim=2] kdist_matrix, matrix):
@@ -115,9 +115,9 @@ def zhou_adaptative_determination(numpy.ndarray[DOUBLE_t, ndim=2] kdist_matrix, 
     N = matrix.row_length
     parameters = []
     Eps_estimations = numpy.mean(kdist_matrix, 1)
-    
+
     for Eps in Eps_estimations:
         Minpts = math.floor(numpy.sum([0]+[len(matrix.element_neighbors_within_radius(i,Eps)) for i in range(N)]) / N)
         parameters.append((Minpts,Eps))
-        
+
     return parameters
