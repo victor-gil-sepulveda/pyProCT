@@ -17,11 +17,7 @@ from pyproclust.driver.compressor.compressor import Compressor
 from pyproclust.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 import json
 from pyproclust.clustering.clustering import Clustering
-from pyproclust.clustering.comparison.caDisplacement import CA_mean_square_displacement_of_cluster
-from pyproclust.clustering.cluster import Cluster
-from pyRMSD.RMSDCalculator import RMSDCalculator
-import numpy
-import matplotlib.cm as cm
+from pyproclust.tools import visualizationTools
 
 class Driver(Observable):
 
@@ -131,104 +127,45 @@ class Driver(Observable):
             except:
                 pass
 
-            #Saver CA mean squared displacement of best cluster
-            #TODO: REFACTORING
-#             try:
             if parameters["matrix"]["method"] == "rmsd":
-                global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
-                global_cluster.prototype = global_cluster.calculate_medoid(self.matrixHandler.distance_matrix)
-                ca_pdb_coordsets =numpy.copy(self.trajectoryHandler.getJoinedPDB().select("name CA").getCoordsets())
-                calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
-                                                fittingCoordsets = ca_pdb_coordsets)
-                calculator.iterativeSuperposition()
-                CA_mean_square_displacements= {
-                                               "global":list(CA_mean_square_displacement_of_cluster(ca_pdb_coordsets,\
-                                                                                                    global_cluster))
-                                               }
-                clusters = best_clustering["clustering"].clusters
-                for i in range(len(clusters)):
-                    cluster = clusters[i]
-                    # Pick the coordinates (ensuring that we are copying them)
-                    fitting_coordinates_of_this_cluster = ca_pdb_coordsets[cluster.all_elements]
-                    calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
-                                                fittingCoordsets = fitting_coordinates_of_this_cluster)
+                #Save CA mean squared displacement of best cluster
+                #TODO: REFACTORING
+                try:
+                    displacements_path, CA_mean_square_displacements = visualizationTools.generate_CA_displacements_file(best_clustering,
+                                                                                                                         self.trajectoryHandler)
 
-                    # Make an iterative superposition (to get the minimum RMSD of all with respect to a mean conformation)
-                    calculator.iterativeSuperposition()
+                    self.generatedFiles.append({
+                                                "description":"Alpha Carbon mean square displacements",
+                                                "path":displacements_path,
+                                                "type":"text"
+                    })
 
-                    # Calculate and convert to list (to serialize)
-                    CA_mean_square_displacements[cluster.id] = list(CA_mean_square_displacement_of_cluster(ca_pdb_coordsets,\
-                                                                                                           cluster))
-
-                displacements_path = os.path.join(self.workspaceHandler["results"], "CA_displacements.json")
-
-                self.generatedFiles.append({
-                                            "description":"Alpha Carbon mean square displacements",
-                                            "path":displacements_path,
-                                            "type":"text"
-                })
-
-                open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements,
-                                                      sort_keys=False,
-                                                      indent=4,
-                                                      separators=(',', ': ')))
-#             except Exception:
-#                 print "Impossible to calculate CA displacements"
+                    open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements,
+                                                          sort_keys=False,
+                                                          indent=4,
+                                                          separators=(',', ': ')))
+                except Exception:
+                    print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
 
             if parameters["matrix"]["method"] == "distance":
-            	# TODO: Superpose again
+                try:
+                    centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
+                                                                                                        best_clustering,
+                                                                                                        self.workspaceHandler,
+                                                                                                        self.trajectoryHandler)
 
-            	centers_path = os.path.join(self.workspaceHandler["results"], "selection_centers.json")
+                    self.generatedFiles.append({
+                                                "description":"Centers of the selection used to calculate distances",
+                                                "path":centers_path,
+                                                "type":"text"
+                    })
 
-                self.generatedFiles.append({
-                                            "description":"Centers of the selection used to calculate distances",
-                                            "path":centers_path,
-                                            "type":"text"
-                })
-
-                clustering = best_clustering["clustering"]
-                ligand_coords = self.trajectoryHandler.getSelection(parameters["matrix"]["parameters"]["body_selection"])
-
-                centers_contents={}
-                centers = []
-                # Superpose and center coords
-
-                # Center coords
-                #for i in range(len(ligand_coords)):
-                #    ligand_coords[i] -= ligand_coords[i].mean(0)
-
-                # Get Bounding Box
-                [max_x,max_y,max_z] = numpy.max(numpy.max(ligand_coords,1),0)
-                [min_x,min_y,min_z] = numpy.min(numpy.min(ligand_coords,1),0)
-                centers_contents["bounding_box"] = [  [max_x, max_y, max_z],
-                                            [max_x, max_y, min_z],
-                                            [max_x, min_y, max_z],
-                                            [max_x, min_y, min_z],
-                                            [min_x, max_y, max_z],
-                                            [min_x, max_y, min_z],
-                                            [min_x, min_y, max_z],
-                                            [min_x, min_y, min_z]]
-#for p1 in ["max_x","min_x"]:
-#    for p2 in ["max_y","min_y"]:
-#        for p3 in ["max_z","min_z"]:
-#            print "[%s, %s, %s],"%(p1,p2,p3)
-#
-                colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
-                centers_contents["points"]
-                for cluster in clustering.clusters:
-                    centers = []
-                    for i,element in enumerate(cluster.all_elements):
-                        coords = ligand_coords[element]
-                        centers.append(list(coords.mean(0)))
-                    centers_contents["points"][cluster.id] = {}
-                    centers_contents["points"][cluster.id]["prototype"] = list(ligand_coords[cluster.prototype].mean(0))
-                    centers_contents["points"][cluster.id]["centers"] = centers
-                    centers_contents["points"][cluster.id]["color"] = list(next(colors))[0:3]
-
-                open(centers_path,"w").write(json.dumps(centers_contents,
-                                                      sort_keys=False,
-                                                      indent=4,
-                                                      separators=(',', ': ')))
+                    open(centers_path,"w").write(json.dumps(centers_contents,
+                                              sort_keys=False,
+                                              indent=4,
+                                              separators=(',', ': ')))
+                except Exception:
+                    print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
 
             representatives_path = saveTools.save_representatives(medoids,
