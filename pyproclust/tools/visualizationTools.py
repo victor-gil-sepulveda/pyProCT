@@ -44,6 +44,7 @@ def calculate_bounding_box(coordinates, backbone_trace):
     coords = numpy.array(coordinates)
     [max_x,max_y,max_z] = numpy.max([numpy.max(numpy.max(coords,1),0).tolist()]+[numpy.max(backbone_trace,0).tolist()],0)
     [min_x,min_y,min_z] = numpy.min([numpy.min(numpy.min(coords,1),0).tolist()]+[numpy.min(backbone_trace,0).tolist()],0)
+    center = numpy.array([min_x,min_y,min_z]) + ((numpy.array([max_x,max_y,max_z])-numpy.array([min_x,min_y,min_z])) /2.)
     return [[max_x, max_y, max_z],
             [max_x, max_y, min_z],
             [max_x, min_y, max_z],
@@ -51,7 +52,7 @@ def calculate_bounding_box(coordinates, backbone_trace):
             [min_x, max_y, max_z],
             [min_x, max_y, min_z],
             [min_x, min_y, max_z],
-            [min_x, min_y, min_z]]
+            [min_x, min_y, min_z]], center.tolist()
 
 def generate_CA_or_P_trace(trajectoryHandler):
     coordsets = numpy.array([])
@@ -78,7 +79,9 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
     centers_contents["backbone_trace"] = generate_CA_or_P_trace(trajectoryHandler)
 
     # Get Bounding Box
-    centers_contents["bounding_box"] = calculate_bounding_box(ligand_coords.tolist() ,centers_contents["backbone_trace"])
+    centers_contents["bounding_box"] , centers_contents["bounding_box_center"] = calculate_bounding_box(
+                                                                                                        ligand_coords.tolist() ,
+                                                                                                        centers_contents["backbone_trace"])
 
     # Colors iterator
     colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
