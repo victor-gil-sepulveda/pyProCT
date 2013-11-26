@@ -40,9 +40,10 @@ def generate_CA_displacements_file(best_clustering, trajectoryHandler):
 
     return displacements_path, CA_mean_square_displacements
 
-def calculate_bounding_box(coordinates):
-    [max_x,max_y,max_z] = numpy.max(numpy.max(coordinates,1),0)
-    [min_x,min_y,min_z] = numpy.min(numpy.min(coordinates,1),0)
+def calculate_bounding_box(coordinates, backbone_trace):
+    coords = numpy.array(coordinates)
+    [max_x,max_y,max_z] = numpy.max([numpy.max(numpy.max(coords,1),0).tolist()]+[numpy.max(backbone_trace,0).tolist()],0)
+    [min_x,min_y,min_z] = numpy.min([numpy.min(numpy.min(coords,1),0).tolist()]+[numpy.min(backbone_trace,0).tolist()],0)
     return [[max_x, max_y, max_z],
             [max_x, max_y, min_z],
             [max_x, min_y, max_z],
@@ -53,13 +54,13 @@ def calculate_bounding_box(coordinates):
             [min_x, min_y, min_z]]
 
 def generate_CA_or_P_trace(trajectoryHandler):
-    coordsets = None
+    coordsets = numpy.array([])
     try:
-        coordsets = trajectoryHandler.getJoinedPDB().select("name CA P").getCoordsets()
+        # Only get first frame of the selection
+        coordsets = trajectoryHandler.getJoinedPDB().select("name CA P").getCoordsets()[0]
     except:
-        coordsets = None
         print "[ERROR visualizationTools::generate_CA_or_P_trace] Impossible to get coordinates for trace"
-    return coordsets
+    return coordsets.tolist()
 
 def generate_selection_centers_file(parameters, best_clustering, workspaceHandler, trajectoryHandler):
     # TODO: Superpose and center coords (or getting already superposed confs)
@@ -73,11 +74,11 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
     centers_contents={}
     centers = []
 
-    # Get Bounding Box
-    centers_contents["bounding_box"] = calculate_bounding_box(ligand_coords)
-
     # Calculate trace
     centers_contents["backbone_trace"] = generate_CA_or_P_trace(trajectoryHandler)
+
+    # Get Bounding Box
+    centers_contents["bounding_box"] = calculate_bounding_box(ligand_coords.tolist() ,centers_contents["backbone_trace"])
 
     # Colors iterator
     colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
