@@ -1,6 +1,6 @@
 import sys
 import pickle
-from pyproclust.clustering.selection.bestClusteringSelector import BestClusteringSelector
+from pyproct.clustering.selection.bestClusteringSelector import BestClusteringSelector
 import numpy
 import matplotlib.pyplot as plt
 import scipy.stats

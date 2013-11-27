@@ -7,16 +7,16 @@ Created on 20/02/2012
 import validation.algorithms.datasets as data
 import scipy.spatial.distance as distance
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproclust.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
-from pyproclust.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm
-from pyproclust.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
-from pyproclust.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
-from pyproclust.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
+from pyproct.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
+from pyproct.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm
+from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
+from pyproct.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
+from pyproct.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
 from validation.algorithms.validationTools import params_to_string, dataset_loading_2D,\
     show_2D_dataset_clusters, generate_similarity_network
-from pyproclust.tools.scriptTools import create_directory
-import pyproclust.algorithms.dbscan.parametersGeneration as DBSParametersGenerator
-import pyproclust.algorithms.gromos.parametersGeneration as GromosParametersGenerator
+from pyproct.tools.scriptTools import create_directory
+import pyproct.algorithms.dbscan.parametersGeneration as DBSParametersGenerator
+import pyproct.algorithms.gromos.parametersGeneration as GromosParametersGenerator
 
 
 class FakeMatrixHandler:

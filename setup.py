@@ -14,57 +14,57 @@ setup(name='pyProClust',
       author_email='victor.gil.sepulveda@gmail.com',
       url='https://github.com/victor-gil-sepulveda/pyProClust',
       packages=[
-                'pyproclust',
-                'pyproclust.algorithms',
-                'pyproclust.algorithms.hierarchical',
-                'pyproclust.algorithms.spectral',
-                'pyproclust.algorithms.dbscan',
-                'pyproclust.algorithms.dbscan.cython',
-                'pyproclust.algorithms.kmedoids',
-                'pyproclust.algorithms.random',
-                'pyproclust.algorithms.gromos',
-                'pyproclust.tools',
-                'pyproclust.clustering',
-                'pyproclust.clustering.analysis',
-                'pyproclust.clustering.comparison',
-                'pyproclust.clustering.comparison.distrprob',
-                'pyproclust.clustering.selection',
-                'pyproclust.clustering.metrics',
-                'pyproclust.clustering.metrics.cython',
-                'pyproclust.clustering.filtering',
-                'pyproclust.protocol',
-                'pyproclust.protocol.refinement',
-                'pyproclust.protocol.exploration',
-                'pyproclust.driver',
-                'pyproclust.driver.handlers',
-                'pyproclust.driver.handlers.matrix',
-                'pyproclust.driver.observer',
-                'pyproclust.driver.scheduling',
-                'pyproclust.driver.compressor',
-                'pyproclust.driver.results',
+                'pyproct',
+                'pyproct.algorithms',
+                'pyproct.algorithms.hierarchical',
+                'pyproct.algorithms.spectral',
+                'pyproct.algorithms.dbscan',
+                'pyproct.algorithms.dbscan.cython',
+                'pyproct.algorithms.kmedoids',
+                'pyproct.algorithms.random',
+                'pyproct.algorithms.gromos',
+                'pyproct.tools',
+                'pyproct.clustering',
+                'pyproct.clustering.analysis',
+                'pyproct.clustering.comparison',
+                'pyproct.clustering.comparison.distrprob',
+                'pyproct.clustering.selection',
+                'pyproct.clustering.metrics',
+                'pyproct.clustering.metrics.cython',
+                'pyproct.clustering.filtering',
+                'pyproct.protocol',
+                'pyproct.protocol.refinement',
+                'pyproct.protocol.exploration',
+                'pyproct.driver',
+                'pyproct.driver.handlers',
+                'pyproct.driver.handlers.matrix',
+                'pyproct.driver.observer',
+                'pyproct.driver.scheduling',
+                'pyproct.driver.compressor',
+                'pyproct.driver.results',
       ],
 
       include_dirs = [numpy.get_include(),
                       distutils.sysconfig.get_python_inc()],
 
       ext_modules=[
-                   Extension('pyproclust.clustering.metrics.cython.normNCut',[
-                                'pyproclust/clustering/metrics/cython/normNCut.c'
+                   Extension('pyproct.clustering.metrics.cython.normNCut',[
+                                'pyproct/clustering/metrics/cython/normNCut.c'
                    ], extra_compile_args=["-O3","-ffast-math"]),
-                   Extension('pyproclust.clustering.metrics.cython.boundedCohesion', [
-                                'pyproclust/clustering/metrics/cython/boundedCohesion.c'
+                   Extension('pyproct.clustering.metrics.cython.boundedCohesion', [
+                                'pyproct/clustering/metrics/cython/boundedCohesion.c'
                    ], extra_compile_args=["-O3","-ffast-math"]),
-                   Extension('pyproclust.clustering.metrics.cython.silhouette',[
-                                'pyproclust/clustering/metrics/cython/silhouette.c'
+                   Extension('pyproct.clustering.metrics.cython.silhouette',[
+                                'pyproct/clustering/metrics/cython/silhouette.c'
                    ], extra_compile_args=["-O3","-ffast-math"]),
-                   Extension('pyproclust.clustering.metrics.cython.meanMinimumDistance', [
-                                'pyproclust/clustering/metrics/cython/meanMinimumDistance.c'
+                   Extension('pyproct.clustering.metrics.cython.meanMinimumDistance', [
+                                'pyproct/clustering/metrics/cython/meanMinimumDistance.c'
                    ], extra_compile_args=["-O3","-ffast-math"]),
-                   Extension('pyproclust.clustering.metrics.cython.meanMinimumDistance', [
-                                'pyproclust/clustering/metrics/cython/meanMinimumDistance.c'
+                   Extension('pyproct.clustering.metrics.cython.meanMinimumDistance', [
+                                'pyproct/clustering/metrics/cython/meanMinimumDistance.c'
                    ], extra_compile_args=["-O3","-ffast-math"]),
-                   Extension("pyproclust.algorithms.dbscan.cython.cythonDbscanTools", [
-                                'pyproclust/algorithms/dbscan/cython/cythonDbscanTools.c'
+                   Extension("pyproct.algorithms.dbscan.cython.cythonDbscanTools", [
+                                'pyproct/algorithms/dbscan/cython/cythonDbscanTools.c'
                    ],extra_compile_args=["-O3","-ffast-math"])
       ],
 

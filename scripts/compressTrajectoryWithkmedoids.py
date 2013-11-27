@@ -10,8 +10,8 @@ import sys
 import optparse
 import prody.proteins
 from pyRMSD.matrixHandler import MatrixHandler
-from pyproclust.algorithms.kmedoids.kMedoids import KMedoids
-from pyproclust.tools.pdbTools import extract_frames_from_trajectory_sequentially
+from pyproct.algorithms.kmedoids.kMedoids import KMedoids
+from pyproct.tools.pdbTools import extract_frames_from_trajectory_sequentially
 import random
 import math
 

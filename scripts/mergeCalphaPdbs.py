@@ -4,8 +4,8 @@ Created on 27/04/2012
 @author: victor
 '''
 import optparse
-from pyproclust.tools.pdbTools import create_CA_file
-import pyproclust.tools.commonTools as common
+from pyproct.tools.pdbTools import create_CA_file
+import pyproct.tools.commonTools as common
 
 if __name__ == '__main__':
     

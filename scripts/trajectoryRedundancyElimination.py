@@ -13,7 +13,7 @@ import sys
 import pyRMSD.RMSD
 import prody.proteins
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproclust.tools.pdbTools import extract_frames_from_trajectory_sequentially
+from pyproct.tools.pdbTools import extract_frames_from_trajectory_sequentially
 import pickle 
                                                                                                                                                 
 if __name__ == '__main__':

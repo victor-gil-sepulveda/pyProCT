@@ -3,14 +3,14 @@
 # http://stackoverflow.com/questions/10374930/matplotlib-annotating-a-3d-scatter-plot
 
 import sys
-from pyproclust.clustering.cluster import Cluster
+from pyproct.clustering.cluster import Cluster
 import prody
 import matplotlib.pyplot as plt
 import numpy
 import json
 from mpl_toolkits.mplot3d import Axes3D
-from pyproclust.tools.commonTools import convert_to_utf8
-from pyproclust.clustering.clustering import Clustering
+from pyproct.tools.commonTools import convert_to_utf8
+from pyproct.clustering.clustering import Clustering
 import optparse
 import matplotlib.cm as cm
 

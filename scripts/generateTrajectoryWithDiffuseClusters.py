@@ -8,7 +8,7 @@ import sys
 import prody
 import numpy
 import numpy.random
-from pyproclust.matrix.condensedMatrix import CondensedDistanceMatrix
+from pyproct.matrix.condensedMatrix import CondensedDistanceMatrix
 import pyRMSD.RMSD
 import matplotlib.pyplot as plt
 
