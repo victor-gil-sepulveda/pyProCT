@@ -19,6 +19,7 @@ setup(name='pyProClust',
                 'pyproclust.algorithms.hierarchical',
                 'pyproclust.algorithms.spectral',
                 'pyproclust.algorithms.dbscan',
+                'pyproclust.algorithms.dbscan.cython',
                 'pyproclust.algorithms.kmedoids',
                 'pyproclust.algorithms.random',
                 'pyproclust.algorithms.gromos',
@@ -42,23 +43,29 @@ setup(name='pyProClust',
                 'pyproclust.driver.compressor',
                 'pyproclust.driver.results',
       ],
-      
+
       include_dirs = [numpy.get_include(),
                       distutils.sysconfig.get_python_inc()],
-      
+
       ext_modules=[
                    Extension('pyproclust.clustering.metrics.cython.normNCut',[
-                                'pyproclust/clustering/metrics/cython/normNCut.c'                         
-                   ]),
+                                'pyproclust/clustering/metrics/cython/normNCut.c'
+                   ], extra_compile_args=["-O3","-ffast-math"]),
                    Extension('pyproclust.clustering.metrics.cython.boundedCohesion', [
-                                'pyproclust/clustering/metrics/cython/boundedCohesion.c'                                                 
-                   ]),
+                                'pyproclust/clustering/metrics/cython/boundedCohesion.c'
+                   ], extra_compile_args=["-O3","-ffast-math"]),
                    Extension('pyproclust.clustering.metrics.cython.silhouette',[
-                                'pyproclust/clustering/metrics/cython/silhouette.c'                                       
-                   ]),
+                                'pyproclust/clustering/metrics/cython/silhouette.c'
+                   ], extra_compile_args=["-O3","-ffast-math"]),
                    Extension('pyproclust.clustering.metrics.cython.meanMinimumDistance', [
-                                'pyproclust/clustering/metrics/cython/meanMinimumDistance.c'                                                        
-                   ])
+                                'pyproclust/clustering/metrics/cython/meanMinimumDistance.c'
+                   ], extra_compile_args=["-O3","-ffast-math"]),
+                   Extension('pyproclust.clustering.metrics.cython.meanMinimumDistance', [
+                                'pyproclust/clustering/metrics/cython/meanMinimumDistance.c'
+                   ], extra_compile_args=["-O3","-ffast-math"]),
+                   Extension("pyproclust.algorithms.dbscan.cython.cythonDbscanTools", [
+                                'pyproclust/algorithms/dbscan/cython/cythonDbscanTools.c'
+                   ],extra_compile_args=["-O3","-ffast-math"])
       ],
-      
+
      )

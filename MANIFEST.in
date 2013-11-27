@@ -1,0 +1,6 @@
+include pyproclust/clustering/metrics/cython/normNCut.c
+include pyproclust/clustering/metrics/cython/boundedCohesion.c
+include pyproclust/clustering/metrics/cython/silhouette.c
+include pyproclust/clustering/metrics/cython/meanMinimumDistance.c
+include pyproclust/clustering/metrics/cython/meanMinimumDistance.c
+include pyproclust/algorithms/dbscan/cython/cythonDbscanTools.c
