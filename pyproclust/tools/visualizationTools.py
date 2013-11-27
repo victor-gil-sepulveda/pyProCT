@@ -10,9 +10,9 @@ from pyproclust.clustering.comparison.caDisplacement import CA_mean_square_displ
 import os
 import matplotlib.cm as cm
 
-def generate_CA_displacements_file(best_clustering, trajectoryHandler):
+def generate_CA_displacements_file(best_clustering, trajectoryHandler, matrixHandler):
     global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
-    global_cluster.prototype = global_cluster.calculate_medoid(self.matrixHandler.distance_matrix)
+    global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
     ca_pdb_coordsets =numpy.copy(trajectoryHandler.getJoinedPDB().select("name CA").getCoordsets())
     calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                     fittingCoordsets = ca_pdb_coordsets)
@@ -40,25 +40,48 @@ def generate_CA_displacements_file(best_clustering, trajectoryHandler):
 
     return displacements_path, CA_mean_square_displacements
 
-def calculate_bounding_box(coordinates, backbone_trace):
+def calculate_bounding_box(coordinates, backbone_trace = []):
+    """
+    Calculates the bounding box that encloses all the atoms of two arrays.
+    @param coordinates: An array containing coordinates for a set of conformations (3D array where dim 0 is the
+    conformation, dim 1 is the atom and dim 2 the coordinate)
+    @param backbone_trace: If used (and if it has length > 0) is a 2D array where dim 0 is the atom and dim 1 the
+    coordinate.
+    @return: A 3-tuple containing:
+    - The bounding box corners.
+    - The center of the b.b. .
+    - The corner with maximum coordinates values.
+    """
     coords = numpy.array(coordinates)
-    [max_x,max_y,max_z] = numpy.max([numpy.max(numpy.max(coords,1),0).tolist()]+[numpy.max(backbone_trace,0).tolist()],0)
-    [min_x,min_y,min_z] = numpy.min([numpy.min(numpy.min(coords,1),0).tolist()]+[numpy.min(backbone_trace,0).tolist()],0)
+    if(len(backbone_trace)>0):
+        [max_x,max_y,max_z] = numpy.max([numpy.max(numpy.max(coords,1),0).tolist()]+[numpy.max(backbone_trace,0).tolist()],0)
+        [min_x,min_y,min_z] = numpy.min([numpy.min(numpy.min(coords,1),0).tolist()]+[numpy.min(backbone_trace,0).tolist()],0)
+    else:
+        [max_x,max_y,max_z] = numpy.max(numpy.max(coords,1),0)
+        [min_x,min_y,min_z] = numpy.min(numpy.min(coords,1),0)
+
     center = numpy.array([min_x,min_y,min_z]) + ((numpy.array([max_x,max_y,max_z])-numpy.array([min_x,min_y,min_z])) /2.)
-    return [[max_x, max_y, max_z],
+    return ([[max_x, max_y, max_z],
             [max_x, max_y, min_z],
             [max_x, min_y, max_z],
             [max_x, min_y, min_z],
             [min_x, max_y, max_z],
             [min_x, max_y, min_z],
             [min_x, min_y, max_z],
-            [min_x, min_y, min_z]], center.tolist()
+            [min_x, min_y, min_z]], center.tolist(), [max_x,max_y,max_z])
 
-def generate_CA_or_P_trace(trajectoryHandler):
+def generate_CA_or_P_trace(trajectoryHandler, backbone_atoms_selection = "name CA P"):
+    """
+    Gets the coordinates of the atoms forming the backbone of a protein. By default We consider the CA atoms in
+    proteins and P atoms in DNA/RNA, but of course is an arbitrary choice.
+    @param trajectoryHandler: Is the project's trajectory handler.
+    @param backbone_atoms_selection: Selection describing the atoms that form part of the trace.
+    @return: A list containing the atom positions of the backbone trace (ordered).
+    """
     coordsets = numpy.array([])
     try:
         # Only get first frame of the selection
-        coordsets = trajectoryHandler.getJoinedPDB().select("name CA P").getCoordsets()[0]
+        coordsets = trajectoryHandler.getJoinedPDB().select(backbone_atoms_selection).getCoordsets()[0]
     except:
         print "[ERROR visualizationTools::generate_CA_or_P_trace] Impossible to get coordinates for trace"
     return coordsets.tolist()
@@ -79,9 +102,10 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
     centers_contents["backbone_trace"] = generate_CA_or_P_trace(trajectoryHandler)
 
     # Get Bounding Box
-    centers_contents["bounding_box"] , centers_contents["bounding_box_center"] = calculate_bounding_box(
-                                                                                                        ligand_coords.tolist() ,
-                                                                                                        centers_contents["backbone_trace"])
+    (centers_contents["bounding_box"] ,
+    centers_contents["bounding_box_center"],
+    centers_contents["bounding_box_corner"]) = calculate_bounding_box( ligand_coords.tolist() ,
+                                                                      centers_contents["backbone_trace"])
 
     # Colors iterator
     colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
