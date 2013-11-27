@@ -18,6 +18,7 @@ setup(name='pyProClust',
                 'pyproct.algorithms',
                 'pyproct.algorithms.hierarchical',
                 'pyproct.algorithms.spectral',
+                'pyproclust.algorithms.spectral.cython',
                 'pyproct.algorithms.dbscan',
                 'pyproct.algorithms.dbscan.cython',
                 'pyproct.algorithms.kmedoids',
@@ -65,6 +66,9 @@ setup(name='pyProClust',
                    ], extra_compile_args=["-O3","-ffast-math"]),
                    Extension("pyproct.algorithms.dbscan.cython.cythonDbscanTools", [
                                 'pyproct/algorithms/dbscan/cython/cythonDbscanTools.c'
+                   ],extra_compile_args=["-O3","-ffast-math"]),
+                   Extension("pyproct.algorithms.spectral.cython.spectralTools", [
+                                'pyproct/algorithms/spectral/cython/spectralTools.c'
                    ],extra_compile_args=["-O3","-ffast-math"])
       ],
 
