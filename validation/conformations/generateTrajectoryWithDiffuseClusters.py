@@ -8,15 +8,11 @@ import sys
 import prody
 import numpy
 import numpy.random
-from pyproct.matrix.condensedMatrix import CondensedDistanceMatrix
-import pyRMSD.RMSD
-import matplotlib.pyplot as plt
 
 if __name__ == '__main__':
     pdb_path = sys.argv[1]
     output = sys.argv[2]
-    output_image_matrix = sys.argv[3]
-    cluster_frames_str = sys.argv[4:len(sys.argv)]
+    cluster_frames_str = sys.argv[3:len(sys.argv)]
     cluster_frames = []
     for c in cluster_frames_str:
         cluster_frames.append(int(c))
@@ -51,32 +47,3 @@ if __name__ == '__main__':
                     pdb.addCoordset(numpy.array([dir_modif*directions+base_coordinates]))
     
     prody.writePDB(output, pdb)
-    rmsd = pyRMSD.RMSD.calculateRMSDCondensedMatrix(pdb.getCoordsets(), "OMP_CALCULATOR")
-
-    condensed_distance_matrix = CondensedDistanceMatrix(rmsd)
-    
-    # Normalize
-    contents = condensed_distance_matrix.get_data()
-    _max = numpy.max(contents)
-    _min = numpy.min(contents)
-    
-    norm_contents = (contents - _min) / (_max - _min)
-    del condensed_distance_matrix
-    
-    norm_condensed = CondensedDistanceMatrix(norm_contents)
-    _max = numpy.max(norm_contents)
-    _min = numpy.min(norm_contents)
-    print _max," ",_min
-    complete = numpy.zeros([norm_condensed.row_length,norm_condensed.row_length] ,dtype=numpy.float)
-    
-    for i in range(norm_condensed.row_length-1):
-        for j in range(i+1,norm_condensed.row_length):
-            complete[i][j] = norm_condensed[i,j]
-            complete[j][i] = norm_condensed[i,j]
-    
-    fig = plt.figure()
-    plt.gray()
-    ax = fig.add_subplot(111)
-    cax = ax.imshow(complete, interpolation='nearest')
-    plt.show()
-    plt.savefig(output_image_matrix)
