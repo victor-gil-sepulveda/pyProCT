@@ -34,6 +34,7 @@ if __name__ == '__main__':
     options, args = parser.parse_args()
     
     params = convert_to_utf8(json.loads(open(options.parameters_file).read()))
+    if params["matrix"]["method"] != "distance":
     results = convert_to_utf8(json.loads(open(options.results_file).read()))
     
     if options.print_list:
@@ -47,7 +48,6 @@ if __name__ == '__main__':
             for not_selected_cluster in results["not_selected"]:
                 print_cluster_info("not_selected",not_selected_cluster,results)
         exit()
-    
     
     fig = plt.figure()
     ax = fig.gca(projection='3d')
@@ -71,8 +71,6 @@ if __name__ == '__main__':
         clustering = Clustering.from_dic(results["not_selected"][options.clustering_to_see]["clustering"])
         # Print some info
         print_cluster_info("not_selected", options.clustering_to_see, results)
-    
-    
     
     # Show all clusters
     colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
