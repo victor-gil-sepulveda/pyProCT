@@ -7,8 +7,8 @@ from distutils.core import setup, Extension
 import numpy
 import distutils.sysconfig
 
-setup(name='pyProClust',
-      version='1.0',
+setup(name='pyProCT',
+      version='1.0.0',
       description='',
       author='Victor Alejandro Gil Sepulveda',
       author_email='victor.gil.sepulveda@gmail.com',
@@ -72,4 +72,18 @@ setup(name='pyProClust',
                    ],extra_compile_args=["-O3","-ffast-math"])
       ],
 
+      scripts = [],
+
+      install_requires=[
+        "numpy>=1.6.1",
+        "PIL>=2.7.3",
+        "scipy>=0.9.0",
+        "matplotlib>=1.1.1rc",
+        "ProDy>=1.4.2",
+        "fastcluster>=1.1.6",
+        "scikit-learn>=0.12",
+        "pyScheduler>=0.1.0",
+        "pyRMSD>=4.0.0",
+        "mpi4py>=1.3"
+      ],
      )

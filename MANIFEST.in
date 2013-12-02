@@ -5,3 +5,6 @@ include pyproclust/clustering/metrics/cython/meanMinimumDistance.c
 include pyproclust/clustering/metrics/cython/meanMinimumDistance.c
 include pyproclust/algorithms/dbscan/cython/cythonDbscanTools.c
 include pyproct/algorithms/spectral/cython/spectralTools.c
+include README.md
+include README.rst
+include LICENSE

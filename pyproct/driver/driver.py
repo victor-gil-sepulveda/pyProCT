@@ -133,6 +133,7 @@ class Driver(Observable):
                 try:
                     displacements_path, CA_mean_square_displacements = visualizationTools.generate_CA_displacements_file(best_clustering,
                                                                                                                          self.trajectoryHandler,
+                                                                                                                         self.workspaceHandler,
                                                                                                                          self.matrixHandler)
 
                     self.generatedFiles.append({

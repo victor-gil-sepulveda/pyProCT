@@ -10,7 +10,7 @@ from pyproct.clustering.comparison.caDisplacement import CA_mean_square_displace
 import os
 import matplotlib.cm as cm
 
-def generate_CA_displacements_file(best_clustering, trajectoryHandler, matrixHandler):
+def generate_CA_displacements_file(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
     global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
     global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
     ca_pdb_coordsets =numpy.copy(trajectoryHandler.getJoinedPDB().select("name CA").getCoordsets())
@@ -36,7 +36,7 @@ def generate_CA_displacements_file(best_clustering, trajectoryHandler, matrixHan
         CA_mean_square_displacements[cluster.id] = list(CA_mean_square_displacement_of_cluster(ca_pdb_coordsets,\
                                                                                                cluster))
 
-    displacements_path = os.path.join(self.workspaceHandler["results"], "CA_displacements.json")
+    displacements_path = os.path.join(workspaceHandler["results"], "CA_displacements.json")
 
     return displacements_path, CA_mean_square_displacements
 
