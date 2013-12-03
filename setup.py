@@ -6,19 +6,26 @@ Created on 25/02/2013
 from distutils.core import setup, Extension
 import numpy
 import distutils.sysconfig
+import os
 
-setup(name='pyProCT',
+def read(fname):
+    return open(os.path.join(os.path.dirname(__file__), fname)).read()
+
+setup(
+      name='pyProCT',
       version='1.0.0',
       description='',
       author='Victor Alejandro Gil Sepulveda',
       author_email='victor.gil.sepulveda@gmail.com',
-      url='https://github.com/victor-gil-sepulveda/pyProClust',
+      url='https://github.com/victor-gil-sepulveda/pyProCT',
+      license = 'LICENSE.txt',
+      long_description = read('README.rst'),
       packages=[
                 'pyproct',
                 'pyproct.algorithms',
                 'pyproct.algorithms.hierarchical',
                 'pyproct.algorithms.spectral',
-                'pyproclust.algorithms.spectral.cython',
+                'pyproct.algorithms.spectral.cython',
                 'pyproct.algorithms.dbscan',
                 'pyproct.algorithms.dbscan.cython',
                 'pyproct.algorithms.kmedoids',
@@ -47,7 +54,6 @@ setup(name='pyProCT',
 
       include_dirs = [numpy.get_include(),
                       distutils.sysconfig.get_python_inc()],
-
       ext_modules=[
                    Extension('pyproct.clustering.metrics.cython.normNCut',[
                                 'pyproct/clustering/metrics/cython/normNCut.c'
@@ -72,11 +78,9 @@ setup(name='pyProCT',
                    ],extra_compile_args=["-O3","-ffast-math"])
       ],
 
-      scripts = [],
-
       install_requires=[
         "numpy>=1.6.1",
-        "PIL>=2.7.3",
+        "PIL>=1.1.6",
         "scipy>=0.9.0",
         "matplotlib>=1.1.1rc",
         "ProDy>=1.4.2",
@@ -85,5 +89,5 @@ setup(name='pyProCT',
         "pyScheduler>=0.1.0",
         "pyRMSD>=4.0.0",
         "mpi4py>=1.3"
-      ],
-     )
+      ]
+)
