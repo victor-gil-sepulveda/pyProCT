@@ -6,7 +6,7 @@ Created on 20/02/2012
 
 
 spaeth_01 = """41 45
-39 44 
+39 44
 42 43
 44 43
 10 42
@@ -84,7 +84,7 @@ spaeth_02 = """13 50
 26  2
 48  2
  5  1"""
- 
+
 spaeth_03 = """38 50
 40 50
 44 50
@@ -363,7 +363,7 @@ spaeth_07 = """11 50
 49 11
  1  9
  5  8"""
- 
+
 spaeth_08 = """16 50
 37 50
 40 50
@@ -391,7 +391,7 @@ spaeth_08 = """16 50
 29 29
 24 28
  2 26
- 6 26 
+ 6 26
 19 26
 22 26
 32 26
@@ -441,7 +441,7 @@ spaeth_08 = """16 50
 47  2
  1  1
 30  1"""
- 
+
 concentric_circles = """1.197 -0.236
 1.005 0.174
 1.133 0.158
@@ -892,7 +892,7 @@ concentric_circles = """1.197 -0.236
 4.995 -0.168
 4.914 -0.409
 5.463 -0.344"""
- 
+
 all_datasets = {
                 'spaeth_01':spaeth_01,
                 'spaeth_02':spaeth_02,
@@ -900,48 +900,87 @@ all_datasets = {
                 'spaeth_04':spaeth_04,
                 'spaeth_05':spaeth_05,
                 'spaeth_06':spaeth_06,
-                'spaeth_07':spaeth_07, 
-                'spaeth_08':spaeth_08, 
+                'spaeth_07':spaeth_07,
+                'spaeth_08':spaeth_08,
                 'concentric_circles':concentric_circles
-                }
+}
 
-# From visual inspection
-number_of_clusters = {
-                        'spaeth_01':range(3,7),
-                        'spaeth_02': range(1,10),
-                        'spaeth_03': range(1,4),
-                        'spaeth_04': [6],
-                        'spaeth_05': [3],
-                        'spaeth_06': [3],
-                        'spaeth_07': [2], 
-                        'spaeth_08': [3], 
-                        'concentric_circles': [3,4]
-                      }
+scale_factor = {
+                'spaeth_01': 1,
+                'spaeth_02': 1,
+                'spaeth_03': 1,
+                'spaeth_04': 1,
+                'spaeth_05': 1,
+                'spaeth_06': 1,
+                'spaeth_07': 1,
+                'spaeth_08': 1,
+                'concentric_circles': 5
+}
 
-# Parameters for Spectral from visual inspection
-sigma_sq = {
-                        'spaeth_01': 8.,
-                        'spaeth_02': 10.,
-                        'spaeth_03': 15.,
-                        'spaeth_04': 5.,
-                        'spaeth_05': 4.105,
-                        'spaeth_06': 2.2,
-                        'spaeth_07': 7, 
-                        'spaeth_08': 8., 
-                        'concentric_circles': 2.5
-                      } # Nota: parece que sigma esta relacionada con el ratio entre la distancia maxima y la varianza
+##########################
+## Hypothesis definition
+##########################
 
-# Parameters for DBSCAN [eps, minpts] 
-DBSCAN_params_sq = {
-                        'spaeth_01': [{"eps":6 ,"minpts":3}],
-                        'spaeth_02': [{"eps":8 ,"minpts":2}],
-                        'spaeth_03': [{"eps":4 ,"minpts":4}],
-                        'spaeth_04': [{"eps":6 ,"minpts":3}],
-                        'spaeth_05': [{"eps":4 ,"minpts":3}],
-                        'spaeth_06': [{"eps":4.8 ,"minpts":3},{"eps":5.3 ,"minpts":3}],
-                        'spaeth_07': [{"eps":5.2 ,"minpts":3}], 
-                        'spaeth_08': [{"eps":4 ,"minpts":3}], 
-                        # Nota concentric_circles: basicamente tenemos que encontrar un buen eps para un
-                        # minpts reducido para que el clustering no se expanda del centro 
-                        # a los circulos concentricos
-                        'concentric_circles': [{"eps":0.6*5 ,"minpts":4}]} 
+num_cluster_ranges={
+                'spaeth_01':(2,10),
+                'spaeth_02':(2,10),
+                'spaeth_03':(2,10),
+                'spaeth_04':(5,10),
+                'spaeth_05':(3,4),
+                'spaeth_06':(3,4),
+                'spaeth_07':(2,10),
+                'spaeth_08':(3,8),
+                'concentric_circles':(3,4)
+}
+
+
+minsize = {
+                'spaeth_01': 3,
+                'spaeth_02': 2,
+                'spaeth_03': 10,
+                'spaeth_04': 8,
+                'spaeth_05': 10,
+                'spaeth_06': 13,
+                'spaeth_07': 10,
+                'spaeth_08': 5,
+                'concentric_circles': 100
+}
+
+noise = {
+                'spaeth_01': 10,
+                'spaeth_02': 10,
+                'spaeth_03': 10,
+                'spaeth_04': 10,
+                'spaeth_05': 10,
+                'spaeth_06': 10,
+                'spaeth_07': 10,
+                'spaeth_08': 10,
+                'concentric_circles': 10
+}
+criteria = {
+    "default":{
+        "default_criteria": {
+            "CythonSilhouette": {
+                "action": ">",
+                "weight": 3
+            },
+            "CythonMirrorCohesion": {
+                "action": ">",
+                "weight": 2
+            }
+        }
+    },
+    "concentric_circles":{
+        "graph_criteria": {
+            "CythonNormNCut": {
+                "action": "<",
+                "weight": 2
+            },
+            "CythonSilhouette": {
+                 "action": ">",
+                 "weight": 1
+             }
+        }
+    }
+}
+

@@ -4,152 +4,59 @@ Created on 20/02/2012
 @author: victor
 '''
 
-import validation.algorithms.datasets as data
-import scipy.spatial.distance as distance
-from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
-from pyproct.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm
-from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
-from pyproct.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
-from pyproct.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
-from validation.algorithms.validationTools import params_to_string, dataset_loading_2D,\
-    show_2D_dataset_clusters, generate_similarity_network
+import json
+import os.path
+import validation.bidimensional.datasets as data
+import validation.bidimensional.validationTools as vtools
 from pyproct.tools.scriptTools import create_directory
-import pyproct.algorithms.dbscan.parametersGeneration as DBSParametersGenerator
-import pyproct.algorithms.gromos.parametersGeneration as GromosParametersGenerator
-
-
-class FakeMatrixHandler:
-    def __init__(self,matrix):
-        self.distance_matrix = matrix
-        
-"""
-Script for visual validation of algorithms.
-"""
-def get_algorithms():
-    algorithms = {
-                  "GROMOS":GromosAlgorithm,
-                  "DBSCAN":DBSCANAlgorithm,
-                  "K-Medoids":KMedoidsAlgorithm,
-                  "Hierarchical":HierarchicalClusteringAlgorithm,
-                  "Spectral":SpectralClusteringAlgorithm
-                  }
-    
-    return algorithms
-
-def generate_params_for_alg_and_dataset(condensed_matrices):
-    
-    params = {
-              "GROMOS":{},
-              "DBSCAN":{},
-              "K-Medoids":{},
-              "Hierarchical":{},
-              "Spectral":{}
-              }
-    
-    for algorithm_name in params.keys():
-        for dataset_name in data.number_of_clusters:
-            params[algorithm_name][dataset_name] = []
-    
-    # Params for spectral and K-medoids
-    for dataset_name in data.number_of_clusters:
-        num_clusters_list = data.number_of_clusters[dataset_name]
-        for num_clusters in num_clusters_list:
-            params["K-Medoids"][dataset_name].append({"k":num_clusters,
-                                                      "seeding_type":"EQUIDISTANT"})
-            
-            params["Spectral"][dataset_name].append({"store_W":True,
-                                                     "max_clusters":max(num_clusters_list),
-                                                     "sigma_sq":data.sigma_sq[dataset_name],
-                                                     "k":num_clusters,
-                                                     "use_k_medoids": True})
-        
-    # Params for GROMOS
-    for dataset_name in data.number_of_clusters:
-        params["GROMOS"][dataset_name].append({'cutoff':7.0})
-        params["GROMOS"][dataset_name].append({'cutoff':5.0})
-        params["GROMOS"][dataset_name].append({'cutoff':3.0})
-        params["Hierarchical"][dataset_name].append({'cutoff':1.1523})
-    for dataset_name in data.number_of_clusters:
-        params["GROMOS"][dataset_name].extend(GromosParametersGenerator.ParametersGenerator({"clustering":{
-                                                                                                           "algorithms":{
-                                                                                                                         "gromos":{
-                                                                                                                                   "max":10
-                                                                                                                                   }
-                                                                                                                         }
-                                                                                                           }
-                                                                                          }
-                                                                                         ,FakeMatrixHandler(condensed_matrices[dataset_name])
-                                              ).get_parameters()[0])
-        
-    
-    params["DBSCAN"] = data.DBSCAN_params_sq
-    for dataset_name in data.number_of_clusters:
-        params["DBSCAN"][dataset_name].extend(DBSParametersGenerator.ParametersGenerator({"evaluation":{
-                                                                                                        "maximum_noise":10
-                                                                                                        }
-                                                                                          }
-                                                                                         ,FakeMatrixHandler(condensed_matrices[dataset_name])
-                                              ).get_parameters()[0])
-        
-    return params
+from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
+from pyproct.driver.parameters import ProtocolParameters
+from pyproct.driver.observer.observer import Observer
+from pyproct.driver.driver import Driver
+from pyproct.tools.commonTools import convert_to_utf8
+from pyproct.clustering.clustering import Clustering
 
 if __name__ == '__main__':
-    
-    condensed_matrices = {}
-    all_observations = {}
     create_directory("./clustering_images")
-    # Creation of all matrices
+    create_directory("./matrices")
+    create_directory("./tmp")
+    condensed_matrices, all_observations = vtools.create_matrices(data)
+    # Saving matrices
     for dataset_name in data.all_datasets:
-        dataset = data.all_datasets[dataset_name]
-        # Creating the matrix
-        if dataset_name == "concentric_circles":
-            observations = dataset_loading_2D(dataset,5)
-        else:
-            observations = dataset_loading_2D(dataset)
-        
-        all_observations[dataset_name] = observations
-        condensed_matrix_data = distance.pdist(observations)
-        condensed_matrix = CondensedMatrix(condensed_matrix_data)
-        condensed_matrices[dataset_name] = condensed_matrix
-        print "Matrix for %s:"%dataset_name
-        print "-----------------------"
-        print "Max dist. = ",condensed_matrix.calculateMax() 
-        print "Min dist. = ",condensed_matrix.calculateMin()
-        print "Mean dist. = ",condensed_matrix.calculateMean()
-        print "Variance = ",condensed_matrix.calculateVariance()
-        print "-----------------------\n"
- 
-    params_for_alg_and_dataset = generate_params_for_alg_and_dataset(condensed_matrices)
-    
-    # Generation of clusterings
+        handler = MatrixHandler({"method":"load"})
+        handler.distance_matrix = condensed_matrices[dataset_name]
+        handler.save_matrix("./matrices/%s"%dataset_name)
+
+    # Run pyProCT for each of them
+    base_script = "".join(open("base_script.json","r").readlines())
     for dataset_name in data.all_datasets:
         print dataset_name
-        observations = all_observations[dataset_name] 
-        condensed_matrix = condensed_matrices[dataset_name]
-        
-        for algorithm_name in ["GROMOS","DBSCAN","K-Medoids","Hierarchical","Spectral"]:
-            params_list = params_for_alg_and_dataset[algorithm_name][dataset_name]
-            print "\t",algorithm_name
-             
-            for params in params_list:
-                print "\t\t",params
-                algorithm = get_algorithms()[algorithm_name](condensed_matrix, **params)
-                if(algorithm_name == "Spectral"):
-                    generate_similarity_network(algorithm.W,
-                                                observations,
-                                                scale = 30,
-                                                margin = 20,
-                                                print_numbers = False).save("clustering_images/%s_spectral_network.jpg"%dataset_name,
-                                                                            "JPEG")
-                clustering = algorithm.perform_clustering(params)
-                image_name = algorithm_name+"_"+dataset_name+"_"+params_to_string(params)
-                show_2D_dataset_clusters(observations,
-                                         clustering,
-                                         scale = 20,
-                                         margin = 20).save("clustering_images/%s.jpg"%image_name,
-                                                  "JPEG")
+        # Change placeholders
+        script_str = base_script%("./matrices/%s"%dataset_name,os.path.abspath("./tmp/%s"%dataset_name))
+        parameters = ProtocolParameters.get_params_from_json(script_str)
+        # And change another hypothesis stuff
+        parameters["evaluation"]["maximum_noise"] = data.noise[dataset_name]
+        parameters["evaluation"]["minimum_cluster_size"] = data.minsize[dataset_name]
+        parameters["evaluation"]["minimum_clusters"] = data.num_cluster_ranges[dataset_name][0]
+        parameters["evaluation"]["maximum_clusters"] = data.num_cluster_ranges[dataset_name][1]
+        print parameters["evaluation"]["minimum_clusters"], parameters["evaluation"]["maximum_clusters"]
+        if dataset_name in data.criteria:
+            parameters["evaluation"]["evaluation_criteria"] = data.criteria[dataset_name]
+        else:
+            parameters["evaluation"]["evaluation_criteria"] = data.criteria["default"]
+        Driver(Observer()).run(parameters)
 
-    
-    print
-    print "Done"
+    for dataset_name in data.all_datasets:
+        results_file = os.path.join(os.path.abspath("./tmp/%s"%dataset_name),"results/results.json")
+        results = convert_to_utf8(json.loads(open(results_file).read()))
+        best = results["best_clustering"]
+        clustering = Clustering.from_dic(results["selected"][best]["clustering"])
+        vtools.show_2D_dataset_clusters(all_observations[dataset_name],
+                                        clustering,
+                                        scale = 20,
+                                        margin = 20).save("clustering_images/%s.jpg"%dataset_name,
+                                                 "JPEG")
+        print dataset_name,results["selected"][best]["type"],results["selected"][best]["parameters"]
+
+
+    print "\nDone"

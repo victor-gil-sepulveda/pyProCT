@@ -1,0 +1,72 @@
+{
+    "clustering": {
+        "control": {
+            "scheduler_type": "Process/Parallel",
+            "number_of_processes": 6
+        },
+        "generation": {
+            "method": "generate"
+        },
+        "algorithms": {
+            "spectral": {
+                "auto": true,
+                "use": true,
+                "max": 25
+            },
+            "dbscan": {
+                "auto": true,
+                "use": true,
+                "max": 25
+            },
+            "gromos": {
+                "auto": true,
+                "use": true,
+                "max": 25
+            },
+            "kmedoids": {
+                "auto": true,
+                "use": true,
+                "max": 25
+            },
+            "random": {
+                "auto": true,
+                "use": false
+            },
+            "hierarchical": {
+                "auto": true,
+                "use": true
+            }
+        }
+    },
+    "global": {
+        "action": {
+            "type": "advanced"
+        },
+        "pdbs": [
+            "fake.pdb"
+        ]
+    },
+    "evaluation": {
+        "evaluation_criteria": {
+        },
+        "query_types": [
+            "NumClusters",
+            "NoiseLevel",
+            "MeanClusterSize"
+        ]
+    },
+    "matrix": {
+        "method": "load",
+        "parameters": {
+            "path": "%s"
+        }
+    },
+    "workspace": {
+        "tmp": "tmp",
+        "matrix": "matrix",
+        "clusterings": "clusterings",
+        "results": "results",
+        "refinement": "refinement",
+        "base": "%s"
+    }
+}
