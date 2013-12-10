@@ -29,7 +29,7 @@ if __name__ == '__main__':
 
     # Run pyProCT for each of them
     base_script = "".join(open("base_script.json","r").readlines())
-    for dataset_name in data.all_datasets:
+    for dataset_name in data.all_datasets: #["spaeth_06"]:#
         print dataset_name
         # Change placeholders
         script_str = base_script%("./matrices/%s"%dataset_name,os.path.abspath("./tmp/%s"%dataset_name))

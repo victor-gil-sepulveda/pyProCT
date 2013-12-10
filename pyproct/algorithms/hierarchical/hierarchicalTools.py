@@ -13,20 +13,29 @@ def find_cutoff_limit(starting_cutoff, min_clusters, max_clusters, grain, hie_al
     @param starting_cutoff: A guess of the smaller cutoff we can use. It can be 0
     @param min_clusters: The minimum number of clusters allowed by clustering.
     @param max_clusters: The maximum number of clusters allowed by clustering.
-    @param grain: The cutoff step that will be used to discover the cutoff range. I positive it will move to the
-    right, if negative to the left.
+    @param grain: The cutoff step that will be used to discover the cutoff range. If it is positive it is going
+    to move to the right, if negative to the left. Exiting conditions are also based on this.
     @param hie_algorithm: The hierarchical algorithm instance (holds the hie matrix, so that it has not to be
     calculated each time we get a clustering).
     """
     current_cutoff = starting_cutoff
     search_ended = False
-    while not search_ended:
+    while not search_ended :
         clustering = hie_algorithm.perform_clustering(kwargs={"cutoff":current_cutoff})
         clustering_size = len(clustering.clusters)
         # Stop when it is into the allowed range
-        search_ended =  clustering_size >= min_clusters and clustering_size <= max_clusters
+        im_in_the_range = clustering_size >= min_clusters and clustering_size <= max_clusters
+
+        im_out_of_range = False
+        if grain>0: # we are moving to the 'right', so to bigger cutoffs and smaller clusters
+            im_out_of_range = clustering_size <= min_clusters
+        else:
+            im_out_of_range = clustering_size >= max_clusters
+
+        search_ended =  im_in_the_range or im_out_of_range
+        #print "current", current_cutoff, "->", clustering_size, "   ", grain
         current_cutoff += grain
-    return current_cutoff
+    return current_cutoff - grain
 
 def get_cutoff_range(starting_cutoff, ending_cutoff, min_clusters, max_clusters, grain, hie_algorithm):
     """
@@ -58,7 +67,7 @@ def get_cutoff_range(starting_cutoff, ending_cutoff, min_clusters, max_clusters,
     if lefmost_limit <= rightmost_limit:
         return (lefmost_limit, rightmost_limit)
     else:
-        return (rightmost_limit,lefmost_limit, rightmost_limit+grain)
+        return (rightmost_limit, rightmost_limit+grain)
 
 def get_clusters_with_ranged_search(   hie_algorithm,
                                        cutoff_range_begin,
@@ -81,12 +90,15 @@ def get_clusters_with_ranged_search(   hie_algorithm,
     @param max_clusters: The maximum number of clusters allowed by clustering.
     """
 
+    #print cutoff_range_begin, cutoff_range_end,min_clusters,max_clusters
     lefmost_limit, rightmost_limit = get_cutoff_range(cutoff_range_begin,
                                                       cutoff_range_end,
                                                       min_clusters,
                                                       max_clusters,
-                                                      0.001,
+                                                      0.01,
                                                       hie_algorithm)
+    #print lefmost_limit, rightmost_limit
+    #exit()
 
     increment = (rightmost_limit-lefmost_limit)/refine_grain
 
