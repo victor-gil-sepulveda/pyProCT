@@ -5,6 +5,19 @@ Created on 21/05/2012
 '''
 
 def find_cutoff_limit(starting_cutoff, min_clusters, max_clusters, grain, hie_algorithm):
+    """
+    Calculates one of the limits of the cutoff range by adding 'grain' to the starting cutoff until the
+    number of clusters of the produced clustering is into the expected range. The direction can be controlled
+    with the sign of 'grain'.
+
+    @param starting_cutoff: A guess of the smaller cutoff we can use. It can be 0
+    @param min_clusters: The minimum number of clusters allowed by clustering.
+    @param max_clusters: The maximum number of clusters allowed by clustering.
+    @param grain: The cutoff step that will be used to discover the cutoff range. I positive it will move to the
+    right, if negative to the left.
+    @param hie_algorithm: The hierarchical algorithm instance (holds the hie matrix, so that it has not to be
+    calculated each time we get a clustering).
+    """
     current_cutoff = starting_cutoff
     search_ended = False
     while not search_ended:
@@ -16,6 +29,19 @@ def find_cutoff_limit(starting_cutoff, min_clusters, max_clusters, grain, hie_al
     return current_cutoff
 
 def get_cutoff_range(starting_cutoff, ending_cutoff, min_clusters, max_clusters, grain, hie_algorithm):
+    """
+    Returns the cutoff range where the cutoff is inside the range defined by [min_clusters, max_clusters]. It
+    first calculates the left limit (from the minimum value of the cutoff, and the smaller number of clusters) and
+    then the right limit (from the maximum value of the cutoff).
+
+    @param starting_cutoff: A guess of the smaller cutoff we can use. It can be 0
+    @param ending_cutoff: A guess of the bigger cutoff we can use.
+    @param min_clusters: The minimum number of clusters allowed by clustering.
+    @param max_clusters: The maximum number of clusters allowed by clustering.
+    @param grain: Positive number that defines the cutoff step that will be used to discover the cutoff range.
+    @param hie_algorithm: The hierarchical algorithm instance (holds the hie matrix, so that it has not to be
+    calculated each time we get a clustering).
+    """
 
     lefmost_limit = find_cutoff_limit(starting_cutoff = starting_cutoff,
                                       min_clusters = min_clusters,
@@ -29,7 +55,10 @@ def get_cutoff_range(starting_cutoff, ending_cutoff, min_clusters, max_clusters,
                                           grain = -grain,
                                           hie_algorithm = hie_algorithm)
 
-    return (lefmost_limit, rightmost_limit)
+    if lefmost_limit <= rightmost_limit:
+        return (lefmost_limit, rightmost_limit)
+    else:
+        return (rightmost_limit,lefmost_limit, rightmost_limit+grain)
 
 def get_clusters_with_ranged_search(   hie_algorithm,
                                        cutoff_range_begin,
@@ -38,13 +67,18 @@ def get_clusters_with_ranged_search(   hie_algorithm,
                                        max_clusters,
                                        refine_grain):
     """
-    Searchs for the range of cutoffs where we are going to get a number of clusters inside the allowed number
+    Searches for the range of cutoffs where we are going to get a number of clusters inside the allowed number
     of clusters [min_clusters,max_clusters]. Returns a dictionary indexed by number of clusters where each item
     is a tuple of (cutoff,Clustering). A dictionary is used because all clusterings with same number of clusters
     would be the same (and in this way we get the set without repetition).
 
     @param cutoff_range_begin: A guess of the smaller cutoff we can use. It can be 0
     @param cutoff_range_end: A guess of the bigger cutoff we can use.
+    @param refine_grain: Positive number that defines the cutoff step that will be used to discover the cutoff range.
+    @param hie_algorithm: The hierarchical algorithm instance (holds the hie matrix, so that it has not to be
+    calculated each time we get a clustering).
+    @param min_clusters: The minimum number of clusters allowed by clustering.
+    @param max_clusters: The maximum number of clusters allowed by clustering.
     """
 
     lefmost_limit, rightmost_limit = get_cutoff_range(cutoff_range_begin,
