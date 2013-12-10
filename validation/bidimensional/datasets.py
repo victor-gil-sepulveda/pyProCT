@@ -970,16 +970,49 @@ criteria = {
             }
         }
     },
-    "concentric_circles":{
+    "spaeth_05":{
         "graph_criteria": {
             "CythonNormNCut": {
                 "action": "<",
                 "weight": 2
             },
-            "CythonSilhouette": {
-                 "action": ">",
-                 "weight": 1
-             }
+            "CythonMirrorCohesion": {
+                "action": ">",
+                "weight": 1
+            }
+        }
+
+    },
+    "spaeth_06":{
+        "graph_criteria": {
+            "CythonNormNCut": {
+                "action": "<",
+                "weight": 2
+            }
+        }
+    },
+    "spaeth_07":{
+        "graph_criteria": {
+            "CythonNormNCut": {
+                "action": "<",
+                "weight": 2
+            }
+        }
+    },
+    "spaeth_08":{
+        "graph_criteria": {
+            "CythonNormNCut": {
+                "action": "<",
+                "weight": 2
+            }
+        }
+    },
+    "concentric_circles":{
+        "graph_criteria": {
+            "CythonNormNCut": {
+                "action": "<",
+                "weight": 2
+            }
         }
     }
 }

@@ -1,46 +1,36 @@
 from itertools import product
+from pyproct.algorithms.spectral.cython.spectralTools import local_sigma_W_estimation
+from pyproct.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
 
 def getClusterAndComplementary(i,all_clusters):
     """
-    Returns the list representing the elements of cluster 'ith' and the 
-    list representing the sum of elements of all other clusters. 
+    Returns the list representing the elements of cluster 'ith' and the
+    list representing the sum of elements of all other clusters.
     """
-    complementary = []
+    complementary_elements = []
     for j in range(len(all_clusters)):
         if j != i:
-            complementary.extend(all_clusters[j].all_elements)
-    return(all_clusters[i].all_elements,complementary)
+            complementary_elements.extend(all_clusters[j].all_elements)
+    return(all_clusters[i].all_elements, complementary_elements)
 
-cdef double W(A1,A2,condensed_matrix):
+cdef double W_partition (A1, A2, W):
     """
     W(A,B) = sum_{i pert A, j pert B} w_i_j
     """
     cdef double  w = 0.
-    
-    for indices in product(A1,A2):
-        w = w + condensed_matrix[indices]
+
+    for i,j in product(A1,A2):
+        w = w + W[i,j]
     return w
 
-cdef double d( int i, condensed_matrix):
-    """
-    Degree of a vertex:
-    d_i = sum_{j=1}^n w_ij
-    """
-    cdef double d_val = 0.
-    cdef int n = condensed_matrix.row_length
-    cdef int j
-    for j in range(n):
-        d_val += condensed_matrix[i,j]
-    return d_val
-
-cdef double vol(A,condensed_matrix):
+cdef double vol(A, D, condensed_matrix):
     """
     vol(A) = sum_{i pert A} d_i
     """
     cdef double vol_val = 0.
     cdef int i
     for i in  A:
-        vol_val += d(i,condensed_matrix)   
+        vol_val += D[i]
     return vol_val
 
 
@@ -50,16 +40,20 @@ cdef class CythonNCut(object):
     """
     def __init__(self):
         pass
-    
-    cpdef double evaluate(self,clustering,condensed_matrix) except *:
+
+    cpdef double evaluate(self, clustering, condensed_matrix) except *:
         """
         Evaluates:
         NCut = 1/2 sum_{i=1}^k W(A_i,A_i-complementary) / vol(A_i)
         """
+        # Calculate similarity graph
+        W, sigma = local_sigma_W_estimation(condensed_matrix)
+        D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
         clusters = clustering.clusters
+
         cdef double ncut_val = 0
         cdef int i = 0
         for i in range(len(clusters)):
             A, Acomp = getClusterAndComplementary(i,clusters)
-            ncut_val += W(A, Acomp, condensed_matrix) / vol(A, condensed_matrix)
+            ncut_val += W_partition(A, Acomp, condensed_matrix) / vol(A, D, condensed_matrix)
         return 0.5*ncut_val
