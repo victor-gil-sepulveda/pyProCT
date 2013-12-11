@@ -926,7 +926,7 @@ num_cluster_ranges={
                 'spaeth_02':(2,10),
                 'spaeth_03':(2,10),
                 'spaeth_04':(5,10),
-                'spaeth_05':(3,4),
+                'spaeth_05':(2,10),
                 'spaeth_06':(3,4),
                 'spaeth_07':(2,10),
                 'spaeth_08':(3,8),
@@ -951,11 +951,11 @@ noise = {
                 'spaeth_02': 10,
                 'spaeth_03': 10,
                 'spaeth_04': 10,
-                'spaeth_05': 10,
+                'spaeth_05': 5,
                 'spaeth_06': 10,
                 'spaeth_07': 10,
                 'spaeth_08': 10,
-                'concentric_circles': 10
+                'concentric_circles': 0
 }
 criteria = {
     "default":{
@@ -975,10 +975,6 @@ criteria = {
             "CythonNormNCut": {
                 "action": "<",
                 "weight": 2
-            },
-            "CythonMirrorCohesion": {
-                "action": ">",
-                "weight": 1
             }
         }
 

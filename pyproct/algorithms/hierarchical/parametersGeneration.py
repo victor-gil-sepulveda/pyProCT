@@ -46,7 +46,7 @@ class ParametersGenerator(object):
         clusters_and_cutoff = hierarchicalTools.get_clusters_with_ranged_search(
                                                                         hierarchicalAlgorithm,
                                                                         0.,
-                                                                        self.distance_matrix.calculateMax(),
+                                                                        self.distance_matrix.calculateMean(),
                                                                         min_clusters,
                                                                         max_clusters,
                                                                         ParametersGenerator.HIERARCHICAL_REFINEMENT_VALUE)
