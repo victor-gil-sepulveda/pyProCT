@@ -11,7 +11,9 @@ import numpy.random
 from validation.conformations.generateTrajectoryWithNaturalClusters import preprocess_pdb,\
     print_matrix
 
-MAX_SIMILARITY = 0.45
+MIN_SIMILARITY = 0.1
+MAX_SIMILARITY = 0.5
+MAX_TRIES = 20
 
 if __name__ == '__main__':
     pdb, input_coordsets, cluster_frames, output = preprocess_pdb(sys.argv)
@@ -24,24 +26,22 @@ if __name__ == '__main__':
         for j in range(len(cluster_frames)):
             if i!= j:
                 directions = input_coordsets[j] - base_coordinates
-                for k in range(20):
-                    displacement_magnitudes = numpy.random.uniform(low=0.0, high=MAX_SIMILARITY, size = numatoms)
-                    pdb.addCoordset(numpy.array([ (displacement_magnitudes *directions.T).T+base_coordinates]))
+
+                displacement_magnitudes = numpy.random.exponential(scale = 1, size = 20)
+                displacement_magnitudes /= numpy.max(displacement_magnitudes)
+                displacement_magnitudes *= (MAX_SIMILARITY-MIN_SIMILARITY)
+                displacement_magnitudes += MIN_SIMILARITY
+
+                step = (MAX_SIMILARITY-MIN_SIMILARITY) / MAX_TRIES
+                for k in range(MAX_TRIES):
+#                     displacement_magnitudes = numpy.random.exponential(scale = 1,
+#                                                                     size = numatoms)
+#                     displacement_magnitudes /= numpy.max(displacement_magnitudes)
+#                     displacement_magnitudes *= (MAX_SIMILARITY-MIN_SIMILARITY)
+#                     displacement_magnitudes += MIN_SIMILARITY
+#                     pdb.addCoordset(numpy.array([(displacement_magnitudes[k] *directions.T).T+base_coordinates]))
+
+                    pdb.addCoordset(numpy.array([((MIN_SIMILARITY+(step*k))*directions.T).T+base_coordinates]))
 
     print_matrix(pdb.select("name CA").getCoordsets(), output+"_big")
     prody.writePDB(output+".pdb", pdb)
-
-
-#                 Normalize translations to have at most a 1A displacement
-#                 max_norm = numpy.max(numpy.sqrt(numpy.sum(directions*directions,1)))
-#                 norm_dirs = directions/max_norm
-#                 norm_dirs = (directions.T / numpy.sqrt(numpy.sum(directions*directions,1))).T
-#                 for k in range(20):
-#                     # New direction will be a random fraction of the distance with random sense
-#                     # plus a totally random fluctuation
-#                     fluctuation = numpy.random.uniform(low=-1.0, high=1.0, size = (numatoms,3))
-#                     direction_modif = numpy.random.uniform(low=-1.0, high=1.0, size = (numatoms,3))
-#                     translations = (direction_modif*(directions+fluctuation))
-#                     norm_translations =(translations.T / numpy.sqrt(numpy.sum(translations*translations,1))).T
-#                     displacement_magnitudes = numpy.random.randint(low=0, high=MAX_TRANSLATION, size = numatoms)
-#                     pdb.addCoordset(numpy.array([ (displacement_magnitudes *norm_translations.T).T+base_coordinates]))

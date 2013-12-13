@@ -1,0 +1,81 @@
+{
+    "clustering": {
+        "control": {
+            "scheduler_type":"Process/Parallel",
+            "number_of_processes": 6
+        },
+        "generation": {
+            "method": "generate"
+        },
+        "algorithms": {
+            "spectral": {
+                "auto": true,
+                "use": false,
+                "sigma": 1,
+                "max": 25
+            },
+            "dbscan": {
+                "auto": true,
+                "use": true
+            },
+            "gromos": {
+                "auto": true,
+                "use": true,
+                "max": 15
+            },
+            "kmedoids": {
+                "auto": true,
+                "use": true,
+                "max": 25
+            },
+            "random": {
+                "auto": true,
+                "use": false
+            },
+            "hierarchical": {
+                "auto": true,
+                "use": true
+            }
+        }
+    },
+    "global": {
+        "action": {
+            "type": "advanced",
+            "parameters": {
+                "keep_remarks": true
+            }
+        },
+        "pdbs": [
+        ]
+    },
+    "evaluation": {
+        "maximum_noise": 25,
+        "minimum_cluster_size": 100,
+        "maximum_clusters": 20,
+        "minimum_clusters": 4,
+        "query_types": [
+        ],
+        "evaluation_criteria": {
+        }
+    },
+    "matrix": {
+        "method": "rmsd",
+        "parameters": {
+            "calculator_type": "QCP_OMP_CALCULATOR",
+            "fit_selection": "name CA",
+            "calc_selection": ""
+        },
+        "filename": "matrix",
+        "image": {
+        	"filename":"matrix_image",
+        	"dimension":1000
+         }
+    },
+    "workspace": {
+        "tmp": "tmp",
+        "matrix": "matrix",
+        "clusterings": "clusterings",
+        "results": "results",
+        "refinement": "refinement"
+    }
+}
