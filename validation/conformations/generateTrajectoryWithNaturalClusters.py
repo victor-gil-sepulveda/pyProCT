@@ -61,7 +61,7 @@ if __name__ == '__main__':
             rand_list = []
             for r in range(numatoms*3):
                 rand_list.append(random.uniform(-1, 1))
-            coordset = numpy.resize(numpy.array(rand_list),(numatoms,3))
-            pdb.addCoordset(numpy.array([coordset+base_coordinates]))
+            rand_displacements = numpy.resize(numpy.array(rand_list),(numatoms,3))
+            pdb.addCoordset(numpy.array([rand_displacements+base_coordinates]))
     print_matrix(pdb.select("name CA").getCoordsets(), output+"_big")
     prody.writePDB(output+".pdb", pdb)

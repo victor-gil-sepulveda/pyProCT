@@ -11,8 +11,8 @@ import numpy.random
 from validation.conformations.generateTrajectoryWithNaturalClusters import preprocess_pdb,\
     print_matrix
 
-MIN_SIMILARITY = 0.1
-MAX_SIMILARITY = 0.5
+MIN_SIMILARITY = 0.05
+MAX_SIMILARITY = 0.6
 MAX_TRIES = 20
 
 if __name__ == '__main__':
@@ -34,13 +34,6 @@ if __name__ == '__main__':
 
                 step = (MAX_SIMILARITY-MIN_SIMILARITY) / MAX_TRIES
                 for k in range(MAX_TRIES):
-#                     displacement_magnitudes = numpy.random.exponential(scale = 1,
-#                                                                     size = numatoms)
-#                     displacement_magnitudes /= numpy.max(displacement_magnitudes)
-#                     displacement_magnitudes *= (MAX_SIMILARITY-MIN_SIMILARITY)
-#                     displacement_magnitudes += MIN_SIMILARITY
-#                     pdb.addCoordset(numpy.array([(displacement_magnitudes[k] *directions.T).T+base_coordinates]))
-
                     pdb.addCoordset(numpy.array([((MIN_SIMILARITY+(step*k))*directions.T).T+base_coordinates]))
 
     print_matrix(pdb.select("name CA").getCoordsets(), output+"_big")
