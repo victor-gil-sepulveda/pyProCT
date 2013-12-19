@@ -12,8 +12,9 @@ from matplotlib.projections import register_projection
 
 N = 9
 
-
-# from http://matplotlib.org/examples/api/radar_chart.html
+################################################################
+# From http://matplotlib.org/examples/api/radar_chart.html
+################################################################
 def unit_poly_verts(theta):
     """Return vertices of polygon for subplot axes.
 
@@ -104,7 +105,7 @@ def radar_factory(num_vars, frame='circle'):
             return {'polar': spine}
     register_projection(RadarAxes)
     return theta
-
+################################################################
 
 
 def gen_data(cluster, index_to_interpolation):
