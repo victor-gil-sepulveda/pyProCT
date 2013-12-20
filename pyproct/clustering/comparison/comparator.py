@@ -44,18 +44,21 @@ def calculate_distance_stats(elements, matrix):
 
     return numpy.mean(distances), numpy.std(distances), numpy.max(distances)
 
-def getTotalNumberOfElements(list_of_cluster_lists):
+def getAllElements(decomposed_cluster):
     """
+    Returns a list of all the elements of a decomposed cluster (the elements of the original cluster)
+    @param decomposed_cluster: One decomposed cluster (trajectory_id: elements dictionary)
     """
-    total = 0
-    for cluster_list in list_of_cluster_lists:
-        for c in cluster_list:
-            total += c.get_size()
-    return total
+    all_elements = []
+    for traj_id in decomposed_cluster:
+        all_elements += decomposed_cluster[traj_id]
+    return all_elements
 
 class Separator(object):
 
     def __init__(self):
+        """
+        """
         pass
 
     @classmethod
@@ -70,15 +73,17 @@ class Separator(object):
         decomposed clusters in that category.
         """
         classification = {
-                          "pure":[],
-                          "mixed":[]
+                          "pure":{},
+                          "mixed":{}
                           }
 
-        for decomposed_cluster in decomposed_clusters:
-            if len(decomposed_clusters.keys())>1:
-                classification["mixed"].append(decomposed_cluster)
+        for cluster_id in decomposed_clusters:
+            decomposed_cluster = decomposed_clusters[cluster_id]
+
+            if len(decomposed_cluster.keys())>1:
+                classification["mixed"][cluster_id] = decomposed_cluster
             else:
-                classification["pure"].append(decomposed_cluster)
+                classification["pure"][cluster_id] = decomposed_cluster
         return classification
 
     @classmethod
@@ -105,7 +110,7 @@ class Separator(object):
             start,end = traj_ranges[traj_id]
             set_ranges[traj_id].append(set(range(start,end)))
 
-        decomposed_clusters = []
+        decomposed_clusters = {}
         for c in clusters:
             elements_set = set(c.all_elements)
             decomposed_cluster = {}
@@ -114,7 +119,7 @@ class Separator(object):
                 if len(intersection) > 0:
                     # Then cluster has elements of this trajectory
                     decomposed_cluster[traj_id] = intersection
-            decomposed_clusters.append(decomposed_cluster)
+            decomposed_clusters[c.id] = decomposed_cluster
         return decomposed_clusters
 
     @classmethod
@@ -122,88 +127,62 @@ class Separator(object):
         """
         Decomposes and separates all the clusters in clustering into pure or mixed clusters depending if their
         elements come from one or more source trajectories.
+        @param clusters: A list containing cluster objects.
+        @param traj_ranges: A dictionary that contains the starting and ending frame of each trajectory (indexed by
+        a trajectory id). The numbering is accumulative, so if we have 2 trajectories of 10 models each, first will
+        start in 0 and end in 9 and second will start in 10 and end in 19.
+
+        @return: A dictionary with two entries (one per category). Each entry holds a list with the
+        decomposed clusters in that category.
         """
         return cls.classify(cls.decompose(clusters, traj_ranges))
 
-class ClusterStatisticalData(object):
-    def __init__(self, cluster, cluster_type, condensed_distance_matrix,A_elements = [], B_elements = []):
-        self.cluster_type = cluster_type
-        self.number_of_elements = cluster.get_size()
-        self.center_difference = 0
-        self.mean_dist_to_center, self.dispersion = calculate_cluster_mean_distance_and_dispersion(cluster,cluster.all_elements,condensed_distance_matrix)
-        self.max_distance = calculate_max_distance(cluster,condensed_distance_matrix)
+class Analyzer(object):
+    def __init__(self):
+        """
+        """
+        pass
 
-        # If mixed ...
-        self.A_part_cluster_data = None
-        self.B_part_cluster_data = None
-        if cluster_type == 'M':
-            self.A_part_cluster = Cluster(None,A_elements)
-            self.B_part_cluster = Cluster(None,B_elements)
-            self.A_part_cluster_data = ClusterStatisticalData(self.A_part_cluster,'P',condensed_distance_matrix)
-            self.B_part_cluster_data = ClusterStatisticalData(self.B_part_cluster,'P',condensed_distance_matrix)
-            self.center_difference = calculate_centers_difference(cluster_type, cluster, condensed_distance_matrix,A_elements,B_elements)
+    @classmethod
+    def run(self, decomposed_clusters, matrix):
+        """
+        Performs a series of analysis to the whole dataset and each of the decomposed clusters.
+        @param decomposed_clusters: A dictionary of decomposed clusters containing 2 keys: "pure" and "mixed",
+        each with a list containing decomposed clusters of each kind.
+        @param matrix: The work distance matrix.
 
-    def __repr__(self):
-        return str(self)
+        @return: The analysis dictionary with all the values.
+        """
+        analysis = {}
+        analysis["total_num_elements"] = 0
+        analysis["total_num_clusters"] = 0
 
-    def __str__(self):
-        res = ""
-        if self.cluster_type == 'A' or self.cluster_type == 'B' or self.cluster_type == 'P':
-            res = "[Cluster Stats. Data -\n\tType: 'Pure'\n\tSize: %d\n\tMean Dist. to centre: %.3f\n\tDispersion: %.3f]\n"%(self.number_of_elements,\
-                                                                                                                     self.mean_dist_to_center,\
-                                                                                                                     self.dispersion)
-        else:
-            res = "[Cluster Stats. Data -\n\ttype: 'Mixed'\n\tSize: %d\n\tMean Dist. to centre: %.3f\n\tDispersion: %.3f\n\tDist. between centers: %.3f\n\n\tA elements inside mixed:"%(self.number_of_elements,\
-                                                                                                                     self.mean_dist_to_center,\
-                                                                                                                     self.dispersion,self.center_difference)\
-            +str(self.A_part_cluster_data )+"\n\tB elements inside mixed:"+str(self.B_part_cluster_data )+"]\n"
-        return res
+        self.analyze_clustering(decomposed_clusters, analysis)
 
-class ClusteringStatisticalAnalyzer(object):
-    def __init__(self, clustering, traj_A_pdb, traj_B_pdb, condensed_matrix, trajectory_comparison = True):
-        self.traj_A_pdb = traj_A_pdb
-        self.traj_B_pdb = traj_B_pdb
-        self.matrix = condensed_matrix
-        self.clustering = clustering
-        self.total_number_of_elements = clustering.total_number_of_elements
-        self.trajectory_comparison = trajectory_comparison
+        self.analyze_clusters(decomposed_clusters, matrix, analysis)
 
-        if not trajectory_comparison:
-            self.pure_A = clustering.clusters
-            self.pure_B = []
-            self.mixed_clusters_with_elements = []
-        else:
-            separator = Separator()
-            self.pure_A , self.pure_B, self.mixed_clusters_with_elements = separator.separate(clustering, traj_A_pdb, traj_B_pdb)
-            self.traj_A_number_of_models = separator.traj_1_numbr_of_models
-            self.traj_B_number_of_models = separator.traj_2_numbr_of_models
+        return analysis
 
-        self.trajectory_comparison = trajectory_comparison
+    def analyze_clustering(self, decomposed_clusters, analysis):
+        for cluster_type in decomposed_clusters:
+            analysis["num_" + cluster_type] = len(decomposed_clusters[cluster_type])
+            analysis["total_num_clusters"] += analysis["num_" + cluster_type]
+            analysis["num_" + cluster_type + "_elements"] = numpy.sum([getAllElements(decomposed_clusters[cluster_type][dc_id]) for dc_id in decomposed_clusters[cluster_type]])
+            analysis["total_num_elements"] += analysis["num_" + cluster_type + "_elements"]
 
-        self.cluster_statistical_data = []
-        self.statistics_dic = {}
+        return cluster_type
 
-        self.mixed_clusters_without_elements = []
-        for m in self.mixed_clusters_with_elements:
-            self.mixed_clusters_without_elements.append(m[0])
 
-    def per_cluster_analytics(self):
-        for cluster in self.pure_A:
-            self.cluster_statistical_data.append(ClusterStatisticalData(cluster,'A',self.matrix))
+    def analyze_clusters(self, decomposed_clusters, matrix, analysis):
+        for cluster_type in decomposed_clusters:
+            for cluster_id in decomposed_clusters[cluster_type]:
+                decomposed_cluster = decomposed_clusters[cluster_type][cluster_id]
+                analysis[cluster_id] = {}
+                analysis[cluster_id]["global"]["mean"], analysis[cluster_id]["global"]["std"], analysis[cluster_id]["global"]["max"] = calculate_distance_stats(getAllElements(decomposed_cluster), matrix)
+                analysis[cluster_id]["global"]["num_elements"] = len(getAllElements(decomposed_cluster))
+                if cluster_type == "mixed":
+                    self.analysis[cluster_id]["centers_mean_diff"] = calculate_mean_center_differences(decomposed_cluster, matrix)
+                    for traj_id in decomposed_cluster:
+                        analysis[cluster_id][traj_id]["mean"], analysis[cluster_id][traj_id]["std"], analysis[cluster_id][traj_id]["max"] = calculate_distance_stats(decomposed_cluster[traj_id], matrix)
+                        analysis[cluster_id][traj_id]["num_elements"] = len(decomposed_cluster[traj_id])
 
-        for cluster in self.pure_B:
-            self.cluster_statistical_data.append(ClusterStatisticalData(cluster,'B',self.matrix))
-
-        for cluster, a_elems, b_elems in self.mixed_clusters_with_elements:
-            self.cluster_statistical_data.append(ClusterStatisticalData(cluster,'M',self.matrix,a_elems,b_elems))
-
-    def per_clustering_analytics(self):
-        if self.trajectory_comparison:
-            self.statistics_dic["number_elements_pure_A"] = getTotalNumberOfElements([self.pure_A])
-            self.statistics_dic["elems_percent_pure_A"]= self.statistics_dic["number_elements_pure_A"]*100./self.total_number_of_elements
-            self.statistics_dic["elems_self_percent_pure_A"]= self.statistics_dic["number_elements_pure_A"]*100./self.traj_A_number_of_models
-            self.statistics_dic["number_elements_pure_B"] = getTotalNumberOfElements([self.pure_B])
-            self.statistics_dic["elems_percent_pure_B"]= self.statistics_dic["number_elements_pure_B"]*100./self.total_number_of_elements
-            self.statistics_dic["elems_self_percent_pure_B"]= self.statistics_dic["number_elements_pure_B"]*100./self.traj_B_number_of_models
-            self.statistics_dic["number_elements_mixed"] = getTotalNumberOfElements([self.mixed_clusters_without_elements])
-            self.statistics_dic["elems_percent_mixed"]= self.statistics_dic["number_elements_mixed"]*100./self.total_number_of_elements
