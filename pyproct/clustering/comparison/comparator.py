@@ -20,11 +20,10 @@ def calculate_mean_center_differences(decomposed_cluster, matrix):
     for traj_id in decomposed_cluster:
         cluster = Cluster(None, decomposed_cluster[traj_id])
         centers.append(cluster.calculate_medoid(matrix))
-
     center_distances = []
-    for i in centers[:-1]:
-        for j in centers[1:]:
-            center_distances.append(matrix[i,j])
+    for i in range(len(centers)-1):
+        for j in range(i+1, len(centers)):
+            center_distances.append(matrix[centers[i],centers[j]])
     return numpy.mean(center_distances)
 
 def calculate_distance_stats(elements, matrix):
@@ -41,7 +40,6 @@ def calculate_distance_stats(elements, matrix):
 
     # We also get a 0 distance from the medoid vs itself (it is contained in 'elements')
     distances = get_distances_of_elements_to(medoid, elements, matrix)
-
     return numpy.mean(distances), numpy.std(distances), numpy.max(distances)
 
 def getAllElements(decomposed_cluster):
@@ -51,7 +49,7 @@ def getAllElements(decomposed_cluster):
     """
     all_elements = []
     for traj_id in decomposed_cluster:
-        all_elements += decomposed_cluster[traj_id]
+        all_elements.extend(decomposed_cluster[traj_id])
     return all_elements
 
 class Separator(object):
@@ -108,7 +106,7 @@ class Separator(object):
         set_ranges = {}
         for traj_id in traj_ranges:
             start,end = traj_ranges[traj_id]
-            set_ranges[traj_id].append(set(range(start,end)))
+            set_ranges[traj_id] = set(range(start,end+1))
 
         decomposed_clusters = {}
         for c in clusters:
@@ -118,7 +116,7 @@ class Separator(object):
                 intersection = elements_set.intersection(set_ranges[traj_id])
                 if len(intersection) > 0:
                     # Then cluster has elements of this trajectory
-                    decomposed_cluster[traj_id] = intersection
+                    decomposed_cluster[traj_id] = list(intersection)
             decomposed_clusters[c.id] = decomposed_cluster
         return decomposed_clusters
 
@@ -163,26 +161,32 @@ class Analyzer(object):
 
         return analysis
 
-    def analyze_clustering(self, decomposed_clusters, analysis):
-        for cluster_type in decomposed_clusters:
-            analysis["num_" + cluster_type] = len(decomposed_clusters[cluster_type])
+    @classmethod
+    def analyze_clustering(cls, separated_decomposed_clusters, analysis):
+
+        analysis["total_num_clusters"] = 0
+        analysis["total_num_elements"] = 0
+
+        for cluster_type in separated_decomposed_clusters:
+            analysis["num_" + cluster_type] = len(separated_decomposed_clusters[cluster_type])
             analysis["total_num_clusters"] += analysis["num_" + cluster_type]
-            analysis["num_" + cluster_type + "_elements"] = numpy.sum([getAllElements(decomposed_clusters[cluster_type][dc_id]) for dc_id in decomposed_clusters[cluster_type]])
+            analysis["num_" + cluster_type + "_elements"] = numpy.sum([len(getAllElements(separated_decomposed_clusters[cluster_type][dc_id])) for dc_id in separated_decomposed_clusters[cluster_type]])
             analysis["total_num_elements"] += analysis["num_" + cluster_type + "_elements"]
 
         return cluster_type
 
-
-    def analyze_clusters(self, decomposed_clusters, matrix, analysis):
-        for cluster_type in decomposed_clusters:
-            for cluster_id in decomposed_clusters[cluster_type]:
-                decomposed_cluster = decomposed_clusters[cluster_type][cluster_id]
-                analysis[cluster_id] = {}
+    @classmethod
+    def analyze_clusters(cls, separated_decomposed_clusters, matrix, analysis):
+        for cluster_type in separated_decomposed_clusters:
+            for cluster_id in separated_decomposed_clusters[cluster_type]:
+                decomposed_cluster = separated_decomposed_clusters[cluster_type][cluster_id]
+                analysis[cluster_id] = {"global":{}}
                 analysis[cluster_id]["global"]["mean"], analysis[cluster_id]["global"]["std"], analysis[cluster_id]["global"]["max"] = calculate_distance_stats(getAllElements(decomposed_cluster), matrix)
                 analysis[cluster_id]["global"]["num_elements"] = len(getAllElements(decomposed_cluster))
                 if cluster_type == "mixed":
-                    self.analysis[cluster_id]["centers_mean_diff"] = calculate_mean_center_differences(decomposed_cluster, matrix)
+                    analysis[cluster_id]["centers_mean_diff"] = calculate_mean_center_differences(decomposed_cluster, matrix)
                     for traj_id in decomposed_cluster:
+                        analysis[cluster_id][traj_id] = {}
                         analysis[cluster_id][traj_id]["mean"], analysis[cluster_id][traj_id]["std"], analysis[cluster_id][traj_id]["max"] = calculate_distance_stats(decomposed_cluster[traj_id], matrix)
                         analysis[cluster_id][traj_id]["num_elements"] = len(decomposed_cluster[traj_id])
 
