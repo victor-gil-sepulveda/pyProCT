@@ -34,8 +34,10 @@ if __name__ == '__main__':
     options, args = parser.parse_args()
 
     params = convert_to_utf8(json.loads(open(options.parameters_file).read()))
-    if params["matrix"]["method"] != "distance":
+    if params["matrix"]["method"] == "distance":
         results = convert_to_utf8(json.loads(open(options.results_file).read()))
+    else:
+        print "ERROR: Only 'distance' clusterings can be plotted."
 
     if options.print_list:
         print "SELECTED"
