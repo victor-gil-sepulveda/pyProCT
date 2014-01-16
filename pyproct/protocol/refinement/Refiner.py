@@ -6,38 +6,34 @@ Created on 11/02/2013
 from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproct.tools.matrixTools import get_submatrix
 from pyproct.clustering.cluster import Cluster
+from pyproct.clustering.clustering import Clustering
+from pyproct.clustering.analysis.analysisPopulator import AnalysisPopulator
+from pyproct.clustering.analysis.analysisRunner import AnalysisRunner
+import pyproct.driver.scheduling.tools as scheduling_tools
+from pyproct.clustering.selection.bestClusteringSelector import BestClusteringSelector
+from pyproct.driver.observer.observable import Observable
 
-
-class Refiner():
+class Refiner(Observable):
     """
     Given a clustering, it tries to further separate its clusters. This way we expect to reduce the scaling problem.
     """
 
-    def __init__(self):
+    def __init__(self, matrixHandler,  trajectoryHandler, clustering_parameters, refinement_parameters, observer):
         """
         """
-        pass
+        super(Refiner,self).__init__(observer)
+        self.matrixHandler = matrixHandler
+        self.trajectoryHandler = trajectoryHandler
+        self.clustering_parameters = clustering_parameters
+        self.refinement_paramenters = refinement_parameters
 
     @classmethod
-    def get_cluster_submatrix_and_map(cls, cluster, matrix):
+    def redefine_cluster_with_map(cls,initial_cluster, new_cluster):
         """
-        Generates a condensed matrix from the original matrix and a map to recover element ids.
-        For instance, if our dataset has 5 elements and the cluster to remap contains element 1,
-        3 and 4, then the elements map will remap 0->1, 1->3 and 2->4. This mapping is implemented
-        as an array so map[0] = 1, map[1] = 3 and map[2] = 4.
-
-        """
-        # Get cluster submatrix (like with compression)
-        elements_map = []
-        for e in cluster.all_elements:
-            elements_map.append(e) # Position [0] for element x1 etc...
-        submatrix = get_submatrix(matrix, cluster.all_elements)
-        return submatrix, elements_map
-
-    @classmethod
-    def redefine_cluster_with_map(initial_cluster, new_cluster):
-        """
-        It renames the elements of a cluster using a map array.
+        It renames the elements of a cluster using a map array.For instance, if our dataset has 5
+        elements and the cluster to remap contains element 1, 3 and 4, then the elements map will
+        remap 0->1, 1->3 and 2->4. This mapping is implemented as an array so map[0] = 1, map[1] = 3
+        and map[2] = 4.
         """
         elements_map = initial_cluster.all_elements # The map are the elements themselves
         remapped_new_cluster_elems = []
@@ -46,42 +42,58 @@ class Refiner():
 
         return Cluster(None, remapped_new_cluster_elems)
 
-    def run(self, clustering):
+    @classmethod
+    def repartition_with_kmedoids(cls, initial_cluster, k, submatrix):
+        partitioned_clustering = KMedoidsAlgorithm(submatrix).perform_clustering({
+                                          "k": k,
+                                          "seeding_type": "RANDOM"})
+        remapped_clusters = []
+        for partitioned_cluster in partitioned_clustering.clusters:
+            remapped_clusters.append(Clustering(cls.redefine_clusters_with_map(initial_cluster, partitioned_cluster)))
+        return Clustering(remapped_clusters)
+
+    def run (self, clustering):
         """
         Refine a clustering recursively using a k-means over each cluster.
         New clusters obtained from a cluster must have no noise and
         """
-#         clusters_at_most =
-#         try_step =
-#         max_random_tries =
-#         new_clusters = []
-#         for cluster in clustering.clusters:
-#             # The initial clustering is added to the list of new clusters.
-#             # With this 'trick' the initial cluster also enters the competition for the best clustering price.
-#             clusterings = [Clustering([cluster])]
-#
-#             submatrix, elements_map = self.get_cluster_submatrix_and_map(cluster)
-#
-#             # Proceed with some K Medoids partitions
-#             kmedoids = KMedoidsAlgorithm(submatrix)
-#             for k in range(2,clusters_at_most,try_step):
-#                 for k in range(max_random_tries):
-#                     clusters = kmedoids.perform_clustering({
-#                                                       "k": k,
-#                                                       "seeding_type": "RANDOM"
-#                     }).clusters
-#                     clusterings.append(Clustering(redefine_clusters_with_map(clusters, elements_map)))
-#
-#             # Remove equal clusterings and those with noise
-#
-#
-#             # Evaluate all clusterings
-#             AnalysisRunner(scheduling_tools.build_scheduler(
-#                                                        clustering_parameters["clustering"]["control"],
-#                                                        self.observer),
-#                                           clusterings,
-#                                           AnalysisPopulator(matrixHandler,
-#                                                             trajectoryHandler,
-#                                                             clustering_parameters)).evaluate()
-#
-#             best_clustering_id, all_scores = BestClusteringSelector(clustering_parameters).choose_best(clusterings)
+        max_partitions = self.refinement_parameters["max_partitions"]
+        try_step = int(max(1, float(max_partitions) / self.refinement_parameters["tries_per_cluster"]))
+        max_random_tries = self.refinement_parameters["max_random_tries"]
+        matrix = self.matrixHandler.distance_matrix
+
+        new_clusters = []
+        for cluster in clustering.clusters:
+            base_id = cluster.id
+            # The initial clustering is added to the list of new clusters.
+            # With this 'trick' the initial cluster also enters the competition for the best clustering price.
+            clusterings = {base_id:{"type":"refined_base",
+                                    "clustering": Clustering([cluster]),
+                                    "parameters": {}}}
+
+            submatrix = get_submatrix(matrix, cluster.all_elements)
+
+            # Proceed with some K Medoids partitions
+            # TODO: Random tries must be added to kmedoids algorithm, refactor then
+            for k in range(2,max_partitions,try_step):
+                for j in range(max_random_tries):
+                    clustering = self.repartition_with_kmedoids(cluster, k, submatrix)
+                    clusterings["%s_%d_%d"%(base_id,k,j)] = {"type":"refined",
+                                                             "clustering": clustering,
+                                                             "parameters": {"k":k}}
+
+            # Evaluate all clusterings and pick the best one
+            AnalysisRunner(scheduling_tools.build_scheduler(
+                                                       self.clustering_parameters["clustering"]["control"],
+                                                       self.observer),
+                                          clusterings,
+                                          AnalysisPopulator(self.matrixHandler,
+                                                            self.trajectoryHandler,
+                                                            self.clustering_parameters)).evaluate()
+
+            best_clustering_id, all_scores = BestClusteringSelector(self.clustering_parameters).choose_best(clusterings)  # @UnusedVariable
+            new_clusters.extend(clusterings[best_clustering_id]["clustering"].clusters)
+
+
+
+

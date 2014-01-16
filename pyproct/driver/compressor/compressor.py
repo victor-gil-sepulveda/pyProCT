@@ -8,6 +8,7 @@ import math
 from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproct.clustering.cluster import Cluster
 from pyproct.protocol.refinement.Refiner import Refiner
+from pyproct.tools.matrixTools import get_submatrix
 
 class Compressor(object):
 
@@ -54,7 +55,7 @@ class Compressor(object):
             expected_cluster_elements = cluster_size * (float(self.parameters["final_number_of_frames"]) / clustering.total_number_of_elements)
             expected_cluster_elements = int(math.ceil(expected_cluster_elements))
 
-            remapped_matrix, elements_map = Refiner.get_cluster_submatrix_and_map(cluster, matrix_handler.distance_matrix)
+            remapped_matrix = get_submatrix(matrix_handler.distance_matrix, cluster.all_elements)
 
             # Prepare and run kmedoids algorithm
             kmedoids = KMedoidsAlgorithm(remapped_matrix)

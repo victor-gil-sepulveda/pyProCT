@@ -17,9 +17,9 @@ class ClusteringProtocol(Observable):
     def __init__(self, timer, observer):
         super(ClusteringProtocol, self).__init__(observer)
         self.timer = timer
-        
+
     def run(self, clustering_parameters, matrixHandler, workspaceHandler, trajectoryHandler):
-        
+
         ############################
         # Clustering exploration
         ############################
@@ -36,20 +36,20 @@ class ClusteringProtocol(Observable):
                                                                             clustering_parameters,
                                                                             matrixHandler),
                                             self.observer).run()
-                                            
+
         self.notify("Clusterings Created", {"number_of_clusters":len(clusterings)})
         self.timer.stop("Clustering Exploration")
-        
+
         ######################
         # First filtering
         ######################
         self.timer.start("Clustering Filtering")
-        selected_clusterings, not_selected_clusterings = ClusteringFilter(clustering_parameters["evaluation"], 
+        selected_clusterings, not_selected_clusterings = ClusteringFilter(clustering_parameters["evaluation"],
                                                                           matrixHandler).filter(clusterings)
-        
+
         self.notify("Filter", {"selected":len(selected_clusterings.keys()),"not_selected":len(not_selected_clusterings.keys())})
         self.timer.stop("Clustering Filtering")
-        
+
         if selected_clusterings == {}:
             return None
 
@@ -61,10 +61,10 @@ class ClusteringProtocol(Observable):
                                                        clustering_parameters["clustering"]["control"],
                                                        self.observer),
                                           selected_clusterings,
-                                          AnalysisPopulator(matrixHandler, 
+                                          AnalysisPopulator(matrixHandler,
                                                             trajectoryHandler,
                                                             clustering_parameters))
-        
+
         analyzer.evaluate()
         self.timer.stop("Evaluation")
 
@@ -76,25 +76,3 @@ class ClusteringProtocol(Observable):
         self.timer.stop("Selection")
 
         return best_clustering_id, selected_clusterings, not_selected_clusterings, all_scores
-            
-#             
-#             analyzer = ClusteringStatisticalAnalyzer(best_clustering,\
-#                                                      protocol_params.pdb1,\
-#                                                      protocol_params.pdb2,\
-#                                                      matrixHandler.distance_matrix,\
-#                                                      protocol_params.shallWeCompareTrajectories())
-#             analyzer.per_cluster_analytics()
-#             
-#             analyzer.per_clustering_analytics()
-#             
-#             plotGenerator = ClusteringPlotsGenerator(analyzer)
-#             
-#             big_plot = plotGenerator.generate_and_compose_big_plot(composition_size= (1024,720), max_radius = 150, ball_horizontal_separation = 50, ball_vertical_separation = 100)
-#             
-#             if protocol_params.shallWeCompareTrajectories():
-#                 small_plot = plotGenerator.generate_and_compose_small_plot(composition_size= (400,700))
-#             else:
-#                 small_plot = plotGenerator.generate_and_compose_small_plot(composition_size= (400,300))
-#             
-#             big_plot.save(workspaceHandler.results_path+"/analysis_plot_big.png")
-#             small_plot.save(workspaceHandler.results_path+"/analysis_plot_small.png")
