@@ -35,28 +35,6 @@ class Test(unittest.TestCase):
         self.assertItemsEqual( [1,3,8],Refiner.redefine_cluster_with_map(initial_cluster, final_cluster_1).all_elements)
         self.assertItemsEqual( [4,7],Refiner.redefine_cluster_with_map(initial_cluster, final_cluster_2).all_elements)
 
-#     def test_recreate_matrix(self):
-#         data = [1,  2,  3,  4,  5,  6,
-#                     7,  8,  9, 10, 11,
-#                        12, 13, 14, 15,
-#                            16, 17, 18,
-#                                19, 20,
-#                                    21]
-#         matrix = CondensedMatrix(data)
-#
-#         all_elements_map = [2,4,6]
-#         new_matrix = recreate_matrix(matrix, len(all_elements_map), all_elements_map)
-#         expected1 = [13, 15,
-#                          20]
-#         numpy.testing.assert_array_equal(expected1, new_matrix.get_data())
-#
-#         all_elements_map = [0,1,4,6]
-#         new_matrix = recreate_matrix(matrix, len(all_elements_map), all_elements_map)
-#         expected2 = [ 1, 4,  6,
-#                          9, 11,
-#                             20]
-#         numpy.testing.assert_array_equal(expected2, new_matrix.get_data())
-
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_Name']
