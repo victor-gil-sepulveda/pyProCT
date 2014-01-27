@@ -8,12 +8,12 @@ import numpy
 class SilhouetteCoefficientCalculator(object):
     """
     Between -1 and 1. 1 Is the value for the better clustering (best separated and with best cohesion.
-    0 can be a not-so-good-and-not-so-bad clustering, but a random clustering would get results 
+    0 can be a not-so-good-and-not-so-bad clustering, but a random clustering would get results
     around this.
     """
-    def __init__(self): 
+    def __init__(self):
         pass
-    
+
     def evaluate(self, clustering, condensed_distance_matrix, element = None, cluster = None):
         """
         Evaluates the silhouette factor for 3 types of elements in the clusterization
@@ -26,23 +26,23 @@ class SilhouetteCoefficientCalculator(object):
         if not element and not cluster and not clustering:
             print "[Error SilhouetteCoefficientCalculator:evaluate] you may use at least one parameter"
             exit(-1)
-        
+
         if (element and clustering) or\
            (cluster and clustering) or\
            (element and not cluster) or\
-           (element and cluster and clustering): 
+           (element and cluster and clustering):
             print "[Error SilhouetteCoefficientCalculator:evaluate] wrong parametrization"
             exit(-1)
-        
+
         if element:
             return self.__one_element_silhouette(element,cluster,condensed_distance_matrix)
-        
+
         if cluster:
             return numpy.mean(self.__one_cluster_partial_silhouette(cluster,clustering,condensed_distance_matrix))
-        
+
         if clustering:
             return numpy.mean(self.__one_clusterization_partial_silhouette(clustering,condensed_distance_matrix))
-    
+
     def __one_clusterization_partial_silhouette(self,clusterization,condensed_distance_matrix):
         """
         Calculates the partial results of the silhouette coefficient for a clusterization.
@@ -51,7 +51,7 @@ class SilhouetteCoefficientCalculator(object):
         for c in clusterization.clusters:
             cluster_silhouettes.extend(self.__one_cluster_partial_silhouette(c,clusterization,condensed_distance_matrix))
         return cluster_silhouettes
-    
+
     def __one_cluster_partial_silhouette(self,cluster,clusterization,condensed_distance_matrix):
         """
         Calculates the partial results of the silhouette coefficient for a cluster.
@@ -60,7 +60,7 @@ class SilhouetteCoefficientCalculator(object):
         for element in cluster:
             silhouette_factors.append(self.__one_element_silhouette(element,cluster,clusterization,condensed_distance_matrix))
         return silhouette_factors
-    
+
     def __one_element_silhouette(self,element,cluster,clusterization,condensed_distance_matrix):
         """
         element is inside cluster
@@ -72,7 +72,7 @@ class SilhouetteCoefficientCalculator(object):
             if where_am_i != i:
                 b_i = min(b_i,self.__get_average_distance_with_cluster(element,clusterization.clusters[i],condensed_distance_matrix))
         return (b_i-a_i)/max(a_i,b_i)
-    
+
     def __sum_cluster_distances(self,element,cluster,condensed_distance_matrix):
         """
         Returns the sum of the distances of one element vs one cluster.
@@ -80,25 +80,25 @@ class SilhouetteCoefficientCalculator(object):
         distance_sum = 0.0
         for e in cluster.all_elements:
             distance_sum += condensed_distance_matrix[e,element]
+            print e, element, condensed_distance_matrix[e,element]
         return distance_sum
-    
+
     def __get_average_distance_with_my_cluster(self,element,cluster,condensed_distance_matrix):
         """
         Calculates the average distance of one element to all the elements of his cluster.
         """
         if cluster.get_size() == 1:
-            # Then we will only rely in b_i, the bigger is b_i, the bigger the coefficient (it 
-            # has sense, as b_i is calculating the separation, and the separation is better 
+            # Then we will only rely in b_i, the bigger is b_i, the bigger the coefficient (it
+            # has sense, as b_i is calculating the separation, and the separation is better
             # as it becomes bigger
             return 1 ## a_i is non negative and 0 is the number leading to the bigger coef.
         else:
             distance_sum = self.__sum_cluster_distances(element,cluster,condensed_distance_matrix)
             return distance_sum / (cluster.get_size()-1)
-    
+
     def __get_average_distance_with_cluster(self,element,cluster,condensed_distance_matrix):
         """
         Calculates the average distance of one element to all the elements of one cluster.
         """
         distance_sum = self.__sum_cluster_distances(element,cluster,condensed_distance_matrix)
         return distance_sum / cluster.get_size()
-    

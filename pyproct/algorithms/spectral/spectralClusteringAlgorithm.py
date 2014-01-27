@@ -94,10 +94,20 @@ class SpectralClusteringAlgorithm(object):
 
         # Eigenvector i is v[:,i]
         if verbose: print "Calculating Eigenvectors ..."
+
+        # Normal eigen solver
 #         eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
-        # We can try with scipy.sparse.linalg.eigs as the matrix is sparse
+
+        # We can try with scipy.sparse.linalg.eigs if the matrix is sparse
 #         eigenvalues, self.eigenvectors = scipy.sparse.linalg.eigs(L, k = self.max_clusters, M = D,which ='SM',return_eigenvectors = True)
-        eigenvalues, self.eigenvectors = scipy.linalg.eigh(a=L, b=D, eigvals = (0,self.max_clusters),overwrite_a = True, overwrite_b = True)
+
+        # If L is symmetric, we can use this one
+        eigenvalues, self.eigenvectors = scipy.linalg.eigh(a=L,
+                                                           b=D,
+                                                           eigvals = (0, self.max_clusters+1),
+                                                           overwrite_a = True,
+                                                           overwrite_b = True,
+                                                           check_finite = False)
 
         # Order eigenvectors by eigenvalue (from lowest to biggest)
         idx = eigenvalues.real.argsort()
@@ -105,7 +115,7 @@ class SpectralClusteringAlgorithm(object):
 
         # We'll only store the vectors we need, usually << N
         self.eigenvectors = numpy.copy(self.eigenvectors[:,:self.max_clusters])
-        if verbose: print "Spectral finished."
+        if verbose: print "Spectral init finished."
 
     def perform_clustering(self, kwargs):
         """
@@ -125,11 +135,12 @@ class SpectralClusteringAlgorithm(object):
             use_k_medoids = True
 
         if k > self.max_clusters: # If k > max_number_of_clusters @ init
-            print "[ERROR SpectralClusteringAlgorithm::perform_clustering] this algorithm was defined to generate at maximum ",self.max_clusters," clusters."
+            print "[ERROR SpectralClusteringAlgorithm::perform_clustering] this algorithm was defined to generate at maximum %d clusters."%self.max_clusters,
 
         algorithm_details = "Spectral algorithm with k = %d and sigma squared = %.3f" %(int(k), self.sigma_sq)
 
-        if use_k_medoids:
+        #if use_k_medoids:
+        if False:
             # The row vectors we have are in R^k (so k length)
             eigen_distances = CondensedMatrix(pdist(self.eigenvectors[:,:k]))
             k_medoids_args = {

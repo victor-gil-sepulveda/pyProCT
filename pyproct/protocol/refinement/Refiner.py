@@ -17,6 +17,7 @@ class Refiner(Observable):
     """
     Given a clustering, it tries to further separate its clusters. This way we expect to reduce the scaling problem.
     """
+    KMedoidsAlgorithmClass = KMedoidsAlgorithm
 
     def __init__(self, matrixHandler,  trajectoryHandler, clustering_parameters, refinement_parameters, observer):
         """
@@ -26,6 +27,7 @@ class Refiner(Observable):
         self.trajectoryHandler = trajectoryHandler
         self.clustering_parameters = clustering_parameters
         self.refinement_paramenters = refinement_parameters
+
 
     @classmethod
     def redefine_cluster_with_map(cls,initial_cluster, new_cluster):
@@ -44,12 +46,12 @@ class Refiner(Observable):
 
     @classmethod
     def repartition_with_kmedoids(cls, initial_cluster, k, submatrix):
-        partitioned_clustering = KMedoidsAlgorithm(submatrix).perform_clustering({
+        partitioned_clustering = cls.KMedoidsAlgorithmClass(submatrix).perform_clustering({
                                           "k": k,
                                           "seeding_type": "RANDOM"})
         remapped_clusters = []
         for partitioned_cluster in partitioned_clustering.clusters:
-            remapped_clusters.append(Clustering(cls.redefine_clusters_with_map(initial_cluster, partitioned_cluster)))
+            remapped_clusters.append(cls.redefine_cluster_with_map(initial_cluster, partitioned_cluster))
         return Clustering(remapped_clusters)
 
     def run (self, clustering):
@@ -93,6 +95,11 @@ class Refiner(Observable):
 
             best_clustering_id, all_scores = BestClusteringSelector(self.clustering_parameters).choose_best(clusterings)  # @UnusedVariable
             new_clusters.extend(clusterings[best_clustering_id]["clustering"].clusters)
+
+        # Convert all new clusters in the new clustering
+        return {"type":"refined_clustering",
+                "clustering": Clustering(new_clusters),
+                "parameters": self.refinement_parameters}
 
 
 

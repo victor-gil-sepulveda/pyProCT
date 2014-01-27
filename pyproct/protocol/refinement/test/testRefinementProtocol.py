@@ -4,28 +4,22 @@ Created on 17/09/2012
 @author: victor
 '''
 import unittest
-from pyRMSD.condensedMatrix import CondensedMatrix
-import numpy
 from pyproct.protocol.refinement.Refiner import Refiner
 from pyproct.clustering.cluster import Cluster
+from pyproct.clustering.clustering import Clustering
 
 class ClusterStub():
     def __init__(self,elements):
         self.all_elements = elements
 
-class Test(unittest.TestCase):
-    def test_get_map_and_submatrix(self):
-        data = [1.0,  2.0,  3.0,   4.0,  5.0,  6.0,
-                      7.0,  8.0,   9.0, 10.0, 11.0,
-                            12.0, 13.0, 14.0, 15.0,
-                                  16.0, 17.0, 18.0,
-                                        19.0, 20.0,
-                                              21.0]
+class KMedoidsAlgorithmStub():
+    def __init__(self, submatrix):
+        pass
 
-        matrix = CondensedMatrix(data)
-        submatrix, element_map = Refiner.get_cluster_submatrix_and_map(Cluster(None,[1,3,4]), matrix)
-        self.assertItemsEqual([8., 9., 16.], submatrix.get_data())
-        self.assertItemsEqual([1,3,4], element_map)
+    def perform_clustering(self, params):
+        return Clustering([Cluster(None,[0,1,4]),Cluster(None,[2,3])])
+
+class Test(unittest.TestCase):
 
     def test_redefine_cluster_with_map(self):
         initial_cluster = Cluster(None,[1,3,4,7,8])
@@ -34,6 +28,14 @@ class Test(unittest.TestCase):
 
         self.assertItemsEqual( [1,3,8],Refiner.redefine_cluster_with_map(initial_cluster, final_cluster_1).all_elements)
         self.assertItemsEqual( [4,7],Refiner.redefine_cluster_with_map(initial_cluster, final_cluster_2).all_elements)
+
+    def test_repartition_with_kmedoids(self):
+        Refiner.KMedoidsAlgorithmClass = KMedoidsAlgorithmStub
+        clustering = Refiner.repartition_with_kmedoids(Cluster(None,[1,3,4,7,8]), 0, None)
+        # We'll suppose that the order is always the same
+        self.assertItemsEqual( [1,3,8],clustering.clusters[0])
+        self.assertItemsEqual( [4,7],clustering.clusters[1])
+
 
 
 if __name__ == "__main__":

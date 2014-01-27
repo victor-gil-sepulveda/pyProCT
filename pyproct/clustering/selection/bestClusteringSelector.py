@@ -28,6 +28,11 @@ class BestClusteringSelector(object):
 
         @return: The id of the best clustering with the criteria_id with higher score and the score itself.
         """
+        if len(clustering_info) == 0:
+            print "[WARNING BestClusteringSelector::choose_best] clustering_info is empty."
+            return None
+        print clustering_info
+
         evaluation_types = AnalysisPopulator.get_evaluation_analysis_types(self.parameters)
 
         # If there were no criteria defined, then the clustering is randomly selected
@@ -39,7 +44,21 @@ class BestClusteringSelector(object):
 
         scores = BestClusteringSelector.get_scores_for_all_clusters_and_criterias(self.criteria, clustering_info)
 
+        ordered_clusters = []
+        for clustering_id in clustering_info:
+            clustering = clustering_info[clustering_id]
+            ordered_clusters.append( (clustering["type"], clustering["evaluation"]["CythonSilhouette"]))
+
+        print sorted(ordered_clusters)
+        print clustering_info['clustering_0003']["clustering"].to_dic()
+        exit()
+
+        print len(clustering_info), len(scores["criteria_0"])
+        print scores
+
         best_clustering_id, criteria_id, scores = self.get_best_clustering(scores)
+
+        print best_clustering_id
 
         return best_clustering_id, scores
 

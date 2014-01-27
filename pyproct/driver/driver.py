@@ -63,32 +63,37 @@ class Driver(Observable):
         ##############################
         clustering_results = None
 
-        if parameters["clustering"]["generation"]["method"] == "generate":
-            clustering_results = ClusteringProtocol(self.timer, self.observer).run(parameters, self.matrixHandler,
-                                                                                                self.workspaceHandler,
-                                                                                                self.trajectoryHandler)
-            if clustering_results != None:
-                best_clustering = None
-                best_clustering_id, selected, not_selected, scores = clustering_results
-                best_clustering = selected[best_clustering_id]
-            else:
-                self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
-                print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
-                exit()
-
         ##############################
         # Load the clustering
         ##############################
         if parameters["clustering"]["generation"]["method"] == "load":
             best_clustering = {"clustering":Clustering.from_dic(parameters["clustering"]["generation"])}
 
-        #################################
-        # Abort if no clusters were found
-        #################################
-        if best_clustering is None:
-            self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
-            print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
-            exit()
+        ##############################
+        # Or generate it
+        ##############################
+        elif parameters["clustering"]["generation"]["method"] == "generate":
+            clustering_results = ClusteringProtocol(self.timer, self.observer).run(parameters, self.matrixHandler,
+                                                                                                self.workspaceHandler,
+                                                                                                self.trajectoryHandler)
+            best_clustering = None
+            abort = False
+
+            if clustering_results != None:
+                best_clustering_id, selected, not_selected, scores = clustering_results  # @UnusedVariable
+                best_clustering = selected[best_clustering_id]
+                #################################
+                # Abort if no clusters were found
+                #################################
+                if best_clustering is None:
+                    abort = True
+            else:
+                abort = True
+
+            if abort:
+                self.notify("SHUTDOWN", "Improductive clustering search. Relax evaluation constraints.")
+                print "[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting..."
+                exit()
 
         return best_clustering, clustering_results
 
