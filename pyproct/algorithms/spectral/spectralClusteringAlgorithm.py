@@ -30,7 +30,7 @@ class SpectralClusteringAlgorithm(object):
         - NUMPY pure uses the real algebraic representation of the calculations. It depends only on Numpy. Useful as golden data
         generator.
         """
-        return  ["PYTHON","NUMPY", "NUMPY_PURE"]
+        return  ["UNNORM_PYTHON","NORM_PYTHON","NORM_NUMPY", "NORM_NUMPY_PURE"]
 
     def __init__(self, condensed_matrix, **kwargs):
         """
@@ -55,9 +55,9 @@ class SpectralClusteringAlgorithm(object):
         if verbose: print "Creating spectral."
 
         try:
-            self.max_clusters = kwargs["max_clusters"]
+            self.max_clusters = int(kwargs["max_clusters"])
         except KeyError:
-            self.max_clusters = condensed_matrix.row_length
+            self.max_clusters = condensed_matrix.row_length-1
 
         if verbose: print "Calculating W ..."
 
@@ -81,7 +81,7 @@ class SpectralClusteringAlgorithm(object):
                 print "[ERROR::SpectralClusteringAlgorithm] Type " ,laplacian_calculation_type, "is not a correct type. Use one of these instead: ", SpectralClusteringAlgorithm.laplacian_calculation_types()
                 exit()
         except KeyError:
-            laplacian_calculation_type = "NUMPY_PURE"
+            laplacian_calculation_type = "UNNORM_PYTHON"
 
 
         if store_W:
@@ -96,18 +96,18 @@ class SpectralClusteringAlgorithm(object):
         if verbose: print "Calculating Eigenvectors ..."
 
         # Normal eigen solver
-#         eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
+        eigenvalues, self.eigenvectors = scipy.linalg.eig(L, D, right = True, overwrite_a = True, overwrite_b = True)
 
         # We can try with scipy.sparse.linalg.eigs if the matrix is sparse
 #         eigenvalues, self.eigenvectors = scipy.sparse.linalg.eigs(L, k = self.max_clusters, M = D,which ='SM',return_eigenvectors = True)
 
         # If L is symmetric, we can use this one
-        eigenvalues, self.eigenvectors = scipy.linalg.eigh(a=L,
-                                                           b=D,
-                                                           eigvals = (0, self.max_clusters+1),
-                                                           overwrite_a = True,
-                                                           overwrite_b = True,
-                                                           check_finite = False)
+#         eigenvalues, self.eigenvectors = scipy.linalg.eigh(a=L,
+#                                                            b=D,
+#                                                            eigvals = (0, self.max_clusters),
+#                                                            overwrite_a = True,
+#                                                            overwrite_b = True,
+#                                                            check_finite = False)
 
         # Order eigenvectors by eigenvalue (from lowest to biggest)
         idx = eigenvalues.real.argsort()
@@ -139,8 +139,7 @@ class SpectralClusteringAlgorithm(object):
 
         algorithm_details = "Spectral algorithm with k = %d and sigma squared = %.3f" %(int(k), self.sigma_sq)
 
-        #if use_k_medoids:
-        if False:
+        if use_k_medoids:
             # The row vectors we have are in R^k (so k length)
             eigen_distances = CondensedMatrix(pdist(self.eigenvectors[:,:k]))
             k_medoids_args = {
@@ -170,26 +169,32 @@ class SpectralClusteringAlgorithm(object):
 
         @return: The laplacian.
         """
-        if laplacian_calculation_type == "PYTHON":
+        if laplacian_calculation_type == "UNNORM_PYTHON":
             if verbose: print "Calculating D ..."
             D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
             if verbose: print "Calculating L ..."
-            return SpectralClusteringAlgorithm.calculate_laplacian_python(W, D), numpy.diag(D)
+            return SpectralClusteringAlgorithm.calculate_unnormalized_laplacian_python(W, D), numpy.diag(D)
 
-        elif laplacian_calculation_type == "NUMPY":
-            if verbose: print "Calculating Dinv ..."
-            Dinv = numpy.diag(SpectralClusteringAlgorithm.calculate_inverse_degree_matrix(W))
-            if verbose: print "Calculating L ..."
-            return SpectralClusteringAlgorithm.calculate_laplacian_numpy(W, Dinv), Dinv
-
-        elif laplacian_calculation_type == "NUMPY_PURE":
+        elif laplacian_calculation_type == "NORM_PYTHON":
             if verbose: print "Calculating D ..."
             D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
             if verbose: print "Calculating L ..."
-            return SpectralClusteringAlgorithm.calculate_laplacian_numpy_pure(W, D), numpy.diag(D)
+            return SpectralClusteringAlgorithm.calculate_normalized_laplacian_python(W, D), numpy.diag(D)
+
+#         elif laplacian_calculation_type == "NORM_NUMPY":
+#             if verbose: print "Calculating Dinv ..."
+#             Dinv = numpy.diag(SpectralClusteringAlgorithm.calculate_inverse_degree_matrix(W))
+#             if verbose: print "Calculating L ..."
+#             return SpectralClusteringAlgorithm.calculate_normalized_laplacian_numpy(W, Dinv), Dinv
+
+        elif laplacian_calculation_type == "NORM_NUMPY_PURE":
+            if verbose: print "Calculating D ..."
+            D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
+            if verbose: print "Calculating L ..."
+            return SpectralClusteringAlgorithm.calculate_normalized_laplacian_numpy_pure(W, D), numpy.diag(D)
 
         else:
-            print "[ERROR SpectralClusteringAlgorithm::calculate_laplacian] Not defined laplacian calculator type: ", laplacian_calculation_type
+            print "[ERROR SpectralClusteringAlgorithm::calculate_normalized_laplacian] Not defined laplacian calculator type: ", laplacian_calculation_type
             exit()
 
     @classmethod
@@ -243,9 +248,29 @@ class SpectralClusteringAlgorithm(object):
         return [1./sum(Wi) for Wi in W]
 
     @classmethod
-    def calculate_laplacian_python(cls, W, D):
+    def calculate_unnormalized_laplacian_python(cls, W, D):
         """
-        Implementation of the laplacian calculation for the 'PYTHON' strategy.
+        Implementation of the unnormalized laplacian calculation. Inplace operations.
+
+        @param W: Adjacency matrix.
+        @param D: Degree matrix.
+
+        @return: Laplacian matrix.
+        """
+        # L = D - W
+        # Run trough the rows and divide row i by D[i]. Because of construction, diagonal is 1 - (1*(1/D[i]))
+        for i in range(W.shape[0]):
+            for j in range(W.shape[1]):
+                if(i==j):
+                    W[i][i] =  D[i] - W[i][j]
+                else:
+                    W[i][j] = -W[i][j]
+        return W
+
+    @classmethod
+    def calculate_normalized_laplacian_python(cls, W, D):
+        """
+        Implementation of the laplacian calculation for the 'PYTHON' strategy. Inplace calculations.
 
         @param W: Adjacency matrix.
         @param D: Degree matrix.
@@ -263,7 +288,7 @@ class SpectralClusteringAlgorithm(object):
         return W
 
     @classmethod
-    def calculate_laplacian_numpy(cls, W, Dinv):
+    def calculate_normalized_laplacian_numpy(cls, W, Dinv):
         """
         Implementation of the laplacian calculation for the 'NUMPY' strategy.
 
@@ -273,13 +298,13 @@ class SpectralClusteringAlgorithm(object):
         @return: Laplacian matrix.
         """
         # L = I - (D^-1 * W), or  - (D^-1 * W) + I
-        L = scipy.linalg.fblas.dgemm(alpha=-1.0, a=Dinv.T, b=W.T, trans_b=True)
-        for i in range(L.shape[0]):
-            L[i][i] += 1
-        return L
+#         L = scipy.linalg.fblas.dgemm(alpha=-1.0, a=Dinv.T, b=W.T, trans_b=True) # NOT WORKING IN THIS VERSION
+#         for i in range(L.shape[0]):
+#             L[i][i] += 1
+#         return L
 
     @classmethod
-    def calculate_laplacian_numpy_pure(cls, W, D):
+    def calculate_normalized_laplacian_numpy_pure(cls, W, D):
         """
         Implementation of the laplacian calculation for the 'NUMPY_PURE' strategy.
 
