@@ -81,12 +81,14 @@ class Driver(Observable):
 
             if clustering_results != None:
                 best_clustering_id, selected, not_selected, scores = clustering_results  # @UnusedVariable
-                best_clustering = selected[best_clustering_id]
+
                 #################################
                 # Abort if no clusters were found
                 #################################
-                if best_clustering is None:
+                if best_clustering_id is None:
                     abort = True
+
+                best_clustering = selected[best_clustering_id]
             else:
                 abort = True
 

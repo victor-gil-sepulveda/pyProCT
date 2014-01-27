@@ -172,13 +172,13 @@ class SpectralClusteringAlgorithm(object):
         if laplacian_calculation_type == "UNNORM_PYTHON":
             if verbose: print "Calculating D ..."
             D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
-            if verbose: print "Calculating L ..."
+            if verbose: print "Calculating L (Unnorm.) ..."
             return SpectralClusteringAlgorithm.calculate_unnormalized_laplacian_python(W, D), numpy.diag(D)
 
         elif laplacian_calculation_type == "NORM_PYTHON":
             if verbose: print "Calculating D ..."
             D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
-            if verbose: print "Calculating L ..."
+            if verbose: print "Calculating L (Norm.) ..."
             return SpectralClusteringAlgorithm.calculate_normalized_laplacian_python(W, D), numpy.diag(D)
 
 #         elif laplacian_calculation_type == "NORM_NUMPY":
@@ -190,7 +190,7 @@ class SpectralClusteringAlgorithm(object):
         elif laplacian_calculation_type == "NORM_NUMPY_PURE":
             if verbose: print "Calculating D ..."
             D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
-            if verbose: print "Calculating L ..."
+            if verbose: print "Calculating L (Norm.) ..."
             return SpectralClusteringAlgorithm.calculate_normalized_laplacian_numpy_pure(W, D), numpy.diag(D)
 
         else:
