@@ -9,6 +9,36 @@ from pyRMSD.RMSDCalculator import RMSDCalculator
 from pyproct.clustering.comparison.caDisplacement import CA_mean_square_displacement_of_cluster
 import os
 import matplotlib.cm as cm
+from pyproct.clustering.comparison.rmsf import calc_rmsf_of_cluster
+
+
+def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
+    global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
+    global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
+    ca_pdb_coordsets =numpy.copy(trajectoryHandler.getJoinedPDB().select("name CA").getCoordsets())
+    calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
+                                    fittingCoordsets = ca_pdb_coordsets)
+    calculator.iterativeSuperposition()
+    CA_mean_square_displacements= {
+                                   "global":list(calc_rmsf_of_cluster(ca_pdb_coordsets,global_cluster))
+                                   }
+    clusters = best_clustering["clustering"].clusters
+    for i in range(len(clusters)):
+        cluster = clusters[i]
+        # Pick the coordinates (ensuring that we are copying them)
+        fitting_coordinates_of_this_cluster = ca_pdb_coordsets[cluster.all_elements]
+        calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
+                                    fittingCoordsets = fitting_coordinates_of_this_cluster)
+
+        # Make an iterative superposition (to get the minimum RMSD of all with respect to a mean conformation)
+        calculator.iterativeSuperposition()
+
+        # Calculate and convert to list (to serialize)
+        CA_mean_square_displacements[cluster.id] = list(calc_rmsf_of_cluster(ca_pdb_coordsets, cluster))
+
+    displacements_path = os.path.join(workspaceHandler["results"], "CA_displacements.json")
+
+    return displacements_path, CA_mean_square_displacements
 
 def generate_CA_displacements_file(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
     global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())

@@ -112,6 +112,7 @@ class Driver(Observable):
 
 
 
+    #TODO: This needs to be refactored, and
     def postprocess(self, parameters, best_clustering):
         ##############################
         # Specialized post-processing
@@ -134,14 +135,38 @@ class Driver(Observable):
             except:
                 pass
 
-            if parameters["matrix"]["method"] == "rmsd":
+#             EXAMPLE OF GLOBAL SECTION
+#             "global": {
+#                     "action": {
+#                         "type": "advanced",
+#                         "parameters": {
+#                             "keep_remarks": true
+#                         }
+#                     },
+#                     "extracted_data":{
+#                         "rmsf":{
+#                             "use":false,
+#                             "parameters":{}
+#                         },
+#                         "centers_and_trace":{
+#                             "use":true,
+#                             "parameters":{}
+#                         },
+#                     },
+#                     "pdbs": [
+#                         ""
+#                     ]
+#                 },
+
+            if (parameters["matrix"]["method"] == "rmsd" or parameters["matrix"]["method"] == "load") \
+            and ("rmsf" in parameters["global"]["postprocess"] and parameters["global"]["postprocess"]["rmsf"]["use"]):
                 #Save CA mean squared displacement of best cluster
                 #TODO: REFACTORING
                 try:
-                    displacements_path, CA_mean_square_displacements = visualizationTools.generate_CA_displacements_file(best_clustering,
-                                                                                                                         self.trajectoryHandler,
-                                                                                                                         self.workspaceHandler,
-                                                                                                                         self.matrixHandler)
+                    displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(best_clustering,
+                                                                                                         self.trajectoryHandler,
+                                                                                                         self.workspaceHandler,
+                                                                                                         self.matrixHandler)
 
                     self.generatedFiles.append({
                                                 "description":"Alpha Carbon mean square displacements",
@@ -156,8 +181,9 @@ class Driver(Observable):
                 except Exception:
                     print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
 
-            if parameters["matrix"]["method"] == "distance" or parameters["matrix"]["method"] == "load":
-                #try:
+            if (parameters["matrix"]["method"] == "distance" or parameters["matrix"]["method"] == "load") and \
+            ("centers_and_trace" in parameters["global"]["postprocess"] and parameters["global"]["postprocess"]["centers_and_trace"]["use"]):
+                try:
                     centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
                                                                                                         best_clustering,
                                                                                                         self.workspaceHandler,
@@ -173,8 +199,8 @@ class Driver(Observable):
                                               sort_keys=False,
                                               indent=4,
                                               separators=(',', ': ')))
-                #except Exception:
-                #    print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
+                except Exception:
+                    print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
 
             representatives_path = saveTools.save_representatives(medoids,

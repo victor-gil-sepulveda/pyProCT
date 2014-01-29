@@ -1,7 +1,7 @@
 import os
 import os.path
 from scripts.plop.metrics.metrics import processFile, genMetrics
-from plotting import plot_metrics, plot_clusters
+from scripts.gpcr.plotting import plot_metrics, plot_clusters
 from pyproct.clustering.clustering import Clustering
 from pyproct.tools.pdbTools import extract_frames_from_trajectory_sequentially, get_number_of_frames
 from pyRMSD.condensedMatrix import CondensedMatrix
@@ -9,7 +9,7 @@ from pyRMSD.matrixHandler import MatrixHandler
 import scipy.spatial.distance
 import shutil
 
-from tools import load_dic_in_json, save_dic_in_json, use_pyproct,\
+from scripts.gpcr.tools import load_dic_in_json, save_dic_in_json, use_pyproct,\
  normalize_metrics, score_cluster, get_best_clustering, find_most_negative_cluster
 
 #export PYTHONPATH=/home/victor/git/pyScheduler:$PYTHONPATH
