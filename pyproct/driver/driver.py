@@ -156,7 +156,7 @@ class Driver(Observable):
                 except Exception:
                     print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
 
-            if parameters["matrix"]["method"] == "distance":
+            if parameters["matrix"]["method"] == "distance" or parameters["matrix"]["method"] == "load":
                 #try:
                     centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
                                                                                                         best_clustering,

@@ -80,7 +80,7 @@ class SilhouetteCoefficientCalculator(object):
                 b_i = min(b_i,self.__get_average_distance_with_cluster(element,clusterization.clusters[i],condensed_distance_matrix))
         if b_i == 0:
             self.warn_misclustered_elements = True # if b1 equals 0, means that we did something wrong while clustering (an element has found a cluster
-            # where all other elements are equal and equal to itseld, this element is incorrectly placed)
+            # where all other elements are equal and equal to itself, this element is incorrectly placed)
             return -1
         else:
             return (b_i-a_i)/max(a_i,b_i)
