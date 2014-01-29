@@ -10,7 +10,7 @@ def calc_rmsf(coordsets, reference):
     # Calculate distances, reference is prototype
     conf_minus_ref = coordsets-reference # Xi-Xref
     distances = numpy.sqrt(numpy.sum(conf_minus_ref**2,2))
-    return numpy.mean(distances**2, 0)
+    return math.sqrt(numpy.mean(distances**2, 0))
 
 def calc_rmsf_of_cluster(alpha_carbons_trajectory_coordsets, cluster):
     if len(alpha_carbons_trajectory_coordsets) != 0:
