@@ -48,7 +48,8 @@ class Refiner(Observable):
     def repartition_with_kmedoids(cls, initial_cluster, k, submatrix):
         partitioned_clustering = cls.KMedoidsAlgorithmClass(submatrix).perform_clustering({
                                           "k": k,
-                                          "seeding_type": "RANDOM"})
+                                          "seeding_type": "RANDOM",
+                                          "tries":10})
         remapped_clusters = []
         for partitioned_cluster in partitioned_clustering.clusters:
             remapped_clusters.append(cls.redefine_cluster_with_map(initial_cluster, partitioned_cluster))
@@ -61,7 +62,6 @@ class Refiner(Observable):
         """
         max_partitions = self.refinement_parameters["max_partitions"]
         try_step = int(max(1, float(max_partitions) / self.refinement_parameters["tries_per_cluster"]))
-        max_random_tries = self.refinement_parameters["max_random_tries"]
         matrix = self.matrixHandler.distance_matrix
 
         new_clusters = []
@@ -76,13 +76,11 @@ class Refiner(Observable):
             submatrix = get_submatrix(matrix, cluster.all_elements)
 
             # Proceed with some K Medoids partitions
-            # TODO: Random tries must be added to kmedoids algorithm, refactor then
             for k in range(2,max_partitions,try_step):
-                for j in range(max_random_tries):
-                    clustering = self.repartition_with_kmedoids(cluster, k, submatrix)
-                    clusterings["%s_%d_%d"%(base_id,k,j)] = {"type":"refined",
-                                                             "clustering": clustering,
-                                                             "parameters": {"k":k}}
+                clustering = self.repartition_with_kmedoids(cluster, k, submatrix)
+                clusterings["%s_%d"%(base_id,k)] = {"type":"refined",
+                                                     "clustering": clustering,
+                                                     "parameters": {"k":k}}
 
             # Evaluate all clusterings and pick the best one
             AnalysisRunner(scheduling_tools.build_scheduler(
