@@ -13,9 +13,14 @@ displacement_files = {
                       "Defined Clusters":'/home/victor/Escritorio/pyProCT-Tests/Synthetic/9_natural_clusters/results/CA_displacements.json',
                       "Diffuse Clusters (1)":'/home/victor/Escritorio/pyProCT-Tests/Synthetic/9_diffuse_clusters/7/results/CA_displacements.json',
                       "Diffuse Clusters (2)":'/home/victor/Escritorio/pyProCT-Tests/Synthetic/9_diffuse_clusters/4/results/CA_displacements.json',
-                      "Diffuse Clusters (3)":'/home/victor/Escritorio/pyProCT-Tests/Synthetic/9_diffuse_clusters/5/results/CA_displacements.json'
+                      "Diffuse Clusters (3)":'/home/victor/Escritorio/pyProCT-Tests/Synthetic/9_diffuse_clusters/5/results/CA_displacements.json',
+                      "Diffuse Clusters (defaults)":'/home/victor/Escritorio/pyProCT-Tests/Synthetic/9_diffuse_clusters/1/results/CA_displacements.json'
                       }
-ordered_keys =["Defined Clusters", "Diffuse Clusters (1)", "Diffuse Clusters (2)", "Diffuse Clusters (3)"]
+ordered_keys =["Defined Clusters",
+               "Diffuse Clusters (defaults)",
+               #"Diffuse Clusters (1)",
+               "Diffuse Clusters (2)",
+               "Diffuse Clusters (3)"]
 
 def calculate_max_min(displacements):
     all_displacements = []

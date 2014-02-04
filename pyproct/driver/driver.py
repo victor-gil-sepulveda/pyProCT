@@ -162,7 +162,7 @@ class Driver(Observable):
             and ("rmsf" in parameters["global"]["postprocess"] and parameters["global"]["postprocess"]["rmsf"]["use"]):
                 #Save CA mean squared displacement of best cluster
                 #TODO: REFACTORING
-                try:
+                #try:
                     displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(best_clustering,
                                                                                                          self.trajectoryHandler,
                                                                                                          self.workspaceHandler,
@@ -178,8 +178,8 @@ class Driver(Observable):
                                                           sort_keys=False,
                                                           indent=4,
                                                           separators=(',', ': ')))
-                except Exception:
-                    print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
+#                 except Exception:
+#                     print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
 
             if (parameters["matrix"]["method"] == "distance" or parameters["matrix"]["method"] == "load") and \
             ("centers_and_trace" in parameters["global"]["postprocess"] and parameters["global"]["postprocess"]["centers_and_trace"]["use"]):

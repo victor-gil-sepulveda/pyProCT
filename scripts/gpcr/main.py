@@ -43,11 +43,25 @@ data = [
 #     {
 #         'dir':'4gpo',
 #     },
+#     {
+#         'dir':'4k5y',
+#     },
     {
-        'dir':'4k5y',
+        'dir':'M1_ACH',
     },
+    {
+        'dir':'M1_GAM',
+    },
+    {
+        'dir':'M1_NCZ',
+    },
+    {
+        'dir':'M1_XNM',
+    }
 ]
 
+# metrics_to_be_extracted = ["LigandRMSD","L1BindingEne"]
+metrics_to_be_extracted = ["L1(63.416.011.9)","L1BindingEne"]
 
 
 cwd = os.getcwd()
@@ -65,7 +79,7 @@ for datum in data:
     ###############################################
     records = []
     processFile(traj_pdb, records, True)
-    all_metrics = genMetrics(["LigandRMSD","L1BindingEne"], records)
+    all_metrics = genMetrics(metrics_to_be_extracted, records)
     print "* %d metrics extracted"%(len(all_metrics))
     plot_metrics(os.path.join(base_dir, ALL_PLOT), all_metrics)
 
@@ -102,7 +116,7 @@ for datum in data:
     ############################################################
     records = []
     processFile(os.path.join(working_directory,"results","compressed_pdb.pdb"), records, True)
-    metrics = genMetrics(["LigandRMSD","L1BindingEne"], records)
+    metrics = genMetrics(metrics_to_be_extracted, records)
     print "* %d metrics extracted"%(len(metrics))
     plot_metrics(os.path.join(base_dir, REP_50_PLOT), metrics)
 
