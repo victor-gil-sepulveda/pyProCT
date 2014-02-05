@@ -140,7 +140,7 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
     # Colors iterator
     colors = iter(cm.rainbow(numpy.linspace(0, 1, len(clustering.clusters))))
 
-    # calculate per cluster centers for selection ( and prototype center)
+    # calculate per cluster centers for selection (and prototype center)
     centers_contents["points"] = {}
     for cluster in clustering.clusters:
         centers = []
@@ -151,5 +151,9 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
         centers_contents["points"][cluster.id]["prototype"] = list(ligand_coords[cluster.prototype].mean(0))
         centers_contents["points"][cluster.id]["centers"] = centers
         centers_contents["points"][cluster.id]["color"] = list(next(colors))[0:3]
+
+    centers_contents["percents"] = {}
+    for cluster in clustering.clusters:
+        centers_contents["percents"][cluster.id] = len(cluster.all_elements) / float(clustering.total_number_of_elements)
 
     return centers_path, centers_contents
