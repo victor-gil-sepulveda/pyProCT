@@ -181,7 +181,7 @@ class Driver(Observable):
 #                     print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
 
             if ("centers_and_trace" in parameters["global"]["postprocess"] and parameters["global"]["postprocess"]["centers_and_trace"]["use"]):
-                try:
+                #try:
                     centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
                                                                                                         best_clustering,
                                                                                                         self.workspaceHandler,
@@ -197,8 +197,8 @@ class Driver(Observable):
                                               sort_keys=False,
                                               indent=4,
                                               separators=(',', ': ')))
-                except Exception:
-                    print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
+                #except Exception:
+                    #print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
 
             representatives_path = saveTools.save_representatives(medoids,

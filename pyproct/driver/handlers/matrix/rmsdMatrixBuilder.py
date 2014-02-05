@@ -38,6 +38,7 @@ class RMSDMatrixBuilder(object):
             calc_selection_coordsets = trajectory_handler.getSelection(calc_selection_string)
             trajectory_handler.setWorkingCoordinates(calc_selection_string)
 
+            symm_groups = []
             if "symmetries" in matrix_creation_parameters:
                 # Then prepare it to handle calculation symmetries
                 # Description of equivalences must have the same number of atoms
@@ -47,7 +48,8 @@ class RMSDMatrixBuilder(object):
 
             calculator = RMSDCalculator(calculatorType = calculator_type,
                                         fittingCoordsets  = fit_selection_coordsets,
-                                        calculationCoordsets = calc_selection_coordsets)
+                                        calculationCoordsets = calc_selection_coordsets,
+                                        calcSymmetryGroups=symm_groups)
 
         rmsds = calculator.pairwiseRMSDMatrix()
 

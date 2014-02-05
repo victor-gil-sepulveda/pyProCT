@@ -123,7 +123,7 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
     #########################
     centers_path = os.path.join(workspaceHandler["results"], "selection_centers.json")
     clustering = best_clustering["clustering"]
-    ligand_coords = trajectoryHandler.getSelection(parameters["matrix"]["parameters"]["body_selection"])
+    ligand_coords = trajectoryHandler.getCalculationCoordinates()
 
     centers_contents={}
     centers = []
@@ -154,6 +154,6 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
 
     centers_contents["percents"] = {}
     for cluster in clustering.clusters:
-        centers_contents["percents"][cluster.id] = len(cluster.all_elements) / float(clustering.total_number_of_elements)
+        centers_contents["percents"][cluster.id] = "%.3f"%(len(cluster.all_elements) / float(clustering.total_number_of_elements))*100
 
     return centers_path, centers_contents
