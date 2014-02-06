@@ -154,6 +154,6 @@ def generate_selection_centers_file(parameters, best_clustering, workspaceHandle
 
     centers_contents["percents"] = {}
     for cluster in clustering.clusters:
-        centers_contents["percents"][cluster.id] = "%.3f"%(len(cluster.all_elements) / float(clustering.total_number_of_elements))*100
+        centers_contents["percents"][cluster.id] = "%.3f"%((len(cluster.all_elements) / float(clustering.total_number_of_elements))*100)
 
     return centers_path, centers_contents

@@ -45,6 +45,7 @@ class RMSDMatrixBuilder(object):
                 symm_groups = cls.process_symm_groups(matrix_creation_parameters,
                                                       trajectory_handler,
                                                       calc_selection_coordsets)
+                print "Using symmetries",symm_groups
 
             calculator = RMSDCalculator(calculatorType = calculator_type,
                                         fittingCoordsets  = fit_selection_coordsets,
@@ -102,7 +103,7 @@ class RMSDMatrixBuilder(object):
             atom2_index = cls.locate_index(atom2_coords, calc_selection_coordsets)
 
             symm_group.append((atom1_index, atom2_index))
-        return symm_group
+        return tuple(symm_group)
 
     @classmethod
     def locate_index(cls,atom_coords, coordsets):
