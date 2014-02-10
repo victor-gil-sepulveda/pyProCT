@@ -10,13 +10,15 @@ from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
 from pyproct.tools.pdbTools import get_model_boundaries,\
     repair_MODEL_ENDMDL_tags
 
-def merge_pdbs(trajectories, temporary_merged_trajectory_path, do_merged_files_have_correlative_models):
+
+#TODO: do_merged_files_have_correlative_models seems to be unnecessary
+def merge_pdbs(trajectories, temporary_merged_trajectory_path, do_merged_files_have_correlative_models = True):
     pdbs = []
     if trajectories.__class__ == TrajectoryHandler:
-        pdbs = [pdb["source"] for pdb in trajectories.pdbs] 
+        pdbs = [pdb["source"] for pdb in trajectories.pdbs]
     else:
         pdbs.extend(trajectories)
-    
+
     # Copy the first one (there's at least one)
     shutil.copyfile(pdbs[0], temporary_merged_trajectory_path)
     file_handler_out = open(temporary_merged_trajectory_path, "a")
@@ -24,9 +26,9 @@ def merge_pdbs(trajectories, temporary_merged_trajectory_path, do_merged_files_h
         # Concat the other files
         file_handler_out.write(open(pdb_file,"r").read())
     file_handler_out.close()
-    
-    if do_merged_files_have_correlative_models:
-        shutil.copyfile(temporary_merged_trajectory_path, 
+
+    if do_merged_files_have_correlative_models: # if true merged file changes its frame numbers
+        shutil.copyfile(temporary_merged_trajectory_path,
                         temporary_merged_trajectory_path+".mdl")
         file_handler_in = open(temporary_merged_trajectory_path+".mdl", "r")
         file_handler_out = open(temporary_merged_trajectory_path,"w")
@@ -37,10 +39,10 @@ def merge_pdbs(trajectories, temporary_merged_trajectory_path, do_merged_files_h
                 current_model = current_model + 1
             else:
                 file_handler_out.write(line)
-        
+
         file_handler_out.close()
         file_handler_in.close()
-    
+
 def save_representatives(representatives,
                          pdb_name,
                          workspace_handler,
@@ -50,29 +52,29 @@ def save_representatives(representatives,
                          keep_remarks = False):
     """
     Saves a pdb file containing the most representative elements of the clustering.
-    
+
     @param representatives: A list of the representative elements of the clustering we want to extract.
-    
+
     @param workspace_handler: The workspace handler of this run.
-    
+
     @param trajectory_holder: The trajectory handler for this run or an array with pdb file paths.
-    
+
     @param do_merged_files_have_correlative_models: When merging, output file will have models from 0 to M, where M is the total number
     of frames of the merged file.
-    
-    @param write_frame_number_instead_of_model_number: When extracting frames, extract those models which number coincides with the 
-    frame numbers in 'representatives'. Otherwise, extract those models which position coincide with the frame number in 
+
+    @param write_frame_number_instead_of_model_number: When extracting frames, extract those models which number coincides with the
+    frame numbers in 'representatives'. Otherwise, extract those models which position coincide with the frame number in
     'representatives'.
     """
     results_directory = workspace_handler["results"]
-    
+
     # Merge pdbs (in order)
     temporary_merged_trajectory_path = os.path.join(workspace_handler["tmp"],"tmp_merged_trajectory.pdb")
-    merge_pdbs(trajectory_holder, 
-               temporary_merged_trajectory_path, 
+    merge_pdbs(trajectory_holder,
+               temporary_merged_trajectory_path,
                do_merged_files_have_correlative_models)
-    
-    # Extract frames from the merged pdb 
+
+    # Extract frames from the merged pdb
     file_handler_in = open(temporary_merged_trajectory_path,"r")
     file_handler_out = open(os.path.join(results_directory,"%s.pdb"%pdb_name),"w")
 
@@ -84,5 +86,5 @@ def save_representatives(representatives,
                                              keep_header = keep_remarks)
     file_handler_in.close()
     file_handler_out.close()
-    
+
     return os.path.join(results_directory,"%s.pdb"%pdb_name)

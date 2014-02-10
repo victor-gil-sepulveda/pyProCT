@@ -125,12 +125,12 @@ class Driver(Observable):
         # Saving representatives
         ##############################
         if "representatives" in parameters ["global"]["postprocess"]:
-            save_representatives(best_clustering, parameters, self.matrixHandler,
+            save_representatives(best_clustering["clustering"], parameters, self.matrixHandler,
                                  self.workspaceHandler, self.trajectoryHandler,
                                  self.generatedFiles, self.timer)
 
         if "pdb_clusters" in parameters ["global"]["postprocess"]:
-            save_all_clusters(parameters, best_clustering, self.generatedFiles, self.timer)
+            save_all_clusters(parameters, best_clustering["clustering"], self.generatedFiles, self.timer)
 
 
         if action_type == "clustering" or action_type == "advanced":
