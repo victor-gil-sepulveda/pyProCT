@@ -18,6 +18,8 @@ from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGa
 import json
 from pyproct.clustering.clustering import Clustering
 from pyproct.tools import visualizationTools
+from pyproct.driver.postprocessing.clusters import save_representatives,\
+    save_all_clusters
 
 class Driver(Observable):
 
@@ -119,21 +121,19 @@ class Driver(Observable):
         ##############################
         action_type = parameters["global"]["action"]["type"]
 
-        if action_type == "clustering" or action_type == "advanced":
-            ##############################
-            # Saving representatives
-            ##############################
-            self.timer.start("Representatives")
-            medoids = best_clustering["clustering"].get_medoids(self.matrixHandler.distance_matrix)
-            # Set prototypes and ids (medoids are ordered)
-            for i in range(len(best_clustering["clustering"].clusters)):
-                best_clustering["clustering"].clusters[i].prototype = medoids[i]
+        ##############################
+        # Saving representatives
+        ##############################
+        if "representatives" in parameters ["global"]["postprocess"]:
+            save_representatives(best_clustering, parameters, self.matrixHandler,
+                                 self.workspaceHandler, self.trajectoryHandler,
+                                 self.generatedFiles, self.timer)
 
-            keep_remarks = False
-            try:
-                keep_remarks = parameters["global"]["action"]["parameters"]["keep_remarks"]
-            except:
-                pass
+        if "pdb_clusters" in parameters ["global"]["postprocess"]:
+            save_all_clusters(parameters, best_clustering, self.generatedFiles, self.timer)
+
+
+        if action_type == "clustering" or action_type == "advanced":
 
 #             EXAMPLE OF GLOBAL SECTION
 #             "global": {
@@ -200,18 +200,6 @@ class Driver(Observable):
                 #except Exception:
                     #print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
-
-            representatives_path = saveTools.save_representatives(medoids,
-                                                                  "representatives",
-                                                                  self.workspaceHandler,
-                                                                  self.trajectoryHandler,
-                                                                  do_merged_files_have_correlative_models=True,
-                                                                  write_frame_number_instead_of_correlative_model_number=True,
-                                                                  keep_remarks = keep_remarks )
-            self.generatedFiles.append({"description":"Cluster central conformations",
-                                        "path":representatives_path,
-                                        "type":"pdb"})
-            self.timer.stop("Representatives")
 
         elif action_type == "comparison":
             ############################################
