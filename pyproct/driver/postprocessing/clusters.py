@@ -11,21 +11,18 @@ import tarfile
 import bz2
 from pyproct.protocol.saveTools import merge_pdbs
 
-
-
-
-def save_all_clusters(parameters, clustering, generatedFiles, timer):
+def save_all_clusters(parameters, workspaceHandler, clustering, generatedFiles, timer):
     timer.start("Save clusters")
 
     #Parameters
-    my_params = parameters["global"]["postprocess"]["pdb_clusters"]["parameters"]
+    my_params = parameters["global"]["postprocess"]["pdb_clusters"]
     keep_remarks = my_params["keep_remarks"] if "keep_remarks" in my_params else False
     keep_frame_number = my_params["keep_frame_number"] if "keep_frame_number" in my_params else False
 
     # Places
-    results_place = parameters["workspace"]["results"]
-    clusterings_place = parameters["workspace"]["clusterings"]
-    tmp_place = parameters["workspace"]["tmp"]
+    results_place = workspaceHandler["results"]
+    clusterings_place = workspaceHandler["clusterings"]
+    tmp_place = workspaceHandler["tmp"]
 
     # The real job
     input_path = os.path.join(tmp_place, "tmp_merged_trajectory.pdb")
@@ -56,7 +53,7 @@ def save_all_clusters(parameters, clustering, generatedFiles, timer):
     tar.close()
     timer.stop("Save clusters")
 
-    generatedFiles.append({"description":"Frames by cluster",
+    generatedFiles.append({"description":"Clusters",
                                          "path":tar_path,
                                          "type":"compressed_pdb"})
 
@@ -65,7 +62,7 @@ def save_representatives(clustering, parameters, matrixHandler, workspaceHandler
     timer.start("Representatives")
 
     #Parameters
-    my_params = parameters["global"]["postprocess"]["representatives"]["parameters"]
+    my_params = parameters["global"]["postprocess"]["representatives"]
     keep_remarks = my_params["keep_remarks"] if "keep_remarks" in my_params else False
     keep_frame_number = my_params["keep_frame_number"] if "keep_frame_number" in my_params else False
 
@@ -83,7 +80,7 @@ def save_representatives(clustering, parameters, matrixHandler, workspaceHandler
                                                           write_frame_number_instead_of_correlative_model_number = keep_frame_number,
                                                           keep_remarks = keep_remarks )
 
-    generatedFiles.append({"description":"Cluster central conformations (II)",
+    generatedFiles.append({"description":"Cluster representatives",
                                 "path":representatives_path,
                                 "type":"pdb"})
 

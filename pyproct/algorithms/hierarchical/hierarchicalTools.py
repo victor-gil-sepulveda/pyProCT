@@ -97,8 +97,6 @@ def get_clusters_with_ranged_search(   hie_algorithm,
                                                       max_clusters,
                                                       0.01,
                                                       hie_algorithm)
-    #print lefmost_limit, rightmost_limit
-    #exit()
 
     increment = (rightmost_limit-lefmost_limit)/refine_grain
 

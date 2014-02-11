@@ -11,7 +11,6 @@ from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
 from pyproct.driver.observer.observable import Observable
 import pyproct.tools.plotTools as plotTools
 from pyproct.protocol.protocol import ClusteringProtocol
-import pyproct.protocol.saveTools as saveTools
 from pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproct.driver.compressor.compressor import Compressor
 from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
@@ -130,78 +129,51 @@ class Driver(Observable):
                                  self.generatedFiles, self.timer)
 
         if "pdb_clusters" in parameters ["global"]["postprocess"]:
-            save_all_clusters(parameters, best_clustering["clustering"], self.generatedFiles, self.timer)
+            save_all_clusters(parameters, self.workspaceHandler, best_clustering["clustering"],
+                              self.generatedFiles, self.timer)
+
+        if "rmsf" in parameters["global"]["postprocess"]:
+            try:
+                displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(best_clustering,
+                                                                                                     self.trajectoryHandler,
+                                                                                                     self.workspaceHandler,
+                                                                                                     self.matrixHandler)
+
+                self.generatedFiles.append({
+                                            "description":"Alpha Carbon mean square displacements",
+                                            "path":displacements_path,
+                                            "type":"text"
+                })
+
+                open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements,
+                                                      sort_keys=False,
+                                                      indent=4,
+                                                      separators=(',', ': ')))
+            except Exception:
+                print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
+
+        if "centers_and_trace" in parameters["global"]["postprocess"]:
+            try:
+                centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
+                                                                                                    best_clustering,
+                                                                                                    self.workspaceHandler,
+                                                                                                    self.trajectoryHandler)
+
+                self.generatedFiles.append({
+                                            "description":"Centers of the selection used to calculate distances",
+                                            "path":centers_path,
+                                            "type":"text"
+                })
+
+                open(centers_path,"w").write(json.dumps(centers_contents,
+                                          sort_keys=False,
+                                          indent=4,
+                                          separators=(',', ': ')))
+            except Exception:
+                print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
 
-        if action_type == "clustering" or action_type == "advanced":
-
-#             EXAMPLE OF GLOBAL SECTION
-#             "global": {
-#                     "action": {
-#                         "type": "advanced",
-#                         "parameters": {
-#                             "keep_remarks": true
-#                         }
-#                     },
-#                     "extracted_data":{
-#                         "rmsf":{
-#                             "use":false,
-#                             "parameters":{}
-#                         },
-#                         "centers_and_trace":{
-#                             "use":true,
-#                             "parameters":{}
-#                         },
-#                     },
-#                     "pdbs": [
-#                         ""
-#                     ]
-#                 },
-
-            if ("rmsf" in parameters["global"]["postprocess"] and parameters["global"]["postprocess"]["rmsf"]["use"]):
-                #Save CA mean squared displacement of best cluster
-                #TODO: REFACTORING
-                #try:
-                    displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(best_clustering,
-                                                                                                         self.trajectoryHandler,
-                                                                                                         self.workspaceHandler,
-                                                                                                         self.matrixHandler)
-
-                    self.generatedFiles.append({
-                                                "description":"Alpha Carbon mean square displacements",
-                                                "path":displacements_path,
-                                                "type":"text"
-                    })
-
-                    open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements,
-                                                          sort_keys=False,
-                                                          indent=4,
-                                                          separators=(',', ': ')))
-#                 except Exception:
-#                     print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
-
-            if ("centers_and_trace" in parameters["global"]["postprocess"] and parameters["global"]["postprocess"]["centers_and_trace"]["use"]):
-                #try:
-                    centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
-                                                                                                        best_clustering,
-                                                                                                        self.workspaceHandler,
-                                                                                                        self.trajectoryHandler)
-
-                    self.generatedFiles.append({
-                                                "description":"Centers of the selection used to calculate distances",
-                                                "path":centers_path,
-                                                "type":"text"
-                    })
-
-                    open(centers_path,"w").write(json.dumps(centers_contents,
-                                              sort_keys=False,
-                                              indent=4,
-                                              separators=(',', ': ')))
-                #except Exception:
-                    #print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
-
-
-        elif action_type == "comparison":
+        if action_type == "comparison":
             ############################################
             # Distribution analysis
             ############################################
@@ -238,7 +210,6 @@ class Driver(Observable):
         # Results are saved to a file
         #################################
         self.save_clustering_results(clustering_results)
-
 
     def run(self, parameters):
 

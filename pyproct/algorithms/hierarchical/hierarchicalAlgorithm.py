@@ -18,11 +18,11 @@ class HierarchicalClusteringAlgorithm(object):
         """
         self.condensed_matrix = condensed_matrix
         self.hie_mat = None
-        
+
     def perform_clustering(self, kwargs):
         """
-        Performs the hierarchical clustering step and the clusterization step. If the hierarchical 
-        matrix is given, then it just calculates the clusters for a given cutoff. If we call the algorithm 
+        Performs the hierarchical clustering step and the clustering step. If the hierarchical
+        matrix is given, then it just calculates the clusters for a given cutoff. If we call the algorithm
         a second time it will use the last matrix.
         """
         """
@@ -31,7 +31,7 @@ class HierarchicalClusteringAlgorithm(object):
         With preserve_input=False the matrix is destroyed while clustering, ut it saves
         memory.
         The metric is not needed in this case,as we are giving the function the calculated
-        matrix. 
+        matrix.
         The method is the method used to determine distances when fusing clusters. methods are described in:
         http://docs.scipy.org/doc/scipy/reference/generated/scipy.spatial.distance.pdist.html
         """
@@ -39,17 +39,17 @@ class HierarchicalClusteringAlgorithm(object):
             cutoff = kwargs["cutoff"]
         except KeyError:
             cutoff = None
-        
+
         try:
             hie_mat = kwargs["hie_mat"]
         except KeyError:
             hie_mat = None
-        
+
         try:
             method = kwargs["method"]
         except KeyError:
             method = 'complete'
-        
+
         if hie_mat != None:
             self.hie_mat = hie_mat
 #            print "[HIERARCHICAL] Matrix provided."
@@ -61,9 +61,9 @@ class HierarchicalClusteringAlgorithm(object):
                 self.hie_mat = hcluster_fast.linkage(self.condensed_matrix.get_data(), method = method)
 #            else:
 #                print "[HIERARCHICAL] Matrix was already stored"
-                
+
         algorithm_details = "Hierarchical with "+method+" method (cutoff = " +str(cutoff)+")"
-        
+
         if cutoff != None:
             # Then apply the cutoff, this doesn't work much as expected
 #            print "[HIERARCHICAL] getting clustering."+algorithm_details
