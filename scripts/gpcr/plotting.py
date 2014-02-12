@@ -3,12 +3,12 @@ import matplotlib.pyplot as plt
 import numpy
 import matplotlib.cm as cm
 
-def plot_metrics(filename, metrics):
+def plot_metrics(filename, metrics, x_label, y_label):
     markersize = 10.
     fig, ax = plt.subplots()
     ax.scatter(metrics.T[0],metrics.T[1], s = markersize)
-    plt.xlabel("RMSD (A)")
-    plt.ylabel("Binding Energy")
+    plt.xlabel(x_label)
+    plt.ylabel(y_label)
     plt.savefig(filename)
 
 def calculate_rectangle(dl, ur, extra = 0, xy_ratio = 1.):
