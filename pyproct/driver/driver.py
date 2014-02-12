@@ -118,7 +118,7 @@ class Driver(Observable):
         ##############################
         # Specialized post-processing
         ##############################
-        action_type = parameters["global"]["action"]["type"]
+
 
         ##############################
         # Saving representatives
@@ -128,9 +128,17 @@ class Driver(Observable):
                                  self.workspaceHandler, self.trajectoryHandler,
                                  self.generatedFiles, self.timer)
 
+        ##############################
+        # Saving all clusters in different files
+        ##############################
         if "pdb_clusters" in parameters ["global"]["postprocess"]:
             save_all_clusters(parameters, self.workspaceHandler, best_clustering["clustering"],
                               self.generatedFiles, self.timer)
+
+
+        ##############################
+        # Generating rmsf plots
+        ##############################
 
         if "rmsf" in parameters["global"]["postprocess"]:
             try:
@@ -152,6 +160,10 @@ class Driver(Observable):
             except Exception:
                 print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
 
+
+        ##############################
+        # Generating 3D plots of center of mass+ trace
+        ##############################
         if "centers_and_trace" in parameters["global"]["postprocess"]:
             try:
                 centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
@@ -173,26 +185,30 @@ class Driver(Observable):
                 print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
 
-        if action_type == "comparison":
-            ############################################
-            # Distribution analysis
-            ############################################
-            self.timer.start("KL divergence")
-            klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)
-            kl_file_path = os.path.join(self.workspaceHandler["matrix"], "kullback_liebler_divergence")
-            klDiv.save(kl_file_path)
-            matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"])
-            self.generatedFiles.append({"description":"Kullback-Leibler divergence",
-                                        "path":matrix_image_file_path,
-                                        "type":"text"})
-            self.timer.stop("KL divergence")
+#         if action_type == "comparison":
+#             ############################################
+#             # Distribution analysis
+#             ############################################
+#             self.timer.start("KL divergence")
+#             klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)
+#             kl_file_path = os.path.join(self.workspaceHandler["matrix"], "kullback_liebler_divergence")
+#             klDiv.save(kl_file_path)
+#             matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"])
+#             self.generatedFiles.append({"description":"Kullback-Leibler divergence",
+#                                         "path":matrix_image_file_path,
+#                                         "type":"text"})
+#             self.timer.stop("KL divergence")
 
-        elif action_type == "compression":
+
+        ##############################
+        # Compress trajectory
+        ##############################
+        if "compression" in parameters["global"]["postprocess"]:
             ############################################
             # Compress
             ############################################
             self.timer.start("Compression")
-            compressor = Compressor(parameters["global"]["action"]["parameters"])
+            compressor = Compressor(parameters["global"]["postprocess"])
             compressed_file_path = compressor.compress(best_clustering["clustering"],
                                                        (lambda params: params['file'] if 'file' in params else "compressed_pdb")(parameters["global"]["action"]["parameters"]),
                                                        self.workspaceHandler,
