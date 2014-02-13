@@ -17,7 +17,7 @@ class WorkspaceHandler(Observable):
         self.data = {
                       "results": os.path.join(workspace_parameters["base"], workspace_parameters["results"] if "results" in workspace_parameters else "results"),
                       "tmp" : os.path.join(workspace_parameters["base"], workspace_parameters["tmp"] if "results" in workspace_parameters else "tmp"),
-                      "clusterings" : os.path.join(workspace_parameters["base"], workspace_parameters["clusterings"] if "clusterings" in workspace_parameters else "clusterings"),
+                      "clusters" : os.path.join(workspace_parameters["base"], workspace_parameters["clusters"] if "clusters" in workspace_parameters else "clusters"),
                       "matrix" : os.path.join(workspace_parameters["base"], workspace_parameters["matrix"] if "matrix" in workspace_parameters else "matrix")
         }
 
