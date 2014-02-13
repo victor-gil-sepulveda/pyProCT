@@ -21,7 +21,7 @@ class ParametersGenerator(object):
             self.max_gen_clusterings = float(parameters["clustering"]["algorithms"]["spectral"]["max"])
         else:
             self.max_gen_clusterings = ParametersGenerator.SPECTRAL_DEFAULT_MAX
-        self.num_clusters_step = int((parameters["evaluation"]["maximum_clusters"] - parameters["evaluation"]["minimum_clusters"]) / self.max_gen_clusterings)
+        self.num_clusters_step = int((parameters["clustering"]["evaluation"]["maximum_clusters"] - parameters["clustering"]["evaluation"]["minimum_clusters"]) / self.max_gen_clusterings)
         if self.num_clusters_step < 1:
             self.num_clusters_step = 1
 
@@ -44,8 +44,8 @@ class ParametersGenerator(object):
         @return: A tuple with the generated parameters and an empty list corresponding to the clusterings.
         """
         run_parameters = []
-        max_clusters = self.parameters["evaluation"]["maximum_clusters"]
-        min_clusters = self.parameters["evaluation"]["minimum_clusters"]
+        max_clusters = self.parameters["clustering"]["evaluation"]["maximum_clusters"]
+        min_clusters = self.parameters["clustering"]["evaluation"]["minimum_clusters"]
         sizes = range(min_clusters,max_clusters+1,self.num_clusters_step)
         for one_size in sizes:
             run_parameter = ParametersGenerator.get_base_parameters()

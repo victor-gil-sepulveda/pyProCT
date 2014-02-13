@@ -66,7 +66,7 @@ class ClusteringExplorer(Observable):
         self.matrix_handler = matrix_handler
         self.workspace_handler = workspace_handler
         self.clustering_parameters = parameters["clustering"]
-        self.evaluation_parameters = parameters["evaluation"]
+        self.evaluation_parameters = parameters["clustering"]["evaluation"]
         self.current_clustering_id = 0
         self.parameters_generator = parameters_generator
         self.scheduler = scheduler

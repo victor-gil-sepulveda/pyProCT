@@ -27,7 +27,7 @@ class Driver(Observable):
         self.generatedFiles = []
 
     def create_workspace(self, parameters):
-        self.workspaceHandler = WorkspaceHandler(parameters["workspace"], self.observer)
+        self.workspaceHandler = WorkspaceHandler(parameters["global"]["workspace"], self.observer)
         self.workspaceHandler.create_directories()
 
     def save_parameters_file(self, parameters):
@@ -36,24 +36,24 @@ class Driver(Observable):
         self.generatedFiles = [{"description":"Parameters file", "path":parameters_file_path, "type":"text"}]
 
     def create_matrix(self, parameters):
-        self.matrixHandler = MatrixHandler(parameters["matrix"])
+        self.matrixHandler = MatrixHandler(parameters["data"]["matrix"])
         self.notify("Matrix calculation", [])
         self.timer.start("Matrix Generation")
         self.matrixHandler.create_matrix(self.trajectoryHandler)
         statistics_file_path = self.matrixHandler.save_statistics(self.workspaceHandler["matrix"])
         self.generatedFiles.append({"description":"Matrix statistics", "path":statistics_file_path, "type":"text"})
         self.timer.stop("Matrix Generation")
-        if "filename" in parameters["matrix"]:
+        if "filename" in parameters["data"]["matrix"]:
             self.timer.start("Matrix Save")
-            self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["filename"]))
+            self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["filename"]))
             self.timer.stop("Matrix Save")
         #########################
         # Matrix plot
         #########################
-        if "image" in parameters["matrix"].keys():
+        if "image" in parameters["data"]["matrix"].keys():
             self.timer.start("Matrix Imaging")
-            matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"])
-            plotTools.matrixToImage(self.matrixHandler.distance_matrix, matrix_image_file_path, max_dim=parameters["matrix"]["image"]["dimension"], observer=self.observer)
+            matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["image"]["filename"])
+            plotTools.matrixToImage(self.matrixHandler.distance_matrix, matrix_image_file_path, max_dim=parameters["data"]["matrix"]["image"]["dimension"], observer=self.observer)
             self.generatedFiles.append({"description":"Matrix image", "path":matrix_image_file_path, "type":"image"})
             self.timer.stop("Matrix Imaging")
 
@@ -123,24 +123,24 @@ class Driver(Observable):
         ##############################
         # Saving representatives
         ##############################
-        if "representatives" in parameters ["global"]["postprocess"]:
-            save_representatives(best_clustering["clustering"], parameters, self.matrixHandler,
+        if "representatives" in parameters["postprocess"]:
+            save_representatives(best_clustering["clustering"], parameters["postprocess"]["representatives"], self.matrixHandler,
                                  self.workspaceHandler, self.trajectoryHandler,
                                  self.generatedFiles, self.timer)
 
         ##############################
         # Saving all clusters in different files
         ##############################
-        if "pdb_clusters" in parameters ["global"]["postprocess"]:
-            save_all_clusters(parameters, self.workspaceHandler, best_clustering["clustering"],
-                              self.generatedFiles, self.timer)
+        if "pdb_clusters" in parameters["postprocess"]:
+            save_all_clusters(parameters["postprocess"]["pdb_clusters"], parameters["data"]["matrix"]["pdbs"],\
+                              self.workspaceHandler, best_clustering["clustering"], self.generatedFiles, self.timer)
 
 
         ##############################
         # Generating rmsf plots
         ##############################
 
-        if "rmsf" in parameters["global"]["postprocess"]:
+        if "rmsf" in parameters["postprocess"]:
             try:
                 displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(best_clustering,
                                                                                                      self.trajectoryHandler,
@@ -164,10 +164,9 @@ class Driver(Observable):
         ##############################
         # Generating 3D plots of center of mass+ trace
         ##############################
-        if "centers_and_trace" in parameters["global"]["postprocess"]:
+        if "centers_and_trace" in parameters["postprocess"]:
             try:
-                centers_path, centers_contents = visualizationTools.generate_selection_centers_file(parameters,
-                                                                                                    best_clustering,
+                centers_path, centers_contents = visualizationTools.generate_selection_centers_file(best_clustering,
                                                                                                     self.workspaceHandler,
                                                                                                     self.trajectoryHandler)
 
@@ -203,14 +202,14 @@ class Driver(Observable):
         ##############################
         # Compress trajectory
         ##############################
-        if "compression" in parameters["global"]["postprocess"]:
+        if "compression" in parameters["postprocess"]:
             ############################################
             # Compress
             ############################################
             self.timer.start("Compression")
-            compressor = Compressor(parameters["global"]["postprocess"])
+            compressor = Compressor(parameters["postprocess"])
             compressed_file_path = compressor.compress(best_clustering["clustering"],
-                                                       (lambda params: params['file'] if 'file' in params else "compressed_pdb")(parameters["global"]["action"]["parameters"]),
+                                                       (lambda params: params['file'] if 'file' in params else "compressed_pdb")(parameters["postprocess"]["compression"]["parameters"]),
                                                        self.workspaceHandler,
                                                        self.trajectoryHandler,
                                                        self.matrixHandler)
@@ -249,7 +248,7 @@ class Driver(Observable):
         # Trajectory Loading
         #####################
         self.timer.start("Trajectory Loading")
-        self.trajectoryHandler = TrajectoryHandler(parameters["global"], parameters["matrix"]['parameters'], self.observer)
+        self.trajectoryHandler = TrajectoryHandler(parameters["data"]["matrix"], parameters["data"]["matrix"]['parameters'], self.observer)
         self.timer.stop("Trajectory Loading")
 
         ##############################
@@ -264,4 +263,3 @@ class Driver(Observable):
 
         self.timer.stop("Global")
         self.notify("Driver Finished", "\n"+str(self.timer))
-

@@ -30,7 +30,7 @@ class ClusteringProtocol(Observable):
                                             matrixHandler,
                                             workspaceHandler,
                                             scheduling_tools.build_scheduler(
-                                                                           clustering_parameters["clustering"]["control"],
+                                                                           clustering_parameters["global"]["control"],
                                                                            self.observer),
                                             AlgorithmRunParametersGenerator(
                                                                             clustering_parameters,
@@ -44,7 +44,7 @@ class ClusteringProtocol(Observable):
         # First filtering
         ######################
         self.timer.start("Clustering Filtering")
-        selected_clusterings, not_selected_clusterings = ClusteringFilter(clustering_parameters["evaluation"],
+        selected_clusterings, not_selected_clusterings = ClusteringFilter(clustering_parameters["clustering"]["evaluation"],
                                                                           matrixHandler).filter(clusterings)
 
         self.notify("Filter", {"selected":len(selected_clusterings.keys()),"not_selected":len(not_selected_clusterings.keys())})
@@ -58,7 +58,7 @@ class ClusteringProtocol(Observable):
         ######################
         self.timer.start("Evaluation")
         analyzer = AnalysisRunner(scheduling_tools.build_scheduler(
-                                                       clustering_parameters["clustering"]["control"],
+                                                       clustering_parameters["global"]["control"],
                                                        self.observer),
                                           selected_clusterings,
                                           AnalysisPopulator(matrixHandler,

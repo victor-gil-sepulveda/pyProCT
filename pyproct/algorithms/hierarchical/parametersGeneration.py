@@ -40,8 +40,8 @@ class ParametersGenerator(object):
         (in this case parameters and clusterings are obtained at the same time).
         """
         run_parameters = []
-        max_clusters = self.parameters["evaluation"]["maximum_clusters"]
-        min_clusters = self.parameters["evaluation"]["minimum_clusters"]
+        max_clusters = self.parameters["clustering"]["evaluation"]["maximum_clusters"]
+        min_clusters = self.parameters["clustering"]["evaluation"]["minimum_clusters"]
         hierarchicalAlgorithm = HierarchicalClusteringAlgorithm(self.distance_matrix)
         clusters_and_cutoff = hierarchicalTools.get_clusters_with_ranged_search(
                                                                         hierarchicalAlgorithm,

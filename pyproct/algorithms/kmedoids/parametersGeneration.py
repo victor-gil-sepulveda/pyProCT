@@ -26,7 +26,7 @@ class ParametersGenerator(object):
         else:
             max_gen_clusterings = ParametersGenerator.MAX_CLUSTERING_PARAMETERS
 
-        self.num_clusters_step = int(math.ceil((parameters["evaluation"]["maximum_clusters"] - parameters["evaluation"]["minimum_clusters"]) / max_gen_clusterings))
+        self.num_clusters_step = int(math.ceil((parameters["clustering"]["evaluation"]["maximum_clusters"] - parameters["clustering"]["evaluation"]["minimum_clusters"]) / max_gen_clusterings))
         if self.num_clusters_step < 1:
             self.num_clusters_step = 1
 
@@ -50,8 +50,8 @@ class ParametersGenerator(object):
         @return: A tuple with the generated parameters and an empty list corresponding to the clusterings.
         """
         run_parameters = []
-        max_clusters = self.parameters["evaluation"]["maximum_clusters"]
-        min_clusters = self.parameters["evaluation"]["minimum_clusters"]
+        max_clusters = self.parameters["clustering"]["evaluation"]["maximum_clusters"]
+        min_clusters = self.parameters["clustering"]["evaluation"]["minimum_clusters"]
         sizes = range(min_clusters,max_clusters+1,self.num_clusters_step)
 
         # Defaults

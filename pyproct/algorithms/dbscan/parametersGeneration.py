@@ -53,7 +53,7 @@ class ParametersGenerator(object):
         buffer = numpy.empty(num_elements)
         kdist_matrix = k_dist(klist, buffer, self.distance_matrix)
 
-        dbscan_param_pairs = dbscanTools.dbscan_param_space_search(self.parameters["evaluation"]["maximum_noise"],
+        dbscan_param_pairs = dbscanTools.dbscan_param_space_search(self.parameters["clustering"]["evaluation"]["maximum_noise"],
                                                                    max_eps_tries,
                                                                    num_elements,
                                                                    klist,

@@ -17,7 +17,7 @@ class BestClusteringSelector(object):
         @param parameters: The global script parameters.
         """
         self.parameters = parameters
-        self.criteria = parameters["evaluation"]["evaluation_criteria"]
+        self.criteria = parameters["clustering"]["evaluation"]["evaluation_criteria"]
 
     def choose_best(self, clustering_info):
         """

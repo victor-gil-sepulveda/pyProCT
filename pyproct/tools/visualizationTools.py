@@ -116,7 +116,7 @@ def generate_CA_or_P_trace(trajectoryHandler, backbone_atoms_selection = "name C
         print "[ERROR visualizationTools::generate_CA_or_P_trace] Impossible to get coordinates for trace"
     return coordsets.tolist()
 
-def generate_selection_centers_file(parameters, best_clustering, workspaceHandler, trajectoryHandler):
+def generate_selection_centers_file(best_clustering, workspaceHandler, trajectoryHandler):
     # TODO: Superpose and center coords (or getting already superposed confs)
     #########################
 

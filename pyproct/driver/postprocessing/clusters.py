@@ -11,11 +11,10 @@ import tarfile
 import bz2
 from pyproct.protocol.saveTools import merge_pdbs
 
-def save_all_clusters(parameters, workspaceHandler, clustering, generatedFiles, timer):
+def save_all_clusters(my_params, pdb_params, workspaceHandler, clustering, generatedFiles, timer):
     timer.start("Save clusters")
 
     #Parameters
-    my_params = parameters["global"]["postprocess"]["pdb_clusters"]
     keep_remarks = my_params["keep_remarks"] if "keep_remarks" in my_params else False
     keep_frame_number = my_params["keep_frame_number"] if "keep_frame_number" in my_params else False
 
@@ -26,7 +25,7 @@ def save_all_clusters(parameters, workspaceHandler, clustering, generatedFiles, 
 
     # The real job
     input_path = os.path.join(tmp_place, "tmp_merged_trajectory.pdb")
-    merge_pdbs(parameters["global"]["pdbs"], input_path)
+    merge_pdbs(pdb_params, input_path)
 
     number_of_frames = get_number_of_frames(input_path)
     cluster_files = []
@@ -56,12 +55,11 @@ def save_all_clusters(parameters, workspaceHandler, clustering, generatedFiles, 
                                          "path":tar_path,
                                          "type":"compressed_pdb"})
 
-def save_representatives(clustering, parameters, matrixHandler, workspaceHandler,
+def save_representatives(clustering, my_params, matrixHandler, workspaceHandler,
                          trajectoryHandler, generatedFiles, timer):
     timer.start("Representatives")
 
     #Parameters
-    my_params = parameters["global"]["postprocess"]["representatives"]
     keep_remarks = my_params["keep_remarks"] if "keep_remarks" in my_params else False
     keep_frame_number = my_params["keep_frame_number"] if "keep_frame_number" in my_params else False
 
