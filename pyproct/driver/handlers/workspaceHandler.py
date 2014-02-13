@@ -35,17 +35,5 @@ class WorkspaceHandler(Observable):
                 shutil.rmtree(self.data[path])
             scripts_common.create_directory(self.data[path])
 
-    def create_refinement_directories(self, workspace_parameters, remove_existing = True):
-        refinement_base = os.path.join(workspace_parameters["base"], workspace_parameters["refinement_base"])
-        self.data["refinement"]["pure_A"] = os.path.join(refinement_base,"pure_A")
-        self.data["refinement"]["pure_B"] = os.path.join(refinement_base,"pure_B")
-        self.data["refinement"]["mixed"] = os.path.join(refinement_base, "mixed")
-
-        for path in self.data["refinement"]:
-            if os.path.exists(self.data["refinement"][path]) and remove_existing:
-                self.notify("Removing Directory",self.data["refinement"][path])
-                shutil.rmtree(self.data["refinement"][path])
-            scripts_common.create_directory(self.data["refinement"][path])
-
 
 
