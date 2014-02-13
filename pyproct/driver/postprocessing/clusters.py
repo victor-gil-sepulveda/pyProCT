@@ -29,13 +29,12 @@ def save_all_clusters(parameters, workspaceHandler, clustering, generatedFiles, 
     merge_pdbs(parameters["global"]["pdbs"], input_path)
 
     number_of_frames = get_number_of_frames(input_path)
-    bz2_files = []
+    cluster_files = []
     for cluster in clustering.clusters:
-        output_path = os.path.join(clusterings_place, "%s.pdb.bz2"%(cluster.id))
-        bz2_files.append(output_path)
-
+        output_path = os.path.join(clusterings_place, "%s.pdb"%(cluster.id))
+        cluster_files.append(output_path)
         file_handler_in = open(input_path,"r")
-        file_handler_out = bz2.BZ2File(output_path,"w")#
+        file_handler_out = open(output_path,"w")
         extract_frames_from_trajectory_sequentially(file_handler_in,
                                                     number_of_frames,
                                                     file_handler_out,
@@ -46,10 +45,10 @@ def save_all_clusters(parameters, workspaceHandler, clustering, generatedFiles, 
         file_handler_out.close()
 
     # Add all bz2 files to a tar file
-    tar_path = os.path.join(results_place,"clusters.tar.bz2")
-    tar = tarfile.open(tar_path, "w:bz2")
-    for comp_file in bz2_files:
-        tar.add(comp_file)
+    tar_path = os.path.join(results_place,"clusters.tar.gz")
+    tar = tarfile.open(tar_path, "w:gz")
+    for comp_file in cluster_files:
+        tar.add(comp_file, os.path.basename(comp_file))
     tar.close()
     timer.stop("Save clusters")
 

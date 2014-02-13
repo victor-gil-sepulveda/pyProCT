@@ -53,9 +53,18 @@ def find_most_negative_rmsd_half(scores):
 def find_most_negative_cluster(scores):
     filtered = scores
     while len(filtered)>1:
-       filtered = find_most_negative_be_half(filtered)
-       filtered = find_most_negative_rmsd_half(filtered)
+        filtered = find_most_negative_be_half(filtered)
+        filtered = find_most_negative_rmsd_half(filtered)
     return filtered[0]
+
+def find_5_clusters_with_less_energy(scores):
+    # Mean energy will be the second element of each score
+    energies = [(en,cluster) for ((dist, en),cluster) in scores]  # @UnusedVariable
+    energies.sort()
+    clusters = []
+    for i in range(5):
+        clusters.append(energies[i])
+    return clusters
 
 def normalize_metrics(metrics):
     normalized_metrics = []
