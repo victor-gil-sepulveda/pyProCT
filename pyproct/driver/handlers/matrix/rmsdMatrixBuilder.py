@@ -33,7 +33,7 @@ class RMSDMatrixBuilder(object):
                                     fittingCoordsets  = fit_selection_coordsets)
 
         # Apply calculation selection if needed
-        calc_selection_string = matrix_creation_parameters["calc_selection"]
+        calc_selection_string = matrix_creation_parameters["calc_selection"] if "calc_selection" in matrix_creation_parameters else  ""
         if calc_selection_string != "" and calc_selection_string != fit_selection_string:
             calc_selection_coordsets = trajectory_handler.getSelection(calc_selection_string)
             trajectory_handler.setWorkingCoordinates(calc_selection_string)
