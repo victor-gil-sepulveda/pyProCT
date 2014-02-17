@@ -29,11 +29,9 @@ class ClusteringProtocol(Observable):
                                             clustering_parameters,
                                             matrixHandler,
                                             workspaceHandler,
-                                            scheduling_tools.build_scheduler(
-                                                                           clustering_parameters["global"]["control"],
-                                                                           self.observer),
-                                            AlgorithmRunParametersGenerator(
-                                                                            clustering_parameters,
+                                            scheduling_tools.build_scheduler(clustering_parameters["global"]["control"],
+                                                                             self.observer),
+                                            AlgorithmRunParametersGenerator(clustering_parameters,
                                                                             matrixHandler),
                                             self.observer).run()
 

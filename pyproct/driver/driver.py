@@ -120,6 +120,8 @@ class Driver(Observable):
         # Specialized post-processing
         ##############################
 
+        if not "postprocess" in parameters:
+            return
 
         ##############################
         # Saving representatives
@@ -133,7 +135,7 @@ class Driver(Observable):
         # Saving all clusters in different files
         ##############################
         if "pdb_clusters" in parameters["postprocess"]:
-            save_all_clusters(parameters["postprocess"]["pdb_clusters"], parameters["data"]["matrix"]["pdbs"],\
+            save_all_clusters(parameters["postprocess"]["pdb_clusters"], parameters["data"]["files"],\
                               self.workspaceHandler, best_clustering["clustering"], self.generatedFiles, self.timer)
 
 
@@ -249,7 +251,7 @@ class Driver(Observable):
         # Trajectory Loading
         #####################
         self.timer.start("Trajectory Loading")
-        self.trajectoryHandler = TrajectoryHandler(parameters["data"]["matrix"], parameters["data"]["matrix"]['parameters'], self.observer)
+        self.trajectoryHandler = TrajectoryHandler(parameters, self.observer)
         self.timer.stop("Trajectory Loading")
 
         ##############################

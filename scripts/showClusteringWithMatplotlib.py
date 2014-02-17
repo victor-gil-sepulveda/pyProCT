@@ -34,7 +34,7 @@ if __name__ == '__main__':
     options, args = parser.parse_args()
 
     params = convert_to_utf8(json.loads(open(options.parameters_file).read()))
-    if params["matrix"]["method"] == "distance":
+    if params["data"]["matrix"]["method"] == "distance":
         results = convert_to_utf8(json.loads(open(options.results_file).read()))
     else:
         print "ERROR: Only 'distance' clusterings can be plotted."
@@ -54,13 +54,13 @@ if __name__ == '__main__':
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     # Plot protein
-    pdb = prody.parsePDB(params["global"]["pdbs"][0])
+    pdb = prody.parsePDB(params["data"]["files"][0])
     if options.show_protein:
         pdb_backbone = pdb.select("name CA").getCoordsets()[0] # "backbone not hetero"
         ax.plot(pdb_backbone.T[0], pdb_backbone.T[1], pdb_backbone.T[2])
 
     # Get geometric centers and plot ligands
-    ligand_coords = pdb.select(params["matrix"]["parameters"]["body_selection"]).getCoordsets()
+    ligand_coords = pdb.select(params["data"]["matrix"]["parameters"]["body_selection"]).getCoordsets()
 
     # Get clustering
     if options.clustering_to_see is None:

@@ -20,7 +20,7 @@ def save_all_clusters(my_params, pdb_params, workspaceHandler, clustering, gener
 
     # Places
     results_place = workspaceHandler["results"]
-    clusterings_place = workspaceHandler["clusterings"]
+    clusters_place = workspaceHandler["clusters"]
     tmp_place = workspaceHandler["tmp"]
 
     # The real job
@@ -30,7 +30,7 @@ def save_all_clusters(my_params, pdb_params, workspaceHandler, clustering, gener
     number_of_frames = get_number_of_frames(input_path)
     cluster_files = []
     for cluster in clustering.clusters:
-        output_path = os.path.join(clusterings_place, "%s.pdb"%(cluster.id))
+        output_path = os.path.join(clusters_place, "%s.pdb"%(cluster.id))
         cluster_files.append(output_path)
         file_handler_in = open(input_path,"r")
         file_handler_out = open(output_path,"w")

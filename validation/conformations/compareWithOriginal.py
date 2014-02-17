@@ -17,8 +17,8 @@ from pyproct.tools.pdbTools import get_number_of_frames
 if __name__ == '__main__':
     base_script = "".join(open("base_script.json","r").readlines())
     parameters = ProtocolParameters.get_params_from_json(base_script)
-    parameters["workspace"]["base"] = sys.argv[3]
-    parameters["global"]["pdbs"] = [sys.argv[1], sys.argv[2]]
+    parameters["global"]["workspace"]["base"] = sys.argv[3]
+    parameters["data"]["files"] = [sys.argv[1], sys.argv[2]]
 
     frames_ini = get_number_of_frames(sys.argv[1])
     frames_proto = get_number_of_frames(sys.argv[2])

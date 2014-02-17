@@ -10,13 +10,15 @@ import prody
 
 class TrajectoryHandler(Observable):
 
-    def __init__(self, global_parameters, matrix_parameters, observer):
+    def __init__(self, parameters, observer):
         """
         """
+        matrix_parameters = parameters["data"]["matrix"]['parameters']
+        files = parameters["data"]["files"]
         super(TrajectoryHandler,self).__init__(observer)
 
-        if len(global_parameters["pdbs"]) > 0:
-            self.pdbs = [self.get_pdb_data(pdb_path) for pdb_path in global_parameters["pdbs"]]
+        if len(files) > 0:
+            self.pdbs = [self.get_pdb_data(pdb_path) for pdb_path in files]
         else:
             common.print_and_flush( "[ERROR] no pdbs. Exiting...\n")
             self.notify("SHUTDOWN","No pdbs defined in script.")
