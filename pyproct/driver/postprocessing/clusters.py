@@ -8,7 +8,6 @@ from pyproct.tools.pdbTools import extract_frames_from_trajectory_sequentially,\
     get_number_of_frames
 import pyproct.protocol.saveTools as saveTools
 import tarfile
-import bz2
 from pyproct.protocol.saveTools import merge_pdbs
 
 def save_all_clusters(my_params, pdb_params, workspaceHandler, clustering, generatedFiles, timer):
@@ -52,7 +51,7 @@ def save_all_clusters(my_params, pdb_params, workspaceHandler, clustering, gener
     timer.stop("Save clusters")
 
     generatedFiles.append({"description":"Clusters",
-                                         "path":tar_path,
+                                         "path":os.path.abspath(tar_path),
                                          "type":"compressed_pdb"})
 
 def save_representatives(clustering, my_params, matrixHandler, workspaceHandler,
@@ -78,7 +77,7 @@ def save_representatives(clustering, my_params, matrixHandler, workspaceHandler,
                                                           keep_remarks = keep_remarks )
 
     generatedFiles.append({"description":"Cluster representatives",
-                                "path":representatives_path,
+                                "path":os.path.abspath(representatives_path),
                                 "type":"pdb"})
 
     timer.stop("Representatives")

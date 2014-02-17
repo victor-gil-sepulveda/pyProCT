@@ -33,7 +33,9 @@ class Driver(Observable):
     def save_parameters_file(self, parameters):
         parameters_file_path = os.path.join(self.workspaceHandler["results"], "parameters.json")
         open(parameters_file_path, "w").write(json.dumps(parameters.params_dic, sort_keys=False, indent=4, separators=(',', ': ')))
-        self.generatedFiles = [{"description":"Parameters file", "path":parameters_file_path, "type":"text"}]
+        self.generatedFiles = [{"description":"Parameters file",
+                                "path":os.path.abspath(parameters_file_path),
+                                "type":"text"}]
 
     def create_matrix(self, parameters):
         self.matrixHandler = MatrixHandler(parameters["data"]["matrix"])
@@ -41,7 +43,9 @@ class Driver(Observable):
         self.timer.start("Matrix Generation")
         self.matrixHandler.create_matrix(self.trajectoryHandler)
         statistics_file_path = self.matrixHandler.save_statistics(self.workspaceHandler["matrix"])
-        self.generatedFiles.append({"description":"Matrix statistics", "path":statistics_file_path, "type":"text"})
+        self.generatedFiles.append({"description":"Matrix statistics",
+                                    "path":os.path.abspath(statistics_file_path),
+                                    "type":"text"})
         self.timer.stop("Matrix Generation")
         if "filename" in parameters["data"]["matrix"]:
             self.timer.start("Matrix Save")
@@ -55,7 +59,9 @@ class Driver(Observable):
             matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["image"]["filename"])
             max_dim = parameters["data"]["matrix"]["image"]["dimension"] if "dimension" in parameters["data"]["matrix"]["image"] else 1000
             plotTools.matrixToImage(self.matrixHandler.distance_matrix, matrix_image_file_path, max_dim=max_dim, observer=self.observer)
-            self.generatedFiles.append({"description":"Matrix image", "path":matrix_image_file_path, "type":"image"})
+            self.generatedFiles.append({"description":"Matrix image",
+                                        "path":os.path.abspath(matrix_image_file_path),
+                                        "type":"image"})
             self.timer.stop("Matrix Imaging")
 
     def get_best_clustering(self, parameters):
@@ -103,7 +109,9 @@ class Driver(Observable):
 
     def save_clustering_results(self, clustering_results):
         results_path = os.path.join(self.workspaceHandler["results"], "results.json")
-        self.generatedFiles.append({"description":"Results file", "path":results_path, "type":"text"})
+        self.generatedFiles.append({"description":"Results file",
+                                    "path":os.path.abspath(results_path),
+                                    "type":"text"})
         json_results = ClusteringResultsGatherer().gather(self.timer,
                                                             self.trajectoryHandler,
                                                             self.workspaceHandler,
@@ -131,9 +139,9 @@ class Driver(Observable):
                                  self.workspaceHandler, self.trajectoryHandler,
                                  self.generatedFiles, self.timer)
 
-        ##############################
+        ##########################################
         # Saving all clusters in different files
-        ##############################
+        ##########################################
         if "pdb_clusters" in parameters["postprocess"]:
             save_all_clusters(parameters["postprocess"]["pdb_clusters"], parameters["data"]["files"],\
                               self.workspaceHandler, best_clustering["clustering"], self.generatedFiles, self.timer)
@@ -152,7 +160,7 @@ class Driver(Observable):
 
                 self.generatedFiles.append({
                                             "description":"Alpha Carbon mean square displacements",
-                                            "path":displacements_path,
+                                            "path":os.path.abspath(displacements_path),
                                             "type":"text"
                 })
 
@@ -175,7 +183,7 @@ class Driver(Observable):
 
                 self.generatedFiles.append({
                                             "description":"Centers of the selection used to calculate distances",
-                                            "path":centers_path,
+                                            "path":os.path.abspath(centers_path),
                                             "type":"text"
                 })
 
@@ -217,7 +225,7 @@ class Driver(Observable):
                                                        self.trajectoryHandler,
                                                        self.matrixHandler)
             self.generatedFiles.append({"description":"Compressed file",
-                                        "path":compressed_file_path,
+                                        "path":os.path.abspath(compressed_file_path),
                                         "type":"pdb"})
             self.timer.stop("Compression")
 
