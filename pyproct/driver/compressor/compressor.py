@@ -15,9 +15,11 @@ class Compressor(object):
     def __init__(self, parameters):
         self.parameters = parameters
 
-    def compress(self, clustering, pdb_name, workspace_handler, trajectory_handler, matrix_handler):
+    def compress(self, clustering, workspace_handler, trajectory_handler, matrix_handler):
         representatives = []
         compression_type = self.parameters["type"]
+
+        pdb_name =  self.parameters['file'] if 'file' in self.parameters else "compressed_pdb"
 
         if compression_type == "RANDOM":
             representatives = self.__naive_compression(clustering, matrix_handler)

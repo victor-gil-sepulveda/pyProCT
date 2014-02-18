@@ -218,9 +218,8 @@ class Driver(Observable):
             # Compress
             ############################################
             self.timer.start("Compression")
-            compressor = Compressor(parameters["postprocess"])
+            compressor = Compressor(parameters["postprocess"]["compression"])
             compressed_file_path = compressor.compress(best_clustering["clustering"],
-                                                       (lambda params: params['file'] if 'file' in params else "compressed_pdb")(parameters["postprocess"]["compression"]["parameters"]),
                                                        self.workspaceHandler,
                                                        self.trajectoryHandler,
                                                        self.matrixHandler)

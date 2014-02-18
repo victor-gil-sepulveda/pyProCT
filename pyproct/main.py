@@ -6,6 +6,7 @@ Created on 04/02/2013
 import optparse
 import threading
 import pyproct
+import os.path
 from pyproct.driver.parameters import ProtocolParameters
 from pyproct.driver.observer.observer import Observer
 from pyproct.driver.driver import Driver
@@ -46,6 +47,7 @@ if __name__ == '__main__':
     parameters = None
     try:
         parameters = ProtocolParameters.get_params_from_json(open(json_script).read())
+        parameters["global"]["workspace"]["base"] = os.path.abspath(parameters["global"]["workspace"]["base"])
     except ValueError, e:
         print "Malformed json script."
         print e.message
