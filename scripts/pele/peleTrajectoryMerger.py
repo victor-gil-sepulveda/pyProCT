@@ -54,6 +54,8 @@ if __name__ == '__main__':
                                     dest = "merge_action",
                                     metavar = "1",
                                     help="Skip the first N frames of every trajectory.")
+    parser.add_option('--append', action="store_true", dest = "append", help="It will append pdbs to the output file")
+
 
     options, args = parser.parse_args()
 
@@ -72,8 +74,12 @@ if __name__ == '__main__':
     for filename in files:
         if options.traj_prefix in filename:
             traj_file.append(os.path.join(options.directory,filename))
-    file_out=open(options.out_file,'w')
     traj_file.sort()
+
+    if options.append == True:
+        file_out=open(options.out_file,'aw')
+    else:
+        file_out=open(options.out_file,'w')
 
     if options.skip_first != -1:
         skip_out = open(options.out_file+".skipped","w")
