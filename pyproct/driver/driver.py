@@ -108,6 +108,8 @@ class Driver(Observable):
         return best_clustering, clustering_results
 
     def save_clustering_results(self, clustering_results):
+        self.timer.stop("Global")
+
         results_path = os.path.join(self.workspaceHandler["results"], "results.json")
         self.generatedFiles.append({"description":"Results file",
                                     "path":os.path.abspath(results_path),
@@ -271,5 +273,4 @@ class Driver(Observable):
         ##############################
         self.perform_actions(parameters)
 
-        self.timer.stop("Global")
         self.notify("Driver Finished", "\n"+str(self.timer))

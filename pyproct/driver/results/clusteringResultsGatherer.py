@@ -11,25 +11,25 @@ from pyproct.clustering.clustering import Clustering
 class SerializerRegistry(object):
     def __init__(self):
         self._classes = {}
-    
+
     def add(self, cls):
         self._classes[cls.__module__, cls.__name__] = cls
         return cls
-    
+
     def object_hook(self, dct):
         module, cls_name = dct.pop('__type__', (None, None))
         if cls_name is not None:
             return self._classes[module, cls_name].from_dic(dct)
         else:
             return dct
-        
+
     def default(self, obj):
         return obj.to_dic()
 
 class ClusteringResultsGatherer(object):
     def __init__(self):
         pass
-    
+
     def gather(self, timer_handler, trajectory_handler, workspace_handler, clustering_results, files):
         results = {}
         results["timing"] = timer_handler.get_elapsed()
@@ -45,8 +45,8 @@ class ClusteringResultsGatherer(object):
         serializer = SerializerRegistry()
         serializer.add(Clustering)
         serializer.add(Cluster)
-        return json.dumps(results, 
-                          sort_keys=False, 
-                          indent=4, 
+        return json.dumps(results,
+                          sort_keys=False,
+                          indent=4,
                           separators=(',', ': '),
                           default=serializer.default)
