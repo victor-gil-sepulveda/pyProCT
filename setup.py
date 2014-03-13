@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
       name='pyProCT',
-      version='1.0.0',
+      version='1.1.0',
       description='',
       author='Victor Alejandro Gil Sepulveda',
       author_email='victor.gil.sepulveda@gmail.com',
@@ -50,6 +50,7 @@ setup(
                 'pyproct.driver.scheduling',
                 'pyproct.driver.compressor',
                 'pyproct.driver.results',
+                'pyproct.driver.postprocessing'
       ],
 
       include_dirs = [numpy.get_include(),
