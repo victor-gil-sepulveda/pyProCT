@@ -17,13 +17,29 @@ import pylab
 alpha_atoms_selection = "name CA"
 
 data = [
+#     {
+#         'dir':'2rh1_2',
+#         'selection':{
+#             'motif': "backbone and resnum 322:327",
+#             'residues': "ca resnum 131 272",
+#         }
+#     },
+#     {
+#         'dir':'2rh1_3',
+#         'selection':{
+#             'motif': "backbone and resnum 322:327",
+#             'residues': "ca resnum 131 272",
+#         }
+#      },
     {
-        'dir':'2rh1',
+        'dir':'2rh1_4_Nano',
+        'pdb_traj':'_2rh1_4_Nano.pdb',
+        'native':'2RH1_Inac_Nano.pdb',
         'selection':{
             'motif': "backbone and resnum 322:327",
             'residues': "ca resnum 131 272",
         }
-    }
+     }
 ]
 
 cwd = os.getcwd()
@@ -34,13 +50,24 @@ for datum in data:
     base_dir = os.path.join(cwd, prot_name)
     os.chdir(base_dir)
 
-    pdb = prody.parsePDB("%s.pdb"%prot_name)
+    native =  prody.parsePDB("%s"%datum['native'], chain='A',subset='backbone')
+    pdb = prody.parsePDB("%s"%datum['pdb_traj'], chain='A',subset='backbone')
+
+    print native.getCoordsets().shape
+    print pdb.getCoordsets().shape
+    native_ca_coordset = native.select(alpha_atoms_selection)
+    native_motif_coordset = native.select(datum['selection']['motif'])
     ca_coordsets = pdb.select(alpha_atoms_selection)
     motif_coordsets = pdb.select(datum['selection']['motif'])
 
+    print native_ca_coordset.getCoordsets().shape,ca_coordsets.getCoordsets().shape
+    print native_motif_coordset.getCoordsets().shape,motif_coordsets.getCoordsets().shape
+    exit()
+#     calculator = RMSDCalculator( calculatorType = "QCP_OMP_CALCULATOR",
+#                  fittingCoordsets = ca_coordsets.getCoordsets(),
+#                  calculationCoordsets = motif_coordsets.getCoordsets())
     calculator = RMSDCalculator( calculatorType = "QCP_OMP_CALCULATOR",
-                 fittingCoordsets = ca_coordsets.getCoordsets(),
-                 calculationCoordsets = motif_coordsets.getCoordsets())
+                 fittingCoordsets = motif_coordsets.getCoordsets())
 
     motif_rmsd = calculator.oneVsTheOthers(  conformation_number = 0,
                                              get_superposed_coordinates = False)

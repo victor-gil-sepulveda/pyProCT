@@ -47,6 +47,9 @@ if __name__ == '__main__':
     parser.add_option('-p', action="store", dest = "traj_prefix",help="The prefix of the trajectory files to be merged.",metavar = "traj_")
     parser.add_option('-d', action="store", dest = "directory", default = "./", help="Directory where the trajectories are.",metavar = "./my_trajectories/")
     parser.add_option('-o', action="store", dest = "out_file",help="Name of the merged trajectory.",metavar = "trajectory.pdb")
+    parser.add_option('-f', action="store", dest = "in_traj_file", help="Path of the file containing the pdb files to merge. If used, overrides '-p' and '-d'.", metavar = "files.txt")
+    parser.add_option('-v', action="store_true", dest = "verbose", help="Shows more output messages.")
+
     parser.add_option('--remarks', action="store_true", dest = "remarks", help="Wheter if keep remarks or not.")
     parser.add_option('--skip_first', action="store", default = -1, dest = "skip_first", metavar = "1", help="Skip the first N frames of every trajectory.")
     parser.add_option('--merge_action', action = "store",
@@ -65,15 +68,22 @@ if __name__ == '__main__':
         parser.error("Please choose one option in %s for the 'merge_action' parameter."%merge_actions)
 
     # Mandatory options
-    if (not options.traj_prefix) or (not options.out_file):
+    if options.in_traj_file is None and ((not options.traj_prefix) or (not options.out_file)):
         parser.error("Please specify the prefix (-p) and output trajectory file (-o).")
 
     # Pick files
     traj_file = []
-    files=os.listdir(options.directory)
-    for filename in files:
-        if options.traj_prefix in filename:
-            traj_file.append(os.path.join(options.directory,filename))
+    if options.in_traj_file is not None:
+        # Then load pdbs defined into a file.
+        traj_file = open(options.in_traj_file, "r").read().splitlines()
+    else:
+        # Else load the pdbs that share the defined prefix.
+        files=os.listdir(options.directory)
+        for filename in files:
+            if options.traj_prefix in filename:
+                traj_file.append(os.path.join(options.directory,filename))
+
+
     traj_file.sort()
 
     if options.append == True:
@@ -93,7 +103,8 @@ if __name__ == '__main__':
     for pdb_filename in traj_file:
         number_of_models = get_number_of_frames(pdb_filename)
         number_of_complete_models = get_number_of_complete_models(pdb_filename)
-        print "file:",pdb_filename,"frames:",number_of_models,"(%d)"%(number_of_complete_models)
+        if options.verbose:
+            print "file:",pdb_filename,"frames:",number_of_models,"(%d)"%(number_of_complete_models)
         models_left.append(number_of_complete_models)
         total_models = total_models + number_of_models
         total_complete_models += number_of_complete_models
