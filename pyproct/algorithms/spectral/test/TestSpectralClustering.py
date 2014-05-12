@@ -11,24 +11,7 @@ from scipy.spatial.distance import pdist
 
 class TestSpectralClustering(unittest.TestCase):
 
-    def test_calculate_adjacency_matrix_regression(self):
 
-        data = [1., 4., 6., 2., 5.,
-                    3., 9., 7., 2.,
-                        4., 1., 1.,
-                             9.,3.,
-                                8.]
-
-        expected_W = [[  1.0, 1.35375977e-01, 0.0, 0.0,  3.35454941e-04, 0.0],
-                     [  1.35375977e-01, 1.0, 0.0, 0.0, 0.0, 3.35454941e-04],
-                     [  0.0, 0.0, 1.0, 0.0, 1.35375977e-01, 1.35375977e-01],
-                     [  0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
-                     [  3.35454941e-04, 0.0, 1.35375977e-01, 0.0, 1.0, 0.0],
-                     [  0.0, 3.35454941e-04, 1.35375977e-01, 0.0, 0.0, 1.0]]
-        matrix  = CondensedMatrix(data)
-
-        W = SpectralClusteringAlgorithm.calculate_adjacency_matrix(matrix, sigma_sq = 0.5)
-        numpy.testing.assert_almost_equal(W,expected_W)
 
     def test_calculate_laplacian(self):
         data = [1., 4., 6., 2., 5.,
@@ -62,18 +45,6 @@ class TestSpectralClustering(unittest.TestCase):
         numpy.testing.assert_almost_equal(L_PYTHON, L_NUMPY_PURE, 3)
         numpy.testing.assert_almost_equal(L_PYTHON, expected_regression, 3)
 
-    def test_calculate_degree_matrix(self):
-        W = [[1., 4., 6.],
-            [4., 1., 7.],
-            [6., 7., 1.]]
-
-        expected_D = [11., 12., 14.]
-        D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
-        numpy.testing.assert_almost_equal(D, expected_D, 8)
-
-        expected_D_inv = [1/11., 1/12., 1/14.]
-        D = SpectralClusteringAlgorithm.calculate_inverse_degree_matrix(W)
-        numpy.testing.assert_almost_equal(D, expected_D_inv, 8)
 
     def test_naive_case_1(self):
 #         1       5         8

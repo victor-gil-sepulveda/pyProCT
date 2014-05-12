@@ -1,6 +1,6 @@
 from itertools import product
-from pyproct.algorithms.spectral.cython.spectralTools import local_sigma_W_estimation
 from pyproct.algorithms.spectral.spectralClusteringAlgorithm import SpectralClusteringAlgorithm
+import pyproct.algorithms.spectral.cython.spectralTools as SpectralTools
 
 def getClusterAndComplementary(i,all_clusters):
     """
@@ -47,8 +47,9 @@ cdef class CythonNCut(object):
         NCut = 1/2 sum_{i=1}^k W(A_i,A_i-complementary) / vol(A_i)
         """
         # Calculate similarity graph
-        W, sigma = local_sigma_W_estimation(condensed_matrix)
-        D = SpectralClusteringAlgorithm.calculate_degree_matrix(W)
+        sigmas = SpectralTools.local_sigma_estimatio(condensed_matrix)
+        W  = SpectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix,sigmas)
+        D = SpectralTools.calculate_degree_matrix(W)
         clusters = clustering.clusters
 
         cdef double ncut_val = 0
