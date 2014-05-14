@@ -150,7 +150,10 @@ def calculateUnnormalizedLaplacian(W, D):
             L[j][i] = tmpval
     return L
 
+<<<<<<< HEAD
 @cython.boundscheck(False)
+=======
+>>>>>>> 71b91d17cd806407651db13885ec3da4f14da1f5
 def calculateUnnormalizedEigenvectors(L, max_number_of_clusters, is_sparse):
     if is_sparse:
         w, v  = scipy.sparse.linalg.eigsh(  A =L,
@@ -168,7 +171,11 @@ def calculateUnnormalizedEigenvectors(L, max_number_of_clusters, is_sparse):
     return v
 
 
+<<<<<<< HEAD
 @cython.boundscheck(False)
+=======
+
+>>>>>>> 71b91d17cd806407651db13885ec3da4f14da1f5
 def calculateNormalizedEigenvectors(L, D, max_number_of_clusters, is_sparse):
     if is_sparse:
         L_sparse = scipy.sparse.csc_matrix(L)

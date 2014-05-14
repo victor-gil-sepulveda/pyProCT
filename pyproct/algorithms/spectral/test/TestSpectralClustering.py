@@ -11,8 +11,6 @@ from scipy.spatial.distance import pdist
 
 class TestSpectralClustering(unittest.TestCase):
 
-
-
     def test_naive_case_1(self):
 #         1       5         8
 #         |       |         |
