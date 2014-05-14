@@ -107,7 +107,7 @@ def calculate_fully_connected_adjacency_matrix_with_sigma_estimation( matrix, si
     W = CondensedMatrix(W_data)
     return W
 
-def force_sparsity(W):
+def force_sparsity(W, sparsity = 0.5):
     """
     matrix is a CondensedMatrix
     """
@@ -116,7 +116,7 @@ def force_sparsity(W):
     # Find the weight that converts at least the 51% of the matrix in 0s
     # TODO: here we need an extra copy because we are directly working with the matrix memory, is this a bug
     # or a feature?
-    threshold = sorted(data)[(((N*(N-1))/2)/2)+1]
+    threshold = sorted(data)[(((N*(N-1))/2) * sparsity)+1]
 
     for i in range(N-1):
         for j in range(i+1,N):

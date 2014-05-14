@@ -57,8 +57,10 @@ class SpectralClusteringAlgorithm(object):
         else:
             if self.verbose: print "Calculating W with sigma estimation..."
             sigmas = SpectralTools.local_sigma_estimation(condensed_matrix)
-            W  = SpectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix,sigmas)
-            if self.verbose: print "Sigma^2 estimation (mean of local sigmas): ", numpy.mean(sigmas)**2
+            W  = SpectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix, sigmas)
+            self.sigma_sq = numpy.mean(sigmas)**2
+
+        if self.verbose: print "Sigma^2 estimation (mean of local sigmas): ", self.sigma_sq
 
         if self.force_sparse:
             SpectralTools.force_sparsity(W)
@@ -114,7 +116,9 @@ class SpectralClusteringAlgorithm(object):
             return k_medoids_alg.perform_clustering(k_medoids_args)
         else:
             centroid, labels = scipy.cluster.vq.kmeans2(self.eigenvectors[:,:k],
-                                                        k, iter = 1000, minit = 'points')
+                                                        k,
+                                                        iter = 1000,
+                                                        minit = 'random')
             del centroid
             clusters = gen_clusters_from_class_list(labels)
             return Clustering(clusters,details = algorithm_details)
@@ -131,7 +135,7 @@ class SpectralClusteringAlgorithm(object):
             self.max_clusters = max_clusters_default
 
         try:
-            self.sigma_sq = params["sigma_sq"]
+            self.sigma_sq = float(params["sigma_sq"])
             self.sigma_estimation = False
         except KeyError:
             self.sigma_sq = None
