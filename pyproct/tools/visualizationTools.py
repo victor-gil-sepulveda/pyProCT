@@ -15,7 +15,7 @@ from pyproct.clustering.comparison.rmsf import calc_rmsf_of_cluster
 def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
     global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
     global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
-    ca_pdb_coordsets =numpy.copy(trajectoryHandler.getJoinedPDB().select("name CA").getCoordsets())
+    ca_pdb_coordsets =numpy.copy(trajectoryHandler.getMergedPDB().select("name CA").getCoordsets())
     calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                     fittingCoordsets = ca_pdb_coordsets)
     calculator.iterativeSuperposition()
@@ -43,7 +43,7 @@ def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixH
 def generate_CA_displacements_file(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
     global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
     global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
-    ca_pdb_coordsets =numpy.copy(trajectoryHandler.getJoinedPDB().select("name CA").getCoordsets())
+    ca_pdb_coordsets =numpy.copy(trajectoryHandler.getMergedPDB().select("name CA").getCoordsets())
     calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
                                     fittingCoordsets = ca_pdb_coordsets)
     calculator.iterativeSuperposition()
@@ -111,7 +111,7 @@ def generate_CA_or_P_trace(trajectoryHandler, backbone_atoms_selection = "name C
     coordsets = numpy.array([])
     try:
         # Only get first frame of the selection
-        coordsets = trajectoryHandler.getJoinedPDB().select(backbone_atoms_selection).getCoordsets()[0]
+        coordsets = trajectoryHandler.getMergedPDB().select(backbone_atoms_selection).getCoordsets()[0]
     except:
         print "[ERROR visualizationTools::generate_CA_or_P_trace] Impossible to get coordinates for trace"
     return coordsets.tolist()

@@ -4,38 +4,43 @@ Created on 19/09/2012
 @author: victor
 '''
 import pyproct.tools.commonTools as common
-import pyproct.tools.pdbTools as pdb_tools
 from pyproct.driver.observer.observable import Observable
 import prody
+import os.path
 
 class TrajectoryHandler(Observable):
 
     def __init__(self, parameters, observer):
         """
+        Class creator. It parses the needed files and extracts info and coordinates.
         """
-        matrix_parameters = parameters["data"]["matrix"]['parameters']
-        files = parameters["data"]["files"]
         super(TrajectoryHandler,self).__init__(observer)
 
-        if len(files) > 0:
-            self.pdbs = [self.get_pdb_data(pdb_path) for pdb_path in files]
-        else:
+        matrix_parameters = parameters["data"]["matrix"]['parameters']
+        self.files = parameters["data"]["files"]
+        self.pdbs = []
+
+        if len(self.files) == 0:
             common.print_and_flush( "[ERROR] no pdbs. Exiting...\n")
             self.notify("SHUTDOWN","No pdbs defined in script.")
             exit()
 
         self.notify("Loading","Loading Trajectories")
 
-        # Bookmarking
+        # Bookmarking structure
         self.bookmarking = {
                              "pdb": None,
                              "selections": {}
         }
 
-        self.coordsets = self.getJoinedPDB().getCoordsets()
+        self.coordsets = self.getMergedPDB().getCoordsets()
         self.number_of_conformations = self.coordsets.shape[0]
         self.number_of_atoms = self.coordsets.shape[1]
 
+        self.handle_selection_paramters(matrix_parameters)
+
+
+    def handle_selection_paramters(self, matrix_parameters):
         # Store the main selections we can do
         self.fitting_selection = self.calculation_selection = None
 
@@ -51,9 +56,8 @@ class TrajectoryHandler(Observable):
         if "body_selection" in matrix_parameters:
             self.calculation_selection = matrix_parameters["body_selection"]
 
-
     @classmethod
-    def get_pdb_data(cls, pdb):
+    def extract_file_data(cls, path, structure):
         """
         Creates a pdb dictionary with source, number of frames and number of atoms.
 
@@ -62,12 +66,25 @@ class TrajectoryHandler(Observable):
         @return: The aforementioned dictionary.
         """
         return {
-                  "source":pdb,
-                  "conformations": pdb_tools.get_number_of_frames(pdb),
-                  "atoms":  pdb_tools.get_number_of_atoms(pdb)
+                  "source":path,
+                  "conformations": structure.numCoordsets(),
+                  "atoms":  structure.numAtoms()
         }
 
-    def getJoinedPDB(self):
+    def get_structure_file(self, path):
+        name, ext = os.path.splitext(path)
+
+        if not ext in [".dcd",".pdb"]:
+            common.print_and_flush( "[ERROR] pyProCT cannot read this file format.\n")
+            self.notify("SHUTDOWN","Wrong file format.")
+            exit()
+
+        if ext == ".dcd":
+            return prody.DCDFile(path)
+        else:
+            return  prody.parsePDB(path)
+
+    def getMergedPDB(self):
         """
         Merges all handled pdbs into a single Prody pdb object. If there's any error, the program must exit, and
         any thread must be stopped.
@@ -77,8 +94,11 @@ class TrajectoryHandler(Observable):
         merged_pdb = None
         if self.bookmarking["pdb"] is None:
             try:
-                for pdb_data in self.pdbs:
-                    pdb = prody.parsePDB(pdb_data["source"])
+                for path in self.files:
+
+                    pdb = self.get_structure_file(path)
+                    self.pdbs.append(self.extract_file_data(path, pdb))
+
                     if merged_pdb is None:
                         merged_pdb = pdb
                     else:
@@ -86,7 +106,7 @@ class TrajectoryHandler(Observable):
                             merged_pdb.addCoordset(coordset)
                 self.bookmarking["pdb"] = merged_pdb
             except Exception, e:
-                print "[ERROR TrajectroyHandler::getJoinedPDB] fatal error reading pdbs.\nError: %s\n Program will halt now ..."%e.message
+                print "[ERROR TrajectroyHandler::getMergedPDB] fatal error reading pdbs.\nError: %s\n Program will halt now ..."%e.message
                 self.notify("SHUTDOWN", "Fatal error reading pdbs.")
                 exit()
 
@@ -99,7 +119,7 @@ class TrajectoryHandler(Observable):
         selection_string = self.bookmarking["working"]
 
         if selection_string == "":
-            return self.getJoinedPDB().getCoordsets()
+            return self.getMergedPDB().getCoordsets()
 
         if not selection_string in self.bookmarking["selections"]:
             return self.getSelection(selection_string)
@@ -108,7 +128,7 @@ class TrajectoryHandler(Observable):
 
     def getSelection(self, selection_string):
         if self.bookmarking["pdb"] is None:
-            self.getJoinedPDB()
+            self.getMergedPDB()
 
         pdb = self.bookmarking["pdb"]
 
