@@ -56,33 +56,68 @@ class TrajectoryHandler(Observable):
         if "body_selection" in matrix_parameters:
             self.calculation_selection = matrix_parameters["body_selection"]
 
-    @classmethod
-    def extract_file_data(cls, path, structure):
-        """
-        Creates a pdb dictionary with source, number of frames and number of atoms.
-
-        @param pdb: The full path of the pdb from which to extract data.
-
-        @return: The aforementioned dictionary.
-        """
-        return {
-                  "source":path,
-                  "conformations": structure.numCoordsets(),
-                  "atoms":  structure.numAtoms()
-        }
-
-    def get_structure_file(self, path):
-        name, ext = os.path.splitext(path)
-
+    def check_extension(self, ext):
         if not ext in [".dcd",".pdb"]:
             common.print_and_flush( "[ERROR] pyProCT cannot read this file format.\n")
             self.notify("SHUTDOWN","Wrong file format.")
             exit()
 
-        if ext == ".dcd":
-            return prody.DCDFile(path)
+    def get_structure(self, file_info):
+
+        structure_info = {
+              "source":"",
+              "source of atoms":"",
+              "base selection": "",
+              "number of conformations": "",
+              "number of atoms":  ""
+        }
+
+        if isinstance(file_info, basestring):
+            # Then is a path, and must be a pdb
+            path = file_info
+            structure_info["source"] = path
+
+            name, ext = os.path.splitext(path)
+
+            self.check_extension(ext)
+
+            if ext == ".dcd":
+                common.print_and_flush( "[ERROR TrajectoryHandler::get_structure] Path format can only be used with pdb files. Exiting...\n")
+                self.notify("SHUTDOWN", "Fatal error reading pdbs.")
+                exit()
+            else:
+                structure = prody.parsePDB(path)
+                structure_info["number of conformations"] = structure.numCoordsets()
+                structure_info["number of atoms"] = structure.numAtoms()
+                return  structure, structure_info
         else:
-            return  prody.parsePDB(path)
+            # {"file":  , "selection":  } object or
+            # {"file": , "atoms_file":, "selection"} if the file is a dcd file
+            path = file_info["file"]
+            structure_info["source"] = path
+            name, ext = os.path.splitext(path)
+            self.check_extension(ext)
+
+            if ext == ".dcd":
+                structure_info["source of atoms"] = file_info["atoms_file"]
+
+                structure = prody.parsePDB(file_info["atoms_file"])
+                dcd_data = prody.DCDFile(path)
+                coordsets = dcd_data.getCoordsets()
+
+                for coordset in coordsets:
+                    structure.addCoordset(coordset)
+            else:
+
+                structure = prody.parsePDB(path)
+
+            if "base_selection" in file_info and file_info["base_selection"] !=  "":
+                structure = structure.select(file_info["base_selection"])
+                structure_info["base selection"]=file_info["base_selection"]
+
+            structure_info["number of conformations"] = structure.numCoordsets()
+            structure_info["number of atoms"] = structure.numAtoms()
+            return  structure, structure_info
 
     def getMergedPDB(self):
         """
@@ -94,15 +129,14 @@ class TrajectoryHandler(Observable):
         merged_pdb = None
         if self.bookmarking["pdb"] is None:
             try:
-                for path in self.files:
-
-                    pdb = self.get_structure_file(path)
-                    self.pdbs.append(self.extract_file_data(path, pdb))
+                for file_info in self.files:
+                    structure, structure_info = self.get_structure(file_info)
+                    self.pdbs.append(structure_info)
 
                     if merged_pdb is None:
-                        merged_pdb = pdb
+                        merged_pdb = structure
                     else:
-                        for coordset in pdb.getCoordsets():
+                        for coordset in structure.getCoordsets():
                             merged_pdb.addCoordset(coordset)
                 self.bookmarking["pdb"] = merged_pdb
             except Exception, e:
