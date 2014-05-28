@@ -33,7 +33,7 @@ class TrajectoryHandler(Observable):
                              "selections": {}
         }
 
-        self.coordsets = self.getMergedPDB().getCoordsets()
+        self.coordsets = self.getMergedStructure().getCoordsets()
         self.number_of_conformations = self.coordsets.shape[0]
         self.number_of_atoms = self.coordsets.shape[1]
 
@@ -41,6 +41,12 @@ class TrajectoryHandler(Observable):
 
 
     def handle_selection_paramters(self, matrix_parameters):
+        """
+        Helper funtion to handle selection parameters (different parameter names can have almost the same
+        functionality and are treated internally in the same way).
+
+        @param matrix_parameters: The parameters chunk that controls matrix selections.
+        """
         # Store the main selections we can do
         self.fitting_selection = self.calculation_selection = None
 
@@ -57,13 +63,49 @@ class TrajectoryHandler(Observable):
             self.calculation_selection = matrix_parameters["body_selection"]
 
     def check_extension(self, ext):
+        """
+        Helper function to check if the file extension is allowed. If not it shuts down the program.
+
+        @param ext: The extension string (with the separating period!)
+
+        @return: Nothing (exits if the condition is not fulfilled)
+        """
         if not ext in [".dcd",".pdb"]:
             common.print_and_flush( "[ERROR] pyProCT cannot read this file format.\n")
             self.notify("SHUTDOWN","Wrong file format.")
             exit()
 
     def get_structure(self, file_info):
+        """
+        Loads a structure file (pdb or dcd) and fills its structure_info data for logging.
 
+        @param file_info: Is a string containing the path of the file or a dictionary with this structure:
+        'pdb' files:
+
+            {
+                "file": ... ,
+                "base_selection": ...
+            }
+
+        Where 'file' contains the path of the pdb file we want to load.
+
+        'dcd' files:
+
+            {
+                "file": ...,
+                "atoms_file": ...,
+                "base_selection": ...
+            }
+
+        Where 'file' contains the path of the 'dcd' file we want to load and atoms_file the source of the pdb file containing
+        the atomic information.
+
+        In both cases 'base_selection' is a Prody selection string that performs an initial selection of the atoms. This is
+        useful when we want to load more than one file with different number of atoms and its goal is to allow the selection
+        of the common atoms. It is up to the user to maintain a 1 to 1 mapping between the atoms of each of the files.
+
+        @return: A tuple containing the structure object and a structure_info dictionary.
+        """
         structure_info = {
               "source":"",
               "source of atoms":"",
@@ -119,9 +161,9 @@ class TrajectoryHandler(Observable):
             structure_info["number of atoms"] = structure.numAtoms()
             return  structure, structure_info
 
-    def getMergedPDB(self):
+    def getMergedStructure(self):
         """
-        Merges all handled pdbs into a single Prody pdb object. If there's any error, the program must exit, and
+        Merges all handled structures into a single Prody AtomGroup object. If there's any error, the program must exit, and
         any thread must be stopped.
 
         @return: The prody object with all read coordsets for certain selection.
@@ -140,7 +182,7 @@ class TrajectoryHandler(Observable):
                             merged_pdb.addCoordset(coordset)
                 self.bookmarking["pdb"] = merged_pdb
             except Exception, e:
-                print "[ERROR TrajectroyHandler::getMergedPDB] fatal error reading pdbs.\nError: %s\n Program will halt now ..."%e.message
+                print "[ERROR TrajectroyHandler::getMergedStructure] fatal error reading pdbs.\nError: %s\n Program will halt now ..."%e.message
                 self.notify("SHUTDOWN", "Fatal error reading pdbs.")
                 exit()
 
@@ -153,7 +195,7 @@ class TrajectoryHandler(Observable):
         selection_string = self.bookmarking["working"]
 
         if selection_string == "":
-            return self.getMergedPDB().getCoordsets()
+            return self.getMergedStructure().getCoordsets()
 
         if not selection_string in self.bookmarking["selections"]:
             return self.getSelection(selection_string)
@@ -162,7 +204,7 @@ class TrajectoryHandler(Observable):
 
     def getSelection(self, selection_string):
         if self.bookmarking["pdb"] is None:
-            self.getMergedPDB()
+            self.getMergedStructure()
 
         pdb = self.bookmarking["pdb"]
 
