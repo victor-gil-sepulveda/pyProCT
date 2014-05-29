@@ -47,8 +47,8 @@ cdef class CythonNCut(object):
         NCut = 1/2 sum_{i=1}^k W(A_i,A_i-complementary) / vol(A_i)
         """
         # Calculate similarity graph
-        sigmas = SpectralTools.local_sigma_estimatio(condensed_matrix)
-        W  = SpectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix,sigmas)
+        sigmas = SpectralTools.local_sigma_estimation(condensed_matrix)
+        W  = SpectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix, sigmas)
         D = SpectralTools.calculate_degree_matrix(W)
         clusters = clustering.clusters
 
