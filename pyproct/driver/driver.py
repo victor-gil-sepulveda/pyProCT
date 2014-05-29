@@ -232,11 +232,25 @@ class Driver(Observable):
 
     def perform_actions(self, parameters):
         best_clustering, clustering_results = self.get_best_clustering(parameters)
+
         self.postprocess(parameters, best_clustering)
+
         #################################
         # Results are saved to a file
         #################################
         self.save_clustering_results(clustering_results)
+
+        #################################
+        # Small summary of the best_cluster is shown
+        #################################
+        print best_clustering
+        print "======================="
+        print "One clustering was found:"
+        print "\t- Used algorithm: ", best_clustering['type']
+        print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
+        print "\t- Noise: ", best_clustering['evaluation']['Noise level']
+
+
 
     def run(self, parameters):
 
