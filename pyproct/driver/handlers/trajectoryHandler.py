@@ -97,7 +97,7 @@ class TrajectoryHandler(Observable):
                 "base_selection": ...
             }
 
-        Where 'file' contains the path of the 'dcd' file we want to load and atoms_file the source of the pdb file containing
+        Where 'file' contains the path of the 'dcd' file we want to load and 'atoms_file' the source of the pdb file containing
         the atomic information.
 
         In both cases 'base_selection' is a Prody selection string that performs an initial selection of the atoms. This is

@@ -1,72 +1,57 @@
 {
+
+	"global":{
+		"control": {
+		    "number_of_processes": 7,
+		    "scheduler_type": "Serial"
+		},
+		"workspace": {
+			"base": "%s"
+		}
+	},
+	"data":{
+		"type":"2Dpoints",
+		"files":["fake.pdb"],
+		"matrix": {
+	        "method": "load",
+	        "parameters": {
+	            "path": "%s"
+	        }
+	    }
+	},
     "clustering": {
-        "control": {
-            "scheduler_type": "Process/Parallel",
-            "number_of_processes": 6
-        },
         "generation": {
             "method": "generate"
         },
         "algorithms": {
             "spectral": {
-                "auto": true,
-                "use": true,
-                "max": 25
+                "max": 100
             },
             "dbscan": {
-                "auto": true,
-                "use": true,
-                "max": 25
+                "max": 100
             },
             "gromos": {
-                "auto": true,
-                "use": true,
-                "max": 25
+                "max": 100
             },
             "kmedoids": {
-                "auto": true,
-                "use": true,
-                "max": 25
-            },
-            "random": {
-                "auto": true,
-                "use": false
+            	"seeding_type": "RANDOM",
+            	"tries":10,
+                "max": 100
             },
             "hierarchical": {
-                "auto": true,
-                "use": true
             }
-        }
-    },
-    "global": {
-        "action": {
-            "type": "advanced"
         },
-        "pdbs": [
-            "fake.pdb"
-        ]
+        "evaluation": {
+	        "evaluation_criteria": {
+
+	        },
+	        "query_types": [
+	            "NumClusters",
+	            "NoiseLevel",
+	            "MeanClusterSize"
+	        ]
+    	}
     },
-    "evaluation": {
-        "evaluation_criteria": {
-        },
-        "query_types": [
-            "NumClusters",
-            "NoiseLevel",
-            "MeanClusterSize"
-        ]
-    },
-    "matrix": {
-        "method": "load",
-        "parameters": {
-            "path": "%s"
-        }
-    },
-    "workspace": {
-        "tmp": "tmp",
-        "matrix": "matrix",
-        "clusterings": "clusterings",
-        "results": "results",
-        "refinement": "refinement",
-        "base": "%s"
+    "postprocess": {
     }
 }

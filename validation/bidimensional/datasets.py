@@ -926,8 +926,8 @@ num_cluster_ranges={
                 'spaeth_02':(2,10),
                 'spaeth_03':(2,10),
                 'spaeth_04':(5,10),
-                'spaeth_05':(2,10),
-                'spaeth_06':(3,4),
+                'spaeth_05':(3,10),
+                'spaeth_06':(3,10),
                 'spaeth_07':(2,10),
                 'spaeth_08':(3,8),
                 'concentric_circles':(3,4)

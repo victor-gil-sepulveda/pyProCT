@@ -32,18 +32,18 @@ if __name__ == '__main__':
     for dataset_name in data.all_datasets: #["spaeth_06"]:#
         print dataset_name
         # Change placeholders
-        script_str = base_script%("./matrices/%s"%dataset_name,os.path.abspath("./tmp/%s"%dataset_name))
+        script_str = base_script%(os.path.abspath("./tmp/%s"%dataset_name),"./matrices/%s"%dataset_name)
         parameters = ProtocolParameters.get_params_from_json(script_str)
         # And change another hypothesis stuff
-        parameters["evaluation"]["maximum_noise"] = data.noise[dataset_name]
-        parameters["evaluation"]["minimum_cluster_size"] = data.minsize[dataset_name]
-        parameters["evaluation"]["minimum_clusters"] = data.num_cluster_ranges[dataset_name][0]
-        parameters["evaluation"]["maximum_clusters"] = data.num_cluster_ranges[dataset_name][1]
-        print parameters["evaluation"]["minimum_clusters"], parameters["evaluation"]["maximum_clusters"]
+        parameters["clustering"]["evaluation"]["maximum_noise"] = data.noise[dataset_name]
+        parameters["clustering"]["evaluation"]["minimum_cluster_size"] = data.minsize[dataset_name]
+        parameters["clustering"]["evaluation"]["minimum_clusters"] = data.num_cluster_ranges[dataset_name][0]
+        parameters["clustering"]["evaluation"]["maximum_clusters"] = data.num_cluster_ranges[dataset_name][1]
+        print parameters["clustering"]["evaluation"]["minimum_clusters"], parameters["clustering"]["evaluation"]["maximum_clusters"]
         if dataset_name in data.criteria:
-            parameters["evaluation"]["evaluation_criteria"] = data.criteria[dataset_name]
+            parameters["clustering"]["evaluation"]["evaluation_criteria"] = data.criteria[dataset_name]
         else:
-            parameters["evaluation"]["evaluation_criteria"] = data.criteria["default"]
+            parameters["clustering"]["evaluation"]["evaluation_criteria"] = data.criteria["default"]
         Driver(Observer()).run(parameters)
 
     for dataset_name in data.all_datasets:
