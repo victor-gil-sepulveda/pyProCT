@@ -1,0 +1,22 @@
+pyproct.clustering.selection.test package
+=========================================
+
+Submodules
+----------
+
+pyproct.clustering.selection.test.testBestClusteringSelection module
+--------------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.selection.test.testBestClusteringSelection
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.selection.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

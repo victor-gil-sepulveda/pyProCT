@@ -1,0 +1,213 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.tools.stateGraphTools &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.tools.stateGraphTools</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 16/05/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">pygraph.classes.digraph</span> <span class="kn">import</span> <span class="n">digraph</span> <span class="c">#@UnresolvedImport</span>
+<span class="kn">from</span> <span class="nn">pygraph.readwrite.dot</span> <span class="kn">import</span> <span class="n">write</span> <span class="c">#@UnresolvedImport</span>
+<span class="kn">import</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">as</span> <span class="nn">clusTools</span>
+<span class="kn">import</span> <span class="nn">pyproct.tools.commonTools</span> <span class="kn">as</span> <span class="nn">common</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span> <span class="nn">pyproct.tools.distributionTools</span> <span class="kn">import</span> <span class="n">get_distance_std_dev_for_elems</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.clustering</span> <span class="kn">import</span> <span class="n">Clustering</span>
+
+<div class="viewcode-block" id="gen_color"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.stateGraphTools.gen_color">[docs]</a><span class="k">def</span> <span class="nf">gen_color</span><span class="p">(</span><span class="n">num_elems</span><span class="p">,</span><span class="n">max_elems</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a red color in &#39;dot&#39; format, which tone is based in the number of elements of a cluster (more elements, more intense).</span>
+<span class="sd">    </span>
+<span class="sd">    @param num_elems: </span>
+<span class="sd">    @param max_elems: </span>
+<span class="sd">    </span>
+<span class="sd">    @return: </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">red_tone</span> <span class="o">=</span> <span class="n">num_elems</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">max_elems</span><span class="p">)</span>
+    <span class="n">color</span> <span class="o">=</span> <span class="s">&quot;0.000 </span><span class="si">%.3f</span><span class="s"> 1.000&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">red_tone</span><span class="p">)</span>
+<span class="c">#    print color</span>
+    <span class="k">return</span> <span class="n">color</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="populate_nodes_with_labels"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.stateGraphTools.populate_nodes_with_labels">[docs]</a><span class="k">def</span> <span class="nf">populate_nodes_with_labels</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">num_elems_of_traj_2</span><span class="p">,</span> <span class="n">std_deviations</span><span class="p">,</span> <span class="n">graph</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="c">#    print &quot;num_elems_of_traj_2&quot;, num_elems_of_traj_2</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">num_clusters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">max_elems</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">num_elems_of_traj_2</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">):</span>
+<span class="c">#        print clustering.clusters[i].get_size(), &quot; &quot;,  num_elems_of_traj_2[i]</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="s">&quot;cluster_&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; (&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_size</span><span class="p">())</span><span class="o">+</span><span class="s">&quot;/&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">num_elems_of_traj_2</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">+</span><span class="s">&quot;)&quot;</span>
+        <span class="n">labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">std_deviations</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mi">10</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">color</span> <span class="o">=</span> <span class="n">gen_color</span><span class="p">(</span><span class="n">num_elems_of_traj_2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">max_elems</span><span class="p">)</span>
+        <span class="c">#print color</span>
+        <span class="n">graph</span><span class="o">.</span><span class="n">add_node</span><span class="p">(</span><span class="n">label</span><span class="p">,[(</span><span class="s">&quot;shape&quot;</span><span class="p">,</span><span class="s">&quot;circle&quot;</span><span class="p">),(</span> <span class="s">&quot;style&quot;</span><span class="p">,</span><span class="s">&quot;filled&quot;</span><span class="p">),(</span><span class="s">&quot;fillcolor&quot;</span><span class="p">,</span><span class="n">color</span><span class="p">),(</span><span class="s">&quot;color&quot;</span><span class="p">,</span><span class="s">&quot;black&quot;</span><span class="p">),(</span><span class="s">&quot;width&quot;</span><span class="p">,</span><span class="nb">str</span><span class="p">(</span><span class="n">size</span><span class="p">))])</span>
+    <span class="k">return</span> <span class="n">labels</span>
+</div>
+<div class="viewcode-block" id="calculate_probability_matrix"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.stateGraphTools.calculate_probability_matrix">[docs]</a><span class="k">def</span> <span class="nf">calculate_probability_matrix</span><span class="p">(</span><span class="n">clustering</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_clusters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="n">total_elements</span><span class="p">,</span><span class="n">cluster_sizes</span> <span class="o">=</span> <span class="n">clusTools</span><span class="o">.</span><span class="n">get_cluster_sizes</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span> <span class="c">#@UnusedVariable</span>
+    <span class="n">class_list</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">gen_class_list</span><span class="p">()</span>
+    
+    <span class="n">prob_matrix</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">):</span>
+        <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.</span><span class="p">]</span><span class="o">*</span><span class="n">num_clusters</span>
+        <span class="n">prob_matrix</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    
+    <span class="n">prob_increments</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">):</span>
+        <span class="n">prob_increments</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">class_list</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">current_cluster</span> <span class="o">=</span> <span class="n">class_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">next_cluster</span> <span class="o">=</span> <span class="n">class_list</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">prob_matrix</span><span class="p">[</span><span class="n">current_cluster</span><span class="p">][</span><span class="n">next_cluster</span><span class="p">]</span> <span class="o">+=</span> <span class="n">prob_increments</span><span class="p">[</span><span class="n">current_cluster</span><span class="p">]</span>
+    
+    <span class="k">return</span> <span class="n">prob_matrix</span>
+</div>
+<div class="viewcode-block" id="add_graph_edges"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.stateGraphTools.add_graph_edges">[docs]</a><span class="k">def</span> <span class="nf">add_graph_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">prob_matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">num_clusters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">num_clusters</span><span class="p">):</span>
+            <span class="n">prob</span> <span class="o">=</span> <span class="n">prob_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">prob</span><span class="o">!=</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prob</span> <span class="o">&gt;</span> <span class="mf">0.05</span><span class="p">:</span>
+                <span class="n">graph</span><span class="o">.</span><span class="n">add_edge</span><span class="p">((</span><span class="n">labels</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">labels</span><span class="p">[</span><span class="n">j</span><span class="p">]),</span><span class="n">wt</span><span class="o">=</span><span class="n">prob</span><span class="p">,</span><span class="n">label</span> <span class="o">=</span> <span class="s">&#39;</span><span class="si">%.2f%%</span><span class="s">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">prob</span><span class="o">*</span><span class="mi">100</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="do_graph"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.stateGraphTools.do_graph">[docs]</a><span class="k">def</span> <span class="nf">do_graph</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span><span class="n">num_elems_of_traj_2</span><span class="p">,</span><span class="n">std_deviations</span><span class="p">,</span><span class="n">filename</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="n">digraph</span><span class="p">()</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="n">populate_nodes_with_labels</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">num_elems_of_traj_2</span><span class="p">,</span><span class="n">std_deviations</span><span class="p">,</span> <span class="n">graph</span><span class="p">)</span>
+    <span class="n">prob_matrix</span> <span class="o">=</span> <span class="n">calculate_probability_matrix</span><span class="p">(</span><span class="n">clustering</span><span class="p">)</span>
+    <span class="n">add_graph_edges</span><span class="p">(</span><span class="n">graph</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">prob_matrix</span><span class="p">)</span>
+    <span class="n">tmp_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="s">&quot;tmp_dot&quot;</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span>
+    <span class="n">tmp_file</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">write</span><span class="p">(</span><span class="n">graph</span><span class="p">))</span>
+    <span class="n">tmp_file</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">print_and_flush</span><span class="p">(</span><span class="s">&quot;delegating to dot...&quot;</span><span class="p">)</span>
+    <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;cat tmp_dot|dot -Tpng -o &quot;</span><span class="o">+</span><span class="n">filename</span><span class="o">+</span><span class="s">&quot;;rm tmp_dot&quot;</span><span class="p">)</span>
+ </div>
+<div class="viewcode-block" id="purge_mixed_clusters_and_do_graph"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.stateGraphTools.purge_mixed_clusters_and_do_graph">[docs]</a><span class="k">def</span> <span class="nf">purge_mixed_clusters_and_do_graph</span><span class="p">(</span><span class="n">mixed</span><span class="p">,</span> <span class="n">pure_clusters_traj1</span><span class="p">,</span><span class="n">condensed_distance_matrix</span><span class="p">,</span><span class="n">std_devs_from_A</span><span class="p">,</span><span class="n">path</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">print_and_flush</span><span class="p">(</span> <span class="s">&quot;Purging clusters...&quot;</span><span class="p">)</span>
+    <span class="c"># Purge all mixed clusters of elements from traj2</span>
+    <span class="n">purged</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">num_elems_of_traj_2</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">mixed</span><span class="p">)):</span>
+        <span class="n">cluster</span><span class="p">,</span> <span class="n">elems_in_traj1</span><span class="p">,</span> <span class="n">elems_in_traj2</span> <span class="o">=</span> <span class="n">mixed</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="c">#@UnusedVariable</span>
+        <span class="n">num_elems_of_traj_2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">elems_in_traj2</span><span class="p">))</span>
+        <span class="c"># We rebuild the cluster with only elements of traj 1</span>
+        <span class="n">purged</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Cluster</span><span class="p">(</span><span class="n">prototype</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span><span class="n">elements</span> <span class="o">=</span> <span class="n">elems_in_traj1</span><span class="p">))</span>
+<span class="c">#        print &quot;l &quot;,len(elems_in_traj1),&quot; &quot;,len(elems_in_traj2)</span>
+    
+    <span class="c"># we also need to have traj 1 pure clusters</span>
+    <span class="n">purged</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">pure_clusters_traj1</span><span class="p">)</span>
+    
+    <span class="c"># Those don&#39;t have any element of traj 2, so we put 0s in the number of </span>
+    <span class="c"># elements list</span>
+    <span class="n">num_elems_of_traj_2</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">pure_clusters_traj1</span><span class="p">))</span>
+    
+    <span class="c">#Calculate statistics for the remaining clusters</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">pure_clusters_traj1</span><span class="p">)):</span>
+        <span class="n">medoid</span> <span class="o">=</span> <span class="n">pure_clusters_traj1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">calculate_medoid</span><span class="p">(</span><span class="n">condensed_distance_matrix</span><span class="p">)</span>
+        <span class="n">std_devs_from_A</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">get_distance_std_dev_for_elems</span><span class="p">(</span><span class="n">pure_clusters_traj1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">all_elements</span><span class="p">,</span><span class="n">medoid</span><span class="p">,</span><span class="n">condensed_distance_matrix</span><span class="p">))</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">print_and_flush</span><span class="p">(</span> <span class="s">&quot;Done.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+    
+    <span class="n">common</span><span class="o">.</span><span class="n">print_and_flush</span><span class="p">(</span><span class="s">&quot;Trying to draw state graph...&quot;</span><span class="p">)</span>
+    <span class="n">do_graph</span><span class="p">(</span><span class="n">Clustering</span><span class="p">(</span><span class="n">purged</span><span class="p">,</span><span class="n">sort</span> <span class="o">=</span>  <span class="bp">False</span><span class="p">),</span><span class="n">num_elems_of_traj_2</span><span class="p">,</span><span class="n">std_devs_from_A</span><span class="p">,</span><span class="n">path</span><span class="p">)</span>
+    <span class="n">common</span><span class="o">.</span><span class="n">print_and_flush</span><span class="p">(</span><span class="s">&quot;Done.</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

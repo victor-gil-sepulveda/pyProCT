@@ -1,0 +1,166 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.main &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../index.html" />
+    <link rel="up" title="Module code" href="../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.main</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 04/02/2013</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">optparse</span>
+<span class="kn">import</span> <span class="nn">threading</span>
+<span class="kn">import</span> <span class="nn">pyproct</span>
+<span class="kn">import</span> <span class="nn">os.path</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.parameters</span> <span class="kn">import</span> <span class="n">ProtocolParameters</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.observer.observer</span> <span class="kn">import</span> <span class="n">Observer</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.driver</span> <span class="kn">import</span> <span class="n">Driver</span>
+
+<div class="viewcode-block" id="CmdLinePrinter"><a class="viewcode-back" href="../../pyproct.html#pyproct.main.CmdLinePrinter">[docs]</a><span class="k">class</span> <span class="nc">CmdLinePrinter</span><span class="p">(</span><span class="n">threading</span><span class="o">.</span><span class="n">Thread</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data_source</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">CmdLinePrinter</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">Event</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_source</span> <span class="o">=</span> <span class="n">data_source</span>
+
+<div class="viewcode-block" id="CmdLinePrinter.stop"><a class="viewcode-back" href="../../pyproct.html#pyproct.main.CmdLinePrinter.stop">[docs]</a>    <span class="k">def</span> <span class="nf">stop</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data_source</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Main&quot;</span><span class="p">,</span><span class="s">&quot;Stop&quot;</span><span class="p">,</span><span class="s">&quot;Finished&quot;</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="CmdLinePrinter.stopped"><a class="viewcode-back" href="../../pyproct.html#pyproct.main.CmdLinePrinter.stopped">[docs]</a>    <span class="k">def</span> <span class="nf">stopped</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stop</span><span class="o">.</span><span class="n">isSet</span><span class="p">()</span>
+</div>
+<div class="viewcode-block" id="CmdLinePrinter.run"><a class="viewcode-back" href="../../pyproct.html#pyproct.main.CmdLinePrinter.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">stopped</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_source</span><span class="o">.</span><span class="n">wait</span><span class="p">()</span>
+            <span class="k">print</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_source</span><span class="o">.</span><span class="n">get_data</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data_source</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">parser</span> <span class="o">=</span> <span class="n">optparse</span><span class="o">.</span><span class="n">OptionParser</span><span class="p">(</span><span class="n">usage</span><span class="o">=</span><span class="s">&#39;%prog [--mpi] [--print] script&#39;</span><span class="p">,</span> <span class="n">version</span><span class="o">=</span><span class="n">pyproct</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span>
+
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;--mpi&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>  <span class="n">dest</span> <span class="o">=</span> <span class="s">&quot;use_mpi&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;Add this flag if you want to use MPI-based scheduling.&quot;</span><span class="p">)</span>
+    <span class="n">parser</span><span class="o">.</span><span class="n">add_option</span><span class="p">(</span><span class="s">&#39;--print&#39;</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="s">&quot;store_true&quot;</span><span class="p">,</span>  <span class="n">dest</span> <span class="o">=</span> <span class="s">&quot;print_messages&quot;</span><span class="p">,</span> <span class="n">help</span><span class="o">=</span><span class="s">&quot;Add this flag to print observed messages to stdout.&quot;</span><span class="p">)</span>
+
+    <span class="n">options</span><span class="p">,</span> <span class="n">args</span> <span class="o">=</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse_args</span><span class="p">()</span>
+
+    <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+        <span class="n">parser</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="s">&quot;You need to specify the script to be executed.&quot;</span><span class="p">)</span>
+
+    <span class="n">json_script</span> <span class="o">=</span> <span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">parameters</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">ProtocolParameters</span><span class="o">.</span><span class="n">get_params_from_json</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">json_script</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+        <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;global&quot;</span><span class="p">][</span><span class="s">&quot;workspace&quot;</span><span class="p">][</span><span class="s">&quot;base&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;global&quot;</span><span class="p">][</span><span class="s">&quot;workspace&quot;</span><span class="p">][</span><span class="s">&quot;base&quot;</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">ValueError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;Malformed json script.&quot;</span>
+        <span class="k">print</span> <span class="n">e</span><span class="o">.</span><span class="n">message</span>
+        <span class="nb">exit</span><span class="p">()</span>
+
+    <span class="n">observer</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">cmd_thread</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">use_mpi</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">pyproct.driver.mpidriver</span> <span class="kn">import</span> <span class="n">MPIDriver</span>
+        <span class="kn">from</span> <span class="nn">pyproct.driver.observer.MPIObserver</span> <span class="kn">import</span> <span class="n">MPIObserver</span>
+        <span class="n">observer</span> <span class="o">=</span> <span class="n">MPIObserver</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">print_messages</span><span class="p">:</span>
+            <span class="n">cmd_thread</span> <span class="o">=</span> <span class="n">CmdLinePrinter</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
+            <span class="n">cmd_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">MPIDriver</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">observer</span> <span class="o">=</span> <span class="n">Observer</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">print_messages</span><span class="p">:</span>
+            <span class="n">cmd_thread</span> <span class="o">=</span> <span class="n">CmdLinePrinter</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
+            <span class="n">cmd_thread</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="n">Driver</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">options</span><span class="o">.</span><span class="n">print_messages</span><span class="p">:</span>
+        <span class="n">cmd_thread</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

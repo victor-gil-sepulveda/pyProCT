@@ -1,0 +1,22 @@
+pyproct.algorithms.test package
+===============================
+
+Submodules
+----------
+
+pyproct.algorithms.test.TestParameterGeneration module
+------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.test.TestParameterGeneration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

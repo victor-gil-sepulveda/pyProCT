@@ -1,0 +1,231 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.algorithms.hierarchical package &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyproct-algorithms-hierarchical-package">
+<h1>pyproct.algorithms.hierarchical package<a class="headerlink" href="#pyproct-algorithms-hierarchical-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.algorithms.hierarchical.test.html">pyproct.algorithms.hierarchical.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.algorithms.hierarchical.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.algorithms.hierarchical.test.html#module-pyproct.algorithms.hierarchical.test.TestHierarchicalClustering">pyproct.algorithms.hierarchical.test.TestHierarchicalClustering module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.algorithms.hierarchical.test.html#module-pyproct.algorithms.hierarchical.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyproct.algorithms.hierarchical.hierarchicalAlgorithm">
+<span id="pyproct-algorithms-hierarchical-hierarchicalalgorithm-module"></span><h2>pyproct.algorithms.hierarchical.hierarchicalAlgorithm module<a class="headerlink" href="#module-pyproct.algorithms.hierarchical.hierarchicalAlgorithm" title="Permalink to this headline">¶</a></h2>
+<p>Created on 19/03/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.algorithms.hierarchical.hierarchicalAlgorithm.HierarchicalClusteringAlgorithm">
+<em class="property">class </em><tt class="descclassname">pyproct.algorithms.hierarchical.hierarchicalAlgorithm.</tt><tt class="descname">HierarchicalClusteringAlgorithm</tt><big>(</big><em>condensed_matrix</em>, <em>**kwargs</em><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/hierarchicalAlgorithm.html#HierarchicalClusteringAlgorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.hierarchicalAlgorithm.HierarchicalClusteringAlgorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>TODOC</p>
+<dl class="method">
+<dt id="pyproct.algorithms.hierarchical.hierarchicalAlgorithm.HierarchicalClusteringAlgorithm.perform_clustering">
+<tt class="descname">perform_clustering</tt><big>(</big><em>kwargs</em><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/hierarchicalAlgorithm.html#HierarchicalClusteringAlgorithm.perform_clustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.hierarchicalAlgorithm.HierarchicalClusteringAlgorithm.perform_clustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Performs the hierarchical clustering step and the clustering step. If the hierarchical
+matrix is given, then it just calculates the clusters for a given cutoff. If we call the algorithm
+a second time it will use the last matrix.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.algorithms.hierarchical.hierarchicalTools">
+<span id="pyproct-algorithms-hierarchical-hierarchicaltools-module"></span><h2>pyproct.algorithms.hierarchical.hierarchicalTools module<a class="headerlink" href="#module-pyproct.algorithms.hierarchical.hierarchicalTools" title="Permalink to this headline">¶</a></h2>
+<p>Created on 21/05/2012</p>
+<p>&#64;author: victor</p>
+<dl class="function">
+<dt id="pyproct.algorithms.hierarchical.hierarchicalTools.find_cutoff_limit">
+<tt class="descclassname">pyproct.algorithms.hierarchical.hierarchicalTools.</tt><tt class="descname">find_cutoff_limit</tt><big>(</big><em>starting_cutoff</em>, <em>min_clusters</em>, <em>max_clusters</em>, <em>grain</em>, <em>hie_algorithm</em><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/hierarchicalTools.html#find_cutoff_limit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.hierarchicalTools.find_cutoff_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates one of the limits of the cutoff range by adding &#8216;grain&#8217; to the starting cutoff until the
+number of clusters of the produced clustering is into the expected range. The direction can be controlled
+with the sign of &#8216;grain&#8217;.</p>
+<p>&#64;param starting_cutoff: A guess of the smaller cutoff we can use. It can be 0
+&#64;param min_clusters: The minimum number of clusters allowed by clustering.
+&#64;param max_clusters: The maximum number of clusters allowed by clustering.
+&#64;param grain: The cutoff step that will be used to discover the cutoff range. If it is positive it is going
+to move to the right, if negative to the left. Exiting conditions are also based on this.
+&#64;param hie_algorithm: The hierarchical algorithm instance (holds the hie matrix, so that it has not to be
+calculated each time we get a clustering).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.algorithms.hierarchical.hierarchicalTools.get_clusters_with_ranged_search">
+<tt class="descclassname">pyproct.algorithms.hierarchical.hierarchicalTools.</tt><tt class="descname">get_clusters_with_ranged_search</tt><big>(</big><em>hie_algorithm</em>, <em>cutoff_range_begin</em>, <em>cutoff_range_end</em>, <em>min_clusters</em>, <em>max_clusters</em>, <em>refine_grain</em><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/hierarchicalTools.html#get_clusters_with_ranged_search"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.hierarchicalTools.get_clusters_with_ranged_search" title="Permalink to this definition">¶</a></dt>
+<dd><p>Searches for the range of cutoffs where we are going to get a number of clusters inside the allowed number
+of clusters [min_clusters,max_clusters]. Returns a dictionary indexed by number of clusters where each item
+is a tuple of (cutoff,Clustering). A dictionary is used because all clusterings with same number of clusters
+would be the same (and in this way we get the set without repetition).</p>
+<p>&#64;param cutoff_range_begin: A guess of the smaller cutoff we can use. It can be 0
+&#64;param cutoff_range_end: A guess of the bigger cutoff we can use.
+&#64;param refine_grain: Positive number that defines the cutoff step that will be used to discover the cutoff range.
+&#64;param hie_algorithm: The hierarchical algorithm instance (holds the hie matrix, so that it has not to be
+calculated each time we get a clustering).
+&#64;param min_clusters: The minimum number of clusters allowed by clustering.
+&#64;param max_clusters: The maximum number of clusters allowed by clustering.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.algorithms.hierarchical.hierarchicalTools.get_cutoff_range">
+<tt class="descclassname">pyproct.algorithms.hierarchical.hierarchicalTools.</tt><tt class="descname">get_cutoff_range</tt><big>(</big><em>starting_cutoff</em>, <em>ending_cutoff</em>, <em>min_clusters</em>, <em>max_clusters</em>, <em>grain</em>, <em>hie_algorithm</em><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/hierarchicalTools.html#get_cutoff_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.hierarchicalTools.get_cutoff_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the cutoff range where the cutoff is inside the range defined by [min_clusters, max_clusters]. It
+first calculates the left limit (from the minimum value of the cutoff, and the smaller number of clusters) and
+then the right limit (from the maximum value of the cutoff).</p>
+<p>&#64;param starting_cutoff: A guess of the smaller cutoff we can use. It can be 0
+&#64;param ending_cutoff: A guess of the bigger cutoff we can use.
+&#64;param min_clusters: The minimum number of clusters allowed by clustering.
+&#64;param max_clusters: The maximum number of clusters allowed by clustering.
+&#64;param grain: Positive number that defines the cutoff step that will be used to discover the cutoff range.
+&#64;param hie_algorithm: The hierarchical algorithm instance (holds the hie matrix, so that it has not to be
+calculated each time we get a clustering).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.algorithms.hierarchical.parametersGeneration">
+<span id="pyproct-algorithms-hierarchical-parametersgeneration-module"></span><h2>pyproct.algorithms.hierarchical.parametersGeneration module<a class="headerlink" href="#module-pyproct.algorithms.hierarchical.parametersGeneration" title="Permalink to this headline">¶</a></h2>
+<p>Created on 27/05/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator">
+<em class="property">class </em><tt class="descclassname">pyproct.algorithms.hierarchical.parametersGeneration.</tt><tt class="descname">ParametersGenerator</tt><big>(</big><em>parameters</em>, <em>matrix_handler</em><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/parametersGeneration.html#ParametersGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="attribute">
+<dt id="pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator.HIERARCHICAL_REFINEMENT_VALUE">
+<tt class="descname">HIERARCHICAL_REFINEMENT_VALUE</tt><em class="property"> = 200</em><a class="headerlink" href="#pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator.HIERARCHICAL_REFINEMENT_VALUE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator.get_base_parameters">
+<em class="property">classmethod </em><tt class="descname">get_base_parameters</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/parametersGeneration.html#ParametersGenerator.get_base_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator.get_base_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Defines the base parameters needed for each of the algorithms. Each parameter created will be based
+on one of those and must not have more keys than these.</p>
+<p>&#64;return: A dictionary with the base parameters for this algorithm.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator.get_parameters">
+<tt class="descname">get_parameters</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyproct/algorithms/hierarchical/parametersGeneration.html#ParametersGenerator.get_parameters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.algorithms.hierarchical.parametersGeneration.ParametersGenerator.get_parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function creates some parameters to be used with the Hierarchical algorithm.
+&#64;return: A tuple with the generated parameters and a list with its corresponding clusterings
+(in this case parameters and clusterings are obtained at the same time).</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.algorithms.hierarchical">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyproct.algorithms.hierarchical" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyproct.algorithms.hierarchical package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyproct.algorithms.hierarchical.hierarchicalAlgorithm">pyproct.algorithms.hierarchical.hierarchicalAlgorithm module</a></li>
+<li><a class="reference internal" href="#module-pyproct.algorithms.hierarchical.hierarchicalTools">pyproct.algorithms.hierarchical.hierarchicalTools module</a></li>
+<li><a class="reference internal" href="#module-pyproct.algorithms.hierarchical.parametersGeneration">pyproct.algorithms.hierarchical.parametersGeneration module</a></li>
+<li><a class="reference internal" href="#module-pyproct.algorithms.hierarchical">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/pyproct.algorithms.hierarchical.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.algorithms.hierarchical.test.TestHierarchicalClustering &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.algorithms.hierarchical.test.TestHierarchicalClustering</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 23/03/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">pdist</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.condensedMatrix</span> <span class="kn">import</span> <span class="n">CondensedMatrix</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.hierarchical.hierarchicalAlgorithm</span> <span class="kn">import</span> <span class="n">HierarchicalClusteringAlgorithm</span>
+<span class="kn">import</span> <span class="nn">cStringIO</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.hierarchical.hierarchicalTools</span> <span class="kn">import</span> <span class="n">get_cutoff_range</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<div class="viewcode-block" id="HierarchicalStub"><a class="viewcode-back" href="../../../../../pyproct.algorithms.hierarchical.test.html#pyproct.algorithms.hierarchical.test.TestHierarchicalClustering.HierarchicalStub">[docs]</a><span class="k">class</span> <span class="nc">HierarchicalStub</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cutoff_map</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cutoff_map</span> <span class="o">=</span> <span class="n">cutoff_map</span>
+
+<div class="viewcode-block" id="HierarchicalStub.perform_clustering"><a class="viewcode-back" href="../../../../../pyproct.algorithms.hierarchical.test.html#pyproct.algorithms.hierarchical.test.TestHierarchicalClustering.HierarchicalStub.perform_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list with a size determined by the cutoff.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cutoff</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;cutoff&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">ClusteringStub</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">cutoff_map</span><span class="p">[</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">cutoff</span><span class="p">)])</span>
+</div></div>
+<div class="viewcode-block" id="ClusteringStub"><a class="viewcode-back" href="../../../../../pyproct.algorithms.hierarchical.test.html#pyproct.algorithms.hierarchical.test.TestHierarchicalClustering.ClusteringStub">[docs]</a><span class="k">class</span> <span class="nc">ClusteringStub</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="nb">list</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span> <span class="o">=</span> <span class="nb">list</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;Clustering (&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">))</span><span class="o">+</span><span class="s">&quot;)&quot;</span>
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Test"><a class="viewcode-back" href="../../../../../pyproct.algorithms.hierarchical.test.html#pyproct.algorithms.hierarchical.test.TestHierarchicalClustering.Test">[docs]</a><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+<div class="viewcode-block" id="Test.test_clustering"><a class="viewcode-back" href="../../../../../pyproct.algorithms.hierarchical.test.html#pyproct.algorithms.hierarchical.test.TestHierarchicalClustering.Test.test_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">test_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Retrocompatibility test.</span>
+<span class="sd">        MAYBE THIS IMPLEMENTATION OF HCLUSTER DOES NOT WORK THAT WELL</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">observations</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mf">1.5</span><span class="p">,</span><span class="mf">1.5</span><span class="p">),(</span><span class="mi">5</span><span class="p">,</span><span class="mi">5</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">4</span><span class="p">,</span><span class="mi">4</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mf">3.5</span><span class="p">)]</span>
+        <span class="n">matrix_data</span> <span class="o">=</span> <span class="n">pdist</span><span class="p">(</span><span class="n">observations</span><span class="p">)</span>
+        <span class="n">condensed</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">(</span><span class="n">matrix_data</span><span class="p">)</span>
+        <span class="n">algorithm</span> <span class="o">=</span> <span class="n">HierarchicalClusteringAlgorithm</span><span class="p">(</span><span class="n">condensed</span><span class="p">)</span>
+        <span class="n">clusterization</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">(</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;cutoff&quot;</span><span class="p">:</span><span class="mf">0.5</span><span class="p">,</span> <span class="s">&quot;method&quot;</span><span class="p">:</span><span class="s">&#39;single&#39;</span><span class="p">})</span>
+        <span class="n">clusters_string</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;[0[0, 1]][3[3, 5]][4[4]][2[2]]&quot;&quot;&quot;</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusterization</span><span class="o">.</span><span class="n">clusters</span><span class="p">:</span>
+            <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">c</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">out</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">clusters_string</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Test.test_cutoff_range"><a class="viewcode-back" href="../../../../../pyproct.algorithms.hierarchical.test.html#pyproct.algorithms.hierarchical.test.TestHierarchicalClustering.Test.test_cutoff_range">[docs]</a>    <span class="k">def</span> <span class="nf">test_cutoff_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">fine_grain_cutoffs</span> <span class="o">=</span> <span class="p">{</span><span class="mi">9</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">8</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">7</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">6</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">:</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">:</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">:</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">:</span><span class="mi">20</span><span class="p">,</span> <span class="mi">0</span><span class="p">:</span><span class="mi">150</span><span class="p">}</span>
+        <span class="n">hierarchical</span> <span class="o">=</span> <span class="n">HierarchicalStub</span><span class="p">(</span><span class="n">fine_grain_cutoffs</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">left</span><span class="p">,</span><span class="n">right</span><span class="p">)</span> <span class="o">=</span> <span class="n">get_cutoff_range</span><span class="p">(</span><span class="n">starting_cutoff</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+                             <span class="n">ending_cutoff</span> <span class="o">=</span> <span class="mi">9</span><span class="p">,</span>
+                             <span class="n">min_clusters</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span>
+                             <span class="n">max_clusters</span> <span class="o">=</span> <span class="mi">7</span><span class="p">,</span>
+                             <span class="n">grain</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                             <span class="n">hie_algorithm</span><span class="o">=</span><span class="n">hierarchical</span><span class="p">)</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">expected</span><span class="p">,(</span><span class="n">math</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">left</span><span class="p">),</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">right</span><span class="p">)))</span>
+
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.test_clustering&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

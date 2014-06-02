@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.algorithms.kmedoids.test.TestKmedoids &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.algorithms.kmedoids.test.TestKmedoids</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 06/06/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.condensedMatrix</span> <span class="kn">import</span> <span class="n">CondensedMatrix</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.kmedoids.kMedoidsAlgorithm</span> <span class="kn">import</span> <span class="n">KMedoidsAlgorithm</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">pdist</span>
+
+<div class="viewcode-block" id="TestKMedoids"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids">[docs]</a><span class="k">class</span> <span class="nc">TestKMedoids</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="TestKMedoids.setUpClass"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.setUpClass">[docs]</a>    <span class="k">def</span> <span class="nf">setUpClass</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">condensed_matrix</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">7.2</span><span class="p">,</span> <span class="mf">6.7</span><span class="p">,</span> 
+                                                     <span class="mf">8.5</span><span class="p">,</span> <span class="mf">4.5</span><span class="p">,</span> <span class="mf">3.6</span><span class="p">,</span> 
+                                                          <span class="mf">7.8</span><span class="p">,</span> <span class="mf">2.2</span><span class="p">,</span> 
+                                                               <span class="mf">2.0</span><span class="p">])</span> 
+        <span class="n">cls</span><span class="o">.</span><span class="n">kmed_alg</span> <span class="o">=</span> <span class="n">KMedoidsAlgorithm</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestKMedoids.test_random_seeding"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_random_seeding">[docs]</a>    <span class="k">def</span> <span class="nf">test_random_seeding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span> <span class="c">#@UnusedVariable</span>
+            <span class="n">medoids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">random_seeding</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">med_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">medoids</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">medoids</span><span class="p">),</span><span class="nb">len</span><span class="p">(</span><span class="n">med_set</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertLessEqual</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">medoids</span><span class="p">),</span><span class="mi">4</span><span class="p">)</span>
+     </div>
+<div class="viewcode-block" id="TestKMedoids.test_convergence"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_convergence">[docs]</a>    <span class="k">def</span> <span class="nf">test_convergence</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">list1</span> <span class="o">=</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">list2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">8</span><span class="p">]</span>
+        <span class="n">list3</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">convergence</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span><span class="n">list2</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertFalse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">convergence</span><span class="p">(</span><span class="n">list1</span><span class="p">,</span><span class="n">list3</span><span class="p">))</span>
+     </div>
+<div class="viewcode-block" id="TestKMedoids.test_get_closer_medoid"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_get_closer_medoid">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_closer_medoid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">medoids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">get_closer_medoid</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">medoids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEquals</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">get_closer_medoid</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">medoids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="p">))</span>
+     </div>
+<div class="viewcode-block" id="TestKMedoids.test_cluster_update"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_cluster_update">[docs]</a>    <span class="k">def</span> <span class="nf">test_cluster_update</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">medoids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">cluster_update</span><span class="p">(</span> <span class="n">medoids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">class_list</span><span class="p">)</span>
+ </div>
+<div class="viewcode-block" id="TestKMedoids.test_gen_medoid_to_cluster_id_map"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_gen_medoid_to_cluster_id_map">[docs]</a>    <span class="k">def</span> <span class="nf">test_gen_medoid_to_cluster_id_map</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">medoids</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">({</span><span class="mi">2</span><span class="p">:</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">:</span><span class="mi">1</span><span class="p">},</span> <span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">gen_medoid_to_cluster_id_map</span><span class="p">(</span><span class="n">medoids</span><span class="p">))</span>
+     </div>
+<div class="viewcode-block" id="TestKMedoids.test_update_medoids"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_update_medoids">[docs]</a>    <span class="k">def</span> <span class="nf">test_update_medoids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+         
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+        <span class="n">kmed_alg</span> <span class="o">=</span> <span class="n">KMedoidsAlgorithm</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="n">kmed_alg</span><span class="o">.</span><span class="n">class_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> 
+                               <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span> <span class="n">kmed_alg</span><span class="o">.</span><span class="n">update_medoids</span><span class="p">(),</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">])</span>
+         </div>
+<div class="viewcode-block" id="TestKMedoids.test_equidistant_seeding"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_equidistant_seeding">[docs]</a>    <span class="k">def</span> <span class="nf">test_equidistant_seeding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">medoids</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">equidistant_seeding</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">25</span><span class="p">,</span> <span class="mi">35</span><span class="p">,</span> <span class="mi">45</span><span class="p">,</span> <span class="mi">55</span><span class="p">,</span> <span class="mi">65</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">85</span><span class="p">,</span> <span class="mi">95</span><span class="p">]</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">medoids</span><span class="p">,</span> <span class="n">expected</span><span class="p">)</span>
+         </div>
+<div class="viewcode-block" id="TestKMedoids.test_gromos_seeding"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_gromos_seeding">[docs]</a>    <span class="k">def</span> <span class="nf">test_gromos_seeding</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+<span class="c">#          Maximum distance of connected components is 1, for 1.5 it may discover 3 clusters.</span>
+<span class="c">#          For 3.2 it may discover only 2</span>
+<span class="c">#</span>
+<span class="c">#         1       5         8</span>
+<span class="c">#         |       |         |</span>
+<span class="c">#         0 - 3   4     6 - 7 </span>
+<span class="c">#         |                 |</span>
+<span class="c">#         2                 9</span>
+<span class="c">#         </span>
+         
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+        <span class="n">kmed_alg</span> <span class="o">=</span> <span class="n">KMedoidsAlgorithm</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="n">rand_seed</span> <span class="o">=</span> <span class="mi">10</span><span class="p">)</span>
+         
+        <span class="c"># With a small cutoff we get all 3 connected components</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span> <span class="n">kmed_alg</span><span class="o">.</span><span class="n">gromos_seeding</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">1.4</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span> <span class="c"># if it&#39;s 1.5 we&#39;ll have 6 instead of 7 as medoid (as it is the first one to have 3 neighbours)</span>
+         
+        <span class="c"># With a bigger cutoff it has to try to find the minimum cutoff for 3 clusters, then 6 is returned instead of 7</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span> <span class="n">kmed_alg</span><span class="o">.</span><span class="n">gromos_seeding</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">),[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">6</span><span class="p">,</span> <span class="mi">5</span><span class="p">])</span>
+         
+        <span class="c"># This one is regression</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span> <span class="n">kmed_alg</span><span class="o">.</span><span class="n">gromos_seeding</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3.2</span><span class="p">),[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+         
+        <span class="c"># This one should return a random sequence, so is only testable because of the rand_seed</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_equal</span><span class="p">(</span><span class="n">kmed_alg</span><span class="o">.</span><span class="n">gromos_seeding</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">])</span>
+        </div>
+<div class="viewcode-block" id="TestKMedoids.test_naive_case"><a class="viewcode-back" href="../../../../../pyproct.algorithms.kmedoids.test.html#pyproct.algorithms.kmedoids.test.TestKmedoids.TestKMedoids.test_naive_case">[docs]</a>    <span class="k">def</span> <span class="nf">test_naive_case</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="c">#         1       5         8</span>
+<span class="c">#         |       |         |</span>
+<span class="c">#         0 - 3   4     6 - 7 </span>
+<span class="c">#         |                 |</span>
+<span class="c">#         2                 9</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">),(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span>
+                  <span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">0</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="mi">1</span><span class="p">),(</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">(</span><span class="n">pdist</span><span class="p">(</span><span class="n">points</span><span class="p">))</span>
+        <span class="n">s_algo</span> <span class="o">=</span> <span class="n">KMedoidsAlgorithm</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">s_algo</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">({</span><span class="s">&#39;k&#39;</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span> <span class="s">&#39;seeding_type&#39;</span><span class="p">:</span><span class="s">&#39;RANDOM&#39;</span><span class="p">})</span><span class="o">.</span><span class="n">clusters</span>
+        
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prototype</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">6</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertIn</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">all_elements</span><span class="p">,</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],[</span><span class="mi">6</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]])</span>
+        </div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.testName&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

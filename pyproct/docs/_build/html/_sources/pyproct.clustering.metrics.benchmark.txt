@@ -1,0 +1,22 @@
+pyproct.clustering.metrics.benchmark package
+============================================
+
+Submodules
+----------
+
+pyproct.clustering.metrics.benchmark.benchmarkPCAMetric module
+--------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.benchmark.benchmarkPCAMetric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.metrics.benchmark
+    :members:
+    :undoc-members:
+    :show-inheritance:

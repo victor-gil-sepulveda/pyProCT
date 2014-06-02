@@ -1,0 +1,216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.metrics.graphMetrics &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.metrics.graphMetrics</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 13/08/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="kn">import</span> <span class="n">product</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Application of graph theory&#39;s metrics to clustering, where each connected component is</span>
+<span class="sd">a cluster.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="getClusterAndComplementary"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.getClusterAndComplementary">[docs]</a><span class="k">def</span> <span class="nf">getClusterAndComplementary</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">all_clusters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the list representing the elements of cluster &#39;ith&#39; and the </span>
+<span class="sd">    list representing the sum of elements of all other clusters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">complementary</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">all_clusters</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="n">i</span><span class="p">:</span>
+            <span class="n">complementary</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">all_clusters</span><span class="p">[</span><span class="n">j</span><span class="p">]</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+    <span class="k">return</span><span class="p">(</span><span class="n">all_clusters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">all_elements</span><span class="p">,</span><span class="n">complementary</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="W"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.W">[docs]</a><span class="k">def</span> <span class="nf">W</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span><span class="n">A2</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    W(A,B) = sum_{i pert A, j pert B} w_i_j</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+    
+    <span class="k">for</span> <span class="n">indices</span> <span class="ow">in</span> <span class="n">product</span><span class="p">(</span><span class="n">A1</span><span class="p">,</span><span class="n">A2</span><span class="p">):</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">w</span> <span class="o">+</span> <span class="n">condensed_matrix</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">w</span>
+</div>
+<div class="viewcode-block" id="d"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.d">[docs]</a><span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Degree of a vertex:</span>
+<span class="sd">    d_i = sum_{j=1}^n w_ij</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d_val</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">condensed_matrix</span><span class="o">.</span><span class="n">row_length</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">d_val</span> <span class="o">+=</span> <span class="n">condensed_matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">d_val</span>
+</div>
+<div class="viewcode-block" id="vol"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.vol">[docs]</a><span class="k">def</span> <span class="nf">vol</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    vol(A) = sum_{i pert A} d_i</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">vol_val</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span>  <span class="n">A</span><span class="p">:</span>
+        <span class="n">vol_val</span> <span class="o">+=</span> <span class="n">d</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span>   
+    <span class="k">return</span> <span class="n">vol_val</span>
+</div>
+<div class="viewcode-block" id="all_cut"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.all_cut">[docs]</a><span class="k">def</span> <span class="nf">all_cut</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cut measure of the connected component A vs the complementary set.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span>
+    <span class="n">cut_val</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)):</span>
+        <span class="n">A</span><span class="p">,</span><span class="n">Acomp</span> <span class="o">=</span> <span class="n">getClusterAndComplementary</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">clusters</span><span class="p">)</span>
+        <span class="n">cut_val</span> <span class="o">+=</span> <span class="n">W</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">Acomp</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span>
+    <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">cut_val</span>
+</div>
+<div class="viewcode-block" id="single_cut"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.single_cut">[docs]</a><span class="k">def</span> <span class="nf">single_cut</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">Acomp</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">W</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">Acomp</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="MinMaxCut"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.MinMaxCut">[docs]</a><span class="k">class</span> <span class="nc">MinMaxCut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Within cluster similarity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+<div class="viewcode-block" id="MinMaxCut.evaluate"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.MinMaxCut.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates:</span>
+<span class="sd">        MinMaxCut = sum_{i=1}^k cut(A_i,A_i-complementary) / W(A_i,A_i)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span>
+        <span class="n">mmcut_val</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)):</span>
+            <span class="n">A</span><span class="p">,</span><span class="n">Acomp</span> <span class="o">=</span> <span class="n">getClusterAndComplementary</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">clusters</span><span class="p">)</span>
+            <span class="n">mmcut_val</span> <span class="o">+=</span> <span class="n">single_cut</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">Acomp</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="n">W</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">mmcut_val</span>
+</div></div>
+<div class="viewcode-block" id="NCut"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.NCut">[docs]</a><span class="k">class</span> <span class="nc">NCut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Is a very simple separation measure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+<div class="viewcode-block" id="NCut.evaluate"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.NCut.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates:</span>
+<span class="sd">        NCut = 1/2 sum_{i=1}^k W(A_i,A_i-complementary) / vol(A_i)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span>
+        <span class="n">ncut_val</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)):</span>
+            <span class="n">A</span><span class="p">,</span><span class="n">Acomp</span> <span class="o">=</span> <span class="n">getClusterAndComplementary</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">clusters</span><span class="p">)</span>
+            <span class="n">ncut_val</span> <span class="o">+=</span> <span class="n">W</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">Acomp</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="n">vol</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">ncut_val</span>
+</div></div>
+<div class="viewcode-block" id="RatioCut"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.RatioCut">[docs]</a><span class="k">class</span> <span class="nc">RatioCut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Is another simple separation measure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+    
+<div class="viewcode-block" id="RatioCut.evaluate"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.graphMetrics.RatioCut.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluates:</span>
+<span class="sd">        RatioCut = sum_{i=1}^k cut(A_i,A_i-complementary) / card(A_i)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span>
+        <span class="n">ratiocut_val</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)):</span>
+            <span class="n">A</span><span class="p">,</span><span class="n">Acomp</span> <span class="o">=</span> <span class="n">getClusterAndComplementary</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">clusters</span><span class="p">)</span>
+            <span class="n">ratiocut_val</span> <span class="o">+=</span> <span class="n">W</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">Acomp</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">ratiocut_val</span>
+    </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,45 @@
+pyproct.clustering.analysis package
+===================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.clustering.analysis.test
+
+Submodules
+----------
+
+pyproct.clustering.analysis.analysis module
+-------------------------------------------
+
+.. automodule:: pyproct.clustering.analysis.analysis
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.analysis.analysisPopulator module
+----------------------------------------------------
+
+.. automodule:: pyproct.clustering.analysis.analysisPopulator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.analysis.analysisRunner module
+-------------------------------------------------
+
+.. automodule:: pyproct.clustering.analysis.analysisRunner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.analysis
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,356 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.algorithms.kmedoids.kMedoidsAlgorithm &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.algorithms.kmedoids.kMedoidsAlgorithm</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 29/05/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.gromos.gromosAlgorithm</span> <span class="kn">import</span> <span class="n">GromosAlgorithm</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">gen_clusters_from_class_list</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.clustering</span> <span class="kn">import</span> <span class="n">Clustering</span>
+
+
+
+<div class="viewcode-block" id="KMedoidsAlgorithm"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm">[docs]</a><span class="k">class</span> <span class="nc">KMedoidsAlgorithm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    K-Means like algorithm with medoids (so that the cluster prototype is always a member of the</span>
+<span class="sd">    dataset). It has 3 different initial seeding implementations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MAX_ITERATIONS</span> <span class="o">=</span> <span class="mi">500</span>
+
+    <span class="nd">@staticmethod</span>
+<div class="viewcode-block" id="KMedoidsAlgorithm.seeding_types"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.seeding_types">[docs]</a>    <span class="k">def</span> <span class="nf">seeding_types</span><span class="p">():</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the possible initial seeding types.</span>
+<span class="sd">            - GROMOS: Uses GROMOS to get the initial medoids. Useful if clusters are well separated.</span>
+<span class="sd">            - EQUIDISTANT: Divides the dataset in k consecutive parts and uses their central element as</span>
+<span class="sd">                medoid. Useful if we suspect that sequence order and geometrical likeness are correlated</span>
+<span class="sd">                (for instance with MD sequences).</span>
+<span class="sd">            - RANDOM: Uses a random choice of elements from the dataset as initial medoids.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span>  <span class="p">[</span><span class="s">&quot;GROMOS&quot;</span><span class="p">,</span><span class="s">&quot;RANDOM&quot;</span><span class="p">,</span> <span class="s">&quot;EQUIDISTANT&quot;</span><span class="p">]</span>
+</div>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor. Sets up some class variables.</span>
+
+<span class="sd">        @param condensed_matrix: The dataset&#39;s distance matrix.</span>
+<span class="sd">        @param rand_seed: A number to set the random seed or None if we don&#39;t want to set it. Useful</span>
+<span class="sd">        to be able to reproduce results.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">rand_seed</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;rand_seed&quot;</span><span class="p">]</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">rand_seed</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span> <span class="o">=</span> <span class="n">condensed_matrix</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_elements</span> <span class="o">=</span> <span class="n">condensed_matrix</span><span class="o">.</span><span class="n">row_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">class_list</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">condensed_matrix</span><span class="o">.</span><span class="n">row_length</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gromos_clusters_bookkeeping</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="KMedoidsAlgorithm.perform_clustering"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.perform_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">perform_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the actual clustering.</span>
+<span class="sd">        @param kwargs: Dictionary with this mandatory keys:</span>
+<span class="sd">            - &#39;k&#39;: Number of clusters to generate.</span>
+<span class="sd">            - &#39;seeding_type&#39;: One of the initial medoid selectors available (@see seeding_types() ).</span>
+<span class="sd">                If seeding type is &#39;GROMOS&#39;, &#39;seeding_max_cutoff&#39; must be also defined, containing the</span>
+<span class="sd">                cutoff that the GROMOS Algorithm will use.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;k&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seeding_type</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;seeding_type&quot;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding_type</span> <span class="o">==</span> <span class="s">&#39;GROMOS&#39;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seeding_max_cutoff</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s">&quot;seeding_max_cutoff&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">seeding_max_cutoff</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span>
+
+        <span class="c"># Getting first medoids</span>
+        <span class="n">current_medoids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding_max_cutoff</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding_type</span><span class="p">)</span>
+<span class="c">#         print &quot;Initial medoids:&quot;, current_medoids</span>
+
+        <span class="n">current_iteration</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">last_medoids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">convergence</span><span class="p">(</span><span class="n">current_medoids</span><span class="p">,</span><span class="n">last_medoids</span><span class="p">)</span> <span class="ow">and</span> <span class="n">current_iteration</span> <span class="o">&lt;</span> <span class="n">KMedoidsAlgorithm</span><span class="o">.</span><span class="n">MAX_ITERATIONS</span><span class="p">:</span>
+<span class="c">#             print &quot;Iteration&quot;</span>
+            <span class="c"># Update clusters</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cluster_update</span><span class="p">(</span><span class="n">current_medoids</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="p">)</span>
+            <span class="c"># Copy current to last (by reference)</span>
+            <span class="n">last_medoids</span> <span class="o">=</span> <span class="n">current_medoids</span>
+            <span class="c"># Update medoids</span>
+            <span class="n">current_medoids</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">update_medoids</span><span class="p">()</span>
+<span class="c">#             print &quot;Current medoids:&quot;, current_medoids</span>
+            <span class="n">current_iteration</span> <span class="o">=</span> <span class="n">current_iteration</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">algorithm_details</span> <span class="o">=</span> <span class="s">&quot;K-Medoids algorithm with k =&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">))</span><span class="o">+</span><span class="s">&quot; and </span><span class="si">%s</span><span class="s"> initial seeding&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">seeding_to_str</span><span class="p">()</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">gen_clusters_from_class_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Clustering</span><span class="p">(</span><span class="n">clusters</span><span class="p">,</span><span class="n">details</span> <span class="o">=</span> <span class="n">algorithm_details</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.seeding_to_str"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.seeding_to_str">[docs]</a>    <span class="k">def</span> <span class="nf">seeding_to_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convenience function to build the details string.</span>
+
+<span class="sd">        @return: a string representation of the initial seeding type.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">seeding_string</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding_type</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding_type</span> <span class="o">==</span> <span class="s">&#39;GROMOS&#39;</span><span class="p">:</span>
+            <span class="n">seeding_string</span> <span class="o">=</span> <span class="s">&quot;(GROMOS,&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeding_max_cutoff</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;)&quot;</span>
+        <span class="k">return</span> <span class="n">seeding_string</span>
+
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.convergence"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.convergence">[docs]</a>    <span class="k">def</span> <span class="nf">convergence</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">current</span><span class="p">,</span> <span class="n">last</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the medoid list has changed. If not, then the algorithm has converged.</span>
+
+<span class="sd">        @param current: The current medoid list in this step.</span>
+<span class="sd">        @param last: The medoid list of the previous step.</span>
+
+<span class="sd">        @return: True if the lists are equal, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="c">#        print &quot;Checking convergence&quot;</span>
+        <span class="k">if</span> <span class="n">last</span> <span class="o">==</span> <span class="p">[]:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+        <span class="n">current</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="n">last</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">current</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">current</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">last</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">return</span> <span class="bp">True</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.get_closer_medoid"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.get_closer_medoid">[docs]</a>    <span class="k">def</span> <span class="nf">get_closer_medoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">element</span><span class="p">,</span> <span class="n">medoids</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Says which medoid is closer to an element.</span>
+
+<span class="sd">        @param element: The element of the dataset we want to test.</span>
+<span class="sd">        @param condensed_matrix: The dataset&#39;s distance matrix.</span>
+
+<span class="sd">        @return: The closer medoid to this element.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">medoids</span><span class="p">)):</span>
+            <span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">condensed_matrix</span><span class="p">[</span><span class="n">element</span><span class="p">,</span><span class="n">medoids</span><span class="p">[</span><span class="n">j</span><span class="p">]],</span><span class="n">medoids</span><span class="p">[</span><span class="n">j</span><span class="p">]))</span>
+        <span class="p">(</span><span class="n">winner_dist</span><span class="p">,</span> <span class="n">winner_medoid</span><span class="p">)</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">winner_medoid</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.gen_medoid_to_cluster_id_map"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.gen_medoid_to_cluster_id_map">[docs]</a>    <span class="k">def</span> <span class="nf">gen_medoid_to_cluster_id_map</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">medoids</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It generates a map defining the relationship between cluster classes and medoids.</span>
+<span class="sd">        For instance if k = 3 and our medoid list is [10, 23, 50], class 0 corresponds to medoid 10, so</span>
+<span class="sd">        cluster_id_map[10] = class 0</span>
+
+<span class="sd">        @param medoids: The medoid list.</span>
+
+<span class="sd">        @return: A medoid to class dictionary.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cluster_id_map</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">medoids</span><span class="p">)):</span>
+            <span class="n">cluster_id_map</span><span class="p">[</span><span class="n">medoids</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="n">cluster_id_map</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.cluster_update"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.cluster_update">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">medoids</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Assigns each element to a cluster (updating its class), depending on which medoid is closer.</span>
+
+<span class="sd">        @param medoids: The medoid list.</span>
+<span class="sd">        @param condensed_matrix: The dataset&#39;s distance matrix.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cluster_id_map</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gen_medoid_to_cluster_id_map</span><span class="p">(</span><span class="n">medoids</span><span class="p">)</span>
+<span class="c">#         print &quot;cluster medoid -&gt; class map:&quot;, cluster_id_map</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">total_elements</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">class_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_id_map</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">get_closer_medoid</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">medoids</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)]</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.update_medoids"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.update_medoids">[docs]</a>    <span class="k">def</span> <span class="nf">update_medoids</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Regenerates the medoids list once the new clusters have been generated.</span>
+
+<span class="sd">        @return: A new medoid list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="n">gen_clusters_from_class_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">class_list</span><span class="p">)</span>
+        <span class="n">medoids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+            <span class="n">medoids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">calculate_medoid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">medoids</span>
+
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.seeding"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.seeding">[docs]</a>    <span class="k">def</span> <span class="nf">seeding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">seeding_max_cutoff</span><span class="p">,</span> <span class="n">seeding_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the initial seeding using the stated seeding process.</span>
+
+<span class="sd">        @param k: The number of medoids we need.</span>
+<span class="sd">        @param seeding_max_cutoff: The initial seeding cutoff to use with the GROMOS algorithm.</span>
+<span class="sd">        @param seeding_type: The seeding process type (@see seeding_types() )</span>
+
+<span class="sd">        @return: The initial medoids.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">seeding_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding_types</span><span class="p">():</span>
+            <span class="k">print</span> <span class="s">&quot;[ERROR::SpectralClusteringAlgorithm] Seeding type &quot;</span> <span class="p">,</span><span class="n">seeding_type</span><span class="p">,</span> <span class="s">&quot;is not a correct type. Use one of these instead: &quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeding_types</span><span class="p">()</span>
+            <span class="nb">exit</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">seeding_type</span> <span class="o">==</span> <span class="s">&quot;RANDOM&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_seeding</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">seeding_type</span> <span class="o">==</span> <span class="s">&quot;GROMOS&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">gromos_seeding</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">seeding_max_cutoff</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">seeding_type</span> <span class="o">==</span> <span class="s">&quot;EQUIDISTANT&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">equidistant_seeding</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="o">.</span><span class="n">row_length</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.random_seeding"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.random_seeding">[docs]</a>    <span class="k">def</span> <span class="nf">random_seeding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">k</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns k random medoids.</span>
+
+<span class="sd">        @param k: The number of medoids we need.</span>
+
+<span class="sd">        @return: The medoid list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">random_medoids</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">sample</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="o">.</span><span class="n">row_length</span><span class="p">),</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">random_medoids</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.equidistant_seeding"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.equidistant_seeding">[docs]</a>    <span class="k">def</span> <span class="nf">equidistant_seeding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">number_of_elements</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        @see seeding_types</span>
+
+<span class="sd">        @param k: The number of medoids we need.</span>
+<span class="sd">        @param number_of_elements: Number of elements of the dataset.</span>
+
+<span class="sd">        @return: The medoid list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">step</span> <span class="o">=</span> <span class="n">number_of_elements</span> <span class="o">/</span> <span class="n">k</span>
+        <span class="n">medoids</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">medoids</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">step</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="n">step</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">medoids</span>
+</div>
+<div class="viewcode-block" id="KMedoidsAlgorithm.gromos_seeding"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.kMedoidsAlgorithm.KMedoidsAlgorithm.gromos_seeding">[docs]</a>    <span class="k">def</span> <span class="nf">gromos_seeding</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">seeding_max_cutoff</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        The first k medoids are selected running the gromos algorithm with an initial cutoff defined in &#39;seeding_max_cutoff&#39;</span>
+<span class="sd">        until it gets at least k clusters. If it can&#39;t, it will use the random seeding strategy.</span>
+
+<span class="sd">        @param k: The number of medoids we need(and thus the number of clusters we want GROMOS to produce)</span>
+<span class="sd">        @param seeding_max_cutoff: The initial seeding cutoff to use with the gromos algorithm.</span>
+
+<span class="sd">        @return: The medoid list.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+<span class="c">#         print &quot;Seeding process&quot;</span>
+        <span class="n">current_cutoff</span> <span class="o">=</span> <span class="n">seeding_max_cutoff</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">k</span> <span class="ow">and</span> <span class="n">current_cutoff</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            EL BOOKEEPING SOLO TIENE SENTIDO EN MULTITHREADING; PERO NO</span>
+<span class="sd">            CON PROCESOS SEPARADOS :(</span>
+<span class="sd">            if(current_cutoff in self.gromos_clusters_bookkeeping):</span>
+<span class="sd">                if</span>
+<span class="sd">            else:</span>
+<span class="sd">            &quot;&quot;&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;Trying gromos with cutoff =&quot;</span><span class="p">,</span> <span class="n">current_cutoff</span><span class="p">,</span><span class="s">&quot;for seeding&quot;</span>
+            <span class="n">gromos_algorithm</span> <span class="o">=</span> <span class="n">GromosAlgorithm</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">condensed_matrix</span><span class="p">)</span>
+            <span class="n">clusters</span> <span class="o">=</span> <span class="n">gromos_algorithm</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">({</span><span class="s">&quot;cutoff&quot;</span><span class="p">:</span><span class="n">current_cutoff</span><span class="p">,</span> <span class="s">&quot;max_clusters&quot;</span><span class="p">:</span><span class="n">k</span><span class="p">})</span><span class="o">.</span><span class="n">clusters</span>
+<span class="c">#             self.gromos_clusters_bookkeeping[current_cutoff] = len(clusters)</span>
+            <span class="n">current_cutoff</span> <span class="o">-=</span> <span class="mf">0.1</span>
+
+        <span class="c"># If it was impossible, do a random seeding</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">current_cutoff</span><span class="o">&lt;=</span><span class="mf">0.</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;Returning a random sampling.&quot;</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">random_seeding</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Returning the medoids.&quot;</span>
+            <span class="n">medoids</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">k</span><span class="p">]:</span>
+                <span class="n">medoids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">prototype</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">medoids</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

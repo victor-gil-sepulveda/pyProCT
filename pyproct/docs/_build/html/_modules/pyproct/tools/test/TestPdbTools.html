@@ -1,0 +1,200 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.tools.test.TestPdbTools &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.tools.test.TestPdbTools</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 16/03/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">pyproct.tools.pdbTools</span>
+<span class="kn">import</span> <span class="nn">pyproct.tools.test.data</span> <span class="kn">as</span> <span class="nn">test_data</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">cStringIO</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">pyproct.tools.pdbTools</span> <span class="kn">import</span> <span class="n">repair_MODEL_ENDMDL_tags</span><span class="p">,</span>\
+    <span class="n">grab_existing_frame_from_trajectory</span>
+
+
+<div class="viewcode-block" id="Test"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test">[docs]</a><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Test.test_def_get_number_of_frames"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_def_get_number_of_frames">[docs]</a>    <span class="k">def</span> <span class="nf">test_def_get_number_of_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">open</span><span class="p">(</span><span class="s">&quot;test_pdb_for_counting_1.pdb&quot;</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_file_content</span><span class="p">)</span>
+        <span class="n">num_models</span> <span class="o">=</span> <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">get_number_of_frames</span><span class="p">(</span><span class="s">&quot;test_pdb_for_counting_1.pdb&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;rm test_pdb_for_counting_1.pdb&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">num_models</span><span class="p">,</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_num_of_models</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Test.test_get_number_of_atoms"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_get_number_of_atoms">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_number_of_atoms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">open</span><span class="p">(</span><span class="s">&quot;test_pdb_for_counting_2.pdb&quot;</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_sub2_file_content</span><span class="p">)</span>
+        <span class="n">num_models</span> <span class="o">=</span> <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">get_number_of_atoms</span><span class="p">(</span><span class="s">&quot;test_pdb_for_counting_2.pdb&quot;</span><span class="p">)</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;rm test_pdb_for_counting_2.pdb&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">num_models</span><span class="p">,</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb1_num_of_atoms</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_extract_frames_from_trajectory_sequentially"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_extract_frames_from_trajectory_sequentially">[docs]</a>    <span class="k">def</span> <span class="nf">test_extract_frames_from_trajectory_sequentially</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_sub2_file_content</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">]</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">extract_frames_from_trajectory_sequentially</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_num_of_models</span> <span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">,</span><span class="s">&quot;TER&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span><span class="n">test_data</span><span class="o">.</span><span class="n">extracted_pdbs_1</span><span class="p">)</span>
+        
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_2_file_content</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">extract_frames_from_trajectory_sequentially</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">test_data</span><span class="o">.</span><span class="n">pdb_2_num_of_models</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">,</span><span class="s">&quot;ENDMDL&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span><span class="n">test_data</span><span class="o">.</span><span class="n">extracted_pdbs_3</span><span class="p">)</span>
+        
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_2_file_content</span><span class="p">)</span>
+        <span class="n">output</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">frames</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">extract_frames_from_trajectory_sequentially</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">test_data</span><span class="o">.</span><span class="n">pdb_2_num_of_models</span><span class="p">,</span> <span class="n">output</span><span class="p">,</span> <span class="n">frames</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">,</span><span class="s">&quot;ENDMDL&quot;</span><span class="p">,</span> <span class="n">keep_header</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">output</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span><span class="n">test_data</span><span class="o">.</span><span class="n">extracted_pdbs_4</span><span class="p">)</span>
+    
+    </div>
+<div class="viewcode-block" id="Test.test_write_a_tfile_model_into_other_tfile"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_write_a_tfile_model_into_other_tfile">[docs]</a>    <span class="k">def</span> <span class="nf">test_write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># We&#39;ll write the first and third model</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_sub2_file_content</span><span class="p">)</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">,</span><span class="s">&quot;TER&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">,</span><span class="s">&quot;TER&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">,</span><span class="s">&quot;TER&quot;</span><span class="p">,</span> <span class="bp">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">output_file</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">test_data</span><span class="o">.</span><span class="n">extracted_pdbs_2</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Test.test_read_to_TAG"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_read_to_TAG">[docs]</a>    <span class="k">def</span> <span class="nf">test_read_to_TAG</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_sub2_file_content</span><span class="p">)</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">read_to_TAG</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span><span class="s">&quot;TER&quot;</span><span class="p">)</span>
+        <span class="n">expected_lines</span> <span class="o">=</span> <span class="s">&quot;&quot;&quot;MODEL 0</span>
+<span class="s">ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            </span>
+<span class="s">ATOM      4  CA  PHE     4      -8.605   2.189  -0.292  1.00  1.00            </span>
+<span class="s">ATOM      5  CA  VAL     5      -5.540   2.776  -2.541  1.00  1.00            </span>
+<span class="s">ATOM      6  CA  LYP     6      -5.228   5.331  -5.451  1.00  1.00            </span>
+<span class="s">ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00            </span>
+<span class="s">&quot;&quot;&quot;</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&#39;</span><span class="se">\n</span><span class="s">&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">][:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">expected_lines</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    </div>
+<div class="viewcode-block" id="Test.test_advance_to_TAG"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_advance_to_TAG">[docs]</a>    <span class="k">def</span> <span class="nf">test_advance_to_TAG</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_file_content</span><span class="p">)</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">advance_to_TAG</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">)</span> <span class="c"># MODEL 1</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">advance_to_TAG</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">)</span> <span class="c"># MODEL 2</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">advance_to_TAG</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span><span class="s">&quot;MODEL&quot;</span><span class="p">)</span> <span class="c"># MODEL 3</span>
+        <span class="n">line</span> <span class="o">=</span>  <span class="n">input_file</span><span class="o">.</span><span class="n">readline</span><span class="p">()</span>
+        <span class="n">expected_line</span> <span class="o">=</span> <span class="s">&quot;ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  3.00            </span><span class="se">\n</span><span class="s">&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">line</span><span class="p">,</span> <span class="n">expected_line</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_create_CA_file"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_create_CA_file">[docs]</a>    <span class="k">def</span> <span class="nf">test_create_CA_file</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">amber_short_contents</span><span class="p">)</span>
+        <span class="n">output_file</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">create_CA_file</span><span class="p">(</span><span class="n">input_file</span><span class="p">,</span> <span class="n">output_file</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">output_file</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">test_data</span><span class="o">.</span><span class="n">amber_short_ca_contents</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_get_model_boundaries"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_get_model_boundaries">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_model_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_pdb_handler</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_sub2_file_content</span><span class="p">)</span>
+        <span class="n">boundaries</span> <span class="o">=</span> <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">pdbTools</span><span class="o">.</span><span class="n">get_model_boundaries</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">)</span>
+        <span class="n">expected_boundaries</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span> <span class="p">[</span><span class="mi">22</span><span class="p">,</span> <span class="mi">26</span><span class="p">],</span> <span class="p">[</span><span class="mi">29</span><span class="p">,</span> <span class="mi">33</span><span class="p">],</span> <span class="p">[</span><span class="mi">36</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="p">[</span><span class="mi">43</span><span class="p">,</span> <span class="mi">45</span><span class="p">]]</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_equal</span><span class="p">(</span><span class="n">boundaries</span><span class="p">,</span> <span class="n">expected_boundaries</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_repair_MODEL_ENDMDL_tags"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_repair_MODEL_ENDMDL_tags">[docs]</a>    <span class="k">def</span> <span class="nf">test_repair_MODEL_ENDMDL_tags</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_pdb_handler</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_sub2_file_content</span><span class="p">)</span>
+        <span class="n">output_file_handler</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">boundaries</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">],</span> <span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span> <span class="p">[</span><span class="mi">15</span><span class="p">,</span> <span class="mi">19</span><span class="p">],</span> <span class="p">[</span><span class="mi">22</span><span class="p">,</span> <span class="mi">26</span><span class="p">],</span> <span class="p">[</span><span class="mi">29</span><span class="p">,</span> <span class="mi">33</span><span class="p">],</span> <span class="p">[</span><span class="mi">36</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="p">[</span><span class="mi">43</span><span class="p">,</span> <span class="mi">45</span><span class="p">]]</span>
+        <span class="n">repair_MODEL_ENDMDL_tags</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">,</span> <span class="n">output_file_handler</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">output_file_handler</span><span class="o">.</span><span class="n">getvalue</span><span class="p">(),</span> <span class="n">test_data</span><span class="o">.</span><span class="n">pdb_1_file_content</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_grab_existing_frames_from_trajectory"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPdbTools.Test.test_grab_existing_frames_from_trajectory">[docs]</a>    <span class="k">def</span> <span class="nf">test_grab_existing_frames_from_trajectory</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">input_pdb_handler</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">proto_pdb</span><span class="p">)</span>
+        <span class="n">output_file_handler</span> <span class="o">=</span> <span class="n">cStringIO</span><span class="o">.</span><span class="n">StringIO</span><span class="p">()</span>
+        <span class="n">grab_existing_frame_from_trajectory</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">,</span> <span class="n">output_file_handler</span><span class="p">,</span> <span class="mi">48</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">test_data</span><span class="o">.</span><span class="n">proto_48_pdb</span><span class="p">,</span> <span class="n">output_file_handler</span><span class="o">.</span><span class="n">getvalue</span><span class="p">())</span>
+        </div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.testName&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

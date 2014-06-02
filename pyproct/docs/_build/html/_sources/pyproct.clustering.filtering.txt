@@ -1,0 +1,29 @@
+pyproct.clustering.filtering package
+====================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.clustering.filtering.test
+
+Submodules
+----------
+
+pyproct.clustering.filtering.clusteringFilter module
+----------------------------------------------------
+
+.. automodule:: pyproct.clustering.filtering.clusteringFilter
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.filtering
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,22 @@
+pyproct.clustering.filtering.test package
+=========================================
+
+Submodules
+----------
+
+pyproct.clustering.filtering.test.TestFiltering module
+------------------------------------------------------
+
+.. automodule:: pyproct.clustering.filtering.test.TestFiltering
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.filtering.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

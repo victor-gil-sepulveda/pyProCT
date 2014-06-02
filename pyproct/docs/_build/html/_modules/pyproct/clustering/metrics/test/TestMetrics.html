@@ -1,0 +1,270 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.metrics.test.TestMetrics &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.metrics.test.TestMetrics</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 02/04/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.condensedMatrix</span> <span class="kn">import</span> <span class="n">CondensedMatrix</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.clustering</span> <span class="kn">import</span> <span class="n">Clustering</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.test</span> <span class="kn">import</span> <span class="n">matrix</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.random</span> <span class="kn">import</span> <span class="n">RandomAlgorithm</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.meanMinimumDistance</span> <span class="kn">import</span> <span class="n">mean_function</span><span class="p">,</span>\
+    <span class="n">MeanMinimumDistanceCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.cohesion</span> <span class="kn">import</span> <span class="n">CohesionCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.separation</span> <span class="kn">import</span> <span class="n">SeparationCalculator</span>
+
+<div class="viewcode-block" id="TestMetrics"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics">[docs]</a><span class="k">class</span> <span class="nc">TestMetrics</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    
+<div class="viewcode-block" id="TestMetrics.test_mean_function"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_mean_function">[docs]</a>    <span class="k">def</span> <span class="nf">test_mean_function</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mean_function</span><span class="p">([]),</span><span class="mi">0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">mean_function</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">]),</span> <span class="mi">5</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="TestMetrics.test_subsample"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_subsample">[docs]</a>    <span class="k">def</span> <span class="nf">test_subsample</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">MeanMinimumDistanceCalculator</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mf">14.5</span><span class="p">,</span> <span class="n">calculator</span><span class="o">.</span><span class="n">subsample</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span>  <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">43</span><span class="p">]))</span>
+        <span class="c"># If the percent gives less than 1 element, we use 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">43</span><span class="p">,</span>  <span class="n">calculator</span><span class="o">.</span><span class="n">subsample</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span>  <span class="p">[</span><span class="mi">4</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">24</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">12</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">43</span><span class="p">]))</span>
+        <span class="c"># If the list has no elements, returns 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="mi">0</span><span class="p">,</span>  <span class="n">calculator</span><span class="o">.</span><span class="n">subsample</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span>  <span class="p">[]))</span>
+    </div>
+<div class="viewcode-block" id="TestMetrics.test_get_min_distances"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_get_min_distances">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_min_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span>
+                                            <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                                                <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                                   <span class="mf">10.</span><span class="p">])</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">MeanMinimumDistanceCalculator</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        
+        <span class="n">min_dists</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">get_mean_and_min_distances</span><span class="p">(</span><span class="n">clusters</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">clusters</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">distances</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span> <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">,</span> <span class="mf">8.0</span><span class="p">],</span> <span class="n">min_dists</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEquals</span><span class="p">(</span><span class="mf">12.33</span><span class="p">,</span><span class="n">mean</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestMetrics.test_get_distances_less_than_mean"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_get_distances_less_than_mean">[docs]</a>    <span class="k">def</span> <span class="nf">test_get_distances_less_than_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">MeanMinimumDistanceCalculator</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">51</span><span class="p">),</span> <span class="n">calculator</span><span class="o">.</span><span class="n">get_distances_less_than_mean</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span><span class="mi">50</span><span class="p">))</span>
+    </div>
+<div class="viewcode-block" id="TestMetrics.test_subsampled_mean_min_dist"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_subsampled_mean_min_dist">[docs]</a>    <span class="k">def</span> <span class="nf">test_subsampled_mean_min_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">MeanMinimumDistanceCalculator</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        <span class="n">triangle</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> 
+                         <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                             <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                <span class="mf">10.</span><span class="p">]</span>
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="n">triangle</span> <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">((</span><span class="mf">8.0</span><span class="p">,</span> <span class="mf">6.0</span><span class="p">),</span><span class="n">calculator</span><span class="o">.</span><span class="n">subsampled_mean_min_dist</span><span class="p">(</span><span class="n">clusters</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">clusters</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>  <span class="mi">20</span><span class="p">,</span> <span class="n">distances</span><span class="p">))</span>
+    </div>
+<div class="viewcode-block" id="TestMetrics.test_mini_evaluation"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_mini_evaluation">[docs]</a>    <span class="k">def</span> <span class="nf">test_mini_evaluation</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">MeanMinimumDistanceCalculator</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        <span class="n">triangle</span> <span class="o">=</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span> 
+                         <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                             <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                <span class="mf">10.</span><span class="p">]</span>
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="n">triangle</span> <span class="p">)</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">Clustering</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="mf">7.0</span><span class="p">,</span> <span class="n">calculator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span><span class="n">distances</span><span class="p">,</span><span class="mi">20</span><span class="p">))</span>
+        </div>
+<div class="viewcode-block" id="TestMetrics.test_full_run"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_full_run">[docs]</a>    <span class="k">def</span> <span class="nf">test_full_run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">condensed_matrix</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">(</span><span class="n">matrix</span><span class="p">)</span>
+        <span class="n">cmax</span> <span class="o">=</span> <span class="n">condensed_matrix</span><span class="o">.</span><span class="n">calculateMax</span><span class="p">()</span>
+        <span class="n">alg</span> <span class="o">=</span> <span class="n">RandomAlgorithm</span><span class="o">.</span><span class="n">RandomClusteringAlgorithm</span><span class="p">(</span><span class="n">condensed_matrix</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">calculator</span> <span class="o">=</span>  <span class="n">MeanMinimumDistanceCalculator</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">20</span><span class="p">):</span>
+            <span class="n">clustering</span> <span class="o">=</span> <span class="n">alg</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">({</span>
+                                                 <span class="s">&quot;max_num_of_clusters&quot;</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> 
+                                                 <span class="s">&quot;num_clusters&quot;</span><span class="p">:</span><span class="n">i</span>
+                                                 <span class="p">})</span>
+            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span> <span class="n">calculator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertTrue</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cmax</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestMetrics.test_cluster_cohesion_without_prototype"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_cluster_cohesion_without_prototype">[docs]</a>    <span class="k">def</span> <span class="nf">test_cluster_cohesion_without_prototype</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span>
+                                                    <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                                                        <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                                           <span class="mf">10.</span><span class="p">])</span>
+        <span class="n">clusters_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        
+        <span class="n">clusters_2</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])]</span>
+        
+        <span class="n">cohesion_calctor</span> <span class="o">=</span> <span class="n">CohesionCalculator</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cohesion_calctor</span><span class="o">.</span><span class="n">evaluate_cluster</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cohesion_calctor</span><span class="o">.</span><span class="n">evaluate_cluster</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span> <span class="mf">0.</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cohesion_calctor</span><span class="o">.</span><span class="n">evaluate_cluster</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span> <span class="mf">5.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cohesion_calctor</span><span class="o">.</span><span class="n">evaluate_cluster</span><span class="p">(</span><span class="n">clusters_2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span> <span class="mf">5.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">cohesion_calctor</span><span class="o">.</span><span class="n">evaluate_cluster</span><span class="p">(</span><span class="n">clusters_2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span> <span class="mf">3.0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="TestMetrics.test_cluster_mixed_cohesion_wo_prot"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_cluster_mixed_cohesion_wo_prot">[docs]</a>    <span class="k">def</span> <span class="nf">test_cluster_mixed_cohesion_wo_prot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span>
+                                            <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                                                <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                                   <span class="mf">10.</span><span class="p">])</span>
+        <span class="n">clusters_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        
+        <span class="n">clusters_2</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])]</span>
+        
+        <span class="n">sep_calctor</span> <span class="o">=</span> <span class="n">SeparationCalculator</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">sep_calctor</span><span class="o">.</span><span class="n">_SeparationCalculator__clusters_mixed_cohesion</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span><span class="mf">7.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">sep_calctor</span><span class="o">.</span><span class="n">_SeparationCalculator__clusters_mixed_cohesion</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span><span class="mf">20.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">sep_calctor</span><span class="o">.</span><span class="n">_SeparationCalculator__clusters_mixed_cohesion</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span><span class="mf">17.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">sep_calctor</span><span class="o">.</span><span class="n">_SeparationCalculator__clusters_mixed_cohesion</span><span class="p">(</span><span class="n">clusters_2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">clusters_2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">distances</span><span class="p">),</span><span class="mf">34.0</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="TestMetrics.test_cluster_cohe_sep_wo_prot_eval"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_cluster_cohe_sep_wo_prot_eval">[docs]</a>    <span class="k">def</span> <span class="nf">test_cluster_cohe_sep_wo_prot_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span>
+                                            <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                                                <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                                   <span class="mf">10.</span><span class="p">])</span>
+        <span class="n">clusters_1</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="p">),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        
+        <span class="n">clusters_2</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span>
+                      <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])]</span>
+        
+        <span class="n">clusterization_1</span> <span class="o">=</span> <span class="n">Clustering</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">)</span>
+        <span class="n">clusterization_2</span> <span class="o">=</span> <span class="n">Clustering</span><span class="p">(</span><span class="n">clusters_2</span><span class="p">)</span>
+        <span class="n">sep_calctor</span> <span class="o">=</span> <span class="n">SeparationCalculator</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">sep_calctor</span><span class="o">.</span><span class="n">cluster_separation</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">clusterization_1</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">distances</span><span class="p">),</span><span class="mf">27.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">sep_calctor</span><span class="o">.</span><span class="n">cluster_separation</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">clusterization_1</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">distances</span><span class="p">),</span><span class="mf">24.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">sep_calctor</span><span class="o">.</span><span class="n">cluster_separation</span><span class="p">(</span><span class="n">clusters_1</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span><span class="n">clusterization_1</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">distances</span><span class="p">),</span><span class="mf">37.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">sep_calctor</span><span class="o">.</span><span class="n">cluster_separation</span><span class="p">(</span><span class="n">clusters_2</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">clusterization_2</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">distances</span><span class="p">),</span><span class="mf">34.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">sep_calctor</span><span class="o">.</span><span class="n">cluster_separation</span><span class="p">(</span><span class="n">clusters_2</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span><span class="n">clusterization_2</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="n">distances</span><span class="p">),</span><span class="mf">34.0</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="TestMetrics.test_regression_separation_eval"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_regression_separation_eval">[docs]</a>    <span class="k">def</span> <span class="nf">test_regression_separation_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span>
+                                            <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                                                <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                                   <span class="mf">10.</span><span class="p">])</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">Clustering</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+        
+        <span class="n">sep_calctor</span> <span class="o">=</span> <span class="n">SeparationCalculator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">sep_calctor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">distances</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mf">27.0</span> <span class="o">+</span> <span class="mf">24.0</span> <span class="o">+</span> <span class="mf">37.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">sep_calctor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">distances</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">0.5</span><span class="p">)</span><span class="o">*</span><span class="mf">27.0</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">5.0</span><span class="p">)</span><span class="o">*</span><span class="mf">37.0</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="TestMetrics.test_regression_cohesion_eval"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestMetrics.TestMetrics.test_regression_cohesion_eval">[docs]</a>    <span class="k">def</span> <span class="nf">test_regression_cohesion_eval</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span>  <span class="n">CondensedMatrix</span><span class="p">(</span> <span class="p">[</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span>
+                                            <span class="mf">5.</span><span class="p">,</span> <span class="mf">6.</span><span class="p">,</span> <span class="mf">7.</span><span class="p">,</span> 
+                                                <span class="mf">8.</span><span class="p">,</span> <span class="mf">9.</span><span class="p">,</span> 
+                                                   <span class="mf">10.</span><span class="p">])</span>
+        <span class="n">clusters</span> <span class="o">=</span> <span class="p">[</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span>
+                    <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span>
+                    <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">elements</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])]</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">Clustering</span><span class="p">(</span><span class="n">clusters</span><span class="p">)</span>
+        
+        <span class="n">cohesion_calctor</span> <span class="o">=</span> <span class="n">CohesionCalculator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span> <span class="n">cohesion_calctor</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">distances</span><span class="p">),</span> <span class="mf">5.5</span><span class="p">)</span>
+        </div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.test_cluster_cohesion&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

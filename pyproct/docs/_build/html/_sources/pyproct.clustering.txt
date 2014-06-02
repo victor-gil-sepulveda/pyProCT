@@ -1,0 +1,42 @@
+pyproct.clustering package
+==========================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.clustering.analysis
+    pyproct.clustering.comparison
+    pyproct.clustering.filtering
+    pyproct.clustering.metrics
+    pyproct.clustering.selection
+    pyproct.clustering.test
+
+Submodules
+----------
+
+pyproct.clustering.cluster module
+---------------------------------
+
+.. automodule:: pyproct.clustering.cluster
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.clustering module
+------------------------------------
+
+.. automodule:: pyproct.clustering.clustering
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering
+    :members:
+    :undoc-members:
+    :show-inheritance:

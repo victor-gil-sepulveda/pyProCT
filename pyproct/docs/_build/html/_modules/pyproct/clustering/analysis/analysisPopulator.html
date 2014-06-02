@@ -1,0 +1,327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.analysis.analysisPopulator &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.analysis.analysisPopulator</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 06/06/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">get_cluster_sizes</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.analysis.analysis</span> <span class="kn">import</span> <span class="n">Analysis</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.graphMetrics</span> <span class="kn">import</span> <span class="n">NCut</span><span class="p">,</span> <span class="n">RatioCut</span><span class="p">,</span> <span class="n">MinMaxCut</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.pcaMetrics</span> <span class="kn">import</span> <span class="n">PCAMetric</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.cython.normNCut</span> <span class="kn">import</span> <span class="n">CythonNCut</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.cython.boundedCohesion</span> <span class="kn">import</span> <span class="n">CythonMirrorCohesionCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.cython.silhouette</span> <span class="kn">import</span> <span class="n">CythonSilhouetteCoefficientCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.cython.meanMinimumDistance</span> <span class="kn">import</span> <span class="n">CythonMeanMinimumDistanceCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.boundedCohesion</span> <span class="kn">import</span> <span class="n">MirrorCohesionCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.silhouette</span> <span class="kn">import</span> <span class="n">SilhouetteCoefficientCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.cohesion</span> <span class="kn">import</span> <span class="n">CohesionCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.meanMinimumDistance</span> <span class="kn">import</span> <span class="n">MeanMinimumDistanceCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.CalinskiHarabasz</span> <span class="kn">import</span> <span class="n">CalinskiHarabaszCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.Dunn</span> <span class="kn">import</span> <span class="n">DunnCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.DaviesBouldin</span> <span class="kn">import</span> <span class="n">DaviesBouldinCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.gaussianSeparation</span> <span class="kn">import</span> <span class="n">GaussianSeparationCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.separation</span> <span class="kn">import</span> <span class="n">SeparationCalculator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.compactness</span> <span class="kn">import</span> <span class="n">CompactnessCalculator</span>
+
+
+<div class="viewcode-block" id="AnalysisPopulator"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator">[docs]</a><span class="k">class</span> <span class="nc">AnalysisPopulator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class creator.</span>
+
+<span class="sd">        @param matrix_handler: Is the matrix handler object, or any object containing a .distance_matrix value.</span>
+
+<span class="sd">        @param trajectory_handler: Is the trajectory handler object, with structural info.</span>
+
+<span class="sd">        @param parameters: The script parameters containing a correct &#39;evaluation&#39; section.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_all_analysis</span><span class="p">(</span><span class="n">matrix_handler</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+
+<div class="viewcode-block" id="AnalysisPopulator.build_all_analysis"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.build_all_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">build_all_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create an instance of all possible analysis. If you&#39;re not able to create it... you&#39;re not able to use it.</span>
+
+<span class="sd">        @param matrix_handler: Is the matrix handler object, or any object containing a .distance_matrix value.</span>
+
+<span class="sd">        @param trajectory_handler: Is the trajectory handler object, with structural info.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distance_matrix</span> <span class="o">=</span> <span class="n">matrix_handler</span><span class="o">.</span><span class="n">distance_matrix</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c"># Pure queries</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Details&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Details&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_details</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;NumClusters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Number of clusters&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_num_clusters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;NumClusteredElems&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Number of clustered elements&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_total_elements</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;MeanClusterSize&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Mean cluster size&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_mean_cluster_size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;PercentInTop4&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Percent in top 4 clusters&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_top_4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;PercentInTop&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Percent in top cluster&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_top_percent</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;ClustersTo90&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Clusters to 90&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_num_clusters_to_percent</span><span class="p">,</span> <span class="mi">90</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;NoiseLevel&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Noise level&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_noise_level</span><span class="p">,</span> <span class="n">distance_matrix</span><span class="o">.</span><span class="n">row_length</span><span class="p">)</span>
+
+        <span class="c"># Evaluators</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;MirrorCohesion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;MirrorCohesion&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                          <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">MirrorCohesionCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Cohesion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Cohesion&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                          <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">CohesionCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Separation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Separation&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                            <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">SeparationCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;MinimumMeanSeparation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;MinimumMeanSeparation&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                       <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">MeanMinimumDistanceCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Silhouette&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Silhouette&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                            <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">SilhouetteCoefficientCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Calinski-Harabasz&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Calinski-Harabasz&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                   <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">CalinskiHarabaszCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Dunn&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Dunn&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                      <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">DunnCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Davies-Bouldin&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Davies-Bouldin&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">DaviesBouldinCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;GaussianSeparation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;GaussianSeparation&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                    <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">GaussianSeparationCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;Compactness&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;Compactness&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                    <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">CompactnessCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+
+        <span class="c"># Cython</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;CythonMirrorCohesion&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;CythonMirrorCohesion&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                      <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">CythonMirrorCohesionCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;CythonMinimumMeanSeparation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;CythonMinimumMeanSeparation&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                             <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">CythonMeanMinimumDistanceCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;CythonSilhouette&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;CythonSilhouette&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                                  <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">CythonSilhouetteCoefficientCalculator</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+
+        <span class="c"># Graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;RatioCut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;RatioCut&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                          <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">RatioCut</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;NCut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;NCut&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                      <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">NCut</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;NormNCut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;NormNCut&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_norm_n_cut</span><span class="p">,</span><span class="n">distance_matrix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;MinMaxCut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;MinMaxCut&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate_with_calculator</span><span class="p">,</span>
+                                                           <span class="p">{</span><span class="s">&quot;class&quot;</span><span class="p">:</span><span class="n">MinMaxCut</span><span class="p">,</span><span class="s">&quot;matrix&quot;</span><span class="p">:</span><span class="n">distance_matrix</span><span class="p">})</span>
+
+        <span class="c"># Cython &amp; Graph</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;CythonNormNCut&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;CythonNormNCut&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_cython_norm_n_cut</span><span class="p">,</span><span class="n">distance_matrix</span><span class="p">)</span>
+
+        <span class="c"># PCA</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="s">&quot;PCAanalysis&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Analysis</span><span class="p">(</span><span class="s">&quot;PCAanalysis&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">analysis_function_pca</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.get_analysis_list"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_analysis_list">[docs]</a>    <span class="k">def</span> <span class="nf">get_analysis_list</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates the list of required analyzers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">analysys_list</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">analysis_types</span> <span class="o">=</span> <span class="n">AnalysisPopulator</span><span class="o">.</span><span class="n">get_query_and_evaluation_analysis_types</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">analysis_type</span> <span class="ow">in</span> <span class="n">analysis_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">analysis_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">:</span>
+                <span class="n">analysys_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_possible_analysis</span><span class="p">[</span><span class="n">analysis_type</span><span class="p">])</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;[WARNING]&quot;</span><span class="p">,</span> <span class="n">analysis_type</span><span class="p">,</span> <span class="s">&quot;is not an allowed analysis type&quot;</span>
+
+        <span class="k">return</span> <span class="n">analysys_list</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AnalysisPopulator.get_query_and_evaluation_analysis_types"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_query_and_evaluation_analysis_types">[docs]</a>    <span class="k">def</span> <span class="nf">get_query_and_evaluation_analysis_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list formed by all the analysis we need to calculate, without repetition, from the data in parameters.</span>
+
+<span class="sd">        @param parameters: The script parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">queries</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;query_types&quot;</span><span class="p">]</span>
+        <span class="n">queries</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">AnalysisPopulator</span><span class="o">.</span><span class="n">get_evaluation_analysis_types</span><span class="p">(</span><span class="n">parameters</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">queries</span><span class="p">))</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="AnalysisPopulator.get_evaluation_analysis_types"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_evaluation_analysis_types">[docs]</a>    <span class="k">def</span> <span class="nf">get_evaluation_analysis_types</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a list formed by the evaluation types present in criteria.</span>
+
+<span class="sd">        @param parameters: The script parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">eval_types</span> <span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">evaluation_criteria_id</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;evaluation_criteria&quot;</span><span class="p">]:</span>
+<span class="c">#             for subcriteria in parameters[&quot;clustering&quot;][&quot;evaluation&quot;][&quot;evaluation_criteria&quot;][evaluation_criteria_id]:</span>
+<span class="c">#                 eval_types.append(subcriteria)</span>
+            <span class="n">eval_types</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;evaluation_criteria&quot;</span><span class="p">][</span><span class="n">evaluation_criteria_id</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">eval_types</span><span class="p">))</span>
+
+    <span class="c">################################################################################</span>
+    <span class="c"># Next we&#39;ll find the analysis functions we have programmed until now.</span>
+    <span class="c"># This is the place to make changes if we want to add new analysis functions..</span>
+    <span class="c">################################################################################</span></div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_details"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_details">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_details</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the &#39;details&#39; field of a clustering.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">clustering</span><span class="o">.</span><span class="n">details</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_num_clusters"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_num_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_num_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of cluster a clustering has.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_total_elements"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_total_elements">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_total_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the number of elements that are clusterized in this clustering (which</span>
+<span class="sd">        may not be the total number of elements of the dataset if there were noisy elements)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">clustering</span><span class="o">.</span><span class="n">total_number_of_elements</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_top_4"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_top_4">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_top_4</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the percentage of elements of the clustering that are in the 4 bigger clusters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clustering</span><span class="o">.</span><span class="n">sort_clusters_by_size</span><span class="p">()</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">percents</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">get_population_percent_of_n_bigger_clusters</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">percents</span><span class="p">:</span>
+            <span class="n">total</span> <span class="o">=</span> <span class="n">total</span><span class="o">+</span><span class="n">p</span>
+        <span class="k">return</span> <span class="n">total</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_num_clusters_to_percent"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_num_clusters_to_percent">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_num_clusters_to_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">percent</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the maximum number of clusters needed to have a percent of the total</span>
+<span class="sd">        number of clustered elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">clustering</span><span class="o">.</span><span class="n">number_of_clusters_to_get_percent</span><span class="p">(</span><span class="n">percent</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_top_percent"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_top_percent">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_top_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the percent of elements over the total number of elements of the clustering, that</span>
+<span class="sd">        have been clustered into the bigger cluster.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">clustering</span><span class="o">.</span><span class="n">sort_clusters_by_size</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">clustering</span><span class="o">.</span><span class="n">get_population_percent_of_cluster</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_noise_level"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_noise_level">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_noise_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">total_elements</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the percent of noise elements in the dataset.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="mf">100.</span><span class="o">-</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">total_number_of_elements</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">total_elements</span><span class="p">))</span><span class="o">*</span><span class="mf">100.</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_mean_cluster_size"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_mean_cluster_size">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_mean_cluster_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the mean cluster size.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="n">get_cluster_sizes</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.evaluate_with_calculator"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.evaluate_with_calculator">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate_with_calculator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">key_args</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a calculator using a class.</span>
+<span class="sd">        @param clustering: Clustering to be evaluated.</span>
+<span class="sd">        @param key_args: A dictionary containing two mandatory keys: &#39;class&#39; with the class of the calculator to be use and</span>
+<span class="sd">        &#39;matrix&#39;, which contains the distance matrix</span>
+<span class="sd">        @return: The valua of the evaluation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">key_args</span><span class="p">[</span><span class="s">&#39;class&#39;</span><span class="p">]()</span>
+        <span class="k">return</span> <span class="n">calculator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">key_args</span><span class="p">[</span><span class="s">&#39;matrix&#39;</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_pca"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_pca">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_pca</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">):</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">PCAMetric</span><span class="p">(</span><span class="n">trajectory_handler</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">calculator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_cython_norm_n_cut"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_cython_norm_n_cut">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_cython_norm_n_cut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">CythonNCut</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">calculator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisPopulator.analysis_function_norm_n_cut"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_norm_n_cut">[docs]</a>    <span class="k">def</span> <span class="nf">analysis_function_norm_n_cut</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">clustering</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">NCut</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">calculator</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

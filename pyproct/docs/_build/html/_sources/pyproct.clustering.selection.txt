@@ -1,0 +1,29 @@
+pyproct.clustering.selection package
+====================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.clustering.selection.test
+
+Submodules
+----------
+
+pyproct.clustering.selection.bestClusteringSelector module
+----------------------------------------------------------
+
+.. automodule:: pyproct.clustering.selection.bestClusteringSelector
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.selection
+    :members:
+    :undoc-members:
+    :show-inheritance:

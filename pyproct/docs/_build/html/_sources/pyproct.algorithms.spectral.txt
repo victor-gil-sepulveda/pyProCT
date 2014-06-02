@@ -1,0 +1,39 @@
+pyproct.algorithms.spectral package
+===================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.algorithms.spectral.benchmark
+    pyproct.algorithms.spectral.cython
+    pyproct.algorithms.spectral.test
+
+Submodules
+----------
+
+pyproct.algorithms.spectral.parametersGeneration module
+-------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.spectral.parametersGeneration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.algorithms.spectral.spectralClusteringAlgorithm module
+--------------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.spectral.spectralClusteringAlgorithm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.spectral
+    :members:
+    :undoc-members:
+    :show-inheritance:

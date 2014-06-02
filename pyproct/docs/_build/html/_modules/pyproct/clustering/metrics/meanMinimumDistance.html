@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.metrics.meanMinimumDistance &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.metrics.meanMinimumDistance</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 09/01/2013</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">random</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<div class="viewcode-block" id="mean_function"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.meanMinimumDistance.mean_function">[docs]</a><span class="k">def</span> <span class="nf">mean_function</span><span class="p">(</span><span class="n">my_list</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Function wrapper to handle difficult cases (like empty lists :/ ).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mi">0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">my_list</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="MeanMinimumDistanceCalculator"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator">[docs]</a><span class="k">class</span> <span class="nc">MeanMinimumDistanceCalculator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">seed_num</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">seed_num</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">seed_num</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="MeanMinimumDistanceCalculator.evaluate"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">,</span> <span class="n">subsampling_percent</span> <span class="o">=</span> <span class="mi">20</span><span class="p">):</span>
+        <span class="n">mean_min_dists</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">total_elements_in_mean_min_dist</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">clustering_size</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">clustering_size</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">cluster1</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">clustering_size</span><span class="p">):</span>
+                <span class="n">cluster2</span> <span class="o">=</span> <span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="p">(</span><span class="n">imd</span><span class="p">,</span><span class="n">jmd</span><span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsampled_mean_min_dist</span><span class="p">(</span><span class="n">cluster1</span><span class="p">,</span> <span class="n">cluster2</span><span class="p">,</span> <span class="n">subsampling_percent</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">)</span>
+                <span class="n">total_elements_in_mean_min_dist</span> <span class="o">+=</span> <span class="mi">2</span>
+                <span class="n">mean_min_dists</span> <span class="o">=</span> <span class="n">mean_min_dists</span> <span class="o">+</span> <span class="n">imd</span> <span class="o">+</span> <span class="n">jmd</span>
+        <span class="k">return</span> <span class="n">mean_min_dists</span> <span class="o">/</span> <span class="n">total_elements_in_mean_min_dist</span>
+    </div>
+<div class="viewcode-block" id="MeanMinimumDistanceCalculator.subsampled_mean_min_dist"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.subsampled_mean_min_dist">[docs]</a>    <span class="k">def</span> <span class="nf">subsampled_mean_min_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cluster1</span><span class="p">,</span> <span class="n">cluster2</span><span class="p">,</span> <span class="n">subsampling_percent</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the calculation for two clusters. This implies that for each pair of clusters it</span>
+<span class="sd">        gets the min_dists and those of min_dists that are smaller than the mean to get the </span>
+<span class="sd">        subsampled value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_dists</span><span class="p">,</span> <span class="n">mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mean_and_min_distances</span><span class="p">(</span><span class="n">cluster1</span><span class="p">,</span> <span class="n">cluster2</span><span class="p">,</span> <span class="n">condensed_matrix</span><span class="p">)</span>
+        <span class="n">min_dists_low_mean</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_distances_less_than_mean</span><span class="p">(</span><span class="n">min_dists</span><span class="p">,</span><span class="n">mean</span><span class="p">)</span>
+        
+        <span class="n">sb1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster1</span><span class="o">.</span><span class="n">all_elements</span><span class="p">),</span> <span class="n">subsampling_percent</span><span class="p">,</span> <span class="n">min_dists_low_mean</span><span class="p">)</span>
+        <span class="n">sb2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subsample</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cluster2</span><span class="o">.</span><span class="n">all_elements</span><span class="p">),</span> <span class="n">subsampling_percent</span><span class="p">,</span> <span class="n">min_dists_low_mean</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">sb1</span><span class="p">,</span><span class="n">sb2</span>
+        </div>
+<div class="viewcode-block" id="MeanMinimumDistanceCalculator.get_mean_and_min_distances"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.get_mean_and_min_distances">[docs]</a>    <span class="k">def</span> <span class="nf">get_mean_and_min_distances</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cluster1</span><span class="p">,</span><span class="n">cluster2</span><span class="p">,</span><span class="n">condensed_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the minimum distances for the elements of cluster1 vs cluster2.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">min_dists</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="c">#        all_dists = []</span>
+        <span class="n">all_dists_accum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">ei</span> <span class="ow">in</span> <span class="n">cluster1</span><span class="o">.</span><span class="n">all_elements</span><span class="p">:</span>
+            <span class="n">distances</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">ej</span> <span class="ow">in</span> <span class="n">cluster2</span><span class="o">.</span><span class="n">all_elements</span><span class="p">:</span>
+                <span class="n">distances</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">condensed_matrix</span><span class="p">[</span><span class="n">ei</span><span class="p">,</span><span class="n">ej</span><span class="p">])</span>
+            <span class="n">min_dists</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">distances</span><span class="p">))</span>
+<span class="c">#            all_dists.extend(distances)</span>
+            <span class="n">all_dists_accum</span> <span class="o">+=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">min_dists</span><span class="p">,</span> <span class="n">all_dists_accum</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">min_dists</span><span class="p">))</span>
+    </div>
+<div class="viewcode-block" id="MeanMinimumDistanceCalculator.get_distances_less_than_mean"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.get_distances_less_than_mean">[docs]</a>    <span class="k">def</span> <span class="nf">get_distances_less_than_mean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">distances</span><span class="p">,</span> <span class="n">mean</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns an array with distances wich are smaller than the given mean.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="k">return</span>  <span class="n">a</span><span class="p">[</span><span class="n">a</span><span class="o">&lt;=</span><span class="n">mean</span><span class="p">]</span>  
+                   </div>
+<div class="viewcode-block" id="MeanMinimumDistanceCalculator.subsample"><a class="viewcode-back" href="../../../../pyproct.clustering.metrics.html#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.subsample">[docs]</a>    <span class="k">def</span> <span class="nf">subsample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cluster_size</span><span class="p">,</span><span class="n">subsampling_percent</span><span class="p">,</span><span class="n">distances</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        It chooses a percent of random given distances and calculates the mean.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">subsampled_elems</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">int</span><span class="p">(</span><span class="n">cluster_size</span><span class="o">*</span><span class="n">subsampling_percent</span><span class="o">/</span><span class="mf">100.</span><span class="p">))</span> <span class="c"># minimum is 1</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mean_function</span><span class="p">(</span><span class="n">distances</span><span class="p">[:</span><span class="n">subsampled_elems</span><span class="p">])</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

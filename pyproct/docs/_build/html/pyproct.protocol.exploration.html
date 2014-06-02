@@ -1,0 +1,220 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.protocol.exploration package &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyproct-protocol-exploration-package">
+<h1>pyproct.protocol.exploration package<a class="headerlink" href="#pyproct-protocol-exploration-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.protocol.exploration.test.html">pyproct.protocol.exploration.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.protocol.exploration.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.protocol.exploration.test.html#module-pyproct.protocol.exploration.test.TestClusteringExplorator">pyproct.protocol.exploration.test.TestClusteringExplorator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.protocol.exploration.test.html#module-pyproct.protocol.exploration.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyproct.protocol.exploration.algorithmRunParametersGenerator">
+<span id="pyproct-protocol-exploration-algorithmrunparametersgenerator-module"></span><h2>pyproct.protocol.exploration.algorithmRunParametersGenerator module<a class="headerlink" href="#module-pyproct.protocol.exploration.algorithmRunParametersGenerator" title="Permalink to this headline">¶</a></h2>
+<p>Created on 06/02/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.protocol.exploration.algorithmRunParametersGenerator.AlgorithmRunParametersGenerator">
+<em class="property">class </em><tt class="descclassname">pyproct.protocol.exploration.algorithmRunParametersGenerator.</tt><tt class="descname">AlgorithmRunParametersGenerator</tt><big>(</big><em>parameters</em>, <em>matrix_handler</em><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/algorithmRunParametersGenerator.html#AlgorithmRunParametersGenerator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.algorithmRunParametersGenerator.AlgorithmRunParametersGenerator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="pyproct.protocol.exploration.algorithmRunParametersGenerator.AlgorithmRunParametersGenerator.get_parameters_for_type">
+<tt class="descname">get_parameters_for_type</tt><big>(</big><em>algorithm_type</em><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/algorithmRunParametersGenerator.html#AlgorithmRunParametersGenerator.get_parameters_for_type"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.algorithmRunParametersGenerator.AlgorithmRunParametersGenerator.get_parameters_for_type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Tries to get some parameters to do a good exploration using one algorithm.</p>
+<p>&#64;param algorithm_type: A valid algorithm type for which to get the parameters.</p>
+<p>&#64;return: A tuple consisting on the parameters we are going to use and, if the clusterings were
+generated to get the clusterings, then those clusterings are also returned for the sake of performance.
+In this case the algorithm parameters in position &#8216;i&#8217; correspond to the created cluster in position &#8216;i&#8217;.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.protocol.exploration.clusteringExplorator">
+<span id="pyproct-protocol-exploration-clusteringexplorator-module"></span><h2>pyproct.protocol.exploration.clusteringExplorator module<a class="headerlink" href="#module-pyproct.protocol.exploration.clusteringExplorator" title="Permalink to this headline">¶</a></h2>
+<p>Created on 05/02/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer">
+<em class="property">class </em><tt class="descclassname">pyproct.protocol.exploration.clusteringExplorator.</tt><tt class="descname">ClusteringExplorer</tt><big>(</big><em>parameters</em>, <em>matrix_handler</em>, <em>workspace_handler</em>, <em>scheduler</em>, <em>parameters_generator</em>, <em>observer=None</em><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/clusteringExplorator.html#ClusteringExplorer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="pyproct.driver.observer.html#pyproct.driver.observer.observable.Observable" title="pyproct.driver.observer.observable.Observable"><tt class="xref py py-class docutils literal"><span class="pre">pyproct.driver.observer.observable.Observable</span></tt></a></p>
+<dl class="method">
+<dt id="pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.build_algorithm">
+<tt class="descname">build_algorithm</tt><big>(</big><em>algorithm_type</em><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/clusteringExplorator.html#ClusteringExplorer.build_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.build_algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates an algorithm with type &#8216;algorithm_type&#8217;.</p>
+<p>&#64;param algorithm_type: The algorithm type.</p>
+<p>&#64;return: An instance of an algorithm of type &#8216;algorithm_type&#8217;.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.generate_clustering_info">
+<tt class="descname">generate_clustering_info</tt><big>(</big><em>algorithm_type</em>, <em>clustering_parameters</em>, <em>clusterings=</em><span class="optional">[</span><span class="optional">]</span><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/clusteringExplorator.html#ClusteringExplorer.generate_clustering_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.generate_clustering_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>It builds the clustering_info structures by parsing the parameters.</p>
+<p>&#64;param algorithm_type: The algorithm type of the clustering algorithm we are working with.</p>
+<p>&#64;param clustering_parameters: The parameters we are going to try with this algorithm.</p>
+<p>&#64;param clusterings: In the case that the parameter generation also created the clusterings, this argument
+will hold them. Clustering parameters and clusterings must be correlated so that &#8216;clustering_parameters[i]&#8217; where
+the parameters used to get &#8216;clustering[i]&#8217;.</p>
+<p>&#64;return: A list of clustering_info structures.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.get_clustering_algorithm_class">
+<em class="property">classmethod </em><tt class="descname">get_clustering_algorithm_class</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/clusteringExplorator.html#ClusteringExplorer.get_clustering_algorithm_class"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.get_clustering_algorithm_class" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function returns a dictionary that links a clustering algorithm type with its class creator.
+&#64;return: The aforementioned dictionary.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.run">
+<tt class="descname">run</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/clusteringExplorator.html#ClusteringExplorer.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.run" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Executes the whole exploration pipeline:</dt>
+<dd><ul class="first last simple">
+<li>Generates the parameters structures</li>
+<li>Executes the algorithms for all different parameters</li>
+<li>Loads the results</li>
+</ul>
+</dd>
+</dl>
+<p>&#64;return: A dictionary &#8216;clustering_info&#8217; structures indexed by clustering ID. Each of these structures
+contains one generated clustering as well as the algorithm type and parameters used to get it.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.schedule_algorithm">
+<tt class="descname">schedule_algorithm</tt><big>(</big><em>algorithm_type</em><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/clusteringExplorator.html#ClusteringExplorer.schedule_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.clusteringExplorator.ClusteringExplorer.schedule_algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Structures all the info needed for an algorithm+parameters execution and pushes it into the scheduling queue.</p>
+<p>&#64;param algorithm_type: The algorithm type of the clustering algorithm we are working with.</p>
+<p>&#64;return: The &#8216;clustering info&#8217; structure as defined by  AlgorithmRunParametersGenerator::get_parameters_for_type.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.protocol.exploration.clusteringExplorator.run_algorithm">
+<tt class="descclassname">pyproct.protocol.exploration.clusteringExplorator.</tt><tt class="descname">run_algorithm</tt><big>(</big><em>algorithm</em>, <em>algorithm_kwargs</em>, <em>clustering_id</em><big>)</big><a class="reference internal" href="_modules/pyproct/protocol/exploration/clusteringExplorator.html#run_algorithm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.protocol.exploration.clusteringExplorator.run_algorithm" title="Permalink to this definition">¶</a></dt>
+<dd><p>This function launches an execution of one clustering algorithm with its parameters. Used mainly to be
+scheduled.</p>
+<p>&#64;param algorithm: Instance of a clustering algorithm.</p>
+<p>&#64;param algorithm_kwargs: The parameters needed by the algorithm above to run.</p>
+<p>&#64;param clustering_id: An id used to define the resulting clustering.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.protocol.exploration">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyproct.protocol.exploration" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyproct.protocol.exploration package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyproct.protocol.exploration.algorithmRunParametersGenerator">pyproct.protocol.exploration.algorithmRunParametersGenerator module</a></li>
+<li><a class="reference internal" href="#module-pyproct.protocol.exploration.clusteringExplorator">pyproct.protocol.exploration.clusteringExplorator module</a></li>
+<li><a class="reference internal" href="#module-pyproct.protocol.exploration">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/pyproct.protocol.exploration.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.driver.handlers.matrix package &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyproct-driver-handlers-matrix-package">
+<h1>pyproct.driver.handlers.matrix package<a class="headerlink" href="#pyproct-driver-handlers-matrix-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.driver.handlers.matrix.test.html">pyproct.driver.handlers.matrix.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.driver.handlers.matrix.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.driver.handlers.matrix.test.html#module-pyproct.driver.handlers.matrix.test.TestEuclidean">pyproct.driver.handlers.matrix.test.TestEuclidean module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.driver.handlers.matrix.test.html#module-pyproct.driver.handlers.matrix.test.testMatrix">pyproct.driver.handlers.matrix.test.testMatrix module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.driver.handlers.matrix.test.html#module-pyproct.driver.handlers.matrix.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder">
+<span id="pyproct-driver-handlers-matrix-euclideandistancematrixbuilder-module"></span><h2>pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder module<a class="headerlink" href="#module-pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder" title="Permalink to this headline">¶</a></h2>
+<p>Created on 13/02/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder.EuclideanDistanceMatrixBuilder">
+<em class="property">class </em><tt class="descclassname">pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder.</tt><tt class="descname">EuclideanDistanceMatrixBuilder</tt><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/euclideanDistanceMatrixBuilder.html#EuclideanDistanceMatrixBuilder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder.EuclideanDistanceMatrixBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="classmethod">
+<dt id="pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder.EuclideanDistanceMatrixBuilder.build">
+<em class="property">classmethod </em><tt class="descname">build</tt><big>(</big><em>trajectory_handler</em>, <em>matrix_creation_parameters</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/euclideanDistanceMatrixBuilder.html#EuclideanDistanceMatrixBuilder.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder.EuclideanDistanceMatrixBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Will generate the CondensedMatrix filled with the all vs all geometric center distances of the &#8220;body_selection&#8221; 
+coordinates (which will usually be a ligand).</p>
+<p>&#64;param trajectory_handler: The handler containing selection strings, pdb info and coordsets.  
+&#64;param matrix_creation_parameters: The creation parameters (from the initial script).</p>
+<p>&#64;return: The created distances matrix.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder.EuclideanDistanceMatrixBuilder.calculate_geom_center">
+<em class="property">classmethod </em><tt class="descname">calculate_geom_center</tt><big>(</big><em>coordinates</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/euclideanDistanceMatrixBuilder.html#EuclideanDistanceMatrixBuilder.calculate_geom_center"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder.EuclideanDistanceMatrixBuilder.calculate_geom_center" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a condensed matrix with the euclidean distances between the geometrical centers of the conformations passed as
+input.</p>
+<p>&#64;param coordinates: Coordinates set from which calculating the geometrical centers (one geometrical center per conformation).</p>
+<p>&#64;return: The contents of the condensed matrix resulting of calculating all euclidean distances between the aforemetioned centers.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.driver.handlers.matrix.matrixHandler">
+<span id="pyproct-driver-handlers-matrix-matrixhandler-module"></span><h2>pyproct.driver.handlers.matrix.matrixHandler module<a class="headerlink" href="#module-pyproct.driver.handlers.matrix.matrixHandler" title="Permalink to this headline">¶</a></h2>
+<p>Created on 13/02/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler">
+<em class="property">class </em><tt class="descclassname">pyproct.driver.handlers.matrix.matrixHandler.</tt><tt class="descname">MatrixHandler</tt><big>(</big><em>matrix_parameters</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/matrixHandler.html#MatrixHandler"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.check_matrix_calculated_error">
+<tt class="descname">check_matrix_calculated_error</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/matrixHandler.html#MatrixHandler.check_matrix_calculated_error"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.check_matrix_calculated_error" title="Permalink to this definition">¶</a></dt>
+<dd><p>Exits the program if the matrix wasn&#8217;t calculated yet.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.create_matrix">
+<tt class="descname">create_matrix</tt><big>(</big><em>trajectory_handler</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/matrixHandler.html#MatrixHandler.create_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.create_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a matrix with the method used in the handler creation.</p>
+<p>&#64;param matrix_base_path: 
+&#64;param parameters:</p>
+<p>&#64;return: The created matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.save_matrix">
+<tt class="descname">save_matrix</tt><big>(</big><em>matrix_path</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/matrixHandler.html#MatrixHandler.save_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.save_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes matrix contents to disk.</p>
+<p>&#64;param matrix_save_file: Complete path (with filename) where to save the matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.save_statistics">
+<tt class="descname">save_statistics</tt><big>(</big><em>matrix_base_path</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/matrixHandler.html#MatrixHandler.save_statistics"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.save_statistics" title="Permalink to this definition">¶</a></dt>
+<dd><p>Writes matrix statistics to disk in JSON format.</p>
+<p>&#64;param matrix_base_path: The folder where to save the &#8216;statistics.json&#8217; file.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.driver.handlers.matrix.rmsdMatrixBuilder">
+<span id="pyproct-driver-handlers-matrix-rmsdmatrixbuilder-module"></span><h2>pyproct.driver.handlers.matrix.rmsdMatrixBuilder module<a class="headerlink" href="#module-pyproct.driver.handlers.matrix.rmsdMatrixBuilder" title="Permalink to this headline">¶</a></h2>
+<p>Created on 13/02/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder">
+<em class="property">class </em><tt class="descclassname">pyproct.driver.handlers.matrix.rmsdMatrixBuilder.</tt><tt class="descname">RMSDMatrixBuilder</tt><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/rmsdMatrixBuilder.html#RMSDMatrixBuilder"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="classmethod">
+<dt id="pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.build">
+<em class="property">classmethod </em><tt class="descname">build</tt><big>(</big><em>trajectory_handler</em>, <em>matrix_creation_parameters</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/rmsdMatrixBuilder.html#RMSDMatrixBuilder.build"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.build" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates a matrix with the method used in the handler creation.</p>
+<p>&#64;param trajectory_handler:
+&#64;param matrix_creation_parameters:</p>
+<p>&#64;return: The created matrix.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.locate_index">
+<em class="property">classmethod </em><tt class="descname">locate_index</tt><big>(</big><em>atom_coords</em>, <em>coordsets</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/rmsdMatrixBuilder.html#RMSDMatrixBuilder.locate_index"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.locate_index" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.process_group">
+<em class="property">classmethod </em><tt class="descname">process_group</tt><big>(</big><em>equivalence_id</em>, <em>matrix_parameters</em>, <em>trajectory_handler</em>, <em>calc_selection_coordsets</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/rmsdMatrixBuilder.html#RMSDMatrixBuilder.process_group"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.process_group" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.process_symm_groups">
+<em class="property">classmethod </em><tt class="descname">process_symm_groups</tt><big>(</big><em>matrix_parameters</em>, <em>trajectory_handler</em>, <em>calc_selection_coordsets</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/rmsdMatrixBuilder.html#RMSDMatrixBuilder.process_symm_groups"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.process_symm_groups" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.select_one_atom">
+<em class="property">classmethod </em><tt class="descname">select_one_atom</tt><big>(</big><em>trajectory_handler</em>, <em>selection</em><big>)</big><a class="reference internal" href="_modules/pyproct/driver/handlers/matrix/rmsdMatrixBuilder.html#RMSDMatrixBuilder.select_one_atom"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.select_one_atom" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.driver.handlers.matrix">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyproct.driver.handlers.matrix" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyproct.driver.handlers.matrix package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder">pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder module</a></li>
+<li><a class="reference internal" href="#module-pyproct.driver.handlers.matrix.matrixHandler">pyproct.driver.handlers.matrix.matrixHandler module</a></li>
+<li><a class="reference internal" href="#module-pyproct.driver.handlers.matrix.rmsdMatrixBuilder">pyproct.driver.handlers.matrix.rmsdMatrixBuilder module</a></li>
+<li><a class="reference internal" href="#module-pyproct.driver.handlers.matrix">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/pyproct.driver.handlers.matrix.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

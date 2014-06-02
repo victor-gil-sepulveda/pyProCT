@@ -1,0 +1,315 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.analysis package &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyproct-clustering-analysis-package">
+<h1>pyproct.clustering.analysis package<a class="headerlink" href="#pyproct-clustering-analysis-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.clustering.analysis.test.html">pyproct.clustering.analysis.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.analysis.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.analysis.test.html#module-pyproct.clustering.analysis.test.TestAnalysisPopulator">pyproct.clustering.analysis.test.TestAnalysisPopulator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.analysis.test.html#pyproct-clustering-analysis-test-testpicklinganalysisrunner-module">pyproct.clustering.analysis.test.TestPicklingAnalysisRunner module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.analysis.test.html#module-pyproct.clustering.analysis.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyproct.clustering.analysis.analysis">
+<span id="pyproct-clustering-analysis-analysis-module"></span><h2>pyproct.clustering.analysis.analysis module<a class="headerlink" href="#module-pyproct.clustering.analysis.analysis" title="Permalink to this headline">¶</a></h2>
+<p>Created on 04/06/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.analysis.analysis.Analysis">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.analysis.analysis.</tt><tt class="descname">Analysis</tt><big>(</big><em>name</em>, <em>analysis_function</em>, <em>other_params=None</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysis.html#Analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysis.Analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysis.Analysis.run">
+<tt class="descname">run</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysis.html#Analysis.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysis.Analysis.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs one analysis function and appends the result to the results string.
+It the result of the function is not an string, it converts the result to a 
+string.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.analysis.analysisPopulator">
+<span id="pyproct-clustering-analysis-analysispopulator-module"></span><h2>pyproct.clustering.analysis.analysisPopulator module<a class="headerlink" href="#module-pyproct.clustering.analysis.analysisPopulator" title="Permalink to this headline">¶</a></h2>
+<p>Created on 06/06/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.analysis.analysisPopulator.</tt><tt class="descname">AnalysisPopulator</tt><big>(</big><em>matrix_handler</em>, <em>trajectory_handler</em>, <em>parameters</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_cython_norm_n_cut">
+<tt class="descname">analysis_function_cython_norm_n_cut</tt><big>(</big><em>clustering</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_cython_norm_n_cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_cython_norm_n_cut" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_details">
+<tt class="descname">analysis_function_details</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_details"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_details" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the &#8216;details&#8217; field of a clustering.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_mean_cluster_size">
+<tt class="descname">analysis_function_mean_cluster_size</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_mean_cluster_size"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_mean_cluster_size" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the mean cluster size.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_noise_level">
+<tt class="descname">analysis_function_noise_level</tt><big>(</big><em>clustering</em>, <em>total_elements</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_noise_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_noise_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the percent of noise elements in the dataset.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_norm_n_cut">
+<tt class="descname">analysis_function_norm_n_cut</tt><big>(</big><em>clustering</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_norm_n_cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_norm_n_cut" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_num_clusters">
+<tt class="descname">analysis_function_num_clusters</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_num_clusters"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_num_clusters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of cluster a clustering has.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_num_clusters_to_percent">
+<tt class="descname">analysis_function_num_clusters_to_percent</tt><big>(</big><em>clustering</em>, <em>percent</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_num_clusters_to_percent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_num_clusters_to_percent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the maximum number of clusters needed to have a percent of the total
+number of clustered elements.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_pca">
+<tt class="descname">analysis_function_pca</tt><big>(</big><em>clustering</em>, <em>trajectory_handler</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_pca"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_pca" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_top_4">
+<tt class="descname">analysis_function_top_4</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_top_4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_top_4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the percentage of elements of the clustering that are in the 4 bigger clusters.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_top_percent">
+<tt class="descname">analysis_function_top_percent</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_top_percent"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_top_percent" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the percent of elements over the total number of elements of the clustering, that
+have been clustered into the bigger cluster.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_total_elements">
+<tt class="descname">analysis_function_total_elements</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.analysis_function_total_elements"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.analysis_function_total_elements" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the number of elements that are clusterized in this clustering (which
+may not be the total number of elements of the dataset if there were noisy elements)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.build_all_analysis">
+<tt class="descname">build_all_analysis</tt><big>(</big><em>matrix_handler</em>, <em>trajectory_handler</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.build_all_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.build_all_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an instance of all possible analysis. If you&#8217;re not able to create it... you&#8217;re not able to use it.</p>
+<p>&#64;param matrix_handler: Is the matrix handler object, or any object containing a .distance_matrix value.</p>
+<p>&#64;param trajectory_handler: Is the trajectory handler object, with structural info.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.evaluate_with_calculator">
+<tt class="descname">evaluate_with_calculator</tt><big>(</big><em>clustering</em>, <em>key_args</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.evaluate_with_calculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.evaluate_with_calculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a calculator using a class.
+&#64;param clustering: Clustering to be evaluated.
+&#64;param key_args: A dictionary containing two mandatory keys: &#8216;class&#8217; with the class of the calculator to be use and
+&#8216;matrix&#8217;, which contains the distance matrix
+&#64;return: The valua of the evaluation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_analysis_list">
+<tt class="descname">get_analysis_list</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.get_analysis_list"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_analysis_list" title="Permalink to this definition">¶</a></dt>
+<dd><p>Generates the list of required analyzers.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_evaluation_analysis_types">
+<em class="property">classmethod </em><tt class="descname">get_evaluation_analysis_types</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.get_evaluation_analysis_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_evaluation_analysis_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list formed by the evaluation types present in criteria.</p>
+<p>&#64;param parameters: The script parameters.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_query_and_evaluation_analysis_types">
+<em class="property">classmethod </em><tt class="descname">get_query_and_evaluation_analysis_types</tt><big>(</big><em>parameters</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisPopulator.html#AnalysisPopulator.get_query_and_evaluation_analysis_types"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisPopulator.AnalysisPopulator.get_query_and_evaluation_analysis_types" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a list formed by all the analysis we need to calculate, without repetition, from the data in parameters.</p>
+<p>&#64;param parameters: The script parameters.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.analysis.analysisRunner">
+<span id="pyproct-clustering-analysis-analysisrunner-module"></span><h2>pyproct.clustering.analysis.analysisRunner module<a class="headerlink" href="#module-pyproct.clustering.analysis.analysisRunner" title="Permalink to this headline">¶</a></h2>
+<p>Created on 29/05/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.analysis.analysisRunner.AnalysisRunner">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.analysis.analysisRunner.</tt><tt class="descname">AnalysisRunner</tt><big>(</big><em>scheduler</em>, <em>clustering_info</em>, <em>populator</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisRunner.html#AnalysisRunner"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisRunner.AnalysisRunner" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="pyproct.clustering.analysis.analysisRunner.AnalysisRunner.add_analysis">
+<tt class="descname">add_analysis</tt><big>(</big><em>analysis</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisRunner.html#AnalysisRunner.add_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.add_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simply appends one analysis to the analysis queue (the analysis we want to do).</p>
+<p>&#64;param analysis: An &#8216;Analysis&#8217; instance.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisRunner.AnalysisRunner.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisRunner.html#AnalysisRunner.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs all analysis for all clusterings in the clustering_info structure and recovers the results of this
+analsis to attach them into the clustering_info structure.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisRunner.AnalysisRunner.run_analysis_for_a_clustering">
+<tt class="descname">run_analysis_for_a_clustering</tt><big>(</big><em>clustering_id</em>, <em>clustering_info</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisRunner.html#AnalysisRunner.run_analysis_for_a_clustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.run_analysis_for_a_clustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds one process to the scheduler which will run all the analysis in the analysis queue for one 
+clustering. The analysis are not executed instantaneously but when the calculating function is used.</p>
+<p>&#64;param clustering_id: The clustering_id of the clustering we are going to work with.</p>
+<p>&#64;param clustering_info: The &#8216;clustering_info&#8217; structure with the clustering to be analyzed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.analysis.analysisRunner.AnalysisRunner.run_analysis_for_all_clusterings">
+<tt class="descname">run_analysis_for_all_clusterings</tt><big>(</big><em>clustering_info</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisRunner.html#AnalysisRunner.run_analysis_for_all_clusterings"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.run_analysis_for_all_clusterings" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds one process to the scheduler which will run all the analysis in the analysis queue for each
+of the clusterings in the clustering_info structure. The analysis are not executed instantaneously 
+but when the calculating function is used.</p>
+<p>&#64;param clustering_info: The &#8216;clustering_info&#8217; structure with the clustering to be analyzed.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.analysis.analysisRunner.run_all_analysis_for_a_clustering">
+<tt class="descclassname">pyproct.clustering.analysis.analysisRunner.</tt><tt class="descname">run_all_analysis_for_a_clustering</tt><big>(</big><em>clustering_id</em>, <em>clustering</em>, <em>analysis</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/analysis/analysisRunner.html#run_all_analysis_for_a_clustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.analysis.analysisRunner.run_all_analysis_for_a_clustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Is the function to be run in parallel.</p>
+<p>&#64;param clustering_id: Is the id of the clustering we are working with.</p>
+<p>&#64;param clustering: A Clustering instance.</p>
+<p>&#64;param analysis: A list of all the analysis we want to perform.s</p>
+<p>&#64;param observer: An observer to communicate messages.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.analysis">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyproct.clustering.analysis" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyproct.clustering.analysis package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.analysis.analysis">pyproct.clustering.analysis.analysis module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.analysis.analysisPopulator">pyproct.clustering.analysis.analysisPopulator module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.analysis.analysisRunner">pyproct.clustering.analysis.analysisRunner module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.analysis">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/pyproct.clustering.analysis.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

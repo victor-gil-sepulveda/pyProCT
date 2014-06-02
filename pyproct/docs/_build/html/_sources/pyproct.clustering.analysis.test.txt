@@ -1,0 +1,30 @@
+pyproct.clustering.analysis.test package
+========================================
+
+Submodules
+----------
+
+pyproct.clustering.analysis.test.TestAnalysisPopulator module
+-------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.analysis.test.TestAnalysisPopulator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.analysis.test.TestPicklingAnalysisRunner module
+------------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.analysis.test.TestPicklingAnalysisRunner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.analysis.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

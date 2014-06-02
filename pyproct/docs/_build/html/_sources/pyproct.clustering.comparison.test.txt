@@ -1,0 +1,46 @@
+pyproct.clustering.comparison.test package
+==========================================
+
+Submodules
+----------
+
+pyproct.clustering.comparison.test.TestAnalyzer module
+------------------------------------------------------
+
+.. automodule:: pyproct.clustering.comparison.test.TestAnalyzer
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.comparison.test.TestCADisplacement module
+------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.comparison.test.TestCADisplacement
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.comparison.test.TestComparator module
+--------------------------------------------------------
+
+.. automodule:: pyproct.clustering.comparison.test.TestComparator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.comparison.test.TestSeparator module
+-------------------------------------------------------
+
+.. automodule:: pyproct.clustering.comparison.test.TestSeparator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.comparison.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

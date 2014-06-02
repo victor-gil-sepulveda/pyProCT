@@ -976,6 +976,16 @@ criteria = {
                 "action": "<",
                 "weight": 2
             }
+        },
+        "default_criteria": {
+            "CythonSilhouette": {
+                "action": ">",
+                "weight": 3
+            },
+            "CythonMirrorCohesion": {
+                "action": ">",
+                "weight": 2
+            }
         }
 
     },
@@ -993,12 +1003,32 @@ criteria = {
                 "action": "<",
                 "weight": 2
             }
+        },
+        "default_criteria": {
+            "CythonSilhouette": {
+                "action": ">",
+                "weight": 3
+            },
+            "CythonMirrorCohesion": {
+                "action": ">",
+                "weight": 2
+            }
         }
     },
     "spaeth_08":{
         "graph_criteria": {
             "CythonNormNCut": {
                 "action": "<",
+                "weight": 2
+            }
+        },
+    "default_criteria": {
+            "CythonSilhouette": {
+                "action": ">",
+                "weight": 3
+            },
+            "CythonMirrorCohesion": {
+                "action": ">",
                 "weight": 2
             }
         }

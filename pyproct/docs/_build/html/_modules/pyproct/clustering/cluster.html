@@ -1,0 +1,320 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.cluster &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.cluster</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 12/03/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">random</span>
+
+<div class="viewcode-block" id="cluster_from_tuple"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.cluster_from_tuple">[docs]</a><span class="k">def</span> <span class="nf">cluster_from_tuple</span><span class="p">(</span><span class="n">mytuple</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a cluster from a tupple formed by a first element being the prototype and</span>
+<span class="sd">    a second element being the list of all elements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">prototype</span> <span class="o">=</span> <span class="n">mytuple</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">all_elements</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">mytuple</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">all_elements</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">prototype</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">prototype</span><span class="p">,</span> <span class="n">all_elements</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="get_cluster_sizes"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.get_cluster_sizes">[docs]</a><span class="k">def</span> <span class="nf">get_cluster_sizes</span><span class="p">(</span><span class="n">clusters</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculates all the sizes of a clusters list and returns it in a tuple in which</span>
+<span class="sd">    the first element is the total number of elements, and the second a list containing</span>
+<span class="sd">    the size of each cluster (maintaining the ordering).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">total_elements</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">cluster_sizes</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
+        <span class="n">size</span> <span class="o">=</span> <span class="n">c</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
+        <span class="n">total_elements</span> <span class="o">=</span> <span class="n">total_elements</span> <span class="o">+</span> <span class="n">size</span>
+        <span class="n">cluster_sizes</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">total_elements</span><span class="p">,</span><span class="n">cluster_sizes</span>
+</div>
+<div class="viewcode-block" id="gen_clusters_from_class_list"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.gen_clusters_from_class_list">[docs]</a><span class="k">def</span> <span class="nf">gen_clusters_from_class_list</span><span class="p">(</span><span class="n">group_list</span><span class="p">,</span><span class="n">skip_list</span><span class="o">=</span><span class="p">[]):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates the clusters that describe a group list. A group list for a N elements clustering</span>
+<span class="sd">    is defined as the list of N elements with the number of cluster to which each cluster</span>
+<span class="sd">    belongs. Example: for 4 elements [1,2,3,4] a possible group list would be: [2,1,2,1] which</span>
+<span class="sd">    means that element 0 and 2 belong to cluster 2 and the others to cluster 2. As it&#39;s not possible</span>
+<span class="sd">    to define a centroid or medioid. ATENTION: the first element of the cluster will be defined as the</span>
+<span class="sd">    centroid/medoid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dic_clusters</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">group_list</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">group_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">skip_list</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">group_list</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="ow">in</span> <span class="n">dic_clusters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+                <span class="n">dic_clusters</span><span class="p">[</span><span class="n">group_list</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">dic_clusters</span><span class="p">[</span><span class="n">group_list</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span><span class="p">]</span>
+    <span class="n">clusters</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">dic_clusters</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">clusters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Cluster</span><span class="p">(</span><span class="n">dic_clusters</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span><span class="n">dic_clusters</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">clusters</span>
+</div>
+<div class="viewcode-block" id="Cluster"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster">[docs]</a><span class="k">class</span> <span class="nc">Cluster</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A cluster object is defined a group of elements which have one or more characteristics in common</span>
+<span class="sd">    and one element which is the most representative element of the cluster. </span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">most_representative_element</span> <span class="o">=</span> <span class="bp">None</span>
+    <span class="n">all_elements</span> <span class="o">=</span> <span class="p">[]</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prototype</span> <span class="p">,</span> <span class="n">elements</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        TODOC</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_elements</span><span class="p">(</span><span class="n">elements</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_prototype</span><span class="p">(</span><span class="n">prototype</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span>
+            <span class="k">raise</span>
+
+<div class="viewcode-block" id="Cluster.set_prototype"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.set_prototype">[docs]</a>    <span class="k">def</span> <span class="nf">set_prototype</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">this_one</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Adds a representative element which must already be inside the</span>
+<span class="sd">        internal elements list. </span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">this_one</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prototype</span> <span class="o">=</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">this_one</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">prototype</span> <span class="o">=</span> <span class="n">this_one</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s">&quot;[Error in Cluster::set_prototype] the prototype is not in the elements list.&quot;</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Cluster.set_elements"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.set_elements">[docs]</a>    <span class="k">def</span> <span class="nf">set_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">elements</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span> <span class="o">=</span> <span class="n">elements</span>
+    </div>
+<div class="viewcode-block" id="Cluster.get_size"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.get_size">[docs]</a>    <span class="k">def</span> <span class="nf">get_size</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the size of the cluster (which is indeed the size of its elements list)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+</div>
+    <span class="k">def</span> <span class="nf">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks whether two clusters are equal or not. Returns True or False depending</span>
+<span class="sd">        on it :P</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span> <span class="o">!=</span> <span class="n">other</span><span class="o">.</span><span class="n">get_size</span><span class="p">()):</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">elements</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+            <span class="n">other_elements</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">other</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)):</span>
+                <span class="k">if</span> <span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">!=</span> <span class="n">other_elements</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="k">return</span> <span class="bp">False</span>
+            <span class="k">return</span> <span class="bp">True</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;[&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prototype</span><span class="p">)</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;]&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    
+<div class="viewcode-block" id="Cluster.calculate_biased_medoid"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.calculate_biased_medoid">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_biased_medoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">condensed_distance_matrix</span><span class="p">,</span><span class="n">elements_into_account</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the medoid (element with minimal distance to all other objects) of the </span>
+<span class="sd">        elements of the cluster which are in elements_into_account. </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">all_elems_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+        <span class="n">accountable_set</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">elements_into_account</span><span class="p">)</span>
+        
+        <span class="c"># Check that elements_into_account is a subset of all_elements</span>
+        <span class="n">elem_inters</span> <span class="o">=</span> <span class="n">all_elems_set</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">accountable_set</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elem_inters</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements_into_account</span><span class="p">):</span>
+            <span class="k">print</span> <span class="s">&quot;[ERROR Cluster::calculate_biased_medoid] &#39;elements_into_account&#39; is not a subset of the elements of this cluster.&quot;</span>  
+            <span class="nb">exit</span><span class="p">()</span>
+        
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">elements_into_account</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;[ERROR Cluster::calculate_biased_medoid] This cluster is empty.&quot;</span>  
+            <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
+        
+        <span class="n">min_dist_pair</span> <span class="o">=</span> <span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">maxint</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ei</span> <span class="ow">in</span> <span class="n">elements_into_account</span><span class="p">:</span>
+            <span class="c"># Calculate distances for this vs all the others</span>
+            <span class="c"># Note that for comparing, the mean is not required,as</span>
+            <span class="c"># all have the same amount of elements</span>
+            <span class="n">summed_distance</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">for</span> <span class="n">ej</span> <span class="ow">in</span> <span class="n">elements_into_account</span><span class="p">:</span>
+                <span class="n">summed_distance</span> <span class="o">=</span> <span class="n">summed_distance</span> <span class="o">+</span> <span class="n">condensed_distance_matrix</span><span class="p">[</span><span class="n">ei</span><span class="p">,</span><span class="n">ej</span><span class="p">]</span>
+            <span class="n">min_dist_pair</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">min_dist_pair</span><span class="p">,(</span><span class="n">summed_distance</span><span class="p">,</span><span class="n">ei</span><span class="p">))</span>
+        
+        <span class="n">medoid_element</span> <span class="o">=</span> <span class="n">min_dist_pair</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        
+        <span class="k">return</span> <span class="n">medoid_element</span>
+ </div>
+<div class="viewcode-block" id="Cluster.calculate_medoid"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.calculate_medoid">[docs]</a>    <span class="k">def</span> <span class="nf">calculate_medoid</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">condensed_distance_matrix</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculates the medoid for all_elements of the cluster and updates the prototype.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">calculate_biased_medoid</span><span class="p">(</span><span class="n">condensed_distance_matrix</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Cluster.get_random_sample"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.get_random_sample">[docs]</a>    <span class="k">def</span> <span class="nf">get_random_sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">rand_seed</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns a random sample of the elements.</span>
+<span class="sd">        </span>
+<span class="sd">        @param n: Number of random elements to get.</span>
+<span class="sd">        </span>
+<span class="sd">        @param rand_seed: Seed for the random package. Used for testing (repeteability)</span>
+<span class="sd">        </span>
+<span class="sd">        @return: A random sample of the cluster elements.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">rand_seed</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="n">rand_seed</span><span class="p">)</span>
+        <span class="n">temporary_list</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+        <span class="n">random</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="n">temporary_list</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">temporary_list</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">n</span><span class="p">]</span>
+    </div>
+<div class="viewcode-block" id="Cluster.to_dic"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.to_dic">[docs]</a>    <span class="k">def</span> <span class="nf">to_dic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Converts this cluster into a dictionary (to be used with json serializers).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">json_dic</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">([</span><span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_elements</span><span class="p">))])</span>
+        <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="c">#capping</span>
+        <span class="n">str_elements</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">elements</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span> <span class="p">:</span>
+                <span class="k">if</span> <span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">start</span><span class="p">:</span>
+                    <span class="n">str_elements</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;, &quot;</span>
+                    <span class="n">start</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">str_elements</span> <span class="o">+=</span> <span class="nb">str</span><span class="p">(</span><span class="n">start</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;:&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="s">&quot;, &quot;</span>
+                    <span class="n">start</span> <span class="o">=</span> <span class="n">elements</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">json_dic</span><span class="p">[</span><span class="s">&quot;elements&quot;</span><span class="p">]</span> <span class="o">=</span><span class="n">str_elements</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prototype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">json_dic</span><span class="p">[</span><span class="s">&quot;prototype&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">prototype</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span><span class="p">:</span>
+            <span class="n">json_dic</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">id</span>
+        
+        <span class="k">return</span> <span class="n">json_dic</span>
+    </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Cluster.from_dic"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.cluster.Cluster.from_dic">[docs]</a>    <span class="k">def</span> <span class="nf">from_dic</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">cluster_dic</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a cluster from a cluster dictionary describing it (as reverse operation of</span>
+<span class="sd">        &#39;to_dic&#39;).</span>
+<span class="sd">        </span>
+<span class="sd">        @param cluster_dic: The cluster in dictionary form (output of &#39;to_dic&#39;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s">&quot;prototype&quot;</span> <span class="ow">in</span> <span class="n">cluster_dic</span><span class="p">:</span>
+            <span class="n">proto</span> <span class="o">=</span> <span class="n">cluster_dic</span><span class="p">[</span><span class="s">&quot;prototype&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">proto</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="k">if</span> <span class="s">&quot;id&quot;</span> <span class="ow">in</span> <span class="n">cluster_dic</span><span class="p">:</span>
+            <span class="n">cid</span> <span class="o">=</span> <span class="n">cluster_dic</span><span class="p">[</span><span class="s">&quot;id&quot;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">cid</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="n">values_string_parts</span> <span class="o">=</span> <span class="n">cluster_dic</span><span class="p">[</span><span class="s">&quot;elements&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;,&quot;</span><span class="p">);</span>
+        <span class="n">elements</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">value_part</span> <span class="ow">in</span> <span class="n">values_string_parts</span><span class="p">:</span>
+            <span class="k">if</span> <span class="s">&quot;:&quot;</span> <span class="ow">in</span> <span class="n">value_part</span><span class="p">:</span>
+                <span class="p">[</span><span class="n">ini</span><span class="p">,</span><span class="n">end</span><span class="p">]</span> <span class="o">=</span> <span class="n">value_part</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s">&quot;:&quot;</span><span class="p">)</span>
+                <span class="n">elements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">ini</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">end</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">elements</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">value_part</span><span class="p">))</span>
+        
+        <span class="n">cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="n">proto</span><span class="p">,</span> <span class="n">elements</span><span class="p">)</span>
+        <span class="n">cluster</span><span class="o">.</span><span class="n">id</span> <span class="o">=</span> <span class="n">cid</span>
+        
+        <span class="k">return</span> <span class="n">cluster</span>
+        </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

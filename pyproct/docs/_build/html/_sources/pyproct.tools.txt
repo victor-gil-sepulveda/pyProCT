@@ -1,0 +1,85 @@
+pyproct.tools package
+=====================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.tools.test
+
+Submodules
+----------
+
+pyproct.tools.commonTools module
+--------------------------------
+
+.. automodule:: pyproct.tools.commonTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.tools.distributionTools module
+--------------------------------------
+
+.. automodule:: pyproct.tools.distributionTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.tools.matrixTools module
+--------------------------------
+
+.. automodule:: pyproct.tools.matrixTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.tools.pdbTools module
+-----------------------------
+
+.. automodule:: pyproct.tools.pdbTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.tools.plotTools module
+------------------------------
+
+.. automodule:: pyproct.tools.plotTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.tools.scriptTools module
+--------------------------------
+
+.. automodule:: pyproct.tools.scriptTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.tools.stateGraphTools module
+------------------------------------
+
+.. automodule:: pyproct.tools.stateGraphTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.tools.visualizationTools module
+---------------------------------------
+
+.. automodule:: pyproct.tools.visualizationTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.tools
+    :members:
+    :undoc-members:
+    :show-inheritance:

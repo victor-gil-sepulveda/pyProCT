@@ -1,0 +1,29 @@
+pyproct.protocol.refinement package
+===================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.protocol.refinement.test
+
+Submodules
+----------
+
+pyproct.protocol.refinement.Refiner module
+------------------------------------------
+
+.. automodule:: pyproct.protocol.refinement.Refiner
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.protocol.refinement
+    :members:
+    :undoc-members:
+    :show-inheritance:

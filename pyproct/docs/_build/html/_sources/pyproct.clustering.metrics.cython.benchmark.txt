@@ -1,0 +1,22 @@
+pyproct.clustering.metrics.cython.benchmark package
+===================================================
+
+Submodules
+----------
+
+pyproct.clustering.metrics.cython.benchmark.benchmarkCython module
+------------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.cython.benchmark.benchmarkCython
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.metrics.cython.benchmark
+    :members:
+    :undoc-members:
+    :show-inheritance:

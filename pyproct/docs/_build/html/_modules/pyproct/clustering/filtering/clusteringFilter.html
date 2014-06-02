@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.filtering.clusteringFilter &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.filtering.clusteringFilter</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 07/08/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ClusteringFilter"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter">[docs]</a><span class="k">class</span> <span class="nc">ClusteringFilter</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This class implements functions to get a list of clusterings and return a list</span>
+<span class="sd">    of filtered clusterings (hopefully smaller).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">evaluation_parameters</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        @param evaluation_parameters: Structure that at least defines: </span>
+<span class="sd">            - evaluation_parameters[&#39;minimum_clusters&#39;] : Minimum number of clusters allowed for a clustering.</span>
+<span class="sd">            - evaluation_parameters[&#39;maximum_clusters&#39;] : Maximum number of clusters allowed for a clustering.</span>
+<span class="sd">            - evaluation_parameters[&#39;minimum_cluster_size&#39;] : Minimum number of elements per cluster (clusters</span>
+<span class="sd">              with less than this will be treated as noise).</span>
+<span class="sd">            - evaluation_parameters[&#39;maximum_noise&#39;] : Max percentage of noise allowed (non clustered elements).</span>
+<span class="sd">            </span>
+<span class="sd">        @param distance_matrix: Is the current distance matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span> <span class="o">=</span> <span class="n">evaluation_parameters</span>
+        
+        <span class="c">#&#39;total_number_of_elements&#39; is the total number of elements of the dataset (which may coincide or not</span>
+        <span class="c">#with the number of clustered elements).</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_elements</span> <span class="o">=</span> <span class="n">matrix_handler</span><span class="o">.</span><span class="n">distance_matrix</span><span class="o">.</span><span class="n">row_length</span>
+    
+<div class="viewcode-block" id="ClusteringFilter.add_filtered_clustering"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.add_filtered_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">add_filtered_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">not_selected</span><span class="p">,</span> <span class="n">clusterings</span><span class="p">,</span> <span class="n">clustering_id</span><span class="p">,</span> <span class="n">reasons</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds a clustering to selected or not_selected arrays depending on if the rejection reasons</span>
+<span class="sd">        array is empty or not.</span>
+<span class="sd">        @param selected: The &#39;clustering info&#39; dictionary with accepted clusterings.</span>
+<span class="sd">        @param not_selected: The &#39;clustering info&#39; dictionary with rejected clusterings.</span>
+<span class="sd">        @param clusterings: The &#39;clustering info&#39; dictionary.</span>
+<span class="sd">        @param clustering_id: Is the id in a &#39;clustering info&#39; dictionary of the clustering being checked.</span>
+<span class="sd">        @param reasons: Rejection reasons array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span><span class="p">(</span><span class="n">reasons</span> <span class="o">==</span> <span class="p">[]):</span>
+            <span class="n">selected</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">clusterings</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">not_selected</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">clusterings</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">]</span>
+            <span class="n">not_selected</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;reasons&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reasons</span>
+    </div>
+<div class="viewcode-block" id="ClusteringFilter.filter"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.filter">[docs]</a>    <span class="k">def</span> <span class="nf">filter</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusterings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Eliminates the clusters whose parameters are not in the range we have defined in the script evaluation parameters. </span>
+<span class="sd">        </span>
+<span class="sd">        @param clusterings: Is a clustering_info dictionary indexed by clustering_id</span>
+<span class="sd">        </span>
+<span class="sd">        @return: A tuple containing the clustering_info structures of the selected and not selected clusterings. These last</span>
+<span class="sd">        with their reasons for not having been selected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_clusterings</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">not_selected_clusterings</span> <span class="o">=</span> <span class="p">{}</span>
+        
+        <span class="c"># Filterings based in clustering analysis </span>
+        <span class="k">for</span> <span class="n">clustering_id</span> <span class="ow">in</span> <span class="n">clusterings</span><span class="p">:</span>
+            <span class="n">reasons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_clustering</span><span class="p">(</span><span class="n">clusterings</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;clustering&quot;</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_filtered_clustering</span><span class="p">(</span><span class="n">selected_clusterings</span><span class="p">,</span>
+                                         <span class="n">not_selected_clusterings</span><span class="p">,</span>
+                                         <span class="n">clusterings</span><span class="p">,</span>
+                                         <span class="n">clustering_id</span><span class="p">,</span>
+                                         <span class="n">reasons</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">filter_repeated</span><span class="p">(</span><span class="n">selected_clusterings</span><span class="p">,</span> <span class="n">not_selected_clusterings</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="ClusteringFilter.filter_repeated"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.filter_repeated">[docs]</a>    <span class="k">def</span> <span class="nf">filter_repeated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">selected_clusterings</span><span class="p">,</span> <span class="n">not_selected_clusterings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks if the clustering is already inside &#39;all_clusterings&#39;, returning a rejection reason in this case.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering_id: The clustering id to be tested.</span>
+<span class="sd">        @param all_clusterings: The array containing all the &#39;clustering info&#39; dictionaries.</span>
+<span class="sd">        </span>
+<span class="sd">        @return: The new selected and not selected &#39;clustering info&#39; arrays</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">new_selected</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">selected_ids</span> <span class="o">=</span> <span class="n">selected_clusterings</span><span class="o">.</span><span class="n">keys</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_ids</span><span class="p">)):</span>
+            <span class="n">clustering_id</span> <span class="o">=</span> <span class="n">selected_ids</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">clustering</span> <span class="o">=</span> <span class="n">selected_clusterings</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;clustering&quot;</span><span class="p">]</span>
+            <span class="n">reasons</span> <span class="o">=</span> <span class="p">[]</span>
+            
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_ids</span><span class="p">)):</span>
+                <span class="n">other_clustering_id</span> <span class="o">=</span> <span class="n">selected_ids</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+                <span class="n">other_clustering</span> <span class="o">=</span> <span class="n">selected_clusterings</span><span class="p">[</span><span class="n">other_clustering_id</span><span class="p">][</span><span class="s">&quot;clustering&quot;</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">clustering</span> <span class="o">==</span> <span class="n">other_clustering</span><span class="p">:</span>
+                    <span class="n">reasons</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&quot;reason&quot;</span><span class="p">:</span><span class="s">&quot;EQUAL_TO_OTHER_CLUSTERING&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">:{</span><span class="s">&quot;id&quot;</span><span class="p">:</span><span class="n">other_clustering_id</span><span class="p">}}]</span>
+                    <span class="k">break</span>
+                
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_filtered_clustering</span><span class="p">(</span><span class="n">new_selected</span><span class="p">,</span>
+                                         <span class="n">not_selected_clusterings</span><span class="p">,</span>
+                                         <span class="n">selected_clusterings</span><span class="p">,</span>
+                                         <span class="n">clustering_id</span><span class="p">,</span>
+                                         <span class="n">reasons</span><span class="p">)</span>
+             
+        <span class="k">return</span> <span class="n">new_selected</span><span class="p">,</span> <span class="n">not_selected_clusterings</span>
+    </div>
+<div class="viewcode-block" id="ClusteringFilter.check_is_not_repeated"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_is_not_repeated">[docs]</a>    <span class="k">def</span> <span class="nf">check_is_not_repeated</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">all_clusterings</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Checks that the clustering is not repeated again in the clustering list. Clusterings are </span>
+<span class="sd">        considered equal if their clusters are equal (even if they were generated using different</span>
+<span class="sd">        algorithms and / or parameters).</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering: The clustering to be checked.</span>
+<span class="sd">        </span>
+<span class="sd">        @param all_clusterings: The array containing all the &#39;clustering info&#39; dictionaries.</span>
+<span class="sd">        </span>
+<span class="sd">        @return: A dictionary with the reasons to discard the clustering if any.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">other_clustering</span> <span class="ow">in</span> <span class="n">all_clusterings</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">clustering</span> <span class="o">==</span> <span class="n">all_clusterings</span><span class="p">[</span><span class="n">other_clustering</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="p">[{</span><span class="s">&quot;reason&quot;</span><span class="p">:</span><span class="s">&quot;EQUAL_TO_OTHER_CLUSTERING&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">:{</span><span class="s">&quot;id&quot;</span><span class="p">:</span><span class="n">other_clustering</span><span class="p">}}]</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    </div>
+<div class="viewcode-block" id="ClusteringFilter.check_num_clusters_in_range"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_num_clusters_in_range">[docs]</a>    <span class="k">def</span> <span class="nf">check_num_clusters_in_range</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Used to see if a clustering has a number of clusters in the range defined by script&#39;s evaluation parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering: The clustering to be checked.</span>
+<span class="sd">        </span>
+<span class="sd">        @return: The reasons of not being selected (if any).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">num_clusters</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">num_clusters</span> <span class="o">&lt;</span>  <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span><span class="p">[</span><span class="s">&quot;minimum_clusters&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">[{</span><span class="s">&quot;reason&quot;</span><span class="p">:</span><span class="s">&quot;TOO_FEW_CLUSTERS&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">:{</span><span class="s">&quot;minimum&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span><span class="p">[</span><span class="s">&quot;minimum_clusters&quot;</span><span class="p">],</span><span class="s">&quot;current&quot;</span><span class="p">:</span><span class="n">num_clusters</span><span class="p">}}]</span>
+        
+        <span class="k">if</span> <span class="n">num_clusters</span> <span class="o">&gt;</span>  <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span><span class="p">[</span><span class="s">&quot;maximum_clusters&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="p">[{</span><span class="s">&quot;reason&quot;</span><span class="p">:</span><span class="s">&quot;TOO_MUCH_CLUSTERS&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">:{</span><span class="s">&quot;maximum&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span><span class="p">[</span><span class="s">&quot;maximum_clusters&quot;</span><span class="p">],</span><span class="s">&quot;current&quot;</span><span class="p">:</span><span class="n">num_clusters</span><span class="p">}}]</span>
+       
+        <span class="k">return</span> <span class="p">[]</span>
+    </div>
+<div class="viewcode-block" id="ClusteringFilter.check_noise_level"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_noise_level">[docs]</a>    <span class="k">def</span> <span class="nf">check_noise_level</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Does the noise level check.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering: The clustering to be checked.</span>
+<span class="sd">        </span>
+<span class="sd">        @return: The reasons of not being selected (if any).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">noise_level</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">-</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">total_number_of_elements</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_elements</span><span class="p">)</span> <span class="o">*</span>  <span class="mi">100</span>
+        
+        <span class="k">if</span> <span class="n">noise_level</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span><span class="p">[</span><span class="s">&#39;maximum_noise&#39;</span><span class="p">]:</span>
+            <span class="k">return</span>  <span class="p">[{</span><span class="s">&quot;reason&quot;</span><span class="p">:</span><span class="s">&quot;TOO_MUCH_NOISE&quot;</span><span class="p">,</span><span class="s">&quot;data&quot;</span><span class="p">:{</span><span class="s">&quot;maximum&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span><span class="p">[</span><span class="s">&quot;maximum_noise&quot;</span><span class="p">],</span><span class="s">&quot;current&quot;</span><span class="p">:</span><span class="n">noise_level</span><span class="p">}}]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        </div>
+<div class="viewcode-block" id="ClusteringFilter.check_clustering"><a class="viewcode-back" href="../../../../pyproct.clustering.filtering.html#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">check_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Decides if one clustering is inside the defined parameters, and returns the reasons of why not otherwise.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering: The clustering to be checked.</span>
+<span class="sd">        </span>
+<span class="sd">        @return: The reasons of not being selected (if any).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c"># First we must eliminate the noise</span>
+        <span class="n">clustering</span><span class="o">.</span><span class="n">eliminate_noise</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluation_parameters</span><span class="p">[</span><span class="s">&quot;minimum_cluster_size&quot;</span><span class="p">])</span>
+        
+        <span class="c"># Then, look for reasons to reject this clustering</span>
+        <span class="n">reasons</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">check_num_clusters_in_range</span><span class="p">(</span><span class="n">clustering</span><span class="p">)</span>
+        <span class="n">reasons</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">check_noise_level</span><span class="p">(</span><span class="n">clustering</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">reasons</span> </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

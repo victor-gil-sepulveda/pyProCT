@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.driver.compressor.compressor &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.driver.compressor.compressor</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 04/04/2013</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">pyproct.protocol.saveTools</span> <span class="kn">as</span> <span class="nn">saveTools</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.kmedoids.kMedoidsAlgorithm</span> <span class="kn">import</span> <span class="n">KMedoidsAlgorithm</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span> <span class="nn">pyproct.protocol.refinement.Refiner</span> <span class="kn">import</span> <span class="n">Refiner</span>
+<span class="kn">from</span> <span class="nn">pyproct.tools.matrixTools</span> <span class="kn">import</span> <span class="n">get_submatrix</span>
+
+<div class="viewcode-block" id="Compressor"><a class="viewcode-back" href="../../../../pyproct.driver.compressor.html#pyproct.driver.compressor.compressor.Compressor">[docs]</a><span class="k">class</span> <span class="nc">Compressor</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+
+<div class="viewcode-block" id="Compressor.compress"><a class="viewcode-back" href="../../../../pyproct.driver.compressor.html#pyproct.driver.compressor.compressor.Compressor.compress">[docs]</a>    <span class="k">def</span> <span class="nf">compress</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">workspace_handler</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">):</span>
+        <span class="n">representatives</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">compression_type</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;type&quot;</span><span class="p">]</span>
+
+        <span class="n">pdb_name</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&#39;file&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;file&#39;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="k">else</span> <span class="s">&quot;compressed_pdb&quot;</span>
+
+        <span class="k">if</span> <span class="n">compression_type</span> <span class="o">==</span> <span class="s">&quot;RANDOM&quot;</span><span class="p">:</span>
+            <span class="n">representatives</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__naive_compression</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">compression_type</span> <span class="o">==</span> <span class="s">&quot;KMEDOIDS&quot;</span><span class="p">:</span>
+            <span class="n">representatives</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__kmedoids_compression</span><span class="p">(</span><span class="n">clustering</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;[ERROR Compressor::compress] The compression type does not exist (</span><span class="si">%s</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">saveTools</span><span class="o">.</span><span class="n">save_representatives</span><span class="p">(</span><span class="n">representatives</span><span class="p">,</span>
+                                              <span class="n">pdb_name</span><span class="p">,</span>
+                                              <span class="n">workspace_handler</span><span class="p">,</span>
+                                              <span class="n">trajectory_handler</span><span class="p">,</span>
+                                              <span class="n">do_merged_files_have_correlative_models</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+                                              <span class="n">write_frame_number_instead_of_correlative_model_number</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
+                                              <span class="n">keep_remarks</span> <span class="o">=</span> <span class="p">(</span><span class="k">lambda</span> <span class="n">params</span><span class="p">:</span> <span class="n">params</span><span class="p">[</span><span class="s">&#39;keep_remarks&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&#39;keep_remarks&#39;</span> <span class="ow">in</span> <span class="n">params</span> <span class="k">else</span> <span class="bp">False</span><span class="p">)(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">))</span>
+</div>
+    <span class="k">def</span> <span class="nf">__naive_compression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">        @return: The nth most representative elements of a clustering.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">number_of_final_frames</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;final_number_of_frames&quot;</span><span class="p">]</span>
+        <span class="k">return</span>  <span class="n">clustering</span><span class="o">.</span><span class="n">get_proportional_size_representatives</span><span class="p">(</span><span class="n">number_of_final_frames</span><span class="p">,</span>
+                                                                <span class="n">matrix_handler</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__kmedoids_compression</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">representatives</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">clustering</span><span class="o">.</span><span class="n">clusters</span><span class="p">:</span>
+            <span class="c"># Guess &#39;correct&#39; number of elements for this cluster</span>
+            <span class="n">cluster_size</span> <span class="o">=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
+            <span class="n">expected_cluster_elements</span> <span class="o">=</span> <span class="n">cluster_size</span> <span class="o">*</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;final_number_of_frames&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">clustering</span><span class="o">.</span><span class="n">total_number_of_elements</span><span class="p">)</span>
+            <span class="n">expected_cluster_elements</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">expected_cluster_elements</span><span class="p">))</span>
+
+            <span class="n">remapped_matrix</span> <span class="o">=</span> <span class="n">get_submatrix</span><span class="p">(</span><span class="n">matrix_handler</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">,</span> <span class="n">cluster</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+
+            <span class="c"># Prepare and run kmedoids algorithm</span>
+            <span class="n">kmedoids</span> <span class="o">=</span> <span class="n">KMedoidsAlgorithm</span><span class="p">(</span><span class="n">remapped_matrix</span><span class="p">)</span>
+<span class="c">#             print &quot;KMEDOIDS:: EXPECTED&quot;, expected_cluster_elements, cluster_size, clustering.total_number_of_elements, self.parameters[&quot;final_number_of_frames&quot;]</span>
+            <span class="n">new_clustering</span> <span class="o">=</span> <span class="n">kmedoids</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">({</span>
+                                                      <span class="s">&quot;k&quot;</span><span class="p">:</span> <span class="n">expected_cluster_elements</span><span class="p">,</span>
+                                                      <span class="s">&quot;seeding_type&quot;</span><span class="p">:</span> <span class="s">&quot;EQUIDISTANT&quot;</span>
+            <span class="p">})</span>
+
+<span class="c">#             print &quot;NEW CLUSTERING SIZE  clusters: %d  elements: %d&quot;%(len(new_clustering.clusters), new_clustering.total_number_of_elements)</span>
+
+            <span class="c"># reverse the remapping and add it to representatives</span>
+            <span class="n">remapped_representatives</span> <span class="o">=</span> <span class="n">new_clustering</span><span class="o">.</span><span class="n">get_medoids</span><span class="p">(</span><span class="n">remapped_matrix</span><span class="p">)</span>
+            <span class="n">fake_cluster</span> <span class="o">=</span> <span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="n">remapped_representatives</span><span class="p">)</span>
+
+            <span class="n">representatives</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">Refiner</span><span class="o">.</span><span class="n">redefine_cluster_with_map</span><span class="p">(</span><span class="n">cluster</span><span class="p">,</span> <span class="n">fake_cluster</span><span class="p">)</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">representatives</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

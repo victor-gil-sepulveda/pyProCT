@@ -1,0 +1,45 @@
+pyproct.algorithms.random package
+=================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.algorithms.random.test
+
+Submodules
+----------
+
+pyproct.algorithms.random.FakeDistributionRandomAlgorithm module
+----------------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.random.FakeDistributionRandomAlgorithm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.algorithms.random.RandomAlgorithm module
+------------------------------------------------
+
+.. automodule:: pyproct.algorithms.random.RandomAlgorithm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.algorithms.random.parametersGeneration module
+-----------------------------------------------------
+
+.. automodule:: pyproct.algorithms.random.parametersGeneration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.random
+    :members:
+    :undoc-members:
+    :show-inheritance:

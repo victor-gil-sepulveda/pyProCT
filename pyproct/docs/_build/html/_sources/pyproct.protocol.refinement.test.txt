@@ -1,0 +1,22 @@
+pyproct.protocol.refinement.test package
+========================================
+
+Submodules
+----------
+
+pyproct.protocol.refinement.test.testRefinementProtocol module
+--------------------------------------------------------------
+
+.. automodule:: pyproct.protocol.refinement.test.testRefinementProtocol
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.protocol.refinement.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

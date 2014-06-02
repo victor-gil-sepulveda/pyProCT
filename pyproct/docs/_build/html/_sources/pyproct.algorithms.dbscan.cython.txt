@@ -1,0 +1,30 @@
+pyproct.algorithms.dbscan.cython package
+========================================
+
+Submodules
+----------
+
+pyproct.algorithms.dbscan.cython.cythonDbscanTools module
+---------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.dbscan.cython.cythonDbscanTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.algorithms.dbscan.cython.setup module
+---------------------------------------------
+
+.. automodule:: pyproct.algorithms.dbscan.cython.setup
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.dbscan.cython
+    :members:
+    :undoc-members:
+    :show-inheritance:

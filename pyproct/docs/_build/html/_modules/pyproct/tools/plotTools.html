@@ -1,0 +1,610 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.tools.plotTools &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.tools.plotTools</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 15/10/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">PIL.Image</span> <span class="kn">as</span> <span class="nn">Image</span>
+<span class="kn">import</span> <span class="nn">PIL.ImageDraw</span> <span class="kn">as</span> <span class="nn">ImageDraw</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="kn">as</span> <span class="nn">plt</span>
+<span class="kn">import</span> <span class="nn">pylab</span>
+<span class="kn">import</span> <span class="nn">PIL.ImageFont</span> <span class="kn">as</span> <span class="nn">ImageFont</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.condensedMatrix</span> <span class="kn">import</span> <span class="n">CondensedMatrix</span>
+<span class="kn">import</span> <span class="nn">math</span>
+
+<div class="viewcode-block" id="shrink_matrix"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.shrink_matrix">[docs]</a><span class="k">def</span> <span class="nf">shrink_matrix</span><span class="p">(</span><span class="n">this_matrix</span><span class="p">,</span> <span class="n">to_have_this_size</span><span class="p">):</span>
+    <span class="n">max_dim</span> <span class="o">=</span> <span class="n">to_have_this_size</span>
+    <span class="n">row_dim</span> <span class="o">=</span> <span class="n">this_matrix</span><span class="o">.</span><span class="n">row_length</span>
+
+    <span class="n">box_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">row_dim</span><span class="o">/</span><span class="n">max_dim</span><span class="p">))</span>
+    <span class="n">number_of_boxes</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">row_dim</span> <span class="o">/</span><span class="n">box_size</span><span class="p">))</span>
+    <span class="n">box_mid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">box_size</span><span class="o">/</span><span class="mf">2.</span><span class="p">))</span>
+    <span class="n">max_dim</span> <span class="o">=</span> <span class="n">number_of_boxes</span> <span class="o">*</span> <span class="n">box_size</span>
+    <span class="k">print</span> <span class="s">&quot;Box size, mid&quot;</span><span class="p">,</span> <span class="n">box_size</span><span class="p">,</span> <span class="n">box_mid</span><span class="p">,</span> <span class="n">max_dim</span><span class="p">,</span> <span class="n">row_dim</span><span class="p">,</span> <span class="n">number_of_boxes</span>
+
+    <span class="n">tmp_condensed</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">number_of_boxes</span><span class="o">*</span><span class="p">(</span><span class="n">number_of_boxes</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">/</span><span class="mf">2.</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_dim</span><span class="p">,</span> <span class="n">box_size</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">max_dim</span><span class="p">,</span> <span class="n">box_size</span><span class="p">):</span>
+            <span class="n">values</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">box_mid</span><span class="p">,</span> <span class="n">box_mid</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="o">-</span><span class="n">box_mid</span><span class="p">,</span> <span class="n">box_mid</span><span class="p">):</span>
+                    <span class="k">if</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="n">i</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">l</span><span class="o">+</span><span class="n">j</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">k</span><span class="o">+</span><span class="n">i</span> <span class="o">&lt;</span> <span class="n">max_dim</span> <span class="ow">and</span> <span class="n">l</span><span class="o">+</span><span class="n">j</span> <span class="o">&lt;</span> <span class="n">max_dim</span><span class="p">):</span>
+                        <span class="k">if</span> <span class="n">k</span><span class="o">+</span><span class="n">i</span> <span class="o">==</span> <span class="n">l</span><span class="o">+</span><span class="n">j</span><span class="p">:</span>
+                            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">values</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">this_matrix</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="n">i</span><span class="p">,</span><span class="n">l</span><span class="o">+</span><span class="n">j</span><span class="p">])</span>
+            <span class="k">if</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">box_size</span> <span class="o">!=</span> <span class="n">l</span><span class="o">/</span><span class="n">box_size</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">values</span> <span class="o">!=</span> <span class="p">[]:</span>
+                    <span class="n">tmp_condensed</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">box_size</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="o">/</span><span class="n">box_size</span><span class="p">)]</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tmp_condensed</span><span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="o">/</span><span class="n">box_size</span><span class="p">),</span> <span class="nb">int</span><span class="p">(</span><span class="n">l</span><span class="o">/</span><span class="n">box_size</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">tmp_condensed</span>
+</div>
+<div class="viewcode-block" id="matrixToImage"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.matrixToImage">[docs]</a><span class="k">def</span> <span class="nf">matrixToImage</span><span class="p">(</span><span class="n">condensed_distance_matrix</span><span class="p">,</span> <span class="n">matrix_image_file</span><span class="p">,</span> <span class="n">max_dim</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">diagonal_value</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">observer</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generates a plot of the distance matrix given as argument and stores it into disk.</span>
+
+<span class="sd">    @param condensed_distance_matrix: Is the matrix (CondensedMatrix) from which we want to create</span>
+<span class="sd">    the image.</span>
+
+<span class="sd">    @param matrix_image_file: The path of the image file to create (with file extension).</span>
+
+<span class="sd">    @param max_dim: Maximum dimensions of the image. If the matrix is bigger it is rescaled.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">condensed_distance_matrix</span><span class="o">.</span><span class="n">row_length</span> <span class="o">&gt;</span> <span class="n">max_dim</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">observer</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">observer</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Matrix To Image&quot;</span><span class="p">,</span><span class="s">&quot;Reescale&quot;</span><span class="p">,</span><span class="s">&quot;Dimension of the matrix (&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">condensed_distance_matrix</span><span class="o">.</span><span class="n">row_length</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;) is bigger than&quot;</span><span class="o">+</span>
+            <span class="s">&quot; the maximum dimension for imaging (&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">max_dim</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;)&quot;</span><span class="p">)</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">shrink_matrix</span><span class="p">(</span><span class="n">condensed_distance_matrix</span><span class="p">,</span> <span class="n">max_dim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">condensed_distance_matrix</span>
+
+    <span class="k">print</span> <span class="n">matrix</span><span class="o">.</span><span class="n">row_length</span>
+    <span class="n">complete</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span> <span class="n">matrix</span><span class="o">.</span><span class="n">row_length</span><span class="p">]</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">float</span><span class="p">)</span>
+
+    <span class="c"># fill diagonal if needed</span>
+    <span class="k">if</span> <span class="n">diagonal_value</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">row_length</span><span class="p">):</span>
+            <span class="n">complete</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">diagonal_value</span>
+
+    <span class="c"># fill matrix</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">row_length</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">matrix</span><span class="o">.</span><span class="n">row_length</span><span class="p">):</span>
+            <span class="n">complete</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">complete</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">matrix</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+    <span class="n">imgplot</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">complete</span><span class="p">,</span> <span class="n">interpolation</span><span class="o">=</span><span class="s">&#39;nearest&#39;</span><span class="p">)</span>
+    <span class="n">imgplot</span><span class="o">.</span><span class="n">set_cmap</span><span class="p">(</span><span class="s">&#39;gray&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">matrix_image_file</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="pieChartCreation"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.pieChartCreation">[docs]</a><span class="k">def</span> <span class="nf">pieChartCreation</span><span class="p">(</span><span class="n">graph_size</span><span class="p">,</span> <span class="n">fracs</span><span class="p">,</span> <span class="n">name1</span><span class="p">,</span> <span class="n">name2</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates the big pie chart of the report. In this pie chart one fraction represents the amount of space</span>
+<span class="sd">    sampled together by both trajectories, and the other two fractions represent the amount of space that was</span>
+<span class="sd">    sampled by either A or B.</span>
+
+<span class="sd">    @param graph_size: The graph size in pixels (?)</span>
+<span class="sd">    @param fracs: a list or tuple containing the total number of elements of pure A, pure B, and mixed clusters.</span>
+<span class="sd">    @param name1: String identifying the first trajectory.</span>
+<span class="sd">    @param name2: String identifying the second trajectory.</span>
+<span class="sd">    @param colors: dictionary with color descriptions for &quot;A&quot;, &quot;B&quot; and &quot;M&quot; (Mixed) written in string format (for</span>
+<span class="sd">    example &quot;#FFFFFF&quot; for white)</span>
+
+<span class="sd">    @return : A PIL image of the pie chart.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">all_labels</span> <span class="o">=</span> <span class="p">[</span><span class="s">&quot;A&quot;</span><span class="p">,</span><span class="s">&quot;B&quot;</span><span class="p">,</span><span class="s">&quot;Mixed&quot;</span><span class="p">]</span>
+    <span class="n">all_colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">colors</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">],</span> <span class="n">colors</span><span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">],</span><span class="n">colors</span><span class="p">[</span><span class="s">&#39;M&#39;</span><span class="p">]]</span>
+    <span class="n">this_labels</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">this_fracs</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">this_colors</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">mydpi</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">pylab</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">graph_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">mydpi</span><span class="p">),</span><span class="nb">int</span><span class="p">(</span><span class="n">graph_size</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="n">mydpi</span><span class="p">)),</span><span class="n">dpi</span> <span class="o">=</span> <span class="n">mydpi</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s">&#39;white&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">fracs</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">fracs</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">this_labels</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_labels</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">this_fracs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fracs</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="n">this_colors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">all_colors</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+    <span class="n">pylab</span><span class="o">.</span><span class="n">pie</span><span class="p">(</span><span class="n">this_fracs</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">this_labels</span><span class="p">,</span> <span class="n">autopct</span><span class="o">=</span><span class="s">&#39;</span><span class="si">%1.1f%%</span><span class="s">&#39;</span><span class="p">,</span> <span class="n">shadow</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span><span class="n">colors</span><span class="o">=</span><span class="n">this_colors</span><span class="p">)</span>
+    <span class="n">pylab</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="n">shorten_name</span><span class="p">(</span><span class="n">name1</span><span class="p">)</span><span class="o">+</span><span class="s">&quot; vs &quot;</span><span class="o">+</span><span class="n">shorten_name</span><span class="p">(</span><span class="n">name2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">fig2img</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="barGraphCreation"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.barGraphCreation">[docs]</a><span class="k">def</span> <span class="nf">barGraphCreation</span><span class="p">(</span><span class="n">A_sizes</span><span class="p">,</span> <span class="n">B_sizes</span><span class="p">,</span> <span class="n">cluster_sizes</span><span class="p">,</span> <span class="n">types</span><span class="p">,</span> <span class="n">total_size</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">graph_size</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draws a bar graph with information about the number of elements in the first ten biggest clusters.</span>
+
+<span class="sd">    @param A_sizes: Total number of elements in &#39;A&#39; clusters, f.ex. [2,3,0,4,5] In this case the third cluster would be of type B.</span>
+<span class="sd">    @param B_sizes: The same, for &#39;B&#39; type clusters.</span>
+<span class="sd">    @param cluster_sizes: List containing the size of each cluster.</span>
+<span class="sd">    @param types: List containing the type of each cluster (&#39;A&#39;,&#39;B&#39; or &#39;M&#39; (Mixed))</span>
+<span class="sd">    @param total_size: Number of clustered elements.</span>
+<span class="sd">    @param colors: dictionary with color descriptions for &quot;A&quot;, &quot;B&quot; and &quot;M&quot; (Mixed) written in string format (for</span>
+<span class="sd">    example &quot;#FFFFFF&quot; for white)</span>
+<span class="sd">    @param graph_size: Size of the image (width, height)</span>
+
+<span class="sd">    @return : A PIL image of the graph bar.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mydpi</span> <span class="o">=</span> <span class="mf">100.</span>
+    <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span> <span class="o">=</span> <span class="p">(</span><span class="n">graph_size</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">mydpi</span><span class="p">,</span> <span class="p">(</span><span class="n">graph_size</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="n">mydpi</span><span class="p">),</span> <span class="n">dpi</span> <span class="o">=</span> <span class="n">mydpi</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">set_facecolor</span><span class="p">(</span><span class="s">&#39;white&#39;</span><span class="p">)</span>
+    <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+    <span class="n">number_of_bars</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">A_sizes</span><span class="p">))</span>
+    <span class="n">A_values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">A_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">number_of_bars</span><span class="p">])</span><span class="o">*</span><span class="mf">100.</span> <span class="o">/</span>  <span class="n">total_size</span>
+    <span class="n">B_values</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">B_sizes</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">number_of_bars</span><span class="p">])</span><span class="o">*</span> <span class="mf">100.</span> <span class="o">/</span> <span class="n">total_size</span>
+
+    <span class="c"># Add pure clusters</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_bars</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;A&#39;</span><span class="p">:</span>
+            <span class="n">A_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">total_size</span>
+        <span class="k">if</span> <span class="n">types</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">==</span><span class="s">&#39;B&#39;</span><span class="p">:</span>
+            <span class="n">B_values</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">cluster_sizes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">100.</span><span class="o">/</span><span class="n">total_size</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">A_values</span><span class="p">)))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">left</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span><span class="n">width</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">A_values</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">bar</span><span class="p">(</span><span class="n">left</span> <span class="o">=</span> <span class="n">x</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">bottom</span> <span class="o">=</span> <span class="n">A_values</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">B_values</span><span class="p">,</span> <span class="n">color</span> <span class="o">=</span> <span class="n">colors</span><span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">])</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s">&#39;%&#39;</span><span class="p">)</span>
+
+    <span class="n">pylab</span><span class="o">.</span><span class="n">yticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+    <span class="n">pylab</span><span class="o">.</span><span class="n">xticks</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="mf">0.75</span><span class="p">,</span><span class="mf">0.8</span><span class="p">,</span><span class="s">&quot;Acc: </span><span class="si">%0.2f</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">cluster_sizes</span><span class="p">)</span><span class="o">*</span><span class="mi">100</span><span class="o">/</span><span class="n">total_size</span><span class="p">),</span><span class="n">size</span><span class="o">=</span> <span class="mi">7</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">fig2img</span><span class="p">(</span><span class="n">fig</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ballGraph"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.ballGraph">[docs]</a><span class="k">def</span> <span class="nf">ballGraph</span><span class="p">(</span><span class="n">number_of_balls</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">max_box_diameter</span><span class="p">,</span> <span class="n">h_ball_separation</span><span class="p">,</span> <span class="n">v_ball_separation</span><span class="p">,</span>\
+                             <span class="n">sizes</span><span class="p">,</span> <span class="n">alphas</span><span class="p">,</span> <span class="n">colors</span><span class="p">,</span> <span class="n">cluster_types</span><span class="p">,</span> <span class="n">A_sizes</span><span class="p">,</span> <span class="n">B_sizes</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It draws an image with N spheres (where N is typically the number of clusters we have). This spheres are</span>
+<span class="sd">    outlined and in the case they&#39;re representing a &#39;M&#39; type cluster, they have an inner circle representing the amount</span>
+<span class="sd">    of elements of &#39;A&#39; and &#39;B&#39; that it has.</span>
+
+<span class="sd">     @param number_of_balls: The number of data analysis we have done (usually number of clusters).</span>
+<span class="sd">     @param size: Size of the image to hold the ball graph.</span>
+<span class="sd">     @param max_box_diameter: Is the diameter of the biggest possible sphere.</span>
+<span class="sd">     @param h_ball_separation: Separation of each sphere in the x axis.</span>
+<span class="sd">     @param v_ball_separation: Separation of each sphere in the y axis (usually enough to fit the &#39;data card&#39;)</span>
+<span class="sd">     @param sizes: List containing the size of each cluster.</span>
+<span class="sd">     @param alphas: Is a list containing the dispersion for each cluster.</span>
+<span class="sd">     @param colors: Dictionary of colors for each type (&#39;A&#39;,&#39;B&#39; and &#39;M&#39;) with RGB color in tuple form (f.ex. (255,255,255) is white)</span>
+<span class="sd">     @param cluster_types: List containing the type of each cluster (&#39;A&#39;,&#39;B&#39; or &#39;M&#39; (Mixed))</span>
+<span class="sd">     @param A_sizes: Total number of elements in &#39;A&#39; clusters, f.ex. [2,3,0,4,5] In this case the third cluster would be of type B.</span>
+<span class="sd">     @param B_sizes: The same, for &#39;B&#39; type clusters.</span>
+
+<span class="sd">     @return: The PIL image with the drawing and the maximum calculated diameter of the biggest sphere.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c"># Refactorizable</span>
+    <span class="n">w</span><span class="p">,</span><span class="n">h</span> <span class="o">=</span> <span class="n">size</span>
+    <span class="n">max_number_of_balls_in_a_row</span>  <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_number_of_balls_in_a_column</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">max_tmp_diameter</span> <span class="o">=</span> <span class="n">max_box_diameter</span> <span class="o">-</span> <span class="mi">4</span>
+    <span class="k">while</span>  <span class="n">max_number_of_balls_in_a_row</span> <span class="o">*</span> <span class="n">max_number_of_balls_in_a_column</span> <span class="o">&lt;=</span> <span class="n">number_of_balls</span><span class="p">:</span>
+        <span class="n">max_number_of_balls_in_a_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">max_tmp_diameter</span><span class="p">)</span><span class="o">+</span><span class="n">h_ball_separation</span><span class="p">))</span>
+        <span class="n">max_number_of_balls_in_a_column</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">max_tmp_diameter</span><span class="p">)</span><span class="o">+</span><span class="n">v_ball_separation</span><span class="p">))</span>
+        <span class="n">max_tmp_diameter</span> <span class="o">-=</span> <span class="mi">1</span>
+
+    <span class="c"># Normalize ball sizes and alphas (based on dispersion)</span>
+    <span class="n">norm_sizes</span> <span class="o">=</span> <span class="n">normalize</span><span class="p">(</span><span class="n">sizes</span><span class="p">,</span><span class="n">max_box_diameter</span><span class="p">)</span>
+    <span class="c"># Reverse values and normalize between 1 and 0.3 (0.3 is the alpha of the cluster with most dispersion)</span>
+    <span class="n">norm_alphas</span> <span class="o">=</span> <span class="n">normalize_in_range</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">normalize_in_range</span><span class="p">(</span><span class="n">alphas</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)),</span><span class="mf">0.3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c"># Paint it!!!</span>
+    <span class="n">canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_number_of_balls_in_a_column</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_number_of_balls_in_a_row</span><span class="p">):</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">max_number_of_balls_in_a_row</span><span class="o">+</span><span class="n">j</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">number_of_balls</span><span class="p">:</span>
+                <span class="n">this_diameter</span> <span class="o">=</span> <span class="n">norm_sizes</span><span class="p">[</span><span class="n">k</span><span class="p">]</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">max_tmp_diameter</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">max_box_diameter</span><span class="p">)</span>
+                <span class="n">pos</span> <span class="o">=</span> <span class="p">((</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">max_tmp_diameter</span><span class="o">+</span><span class="n">h_ball_separation</span><span class="p">)),</span>\
+                           <span class="p">(</span><span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="n">max_tmp_diameter</span><span class="o">+</span><span class="n">v_ball_separation</span><span class="p">)))</span>
+
+                <span class="n">centering_offset</span> <span class="o">=</span> <span class="n">max_box_diameter</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span> <span class="n">this_diameter</span><span class="o">/</span><span class="mi">2</span>
+                <span class="n">ball</span> <span class="o">=</span> <span class="n">drawBall</span><span class="p">((</span><span class="n">max_box_diameter</span><span class="p">,)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">this_diameter</span><span class="p">,</span> <span class="n">colors</span><span class="p">[</span><span class="n">cluster_types</span><span class="p">[</span><span class="n">k</span><span class="p">]],</span><span class="n">norm_alphas</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">cluster_types</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&#39;M&#39;</span><span class="p">:</span>
+                    <span class="n">canvas</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">ball</span><span class="p">,</span><span class="n">tuple_to_int</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">ball_with_inner_circles</span> <span class="o">=</span> <span class="n">circledPercentages</span><span class="p">(</span><span class="n">ball</span><span class="p">,</span> <span class="p">(</span><span class="n">centering_offset</span><span class="p">,</span><span class="n">centering_offset</span><span class="p">),</span> <span class="n">this_diameter</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="n">A_sizes</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">B_sizes</span><span class="p">[</span><span class="n">k</span><span class="p">],</span> <span class="n">colors</span><span class="p">)</span>
+                    <span class="n">canvas</span><span class="o">.</span><span class="n">paste</span><span class="p">(</span><span class="n">ball_with_inner_circles</span><span class="p">,</span><span class="n">tuple_to_int</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">canvas</span><span class="p">,</span> <span class="n">max_tmp_diameter</span>
+</div>
+<div class="viewcode-block" id="drawBall"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.drawBall">[docs]</a><span class="k">def</span> <span class="nf">drawBall</span><span class="p">(</span><span class="n">canvas_size</span><span class="p">,</span> <span class="n">ball_diameter</span><span class="p">,</span> <span class="n">fill_color</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draws the image of black-outlined sphere representing a cluster.</span>
+
+<span class="sd">    @param ball_diameter: The diameter of the sphere...</span>
+<span class="sd">    @param fill_color: Color used to fill the sphere.</span>
+<span class="sd">    @param alpha: Is the alpha value of the image (usually the</span>
+
+<span class="sd">    @return: A PIL image of the resulting sphere.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">canvas_size</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+    <span class="n">centering_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">canvas_size</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span> <span class="o">-</span> <span class="n">ball_diameter</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="n">centering_offset</span><span class="p">,</span><span class="n">centering_offset</span><span class="p">,</span><span class="n">centering_offset</span><span class="o">+</span><span class="n">ball_diameter</span><span class="p">,</span><span class="n">centering_offset</span><span class="o">+</span><span class="n">ball_diameter</span><span class="p">)</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">position</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="n">fill_color</span><span class="p">)</span>
+    <span class="n">blending_canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">canvas_size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">border_canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">canvas_size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">drawCircleBorder</span><span class="p">(</span><span class="n">border_canvas</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="n">Image</span><span class="o">.</span><span class="n">blend</span><span class="p">(</span><span class="n">blending_canvas</span><span class="p">,</span><span class="n">canvas</span><span class="p">,</span><span class="n">alpha</span><span class="p">),</span> <span class="n">border_canvas</span><span class="p">,</span> <span class="n">border_canvas</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="drawCircleBorder"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.drawCircleBorder">[docs]</a><span class="k">def</span> <span class="nf">drawCircleBorder</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">bbox</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draws a black border over a sphere PIL image.</span>
+
+<span class="sd">    @param canvas: The PIL image with the sphere.</span>
+<span class="sd">    @param bbox: The description of this image&#39;s bounding box in coordinates (upper left x, ul y, bottom right x, br y).</span>
+<span class="sd">    @param width: The width of the border.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+    <span class="n">border_position</span> <span class="o">=</span> <span class="p">(</span><span class="n">bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">width</span><span class="p">,</span><span class="n">bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">width</span><span class="p">,</span><span class="n">bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">width</span><span class="p">,</span><span class="n">bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">width</span><span class="p">)</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">border_position</span><span class="p">,</span><span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">ellipse</span><span class="p">(</span><span class="n">tuple_to_int</span><span class="p">(</span><span class="n">bbox</span><span class="p">),</span><span class="n">fill</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="circledPercentages"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.circledPercentages">[docs]</a><span class="k">def</span> <span class="nf">circledPercentages</span><span class="p">(</span><span class="n">ball_canvas</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">ball_diameter</span><span class="p">,</span> <span class="n">radius_percent</span><span class="p">,</span> <span class="n">sizeA</span><span class="p">,</span> <span class="n">sizeB</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Draws the inner part of the sphere (if it&#39;s of type &#39;M&#39;) with the percentage of &#39;A&#39; and &#39;B&#39; parts.</span>
+
+<span class="sd">    @param ball_canvas: Sphere image to draw the inner part.</span>
+<span class="sd">    @param position: The corner of the bounding box of the sphere, relative to the image.</span>
+<span class="sd">    @param ball_diameter: The diameter of the sphere drawn in ball_canvas.</span>
+<span class="sd">    @param radius_percent: Is the percent of the radius dedicated to the percentage representation.</span>
+<span class="sd">    @param sizeA: Number of elements of &#39;A&#39; in the &#39;M&#39; cluster.</span>
+<span class="sd">    @param sizeB: Number of elements of &#39;B&#39; in the &#39;M&#39; cluster.</span>
+<span class="sd">    @param colors: Dictionary of colors for each type (&#39;A&#39;,&#39;B&#39; and &#39;M&#39;) with RGB color in tuple form (f.ex. (255,255,255) is white)</span>
+
+<span class="sd">    @return: A PIL image with the complete sphere drawing (the complete representation of an &#39;M&#39; cluster).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ball_radius</span> <span class="o">=</span> <span class="n">ball_diameter</span><span class="o">/</span><span class="mf">2.</span>
+    <span class="n">width</span> <span class="o">=</span> <span class="n">radius_percent</span> <span class="o">*</span> <span class="n">ball_radius</span>
+
+    <span class="n">inner_bbox</span> <span class="o">=</span> <span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ball_radius</span><span class="p">,</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ball_radius</span><span class="p">,</span>\
+                  <span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">ball_diameter</span><span class="o">-</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ball_radius</span><span class="p">),</span> <span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">ball_diameter</span><span class="o">-</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="n">ball_radius</span><span class="p">))</span>
+
+    <span class="n">outer_bbox</span> <span class="o">=</span> <span class="p">(</span><span class="n">inner_bbox</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">width</span><span class="p">,</span> <span class="n">inner_bbox</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="n">width</span><span class="p">,</span>\
+                  <span class="n">inner_bbox</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="n">width</span><span class="p">,</span> <span class="n">inner_bbox</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">+</span><span class="n">width</span><span class="p">)</span>
+
+    <span class="n">A_mask</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">ball_canvas</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">drawCircleBorder</span><span class="p">(</span><span class="n">A_mask</span><span class="p">,</span><span class="n">tuple_to_int</span><span class="p">(</span><span class="n">inner_bbox</span><span class="p">),</span><span class="n">width</span><span class="p">)</span>
+    <span class="n">A_color</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">ball_canvas</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="s">&#39;A&#39;</span><span class="p">])</span>
+    <span class="n">A_circled</span> <span class="o">=</span>  <span class="n">Image</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="n">ball_canvas</span><span class="p">,</span> <span class="n">A_color</span><span class="p">,</span> <span class="n">A_mask</span><span class="p">)</span>
+
+    <span class="n">B_mask</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">ball_canvas</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">drawCircleBorder</span><span class="p">(</span><span class="n">B_mask</span><span class="p">,</span><span class="n">tuple_to_int</span><span class="p">(</span><span class="n">inner_bbox</span><span class="p">),</span><span class="n">width</span><span class="p">)</span>
+    <span class="n">B_color</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">ball_canvas</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="n">colors</span><span class="p">[</span><span class="s">&#39;B&#39;</span><span class="p">])</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">B_mask</span><span class="p">)</span>
+    <span class="n">B_percent</span> <span class="o">=</span> <span class="n">sizeB</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">sizeA</span><span class="o">+</span><span class="n">sizeB</span><span class="p">)</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">pieslice</span><span class="p">(</span><span class="n">tuple_to_int</span><span class="p">(</span><span class="n">outer_bbox</span><span class="p">),</span> <span class="mi">0</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">360</span> <span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="n">B_percent</span><span class="p">)),</span> <span class="n">fill</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+
+    <span class="c"># Separation line from A-B</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">B_color</span><span class="p">)</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">pieslice</span><span class="p">(</span><span class="n">tuple_to_int</span><span class="p">(</span><span class="n">outer_bbox</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="mi">360</span> <span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span> <span class="n">B_percent</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">outline</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span> <span class="p">)</span>
+
+    <span class="n">AB_circled</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="n">A_circled</span><span class="p">,</span> <span class="n">B_color</span><span class="p">,</span> <span class="n">B_mask</span><span class="p">)</span>
+    <span class="n">outer_border_canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">AB_circled</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">inner_border_canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">AB_circled</span><span class="o">.</span><span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">drawCircleBorder</span><span class="p">(</span><span class="n">inner_border_canvas</span><span class="p">,</span> <span class="n">inner_bbox</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">drawCircleBorder</span><span class="p">(</span><span class="n">outer_border_canvas</span><span class="p">,</span> <span class="n">outer_bbox</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">tmp</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="n">AB_circled</span><span class="p">,</span> <span class="n">inner_border_canvas</span><span class="p">,</span> <span class="n">inner_border_canvas</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="n">tmp</span><span class="p">,</span> <span class="n">outer_border_canvas</span><span class="p">,</span> <span class="n">outer_border_canvas</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="writeTagPlusValue"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.writeTagPlusValue">[docs]</a><span class="k">def</span> <span class="nf">writeTagPlusValue</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">string_tag</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes a numeric value into an image, preceded with a bold tag.</span>
+
+<span class="sd">    @param canvas: PIL image to write into.</span>
+<span class="sd">    @param position: Position where it starts to write.</span>
+<span class="sd">    @param string_tag: The tag.</span>
+<span class="sd">    @param value: The value we want to write.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">string_value</span> <span class="o">=</span> <span class="s">&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,(</span><span class="nb">int</span><span class="p">,</span><span class="nb">long</span><span class="p">))</span> <span class="p">:</span>
+        <span class="n">string_value</span> <span class="o">=</span> <span class="s">&quot; </span><span class="si">%d</span><span class="s">&quot;</span><span class="o">%</span><span class="n">value</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">string_value</span> <span class="o">=</span> <span class="s">&quot; </span><span class="si">%.3f</span><span class="s">&quot;</span><span class="o">%</span><span class="n">value</span>
+    <span class="n">writeTagPlusStringValue</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">string_tag</span><span class="p">,</span> <span class="n">string_value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="writeTagPlusStringValue"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.writeTagPlusStringValue">[docs]</a><span class="k">def</span> <span class="nf">writeTagPlusStringValue</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">string_tag</span><span class="p">,</span> <span class="n">string_value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes text into an image, preceded with a bold tag.</span>
+
+<span class="sd">    @param canvas: PIL image to write into.</span>
+<span class="sd">    @param position: Position where it starts to write.</span>
+<span class="sd">    @param string_tag: The tag.</span>
+<span class="sd">    @param string_value: The string we want to write.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+    <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">draw</span><span class="o">.</span><span class="n">textsize</span><span class="p">(</span><span class="n">string_tag</span><span class="p">)</span> <span class="c">#@UnusedVariable</span>
+    <span class="n">tag_position</span> <span class="o">=</span> <span class="n">position</span>
+    <span class="n">value_position</span>  <span class="o">=</span> <span class="p">(</span><span class="n">position</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">width</span><span class="o">+</span><span class="mi">10</span><span class="p">,</span><span class="n">position</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">tag_position</span><span class="p">,</span> <span class="n">string_tag</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="p">(</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">50</span><span class="p">),</span> <span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s">&quot;/usr/share/fonts/truetype/msttcorefonts/georgiab.ttf&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+    <span class="n">draw</span><span class="o">.</span><span class="n">text</span><span class="p">(</span><span class="n">value_position</span><span class="p">,</span> <span class="n">string_value</span><span class="p">,</span> <span class="n">fill</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">font</span> <span class="o">=</span> <span class="n">ImageFont</span><span class="o">.</span><span class="n">truetype</span><span class="p">(</span><span class="s">&quot;/usr/share/fonts/truetype/msttcorefonts/cour.ttf&quot;</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="plotDataCards"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.plotDataCards">[docs]</a><span class="k">def</span> <span class="nf">plotDataCards</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">number_of_cards</span><span class="p">,</span> <span class="n">max_radius</span><span class="p">,</span> <span class="n">h_ball_separation</span><span class="p">,</span> <span class="n">v_ball_separation</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">key_exceptions</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes the small data cards under each cluster sphere representation.</span>
+
+<span class="sd">    @param image: Canvas to draw into (PIL image).</span>
+<span class="sd">    @param size: Tuple with the canvas size</span>
+<span class="sd">    @param number_of_cards: Number of cards we have to write (same as number of clusters)</span>
+<span class="sd">    @param max_radius: Is the radius of the biggest possible sphere.</span>
+<span class="sd">    @param h_ball_separation: Separation of each sphere in the x axis.</span>
+<span class="sd">    @param v_ball_separation: Separation of each sphere in the y axis (usually enough to fit the &#39;data card&#39;)</span>
+<span class="sd">    @param data: A dictionary containing all the data with the form {data_key:(data_label, data_array)},</span>
+<span class="sd">    for example: {&quot;cluster_sizes&quot;:(&quot;size&quot;, [4,6,2,5,3,8])}</span>
+<span class="sd">    @param key_exceptions: Those keys of the data dictionary we want to skip.</span>
+
+<span class="sd">    @return: A PIL image with the written data cards.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">size</span>
+    <span class="n">max_number_of_cards_in_a_row</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">w</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">max_radius</span><span class="p">)</span><span class="o">+</span><span class="n">h_ball_separation</span><span class="p">))</span>
+    <span class="n">max_number_of_cards_in_a_column</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">h</span> <span class="o">/</span> <span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">max_radius</span><span class="p">)</span><span class="o">+</span><span class="n">v_ball_separation</span><span class="p">))</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_number_of_cards_in_a_column</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_number_of_cards_in_a_row</span><span class="p">):</span>
+            <span class="n">k</span> <span class="o">=</span> <span class="n">i</span><span class="o">*</span><span class="n">max_number_of_cards_in_a_row</span><span class="o">+</span><span class="n">j</span>
+            <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="n">number_of_cards</span><span class="p">:</span>
+                <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">key_exceptions</span><span class="p">:</span>
+                        <span class="n">datum</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+                        <span class="n">desc</span> <span class="o">=</span> <span class="n">datum</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                        <span class="n">value</span> <span class="o">=</span> <span class="n">datum</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="n">k</span><span class="p">]</span>
+                        <span class="n">text_to_draw</span> <span class="o">=</span> <span class="n">desc</span><span class="o">+</span><span class="s">&quot; </span><span class="si">%.3f</span><span class="s">&quot;</span><span class="o">%</span><span class="n">value</span>
+                        <span class="n">width</span><span class="p">,</span> <span class="n">height</span> <span class="o">=</span> <span class="n">draw</span><span class="o">.</span><span class="n">textsize</span><span class="p">(</span><span class="n">text_to_draw</span><span class="p">)</span> <span class="c">#@UnusedVariable</span>
+                        <span class="n">offset</span> <span class="o">+=</span> <span class="n">height</span> <span class="o">+</span> <span class="mi">3</span>
+                        <span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="n">j</span><span class="o">*</span><span class="p">(</span><span class="n">max_radius</span><span class="o">+</span><span class="n">h_ball_separation</span><span class="p">),</span> <span class="n">i</span><span class="o">*</span><span class="p">(</span><span class="n">max_radius</span><span class="o">+</span><span class="n">v_ball_separation</span><span class="p">)</span><span class="o">+</span><span class="n">max_radius</span><span class="o">+</span><span class="n">offset</span><span class="p">)</span>
+                        <span class="n">writeTagPlusValue</span><span class="p">(</span><span class="n">image</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">desc</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">image</span>
+</div>
+<div class="viewcode-block" id="plotSummaryTable"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.plotSummaryTable">[docs]</a><span class="k">def</span> <span class="nf">plotSummaryTable</span><span class="p">(</span><span class="n">size</span><span class="p">,</span> <span class="n">clustering_statistics_dic</span><span class="p">,</span> <span class="n">per_cluster_statistics</span><span class="p">,</span> <span class="n">total_elements</span><span class="p">,</span> <span class="n">trajectory_comparison</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Writes the summary table, used in both the simple and extended output.</span>
+
+<span class="sd">    @param size: Size of the summary table.</span>
+<span class="sd">    @param clustering_statistics_dic:</span>
+<span class="sd">    @param per_cluster_statistics:</span>
+<span class="sd">    @param total_elements:</span>
+<span class="sd">    @param trajectory_comparison: If true, it means we are performing a trajectory comparison, and the trajectory comparison</span>
+<span class="sd">    specific data is added.</span>
+
+<span class="sd">    @return: A PIL image with the written summary table.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">canvas</span> <span class="o">=</span> <span class="n">Image</span><span class="o">.</span><span class="n">new</span><span class="p">(</span><span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span><span class="n">color</span><span class="o">=</span><span class="p">(</span><span class="mi">255</span><span class="p">,)</span><span class="o">*</span><span class="mi">4</span><span class="p">)</span>
+    <span class="n">draw</span> <span class="o">=</span> <span class="n">ImageDraw</span><span class="o">.</span><span class="n">Draw</span><span class="p">(</span><span class="n">canvas</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Num. elements:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%d</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">total_elements</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">trajectory_comparison</span><span class="p">:</span>
+
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Num. elements A:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%d</span><span class="s"> (</span><span class="si">%.2f%%</span><span class="s">, self: </span><span class="si">%.2f%%</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;number_elements_pure_A&quot;</span><span class="p">],</span>\
+                                                                     <span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;elems_percent_pure_A&quot;</span><span class="p">],</span>\
+                                                                     <span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;elems_self_percent_pure_A&quot;</span><span class="p">])))</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Num. elements B:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%d</span><span class="s"> (</span><span class="si">%.2f%%</span><span class="s">, self: </span><span class="si">%.2f%%</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;number_elements_pure_B&quot;</span><span class="p">],</span>\
+                                                                     <span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;elems_percent_pure_B&quot;</span><span class="p">],</span>\
+                                                                     <span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;elems_self_percent_pure_B&quot;</span><span class="p">])))</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Num. elements Mixed:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%d</span><span class="s"> (</span><span class="si">%.2f%%</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;number_elements_mixed&quot;</span><span class="p">],</span>\
+                                                                     <span class="n">clustering_statistics_dic</span><span class="p">[</span><span class="s">&quot;elems_percent_mixed&quot;</span><span class="p">])))</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Mean cluster size:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%.2f</span><span class="s"> (</span><span class="si">%.2f</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_sizes&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>\
+                                                   <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_sizes&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]))))</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Mean distance to center:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%.2f</span><span class="s"> (</span><span class="si">%.2f</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_mean_distances&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>\
+                                                   <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_mean_distances&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]))))</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Mean max. distance:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%.2f</span><span class="s"> (</span><span class="si">%.2f</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_max_distances&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>\
+                                                   <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_max_distances&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]))))</span>
+
+    <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Mean dispersion:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%.2f</span><span class="s"> (</span><span class="si">%.2f</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_dispersions&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span>\
+                                                   <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;cluster_dispersions&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">]))))</span>
+    <span class="k">if</span> <span class="n">trajectory_comparison</span><span class="p">:</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s">&quot;Mean center differences:&quot;</span><span class="p">,</span><span class="s">&quot;   </span><span class="si">%.2f</span><span class="s"> (</span><span class="si">%.2f</span><span class="s">)&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">remove_zeros</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;center_differences&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">])),</span>\
+                                                       <span class="n">numpy</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">remove_zeros</span><span class="p">(</span><span class="n">per_cluster_statistics</span><span class="p">[</span><span class="s">&quot;center_differences&quot;</span><span class="p">][</span><span class="mi">1</span><span class="p">])))))</span>
+    <span class="n">initial_pos</span> <span class="o">=</span> <span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">30</span><span class="p">)</span>
+    <span class="n">offset</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">lines</span><span class="p">:</span>
+        <span class="n">position</span> <span class="o">=</span> <span class="p">(</span><span class="n">initial_pos</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="n">initial_pos</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="n">offset</span><span class="p">)</span>
+        <span class="n">writeTagPlusStringValue</span><span class="p">(</span><span class="n">canvas</span><span class="p">,</span> <span class="n">position</span><span class="p">,</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">offset</span> <span class="o">+=</span> <span class="n">draw</span><span class="o">.</span><span class="n">textsize</span><span class="p">(</span><span class="n">l</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span><span class="o">+</span><span class="mi">5</span>
+    <span class="k">return</span> <span class="n">canvas</span>
+</div>
+<div class="viewcode-block" id="fig2data"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.fig2data">[docs]</a><span class="k">def</span> <span class="nf">fig2data</span> <span class="p">(</span><span class="n">fig</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a Matplotlib figure to a 4D numpy array with RGBA channels and return it</span>
+
+<span class="sd">    @param fig: a matplotlib figure</span>
+
+<span class="sd">    @return: a numpy 3D array of RGBA values</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># draw the renderer</span>
+    <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">draw</span> <span class="p">(</span> <span class="p">)</span>
+
+    <span class="c"># Get the RGBA buffer from the figure</span>
+    <span class="n">w</span><span class="p">,</span><span class="n">h</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">get_width_height</span><span class="p">()</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">fromstring</span> <span class="p">(</span> <span class="n">fig</span><span class="o">.</span><span class="n">canvas</span><span class="o">.</span><span class="n">tostring_argb</span><span class="p">(),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">numpy</span><span class="o">.</span><span class="n">uint8</span> <span class="p">)</span>
+    <span class="n">buf</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="mi">4</span> <span class="p">)</span>
+
+    <span class="c"># canvas.tostring_argb give pixmap in ARGB mode. Roll the ALPHA channel to have it in RGBA mode</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">roll</span> <span class="p">(</span> <span class="n">buf</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">axis</span> <span class="o">=</span> <span class="mi">2</span> <span class="p">)</span>
+    <span class="k">return</span> <span class="n">buf</span>
+</div>
+<div class="viewcode-block" id="fig2img"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.fig2img">[docs]</a><span class="k">def</span> <span class="nf">fig2img</span> <span class="p">(</span><span class="n">fig</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert a Matplotlib figure to a PIL Image in RGBA format and return it</span>
+
+<span class="sd">    @param fig: a matplotlib figure</span>
+
+<span class="sd">    @return: a Python Imaging Library ( PIL ) image</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c"># put the figure pixmap into a numpy array</span>
+    <span class="n">buf</span> <span class="o">=</span> <span class="n">fig2data</span> <span class="p">(</span> <span class="n">fig</span> <span class="p">)</span>
+    <span class="n">w</span><span class="p">,</span> <span class="n">h</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">buf</span><span class="o">.</span><span class="n">shape</span> <span class="c">#@UnusedVariable</span>
+    <span class="k">return</span> <span class="n">Image</span><span class="o">.</span><span class="n">fromstring</span><span class="p">(</span> <span class="s">&quot;RGBA&quot;</span><span class="p">,</span> <span class="p">(</span> <span class="n">w</span> <span class="p">,</span><span class="n">h</span> <span class="p">),</span> <span class="n">buf</span><span class="o">.</span><span class="n">tostring</span><span class="p">(</span> <span class="p">)</span> <span class="p">)</span>
+</div>
+<div class="viewcode-block" id="normalize"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.normalize">[docs]</a><span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="n">mylist</span><span class="p">,</span> <span class="n">max_value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rescales the values of an array to be in the range (-max_value, max_value).</span>
+
+<span class="sd">    @param mylist: The array to normalize.</span>
+<span class="sd">    @param max_value: Maximum value in the range.</span>
+
+<span class="sd">    @return: The normalized list (numpy.array).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">max_in_list</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mylist</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">mylist</span><span class="p">:</span>
+        <span class="n">normlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="o">*</span><span class="nb">float</span><span class="p">(</span><span class="n">max_value</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">max_in_list</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">normlist</span>
+</div>
+<div class="viewcode-block" id="normalize_in_range"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.normalize_in_range">[docs]</a><span class="k">def</span> <span class="nf">normalize_in_range</span><span class="p">(</span><span class="n">mylist</span><span class="p">,</span> <span class="n">min_value</span><span class="p">,</span> <span class="n">max_value</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rescales all the values of an array to be in the range (min_value, max_value).</span>
+
+<span class="sd">    @param mylist: The array to normalize.</span>
+<span class="sd">    @param min_value: Minimum value we want to have in the list.</span>
+<span class="sd">    @param max_value: Maximum value in the range.</span>
+
+<span class="sd">    @return: The normalized list.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">normlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">max_in_list</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">mylist</span><span class="p">)</span>
+    <span class="n">effective_range</span> <span class="o">=</span> <span class="n">max_value</span> <span class="o">-</span> <span class="n">min_value</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">mylist</span><span class="p">:</span>
+        <span class="n">normlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">min_value</span> <span class="o">+</span> <span class="n">effective_range</span><span class="o">*</span><span class="p">(</span><span class="n">d</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">max_in_list</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">normlist</span>
+</div>
+<div class="viewcode-block" id="remove_zeros"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.remove_zeros">[docs]</a><span class="k">def</span> <span class="nf">remove_zeros</span><span class="p">(</span><span class="n">mylist</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a new list which is equal to the input list but without zeros.</span>
+
+<span class="sd">    @param mylist: The array to delete zeros.</span>
+
+<span class="sd">    @return: The list without zeros.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">myretlist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">elem</span> <span class="ow">in</span> <span class="n">mylist</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">elem</span><span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">myretlist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">elem</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">myretlist</span>
+</div>
+<div class="viewcode-block" id="tuple_to_int"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.tuple_to_int">[docs]</a><span class="k">def</span> <span class="nf">tuple_to_int</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a copy of a tuple, populated with int casts of its elements.</span>
+
+<span class="sd">    @param t: The tuple to cast.</span>
+
+<span class="sd">    @return: A copy of the tuple with int elements.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mytmplist</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">element</span> <span class="ow">in</span> <span class="n">t</span><span class="p">:</span>
+        <span class="n">mytmplist</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">element</span><span class="p">))</span>
+    <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">mytmplist</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="shorten_name"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.plotTools.shorten_name">[docs]</a><span class="k">def</span> <span class="nf">shorten_name</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">=</span> <span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Makes a string shorter, leaving only certain quantity of the last characters, preceded by &#39;...&#39;.</span>
+
+<span class="sd">    @param name: The string to shorten.</span>
+<span class="sd">    @param max_length: Maximum length of the resulting string.</span>
+
+<span class="sd">    @return: A string with max_lenght characters plus &#39;...&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">max_length</span><span class="p">:</span>
+        <span class="k">return</span>  <span class="s">&quot;...&quot;</span><span class="o">+</span><span class="n">name</span><span class="p">[</span><span class="o">-</span><span class="n">max_length</span><span class="p">:]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">name</span>
+</pre></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

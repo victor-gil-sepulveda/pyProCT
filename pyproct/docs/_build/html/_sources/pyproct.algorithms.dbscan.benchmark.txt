@@ -1,0 +1,22 @@
+pyproct.algorithms.dbscan.benchmark package
+===========================================
+
+Submodules
+----------
+
+pyproct.algorithms.dbscan.benchmark.DBSCANbenchmark module
+----------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.dbscan.benchmark.DBSCANbenchmark
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.dbscan.benchmark
+    :members:
+    :undoc-members:
+    :show-inheritance:

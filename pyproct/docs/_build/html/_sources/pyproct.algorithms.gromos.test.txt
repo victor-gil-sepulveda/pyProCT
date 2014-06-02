@@ -1,0 +1,30 @@
+pyproct.algorithms.gromos.test package
+======================================
+
+Submodules
+----------
+
+pyproct.algorithms.gromos.test.TestAutoParametrization module
+-------------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.gromos.test.TestAutoParametrization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.algorithms.gromos.test.TestGromos module
+------------------------------------------------
+
+.. automodule:: pyproct.algorithms.gromos.test.TestGromos
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.gromos.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

@@ -1,0 +1,29 @@
+pyproct.clustering.comparison.distrprob package
+===============================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.clustering.comparison.distrprob.test
+
+Submodules
+----------
+
+pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence module
+------------------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.comparison.distrprob
+    :members:
+    :undoc-members:
+    :show-inheritance:

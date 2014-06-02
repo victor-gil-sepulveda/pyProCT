@@ -1,0 +1,45 @@
+pyproct.driver.handlers.matrix package
+======================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.driver.handlers.matrix.test
+
+Submodules
+----------
+
+pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder module
+--------------------------------------------------------------------
+
+.. automodule:: pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.driver.handlers.matrix.matrixHandler module
+---------------------------------------------------
+
+.. automodule:: pyproct.driver.handlers.matrix.matrixHandler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.driver.handlers.matrix.rmsdMatrixBuilder module
+-------------------------------------------------------
+
+.. automodule:: pyproct.driver.handlers.matrix.rmsdMatrixBuilder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.driver.handlers.matrix
+    :members:
+    :undoc-members:
+    :show-inheritance:

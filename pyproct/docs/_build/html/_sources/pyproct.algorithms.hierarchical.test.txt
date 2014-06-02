@@ -1,0 +1,22 @@
+pyproct.algorithms.hierarchical.test package
+============================================
+
+Submodules
+----------
+
+pyproct.algorithms.hierarchical.test.TestHierarchicalClustering module
+----------------------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.hierarchical.test.TestHierarchicalClustering
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.hierarchical.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

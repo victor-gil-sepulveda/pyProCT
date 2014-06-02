@@ -1,0 +1,30 @@
+pyproct.driver.handlers.matrix.test package
+===========================================
+
+Submodules
+----------
+
+pyproct.driver.handlers.matrix.test.TestEuclidean module
+--------------------------------------------------------
+
+.. automodule:: pyproct.driver.handlers.matrix.test.TestEuclidean
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.driver.handlers.matrix.test.testMatrix module
+-----------------------------------------------------
+
+.. automodule:: pyproct.driver.handlers.matrix.test.testMatrix
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.driver.handlers.matrix.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

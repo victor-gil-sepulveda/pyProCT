@@ -1,0 +1,180 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.metrics.test.TestPCAMetric &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.metrics.test.TestPCAMetric</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 20/12/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">prody</span>
+
+<span class="kn">from</span> <span class="nn">pyproct.tools.test.data.amber_short_ca</span> <span class="kn">import</span> <span class="n">amber_short_ca_contents</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.metrics.pcaMetrics</span> <span class="kn">import</span> <span class="n">PCAMetric</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">Cluster</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.clustering</span> <span class="kn">import</span> <span class="n">Clustering</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="TrajectoryHandlerStub"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.TrajectoryHandlerStub">[docs]</a><span class="k">class</span> <span class="nc">TrajectoryHandlerStub</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">coords</span><span class="p">,</span> <span class="n">apc</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span> <span class="o">=</span> <span class="n">coords</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">atoms_per_conformation</span> <span class="o">=</span> <span class="n">apc</span>
+
+<div class="viewcode-block" id="TrajectoryHandlerStub.getFittingCoordinates"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.TrajectoryHandlerStub.getFittingCoordinates">[docs]</a>    <span class="k">def</span> <span class="nf">getFittingCoordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">coordinates</span>
+            </div>
+<div class="viewcode-block" id="TrajectoryHandlerStub.getCalculationCoordinates"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.TrajectoryHandlerStub.getCalculationCoordinates">[docs]</a>    <span class="k">def</span> <span class="nf">getCalculationCoordinates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">None</span>
+    </div></div>
+<div class="viewcode-block" id="testPCAMetric"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.testPCAMetric">[docs]</a><span class="k">class</span> <span class="nc">testPCAMetric</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="testPCAMetric.setUpClass"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.testPCAMetric.setUpClass">[docs]</a>    <span class="k">def</span> <span class="nf">setUpClass</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="c"># Generate and read the pdb</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">pdb_path</span> <span class="o">=</span> <span class="s">&quot;tmp_pdb.pdb&quot;</span>
+        <span class="nb">open</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">pdb_path</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">amber_short_ca_contents</span><span class="p">);</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">prody</span><span class="o">.</span><span class="n">confProDy</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="s">&#39;none&#39;</span><span class="p">)</span><span class="c">#setVerbosity(&#39;none&#39;)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Impossible to silent prody&quot;</span> 
+        <span class="n">cls</span><span class="o">.</span><span class="n">pdb</span> <span class="o">=</span> <span class="n">prody</span><span class="o">.</span><span class="n">parsePDB</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">pdb_path</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s">&#39;calpha&#39;</span><span class="p">)</span>
+        
+        <span class="c"># Save coordsets before superposition</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">not_iterposed_coordsets</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">getCoordsets</span><span class="p">())</span>
+        
+        <span class="c"># Do Prody iterposition</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">ensemble</span> <span class="o">=</span> <span class="n">prody</span><span class="o">.</span><span class="n">Ensemble</span><span class="p">(</span><span class="s">&#39;pca_test_ensemble&#39;</span><span class="p">)</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">setCoords</span><span class="p">(</span> <span class="n">cls</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">getCoords</span><span class="p">())</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">addCoordset</span><span class="p">(</span><span class="n">cls</span><span class="o">.</span><span class="n">pdb</span><span class="o">.</span><span class="n">getCoordsets</span><span class="p">())</span>
+        <span class="c">#prody.setVerbosity(&#39;info&#39;)</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">iterpose</span><span class="p">()</span>
+        <span class="n">cls</span><span class="o">.</span><span class="n">coordsets</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">ensemble</span><span class="o">.</span><span class="n">getCoordsets</span><span class="p">()</span>
+        </div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="testPCAMetric.tearDownClass"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.testPCAMetric.tearDownClass">[docs]</a>    <span class="k">def</span> <span class="nf">tearDownClass</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">system</span><span class="p">(</span><span class="s">&quot;rm &quot;</span><span class="o">+</span><span class="n">cls</span><span class="o">.</span><span class="n">pdb_path</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="testPCAMetric.test_covariance_matrix_vs_prody"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.testPCAMetric.test_covariance_matrix_vs_prody">[docs]</a>    <span class="k">def</span> <span class="nf">test_covariance_matrix_vs_prody</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do it with PCA metric</span>
+        <span class="n">my_cov_matrix</span> <span class="o">=</span> <span class="n">PCAMetric</span><span class="o">.</span><span class="n">create_covariance_matrix</span><span class="p">(</span><span class="n">testPCAMetric</span><span class="o">.</span><span class="n">coordsets</span><span class="p">)</span>
+         
+        <span class="c"># Do it with prody</span>
+        <span class="n">pca</span> <span class="o">=</span> <span class="n">prody</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="s">&#39;pcametric_pca&#39;</span><span class="p">)</span>
+        <span class="n">pca</span><span class="o">.</span><span class="n">buildCovariance</span><span class="p">(</span><span class="n">testPCAMetric</span><span class="o">.</span><span class="n">ensemble</span><span class="p">)</span>
+        <span class="n">prody_cov_matrix</span> <span class="o">=</span> <span class="n">pca</span><span class="o">.</span><span class="n">_cov</span>
+         
+        <span class="c"># Compare</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">my_cov_matrix</span><span class="p">,</span> <span class="n">prody_cov_matrix</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+     </div>
+<div class="viewcode-block" id="testPCAMetric.test_eigenvalues"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.testPCAMetric.test_eigenvalues">[docs]</a>    <span class="k">def</span> <span class="nf">test_eigenvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c"># do it with PCA metric</span>
+        <span class="n">my_cov_matrix</span> <span class="o">=</span> <span class="n">PCAMetric</span><span class="o">.</span><span class="n">create_covariance_matrix</span><span class="p">(</span><span class="n">testPCAMetric</span><span class="o">.</span><span class="n">coordsets</span><span class="p">)</span>
+        <span class="n">biggest_eigenvalue</span> <span class="o">=</span> <span class="n">PCAMetric</span><span class="o">.</span><span class="n">calculate_biggest_eigenvalue</span><span class="p">(</span><span class="n">my_cov_matrix</span><span class="p">)</span>
+         
+        <span class="c"># Do it with prody</span>
+        <span class="n">pca</span> <span class="o">=</span> <span class="n">prody</span><span class="o">.</span><span class="n">PCA</span><span class="p">(</span><span class="s">&#39;pcametric_pca&#39;</span><span class="p">)</span>
+        <span class="n">pca</span><span class="o">.</span><span class="n">buildCovariance</span><span class="p">(</span><span class="n">testPCAMetric</span><span class="o">.</span><span class="n">ensemble</span><span class="p">)</span>
+        <span class="n">pca</span><span class="o">.</span><span class="n">calcModes</span><span class="p">(</span><span class="n">n_modes</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEqual</span><span class="p">(</span><span class="n">pca</span><span class="o">.</span><span class="n">getEigvals</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span> <span class="n">biggest_eigenvalue</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+         </div>
+<div class="viewcode-block" id="testPCAMetric.test_PCA"><a class="viewcode-back" href="../../../../../pyproct.clustering.metrics.test.html#pyproct.clustering.metrics.test.TestPCAMetric.testPCAMetric.test_PCA">[docs]</a>    <span class="k">def</span> <span class="nf">test_PCA</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Regression test.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">trajectory_handler</span> <span class="o">=</span> <span class="n">TrajectoryHandlerStub</span><span class="p">(</span><span class="n">testPCAMetric</span><span class="o">.</span><span class="n">not_iterposed_coordsets</span><span class="p">,</span><span class="mi">66</span><span class="p">)</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">Clustering</span><span class="p">([</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">)),</span><span class="n">Cluster</span><span class="p">(</span><span class="bp">None</span><span class="p">,</span><span class="nb">range</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">12</span><span class="p">))],</span> <span class="s">&quot;a clustering&quot;</span><span class="p">)</span>
+        <span class="n">pcaMetric</span> <span class="o">=</span> <span class="n">PCAMetric</span><span class="p">(</span><span class="n">trajectory_handler</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertAlmostEquals</span><span class="p">(</span><span class="n">pcaMetric</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">clustering</span><span class="p">),</span> <span class="mf">1.427748687873</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+</div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.testName&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

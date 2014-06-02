@@ -1,0 +1,284 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.algorithms.dbscan.test.TestDBSCAN &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.algorithms.dbscan.test.TestDBSCAN</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 17/04/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.condensedMatrix</span> <span class="kn">import</span> <span class="n">CondensedMatrix</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.dbscan.dbscanAlgorithm</span> <span class="kn">import</span> <span class="n">DBSCANAlgorithm</span><span class="p">,</span>\
+    <span class="n">PointClassType</span>
+<span class="c"># from pyproct.algorithms.dbscan.dbscanTools import kth_elements_distance, k_dist,\</span>
+<span class="c">#     k_scale_gen, zhou_adaptative_determination,dbscan_param_space_search</span>
+<span class="kn">from</span> <span class="nn">pyproct.algorithms.dbscan.cython.cythonDbscanTools</span> <span class="kn">import</span> <span class="n">kth_elements_distance</span><span class="p">,</span> <span class="n">k_dist</span><span class="p">,</span>\
+    <span class="n">k_scale_gen</span><span class="p">,</span><span class="n">dbscan_param_space_search</span><span class="p">,</span><span class="n">zhou_adaptative_determination</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<div class="viewcode-block" id="Test"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test">[docs]</a><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+
+<div class="viewcode-block" id="Test.test_eps_neighborhood"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_eps_neighborhood">[docs]</a>    <span class="k">def</span> <span class="nf">test_eps_neighborhood</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span>
+                                          <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span> <span class="p">,</span><span class="mf">1.</span><span class="p">,</span>
+                                              <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span>
+                                                  <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span>
+                                                      <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span>
+                                                          <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span>
+                                                              <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                                                  <span class="mf">1.</span><span class="p">])</span>
+        <span class="n">dbscan_alg</span> <span class="o">=</span> <span class="n">DBSCANAlgorithm</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__eps_neighborhood</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__eps_neighborhood</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__eps_neighborhood</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__eps_neighborhood</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mf">1.</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">element_neighbors_within_radius</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">3</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">element_neighbors_within_radius</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">2</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">element_neighbors_within_radius</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">element_neighbors_within_radius</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mf">1.</span><span class="p">),[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">7</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="Test.test_seed_expansion"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_seed_expansion">[docs]</a>    <span class="k">def</span> <span class="nf">test_seed_expansion</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Graph:</span>
+<span class="sd">        1--2  3--4</span>
+<span class="sd">        \ /</span>
+<span class="sd">         0</span>
+<span class="sd">         </span>
+<span class="sd">        Adj. list:</span>
+<span class="sd">        </span>
+<span class="sd">        1 1 0 0 0</span>
+<span class="sd">          1 0 0 0 </span>
+<span class="sd">            0 0 0 </span>
+<span class="sd">              0 0 </span>
+<span class="sd">                1</span>
+<span class="sd">                </span>
+<span class="sd">        Inv. distance adjacency list (two nodes are connected if their distance is </span>
+<span class="sd">        lower than x)</span>
+<span class="sd">        </span>
+<span class="sd">        0 0 x x x</span>
+<span class="sd">          0 x x x </span>
+<span class="sd">            x x x </span>
+<span class="sd">              x x </span>
+<span class="sd">                0</span>
+<span class="sd">                      </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> 
+                                         <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                            <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                               <span class="mf">0.</span><span class="p">])</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">row_length</span>
+        <span class="n">dbscan_alg</span> <span class="o">=</span> <span class="n">DBSCANAlgorithm</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">minpts</span> <span class="o">=</span> <span class="mi">2</span>
+        
+        <span class="n">elements_class</span> <span class="o">=</span> <span class="p">[</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">]</span><span class="o">*</span><span class="n">N</span> 
+        <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__seed_expansion</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">minpts</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="n">elements_class</span><span class="p">)</span>
+        <span class="n">expected_classes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">expected_classes</span><span class="p">,</span> <span class="n">elements_class</span><span class="p">)</span>
+        
+        <span class="n">elements_class</span> <span class="o">=</span> <span class="p">[</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">]</span><span class="o">*</span><span class="n">N</span> 
+        <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__seed_expansion</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">minpts</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">elements_class</span><span class="p">)</span>
+        <span class="n">expected_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span> <span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">expected_classes</span><span class="p">,</span> <span class="n">elements_class</span><span class="p">)</span>
+        
+        <span class="n">minpts</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__seed_expansion</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">minpts</span><span class="p">,</span> <span class="p">[</span><span class="mi">3</span><span class="p">],</span> <span class="n">elements_class</span><span class="p">)</span>
+        <span class="n">expected_classes</span> <span class="o">=</span> <span class="p">[</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">expected_classes</span><span class="p">,</span> <span class="n">elements_class</span><span class="p">)</span>
+        
+        <span class="n">elements_class</span> <span class="o">=</span> <span class="p">[</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">]</span><span class="o">*</span><span class="n">N</span> 
+        <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">_DBSCANAlgorithm__seed_expansion</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">eps</span><span class="p">,</span> <span class="n">minpts</span><span class="p">,</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">],</span> <span class="n">elements_class</span><span class="p">)</span>
+        <span class="n">expected_classes</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">expected_classes</span><span class="p">,</span> <span class="n">elements_class</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_dbscan"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_dbscan">[docs]</a>    <span class="k">def</span> <span class="nf">test_dbscan</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> 
+                                         <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                            <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                               <span class="mf">0.</span><span class="p">])</span>
+        <span class="n">dbscan_alg</span> <span class="o">=</span> <span class="n">DBSCANAlgorithm</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">minpts</span> <span class="o">=</span> <span class="mi">2</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">(</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;eps&quot;</span><span class="p">:</span><span class="n">eps</span><span class="p">,</span> <span class="s">&quot;minpts&quot;</span><span class="p">:</span><span class="n">minpts</span><span class="p">})</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">gen_class_list</span><span class="p">(</span><span class="n">starts_with</span> <span class="o">=</span> <span class="mi">1</span><span class="p">),</span> <span class="n">expected</span><span class="p">)</span>
+        <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">element_class</span> <span class="o">=</span> <span class="p">[</span><span class="n">PointClassType</span><span class="o">.</span><span class="n">UNCLASSIFIED</span><span class="p">]</span><span class="o">*</span><span class="mi">5</span>
+        <span class="n">eps</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="n">minpts</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">(</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;eps&quot;</span><span class="p">:</span><span class="n">eps</span><span class="p">,</span> <span class="s">&quot;minpts&quot;</span><span class="p">:</span><span class="n">minpts</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">gen_class_list</span><span class="p">(</span><span class="n">starts_with</span> <span class="o">=</span> <span class="mi">1</span><span class="p">),[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
+        </div>
+<div class="viewcode-block" id="Test.test_dbscan_regression_mini"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_dbscan_regression_mini">[docs]</a>    <span class="k">def</span> <span class="nf">test_dbscan_regression_mini</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span>    <span class="mf">12.36931688</span><span class="p">,</span>   <span class="mf">5.83095189</span><span class="p">,</span>   <span class="mf">9.43398113</span><span class="p">,</span>  <span class="mf">12.52996409</span><span class="p">,</span>  <span class="mf">15.65247584</span><span class="p">,</span>  <span class="mf">17.4642492</span><span class="p">,</span>    
+                                                        <span class="mf">9.21954446</span><span class="p">,</span>   <span class="mf">4.47213595</span><span class="p">,</span>   <span class="mf">3.16227766</span><span class="p">,</span>   <span class="mf">4.47213595</span><span class="p">,</span>   <span class="mf">5.65685425</span><span class="p">,</span>   
+                                                                      <span class="mf">5.</span><span class="p">,</span>           <span class="mf">8.06225775</span><span class="p">,</span>  <span class="mf">11.18033989</span><span class="p">,</span>  <span class="mf">13.15294644</span><span class="p">,</span>
+                                                                                    <span class="mf">3.16227766</span><span class="p">,</span>   <span class="mf">6.32455532</span><span class="p">,</span>   <span class="mf">8.24621125</span><span class="p">,</span>   
+                                                                                                  <span class="mf">3.16227766</span><span class="p">,</span>   <span class="mf">5.09901951</span><span class="p">,</span>   
+                                                                                                                <span class="mf">2.</span>  <span class="p">])</span>
+        <span class="n">dbscan_alg</span> <span class="o">=</span> <span class="n">DBSCANAlgorithm</span><span class="p">(</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">clustering</span> <span class="o">=</span> <span class="n">dbscan_alg</span><span class="o">.</span><span class="n">perform_clustering</span><span class="p">(</span><span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;eps&quot;</span><span class="p">:</span><span class="mf">4.0</span><span class="p">,</span> <span class="s">&quot;minpts&quot;</span><span class="p">:</span><span class="mi">3</span><span class="p">})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">clustering</span><span class="o">.</span><span class="n">gen_class_list</span><span class="p">(</span><span class="n">starts_with</span> <span class="o">=</span> <span class="mi">1</span><span class="p">),[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span> <span class="c">#[0, 1, 0, 1, 1, 1, 0]</span>
+        </div>
+<div class="viewcode-block" id="Test.test_kth_elements"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_kth_elements">[docs]</a>    <span class="k">def</span> <span class="nf">test_kth_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span><span class="mf">17.46</span><span class="p">,</span>   <span class="mf">9.21</span><span class="p">,</span>  <span class="mf">4.47</span><span class="p">,</span>  <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">4.47</span><span class="p">,</span>   <span class="mf">5.65</span><span class="p">,</span>   
+                                             <span class="mf">12.36</span><span class="p">,</span>  <span class="mf">5.83</span><span class="p">,</span>  <span class="mf">9.43</span><span class="p">,</span>  <span class="mf">12.52</span><span class="p">,</span>  <span class="mf">15.65</span><span class="p">,</span>
+                                                     <span class="mf">5.</span><span class="p">,</span>    <span class="mf">8.06</span><span class="p">,</span>  <span class="mf">11.18</span><span class="p">,</span>  <span class="mf">13.15</span><span class="p">,</span>
+                                                            <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">6.35</span><span class="p">,</span>   <span class="mf">8.24</span><span class="p">,</span>   
+                                                                    <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">5.10</span><span class="p">,</span>
+                                                                            <span class="mf">2.</span>  <span class="p">])</span>
+        <span class="nb">buffer</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">row_length</span><span class="p">)</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mf">3.1600000000000001</span><span class="p">,</span> <span class="mf">5.0999999999999996</span><span class="p">]</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">kth_elements_distance</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span><span class="nb">buffer</span><span class="p">,</span><span class="n">distances</span><span class="p">)</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">expected</span><span class="p">,</span> <span class="n">result</span><span class="p">,</span> <span class="n">decimal</span> <span class="o">=</span> <span class="mi">3</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_k_dist"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_k_dist">[docs]</a>    <span class="k">def</span> <span class="nf">test_k_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span><span class="mf">17.46</span><span class="p">,</span>   <span class="mf">9.21</span><span class="p">,</span>  <span class="mf">4.47</span><span class="p">,</span>  <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">4.47</span><span class="p">,</span>   <span class="mf">5.65</span><span class="p">,</span>   
+                                             <span class="mf">12.36</span><span class="p">,</span>  <span class="mf">5.83</span><span class="p">,</span>  <span class="mf">9.43</span><span class="p">,</span>  <span class="mf">12.52</span><span class="p">,</span>  <span class="mf">15.65</span><span class="p">,</span>
+                                                     <span class="mf">5.</span><span class="p">,</span>    <span class="mf">8.06</span><span class="p">,</span>  <span class="mf">11.18</span><span class="p">,</span>  <span class="mf">13.15</span><span class="p">,</span>
+                                                            <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">6.35</span><span class="p">,</span>   <span class="mf">8.24</span><span class="p">,</span>   
+                                                                    <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">5.10</span><span class="p">,</span>
+                                                                            <span class="mf">2.</span>  <span class="p">])</span>
+        <span class="nb">buffer</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">row_length</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">k_dist</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span>
+        <span class="c"># [[  4.47   5.65]</span>
+        <span class="c"># [  9.43  12.52]</span>
+        <span class="c"># [  8.06  11.18]</span>
+        <span class="c"># [  4.47   5.83]</span>
+        <span class="c"># [  3.16   5.1 ]</span>
+        <span class="c"># [  3.16   6.35]</span>
+        <span class="c"># [  5.1    8.24]]</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="nb">sorted</span><span class="p">([</span>  <span class="mf">4.47</span><span class="p">,</span>   <span class="mf">9.43</span><span class="p">,</span>  <span class="mf">8.06</span><span class="p">,</span>    <span class="mf">4.47</span><span class="p">,</span>   <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">3.16</span><span class="p">,</span>   <span class="mf">5.1</span><span class="p">]),</span>
+                    <span class="nb">sorted</span><span class="p">([</span>  <span class="mf">5.65</span><span class="p">,</span>  <span class="mf">12.52</span><span class="p">,</span> <span class="mf">11.18</span><span class="p">,</span>    <span class="mf">5.83</span><span class="p">,</span>   <span class="mf">5.1</span><span class="p">,</span>    <span class="mf">6.35</span><span class="p">,</span>   <span class="mf">8.24</span><span class="p">])]</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">expected</span><span class="p">,</span><span class="n">decimal</span> <span class="o">=</span> <span class="mi">2</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_k_scale_gen"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_k_scale_gen">[docs]</a>    <span class="k">def</span> <span class="nf">test_k_scale_gen</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span> <span class="n">k_scale_gen</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>    <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="mi">32</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span><span class="mi">128</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span> <span class="n">k_scale_gen</span><span class="p">(</span><span class="mi">7</span><span class="p">),</span>      <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span> <span class="n">k_scale_gen</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span>      <span class="p">[])</span>
+        </div>
+<div class="viewcode-block" id="Test.test_zhou_adaptative_determination"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_zhou_adaptative_determination">[docs]</a>    <span class="k">def</span> <span class="nf">test_zhou_adaptative_determination</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> 
+                                          <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                              <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                                  <span class="mf">0.</span><span class="p">])</span>
+        <span class="nb">buffer</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="n">distances</span><span class="o">.</span><span class="n">row_length</span><span class="p">)</span>
+        <span class="n">k_dist_matrix</span> <span class="o">=</span> <span class="n">k_dist</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">]),</span> <span class="nb">buffer</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span>
+        <span class="n">zhou_params</span> <span class="o">=</span>  <span class="n">zhou_adaptative_determination</span><span class="p">(</span><span class="n">k_dist_matrix</span><span class="p">,</span> <span class="n">distances</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">zhou_params</span><span class="p">,[(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">),</span> <span class="p">(</span><span class="mf">4.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">)])</span>
+        </div>
+<div class="viewcode-block" id="Test.test_dbscan_param_space_search"><a class="viewcode-back" href="../../../../../pyproct.algorithms.dbscan.test.html#pyproct.algorithms.dbscan.test.TestDBSCAN.Test.test_dbscan_param_space_search">[docs]</a>    <span class="k">def</span> <span class="nf">test_dbscan_param_space_search</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="n">CondensedMatrix</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span>
+                                          <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span>
+                                              <span class="mf">2.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">,</span>
+                                                  <span class="mf">4.</span><span class="p">,</span> <span class="mf">4.</span><span class="p">,</span>
+                                                      <span class="mf">0.</span><span class="p">])</span>
+        <span class="n">k_list</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span>
+        
+        <span class="n">N</span> <span class="o">=</span> <span class="n">distances</span><span class="o">.</span><span class="n">row_length</span> <span class="c">#5</span>
+        
+        <span class="n">kdist_matrix</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span><span class="mf">2.</span><span class="p">,</span><span class="mf">3.</span><span class="p">,</span><span class="mf">4.</span><span class="p">,</span><span class="mf">5.</span><span class="p">,</span><span class="mf">6.</span><span class="p">],</span>
+                                    <span class="p">[</span><span class="mf">5.</span><span class="p">,</span><span class="mf">6.</span><span class="p">,</span><span class="mf">7.</span><span class="p">,</span><span class="mf">8.</span><span class="p">,</span><span class="mf">9.</span><span class="p">,</span><span class="mf">7.</span><span class="p">]])</span>
+        
+        <span class="n">param_pairs</span> <span class="o">=</span> <span class="n">dbscan_param_space_search</span><span class="p">(</span>   <span class="mi">90</span><span class="p">,</span> <span class="c"># 90# noise</span>
+                                                   <span class="mi">2</span><span class="p">,</span>
+                                                   <span class="n">N</span><span class="p">,</span>
+                                                   <span class="n">k_list</span><span class="p">,</span>
+                                                   <span class="n">kdist_matrix</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">param_pairs</span><span class="p">,</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">),</span> <span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mf">9.0</span><span class="p">)])</span>
+    </div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.testDBSCAN&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

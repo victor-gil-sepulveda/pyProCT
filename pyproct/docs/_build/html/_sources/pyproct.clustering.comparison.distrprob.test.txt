@@ -1,0 +1,22 @@
+pyproct.clustering.comparison.distrprob.test package
+====================================================
+
+Submodules
+----------
+
+pyproct.clustering.comparison.distrprob.test.TestKullbackLiebler module
+-----------------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.comparison.distrprob.test.TestKullbackLiebler
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.comparison.distrprob.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

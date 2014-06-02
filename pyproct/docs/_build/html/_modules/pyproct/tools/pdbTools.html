@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.tools.pdbTools &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.tools.pdbTools</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 16/03/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+<span class="kn">import</span> <span class="nn">prody</span> 
+
+<div class="viewcode-block" id="get_number_of_frames"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.get_number_of_frames">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_frames</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses the &#39;egrep&#39; shell command to count the number of times MODEL appears in the trajectory file, which will be indeed</span>
+<span class="sd">    the number of different structures.</span>
+<span class="sd">    </span>
+<span class="sd">    @param pdb_file: The pdb file (path) from which the number of frames will be counted.</span>
+<span class="sd">    </span>
+<span class="sd">    @return: The number of MODEL tags found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;egrep&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&#39;&#39;&quot;^MODEL&quot;&#39;&#39;</span><span class="p">,</span><span class="n">pdb_file</span><span class="p">],</span><span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+</div>
+<div class="viewcode-block" id="get_number_of_atoms"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.get_number_of_atoms">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_atoms</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Counts the number of ATOM and HETATM entries in the first model of a pdb file.</span>
+<span class="sd">    </span>
+<span class="sd">    @param pdb_file: The pdb file (path) from which the number of atoms will be counted.</span>
+<span class="sd">    </span>
+<span class="sd">    @return: The number of atoms found in the first frame.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">handler</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span><span class="s">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">number_of_models</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">number_of_atoms</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">handler</span><span class="p">:</span>
+        
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MODEL&quot;</span><span class="p">:</span>
+            <span class="n">number_of_models</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="k">if</span> <span class="n">number_of_models</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">break</span>
+
+        <span class="k">if</span> <span class="n">number_of_models</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ATOM&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;HETATM&quot;</span><span class="p">):</span>
+            <span class="n">number_of_atoms</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">number_of_atoms</span>
+</div>
+<div class="viewcode-block" id="read_to_TAG"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.read_to_TAG">[docs]</a><span class="k">def</span> <span class="nf">read_to_TAG</span><span class="p">(</span><span class="n">file_input_handler</span><span class="p">,</span> <span class="n">TAG</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Advances the file handler reading cursor to the line after a tag.</span>
+<span class="sd">    </span>
+<span class="sd">    @param file_input_handler: Working file handler.</span>
+<span class="sd">    @param TAG: The tag to advance to (for instance &quot;MODEL&quot;, or &quot;TER&quot;). </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>  
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">file_input_handler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">TAG</span><span class="p">,</span> <span class="nb">basestring</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">l</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">TAG</span><span class="p">)]</span><span class="o">==</span><span class="n">TAG</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">lines</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c"># if not, is a list</span>
+            <span class="k">for</span> <span class="n">tag</span> <span class="ow">in</span> <span class="n">TAG</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">l</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">tag</span><span class="p">)]</span><span class="o">==</span><span class="n">TAG</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">lines</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">,</span> <span class="s">&quot;The end of the file was reached and the tag &quot;</span><span class="o">+</span><span class="n">TAG</span><span class="o">+</span><span class="s">&quot; was not found.&quot;</span> 
+</div>
+<div class="viewcode-block" id="advance_to_TAG"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.advance_to_TAG">[docs]</a><span class="k">def</span> <span class="nf">advance_to_TAG</span><span class="p">(</span><span class="n">file_input_handler</span><span class="p">,</span> <span class="n">TAG</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Advances the file handler reading cursor until it finds a tag.</span>
+<span class="sd">    </span>
+<span class="sd">    @param file_input_handler: Working file handler.</span>
+<span class="sd">    @param TAG: The tag to advance to (for instance &quot;MODEL&quot;, or &quot;TER&quot;). </span>
+<span class="sd">    &quot;&quot;&quot;</span>   
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">file_input_handler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">l</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">TAG</span><span class="p">)]</span><span class="o">==</span><span class="n">TAG</span><span class="p">:</span>
+            <span class="k">return</span>
+</div>
+<div class="viewcode-block" id="write_a_tfile_model_into_other_tfile"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.write_a_tfile_model_into_other_tfile">[docs]</a><span class="k">def</span> <span class="nf">write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="n">file_in_handler</span><span class="p">,</span> 
+                                         <span class="n">file_out_handler</span><span class="p">,</span> 
+                                         <span class="n">current_model</span><span class="p">,</span> 
+                                         <span class="n">INITIAL_TAG</span><span class="p">,</span> 
+                                         <span class="n">END_TAG</span><span class="p">,</span> 
+                                         <span class="n">skip</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> 
+                                         <span class="n">keep_header</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It writes the next model found in a trajectory unless the skip parameter is set to &#39;True&#39;.</span>
+<span class="sd">    It makes the input file handler reading cursor to be placed the line after the end of the model.</span>
+<span class="sd">    </span>
+<span class="sd">    @param file_in_handler: Input file handler.</span>
+<span class="sd">    @param file_out_handler: File handler to write the model to.</span>
+<span class="sd">    @param current_model: Is the model number we will write in the output handler.</span>
+<span class="sd">    @param INITIAL_TAG: Is the tag preceding the atom pdb data. Usually is &quot;MODEL&quot;.</span>
+<span class="sd">    @param END_TAG: Is the last tag in a model, after the pdb atom data. Usually is &quot;ENDMDL&quot; or &quot;TER&quot;.</span>
+<span class="sd">    @param skip: If true, the model will not be written to the output file, but the cursor of the input_file will be moved</span>
+<span class="sd">    anyway.</span>
+<span class="sd">    @param keep_header: Will try to keep any header previous to INITIAL_TAG, such as &quot;REMARK&quot; lines.</span>
+<span class="sd">    &quot;&quot;&quot;</span>    
+    <span class="c"># Shall we write this model or not?</span>
+    <span class="k">if</span> <span class="n">skip</span><span class="p">:</span>
+        <span class="n">read_to_TAG</span><span class="p">(</span><span class="n">file_in_handler</span><span class="p">,</span><span class="n">END_TAG</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span> 
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_header</span><span class="p">:</span>
+            <span class="c"># Find model tag</span>
+            <span class="n">advance_to_TAG</span><span class="p">(</span><span class="n">file_in_handler</span><span class="p">,</span><span class="n">INITIAL_TAG</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">header</span> <span class="o">=</span> <span class="n">read_to_TAG</span><span class="p">(</span><span class="n">file_in_handler</span><span class="p">,</span><span class="n">INITIAL_TAG</span><span class="p">)</span>
+            <span class="n">file_out_handler</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">header</span><span class="p">)</span>
+        
+        <span class="n">file_out_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;MODEL&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">current_model</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+            
+        <span class="c"># Once the model tag is found... write it down</span>
+        <span class="n">lines</span>  <span class="o">=</span> <span class="n">read_to_TAG</span><span class="p">(</span><span class="n">file_in_handler</span><span class="p">,</span><span class="n">END_TAG</span><span class="p">)</span>
+        <span class="n">file_out_handler</span><span class="o">.</span><span class="n">writelines</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="n">file_out_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;ENDMDL</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
+    
+</div>
+<div class="viewcode-block" id="extract_frames_from_trajectory_sequentially"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.extract_frames_from_trajectory_sequentially">[docs]</a><span class="k">def</span> <span class="nf">extract_frames_from_trajectory_sequentially</span><span class="p">(</span><span class="n">file_handler_in</span><span class="p">,</span> 
+                                   <span class="n">number_of_frames</span><span class="p">,</span> 
+                                   <span class="n">file_handler_out</span><span class="p">,</span> 
+                                   <span class="n">frames_to_save</span><span class="p">,</span> 
+                                   <span class="n">INITIAL_TAG</span><span class="o">=</span><span class="s">&quot;MODEL&quot;</span><span class="p">,</span> 
+                                   <span class="n">END_TAG</span><span class="o">=</span><span class="s">&quot;ENDMDL&quot;</span><span class="p">,</span> 
+                                   <span class="n">keep_header</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span>
+                                   <span class="n">write_frame_number_instead_of_correlative_model_number</span> <span class="o">=</span> <span class="bp">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    It extracts some frames from one trajectory and writes them down in an opened file handler.</span>
+<span class="sd">    </span>
+<span class="sd">    @param file_in_handler: Input file handler.</span>
+<span class="sd">    @param number_of_frames: Number of models in the input trajectory.</span>
+<span class="sd">    @param file_out_handler: File handler to write the model to.</span>
+<span class="sd">    @param frames_to_save: An array with the frame numbers to copy in the output trajectory. For example: [0,1,2] will store the</span>
+<span class="sd">    three first frames of the input trajectory into the second.</span>
+<span class="sd">    @param INITIAL_TAG: Is the tag preceding the atom pdb data. Usually is &quot;MODEL&quot;.</span>
+<span class="sd">    @param END_TAG: Is the last tag in a model, after the pdb atom data. Usually is &quot;ENDMDL&quot; or &quot;TER&quot;.</span>
+<span class="sd">    @param keep_header: Will try to keep any header previous to INITIAL_TAG, such as &quot;REMARK&quot; lines.</span>
+<span class="sd">    @param use_frame_number_as_model: If true, it will use the number of frame in &#39;frames_to_save&#39; as model number</span>
+<span class="sd">    in the new file. If not, models of the new file will have sequential numbering.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">current</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">number_of_frames</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">frames_to_save</span><span class="p">:</span>
+            <span class="n">write</span> <span class="o">=</span> <span class="bp">True</span>
+            <span class="k">if</span> <span class="n">write_frame_number_instead_of_correlative_model_number</span><span class="p">:</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="n">i</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">current</span> <span class="o">=</span> <span class="n">current</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">write</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="n">write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="n">file_handler_in</span><span class="p">,</span>
+                                             <span class="n">file_handler_out</span><span class="p">,</span>
+                                             <span class="n">current</span><span class="p">,</span>
+                                             <span class="n">INITIAL_TAG</span><span class="p">,</span>
+                                             <span class="n">END_TAG</span><span class="p">,</span>
+                                             <span class="ow">not</span> <span class="n">write</span><span class="p">,</span>
+                                             <span class="n">keep_header</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="create_CA_file"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.create_CA_file">[docs]</a><span class="k">def</span> <span class="nf">create_CA_file</span><span class="p">(</span><span class="n">file_handler_in</span><span class="p">,</span> <span class="n">file_handler_out</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Creates a valid CA pdb from a valid pdb. Useful to reduce load times.</span>
+<span class="sd">    </span>
+<span class="sd">    @param file_handler_in: A file handler containing the trajectory to &#39;compress&#39;.</span>
+<span class="sd">    @param file_handler_out: The file handler in which the new trajectory is written.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">file_handler_in</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;MOD&#39;</span> <span class="ow">or</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;END&#39;</span> <span class="ow">or</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;TER&#39;</span><span class="p">:</span> 
+            <span class="n">file_handler_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="s">&#39;ATO&#39;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span> <span class="o">==</span><span class="s">&quot; CA &quot;</span><span class="p">:</span>
+                <span class="n">file_handler_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+                </div>
+<div class="viewcode-block" id="get_model_boundaries"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.get_model_boundaries">[docs]</a><span class="k">def</span> <span class="nf">get_model_boundaries</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Tries to discover the structure of the file.</span>
+<span class="sd">    </span>
+<span class="sd">    @param input_pdb: Is the pdb file we want to repair.</span>
+<span class="sd">    </span>
+<span class="sd">    @return: The list of sections of the file that represent a model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">boundaries</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">line_number</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">reading_model</span> <span class="o">=</span> <span class="bp">False</span>
+    <span class="n">last_atom_serial</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_pdb_handler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ATOM&quot;</span> <span class="ow">or</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;HETA&quot;</span><span class="p">:</span>
+            <span class="n">atom_serial</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">5</span><span class="p">:</span><span class="mi">11</span><span class="p">])</span>
+            <span class="c"># if the atom serial number decreases suddenly, it means we are starting</span>
+            <span class="c"># to read another frame of the trajectory, so we have to finish the last</span>
+            <span class="c"># and open a new boundary</span>
+            <span class="c"># if reading model was false, we are starting a new frame of the trajectory</span>
+            <span class="k">if</span> <span class="n">last_atom_serial</span> <span class="o">&gt;</span> <span class="n">atom_serial</span> <span class="ow">or</span> <span class="n">reading_model</span> <span class="o">==</span> <span class="bp">False</span><span class="p">:</span>
+                <span class="n">boundaries</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">line_number</span><span class="p">])</span>
+                <span class="n">reading_model</span> <span class="o">=</span> <span class="bp">True</span>
+           
+            <span class="n">last_atom_serial</span> <span class="o">=</span> <span class="n">atom_serial</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c"># if the tag is not atom, we are not reading a frame,</span>
+            <span class="c"># and we can close a boundary</span>
+            <span class="k">if</span> <span class="n">reading_model</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+                <span class="n">boundaries</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line_number</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+                <span class="n">reading_model</span> <span class="o">=</span> <span class="bp">False</span> 
+        
+        <span class="n">line_number</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">boundaries</span>
+</div>
+<div class="viewcode-block" id="repair_MODEL_ENDMDL_tags"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.repair_MODEL_ENDMDL_tags">[docs]</a><span class="k">def</span> <span class="nf">repair_MODEL_ENDMDL_tags</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">,</span> <span class="n">output_pdb_handler</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses the previously discovered partition with &#39;get_model_boundaries&#39; to add the necessary MODEL, </span>
+<span class="sd">    ENDMDL tags for each of its discovered models.</span>
+<span class="sd">    </span>
+<span class="sd">    @param input_pdb: Is the pdb file handler we want to repair.</span>
+<span class="sd">    @param output_pdb: Is the resulting file handler (hopefully correct). </span>
+<span class="sd">    &quot;&quot;&quot;</span>  
+    <span class="n">line_number</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">current_boundary</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">input_pdb_handler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">current_boundary</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">boundaries</span><span class="p">):</span>
+            <span class="k">break</span>
+        <span class="c">#print current_boundary</span>
+        <span class="k">if</span> <span class="n">line_number</span> <span class="o">==</span> <span class="n">boundaries</span><span class="p">[</span><span class="n">current_boundary</span><span class="p">][</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="n">output_pdb_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;MODEL &quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">current_boundary</span><span class="p">)</span><span class="o">.</span><span class="n">rjust</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>        
+        <span class="k">if</span> <span class="n">line_number</span><span class="o">&gt;=</span><span class="n">boundaries</span><span class="p">[</span><span class="n">current_boundary</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">line_number</span><span class="o">&lt;=</span><span class="n">boundaries</span><span class="p">[</span><span class="n">current_boundary</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">output_pdb_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">line_number</span> <span class="o">==</span> <span class="n">boundaries</span><span class="p">[</span><span class="n">current_boundary</span><span class="p">][</span><span class="mi">1</span><span class="p">]:</span>
+            <span class="n">output_pdb_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;ENDMDL</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>        
+            <span class="n">current_boundary</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="n">line_number</span> <span class="o">+=</span> <span class="mi">1</span>
+</div>
+<div class="viewcode-block" id="grab_existing_frame_from_trajectory"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.grab_existing_frame_from_trajectory">[docs]</a><span class="k">def</span> <span class="nf">grab_existing_frame_from_trajectory</span><span class="p">(</span><span class="n">trajectory_file_handler</span><span class="p">,</span> <span class="n">output_file_handler</span><span class="p">,</span> <span class="n">model_number</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Extracts a model of a trajectory and writes it into another file. The model must exist in the trajectory,</span>
+<span class="sd">    otherwise the behavior will be undefined.</span>
+<span class="sd">    </span>
+<span class="sd">    @param trajectory_file_handler: Opened file handler containing the whole trajectory.</span>
+<span class="sd">    </span>
+<span class="sd">    @param output_file_handler: Opened file handler to write resulting model.</span>
+<span class="sd">    </span>
+<span class="sd">    @param model_number: The model we want to extract from the trajectory. It MUST exist.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">write_model</span> <span class="o">=</span> <span class="bp">False</span>
+    
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">trajectory_file_handler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MODEL&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">5</span><span class="p">:])</span> <span class="o">==</span> <span class="n">model_number</span><span class="p">:</span>
+                <span class="n">write_model</span> <span class="o">=</span> <span class="bp">True</span>
+        
+        <span class="k">if</span> <span class="n">write_model</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+            <span class="n">output_file_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">write_model</span> <span class="o">==</span> <span class="bp">True</span> <span class="ow">and</span>  <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ENDMDL&quot;</span><span class="p">:</span>
+            <span class="n">write_model</span> <span class="o">=</span> <span class="bp">False</span>
+    </div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

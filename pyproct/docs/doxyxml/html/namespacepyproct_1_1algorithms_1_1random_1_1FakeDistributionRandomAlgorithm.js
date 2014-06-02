@@ -1,0 +1,4 @@
+var namespacepyproct_1_1algorithms_1_1random_1_1FakeDistributionRandomAlgorithm =
+[
+    [ "FakeDistributionRandomClusteringAlgorithm", "classpyproct_1_1algorithms_1_1random_1_1FakeDistributionRandomAlgorithm_1_1FakeDistributionRandomClusteringAlgorithm.html", null ]
+];

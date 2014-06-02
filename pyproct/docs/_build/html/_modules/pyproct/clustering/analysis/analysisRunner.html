@@ -1,0 +1,192 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.analysis.analysisRunner &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.clustering.analysis.analysisRunner</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 29/05/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="run_all_analysis_for_a_clustering"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisRunner.run_all_analysis_for_a_clustering">[docs]</a><span class="k">def</span> <span class="nf">run_all_analysis_for_a_clustering</span><span class="p">(</span><span class="n">clustering_id</span><span class="p">,</span> <span class="n">clustering</span><span class="p">,</span> <span class="n">analysis</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Is the function to be run in parallel.</span>
+<span class="sd">    </span>
+<span class="sd">    @param clustering_id: Is the id of the clustering we are working with.</span>
+<span class="sd">    </span>
+<span class="sd">    @param clustering: A Clustering instance.</span>
+<span class="sd">    </span>
+<span class="sd">    @param analysis: A list of all the analysis we want to perform.s</span>
+<span class="sd">    </span>
+<span class="sd">    @param observer: An observer to communicate messages.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">analysis_results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">analysis</span><span class="p">:</span>
+        <span class="n">analysis_results</span><span class="p">[</span><span class="n">a</span><span class="o">.</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span>  <span class="n">a</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">clustering</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">clustering_id</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="AnalysisRunner"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisRunner.AnalysisRunner">[docs]</a><span class="k">class</span> <span class="nc">AnalysisRunner</span><span class="p">():</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scheduler</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">,</span> <span class="n">populator</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constructor</span>
+<span class="sd">        </span>
+<span class="sd">        @param scheduler: A Scheduler instance of any type to control the execution of analysis.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering_info: a &#39;clustering_info&#39; structure (dictionary that for each &#39;clustering_id&#39; has a structure</span>
+<span class="sd">        with all the info of one clustering. </span>
+<span class="sd">        </span>
+<span class="sd">        @param populator: An &#39;AnalysisPopulator&#39;-like instance to add the needed analysis.</span>
+<span class="sd">        </span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span> <span class="o">=</span> <span class="n">populator</span><span class="o">.</span><span class="n">get_analysis_list</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span> <span class="o">=</span> <span class="n">scheduler</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_analysis</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clustering_info</span> <span class="o">=</span> <span class="n">clustering_info</span>
+    
+<div class="viewcode-block" id="AnalysisRunner.add_analysis"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.add_analysis">[docs]</a>    <span class="k">def</span> <span class="nf">add_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">analysis</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Simply appends one analysis to the analysis queue (the analysis we want to do).</span>
+<span class="sd">        </span>
+<span class="sd">        @param analysis: An &#39;Analysis&#39; instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">analysis</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">analysis</span><span class="p">)</span>
+       </div>
+<div class="viewcode-block" id="AnalysisRunner.run_analysis_for_all_clusterings"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.run_analysis_for_all_clusterings">[docs]</a>    <span class="k">def</span> <span class="nf">run_analysis_for_all_clusterings</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds one process to the scheduler which will run all the analysis in the analysis queue for each</span>
+<span class="sd">        of the clusterings in the clustering_info structure. The analysis are not executed instantaneously </span>
+<span class="sd">        but when the calculating function is used.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering_info: The &#39;clustering_info&#39; structure with the clustering to be analyzed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">clustering_id</span> <span class="ow">in</span> <span class="n">clustering_info</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run_analysis_for_a_clustering</span><span class="p">(</span><span class="n">clustering_id</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="AnalysisRunner.run_analysis_for_a_clustering"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.run_analysis_for_a_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">run_analysis_for_a_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_id</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds one process to the scheduler which will run all the analysis in the analysis queue for one </span>
+<span class="sd">        clustering. The analysis are not executed instantaneously but when the calculating function is used.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering_id: The clustering_id of the clustering we are going to work with.</span>
+<span class="sd">        </span>
+<span class="sd">        @param clustering_info: The &#39;clustering_info&#39; structure with the clustering to be analyzed.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">func_kwargs</span> <span class="o">=</span> <span class="p">{</span>
+                       <span class="s">&quot;clustering_id&quot;</span><span class="p">:</span> <span class="n">clustering_id</span><span class="p">,</span>
+                       <span class="s">&quot;clustering&quot;</span><span class="p">:</span><span class="n">clustering_info</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;clustering&quot;</span><span class="p">],</span>
+                       <span class="s">&quot;analysis&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">analysis</span>
+                       <span class="p">}</span>
+        
+        <span class="n">task_name</span> <span class="o">=</span> <span class="s">&quot;Evaluation of </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">clustering_id</span><span class="p">)</span>
+        <span class="n">description</span> <span class="o">=</span> <span class="s">&quot;Evaluation of </span><span class="si">%s</span><span class="s"> clustering (</span><span class="si">%s</span><span class="s">) with parameters: </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">clustering_info</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;type&quot;</span><span class="p">],</span>
+                                                                                 <span class="n">clustering_id</span><span class="p">,</span>
+                                                                                 <span class="n">clustering_info</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;parameters&quot;</span><span class="p">])</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">add_task</span><span class="p">(</span><span class="n">task_name</span> <span class="o">=</span> <span class="n">task_name</span><span class="p">,</span> 
+                                <span class="n">description</span> <span class="o">=</span> <span class="n">description</span><span class="p">,</span> 
+                                <span class="n">target_function</span> <span class="o">=</span> <span class="n">run_all_analysis_for_a_clustering</span><span class="p">,</span> 
+                                <span class="n">function_kwargs</span> <span class="o">=</span> <span class="n">func_kwargs</span><span class="p">,</span>
+                                <span class="n">dependencies</span> <span class="o">=</span> <span class="p">{})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_analysis</span> <span class="o">+=</span> <span class="mi">1</span>
+
+                    </div>
+<div class="viewcode-block" id="AnalysisRunner.evaluate"><a class="viewcode-back" href="../../../../pyproct.clustering.analysis.html#pyproct.clustering.analysis.analysisRunner.AnalysisRunner.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs all analysis for all clusterings in the clustering_info structure and recovers the results of this</span>
+<span class="sd">        analsis to attach them into the clustering_info structure.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">run_analysis_for_all_clusterings</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clustering_info</span><span class="p">)</span>
+        
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scheduler</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="p">(</span><span class="n">clustering_id</span><span class="p">,</span> <span class="n">analysis_results</span><span class="p">)</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">clustering_info</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">analysis_results</span>
+    </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

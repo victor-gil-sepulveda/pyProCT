@@ -1,0 +1,204 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.filtering package &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyproct-clustering-filtering-package">
+<h1>pyproct.clustering.filtering package<a class="headerlink" href="#pyproct-clustering-filtering-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.clustering.filtering.test.html">pyproct.clustering.filtering.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.filtering.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.filtering.test.html#module-pyproct.clustering.filtering.test.TestFiltering">pyproct.clustering.filtering.test.TestFiltering module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.filtering.test.html#module-pyproct.clustering.filtering.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyproct.clustering.filtering.clusteringFilter">
+<span id="pyproct-clustering-filtering-clusteringfilter-module"></span><h2>pyproct.clustering.filtering.clusteringFilter module<a class="headerlink" href="#module-pyproct.clustering.filtering.clusteringFilter" title="Permalink to this headline">¶</a></h2>
+<p>Created on 07/08/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.filtering.clusteringFilter.</tt><tt class="descname">ClusteringFilter</tt><big>(</big><em>evaluation_parameters</em>, <em>matrix_handler</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This class implements functions to get a list of clusterings and return a list
+of filtered clusterings (hopefully smaller).</p>
+<dl class="method">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.add_filtered_clustering">
+<tt class="descname">add_filtered_clustering</tt><big>(</big><em>selected</em>, <em>not_selected</em>, <em>clusterings</em>, <em>clustering_id</em>, <em>reasons</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter.add_filtered_clustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.add_filtered_clustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds a clustering to selected or not_selected arrays depending on if the rejection reasons
+array is empty or not.
+&#64;param selected: The &#8216;clustering info&#8217; dictionary with accepted clusterings.
+&#64;param not_selected: The &#8216;clustering info&#8217; dictionary with rejected clusterings.
+&#64;param clusterings: The &#8216;clustering info&#8217; dictionary.
+&#64;param clustering_id: Is the id in a &#8216;clustering info&#8217; dictionary of the clustering being checked.
+&#64;param reasons: Rejection reasons array.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_clustering">
+<tt class="descname">check_clustering</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter.check_clustering"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_clustering" title="Permalink to this definition">¶</a></dt>
+<dd><p>Decides if one clustering is inside the defined parameters, and returns the reasons of why not otherwise.</p>
+<p>&#64;param clustering: The clustering to be checked.</p>
+<p>&#64;return: The reasons of not being selected (if any).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_is_not_repeated">
+<tt class="descname">check_is_not_repeated</tt><big>(</big><em>clustering</em>, <em>all_clusterings</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter.check_is_not_repeated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_is_not_repeated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks that the clustering is not repeated again in the clustering list. Clusterings are 
+considered equal if their clusters are equal (even if they were generated using different
+algorithms and / or parameters).</p>
+<p>&#64;param clustering: The clustering to be checked.</p>
+<p>&#64;param all_clusterings: The array containing all the &#8216;clustering info&#8217; dictionaries.</p>
+<p>&#64;return: A dictionary with the reasons to discard the clustering if any.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_noise_level">
+<tt class="descname">check_noise_level</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter.check_noise_level"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_noise_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does the noise level check.</p>
+<p>&#64;param clustering: The clustering to be checked.</p>
+<p>&#64;return: The reasons of not being selected (if any).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_num_clusters_in_range">
+<tt class="descname">check_num_clusters_in_range</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter.check_num_clusters_in_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.check_num_clusters_in_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Used to see if a clustering has a number of clusters in the range defined by script&#8217;s evaluation parameters.</p>
+<p>&#64;param clustering: The clustering to be checked.</p>
+<p>&#64;return: The reasons of not being selected (if any).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.filter">
+<tt class="descname">filter</tt><big>(</big><em>clusterings</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter.filter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.filter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Eliminates the clusters whose parameters are not in the range we have defined in the script evaluation parameters.</p>
+<p>&#64;param clusterings: Is a clustering_info dictionary indexed by clustering_id</p>
+<p>&#64;return: A tuple containing the clustering_info structures of the selected and not selected clusterings. These last
+with their reasons for not having been selected.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.filter_repeated">
+<tt class="descname">filter_repeated</tt><big>(</big><em>selected_clusterings</em>, <em>not_selected_clusterings</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/filtering/clusteringFilter.html#ClusteringFilter.filter_repeated"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.filtering.clusteringFilter.ClusteringFilter.filter_repeated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Checks if the clustering is already inside &#8216;all_clusterings&#8217;, returning a rejection reason in this case.</p>
+<p>&#64;param clustering_id: The clustering id to be tested.
+&#64;param all_clusterings: The array containing all the &#8216;clustering info&#8217; dictionaries.</p>
+<p>&#64;return: The new selected and not selected &#8216;clustering info&#8217; arrays</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.filtering">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyproct.clustering.filtering" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyproct.clustering.filtering package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.filtering.clusteringFilter">pyproct.clustering.filtering.clusteringFilter module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.filtering">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/pyproct.clustering.filtering.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

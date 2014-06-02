@@ -1,0 +1,109 @@
+pyproct.clustering.metrics.test package
+=======================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.clustering.metrics.test.data
+
+Submodules
+----------
+
+pyproct.clustering.metrics.test.TestBoundedMetrics module
+---------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestBoundedMetrics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestCalinskiHarabasz module
+-----------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestCalinskiHarabasz
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestCommonTools module
+------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestCommonTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestCythonVsPython module
+---------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestCythonVsPython
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestDaviesBouldin module
+--------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestDaviesBouldin
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestDunnIndex module
+----------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestDunnIndex
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestGaussianCalculator module
+-------------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestGaussianCalculator
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestGraphMetrics module
+-------------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestGraphMetrics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestMetrics module
+--------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestMetrics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestPCAMetric module
+----------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestPCAMetric
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.clustering.metrics.test.TestSilhouette module
+-----------------------------------------------------
+
+.. automodule:: pyproct.clustering.metrics.test.TestSilhouette
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.clustering.metrics.test
+    :members:
+    :undoc-members:
+    :show-inheritance:

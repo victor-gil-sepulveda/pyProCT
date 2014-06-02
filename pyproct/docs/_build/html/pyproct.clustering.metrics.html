@@ -1,0 +1,707 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.clustering.metrics package &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="pyproct-clustering-metrics-package">
+<h1>pyproct.clustering.metrics package<a class="headerlink" href="#pyproct-clustering-metrics-package" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.clustering.metrics.benchmark.html">pyproct.clustering.metrics.benchmark package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.benchmark.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.benchmark.html#pyproct-clustering-metrics-benchmark-benchmarkpcametric-module">pyproct.clustering.metrics.benchmark.benchmarkPCAMetric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.benchmark.html#module-pyproct.clustering.metrics.benchmark">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.clustering.metrics.cython.html">pyproct.clustering.metrics.cython package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyproct.clustering.metrics.cython.benchmark.html">pyproct.clustering.metrics.cython.benchmark package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyproct.clustering.metrics.cython.benchmark.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyproct.clustering.metrics.cython.benchmark.html#pyproct-clustering-metrics-cython-benchmark-benchmarkcython-module">pyproct.clustering.metrics.cython.benchmark.benchmarkCython module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyproct.clustering.metrics.cython.benchmark.html#module-pyproct.clustering.metrics.cython.benchmark">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#module-pyproct.clustering.metrics.cython.boundedCohesion">pyproct.clustering.metrics.cython.boundedCohesion module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#module-pyproct.clustering.metrics.cython.meanMinimumDistance">pyproct.clustering.metrics.cython.meanMinimumDistance module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#module-pyproct.clustering.metrics.cython.normNCut">pyproct.clustering.metrics.cython.normNCut module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#module-pyproct.clustering.metrics.cython.setup">pyproct.clustering.metrics.cython.setup module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#module-pyproct.clustering.metrics.cython.silhouette">pyproct.clustering.metrics.cython.silhouette module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.cython.html#module-pyproct.clustering.metrics.cython">Module contents</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="pyproct.clustering.metrics.test.html">pyproct.clustering.metrics.test package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="pyproct.clustering.metrics.test.data.html">pyproct.clustering.metrics.test.data package</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="pyproct.clustering.metrics.test.data.html#submodules">Submodules</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyproct.clustering.metrics.test.data.html#module-pyproct.clustering.metrics.test.data.example_clustering_1">pyproct.clustering.metrics.test.data.example_clustering_1 module</a></li>
+<li class="toctree-l4"><a class="reference internal" href="pyproct.clustering.metrics.test.data.html#module-pyproct.clustering.metrics.test.data">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#submodules">Submodules</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestBoundedMetrics">pyproct.clustering.metrics.test.TestBoundedMetrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestCalinskiHarabasz">pyproct.clustering.metrics.test.TestCalinskiHarabasz module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestCommonTools">pyproct.clustering.metrics.test.TestCommonTools module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#pyproct-clustering-metrics-test-testcythonvspython-module">pyproct.clustering.metrics.test.TestCythonVsPython module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestDaviesBouldin">pyproct.clustering.metrics.test.TestDaviesBouldin module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestDunnIndex">pyproct.clustering.metrics.test.TestDunnIndex module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestGaussianCalculator">pyproct.clustering.metrics.test.TestGaussianCalculator module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestGraphMetrics">pyproct.clustering.metrics.test.TestGraphMetrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestMetrics">pyproct.clustering.metrics.test.TestMetrics module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestPCAMetric">pyproct.clustering.metrics.test.TestPCAMetric module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test.TestSilhouette">pyproct.clustering.metrics.test.TestSilhouette module</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pyproct.clustering.metrics.test.html#module-pyproct.clustering.metrics.test">Module contents</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.CalinskiHarabasz">
+<span id="pyproct-clustering-metrics-calinskiharabasz-module"></span><h2>pyproct.clustering.metrics.CalinskiHarabasz module<a class="headerlink" href="#module-pyproct.clustering.metrics.CalinskiHarabasz" title="Permalink to this headline">¶</a></h2>
+<p>Created on 11/06/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.CalinskiHarabasz.</tt><tt class="descname">CalinskiHarabaszCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/CalinskiHarabasz.html#CalinskiHarabaszCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Implementation of the Calinski-Harabasz (VRC) index, as described in T. Calinski and J.Harabasz paper in
+&#8216;Communications in Statistics 3(1), 1-27 (1974)&#8217;.
+Contains the necessary functions to calculate the index in the two forms presented.</p>
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.A_k">
+<em class="property">classmethod </em><tt class="descname">A_k</tt><big>(</big><em>clustering</em>, <em>D</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/CalinskiHarabasz.html#CalinskiHarabaszCalculator.A_k"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.A_k" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the A_k term.
+&#64;param clustering: The clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The A_k term value.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.BGSS">
+<em class="property">classmethod </em><tt class="descname">BGSS</tt><big>(</big><em>clustering</em>, <em>D</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/CalinskiHarabasz.html#CalinskiHarabaszCalculator.BGSS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.BGSS" title="Permalink to this definition">¶</a></dt>
+<dd><p>C-H description of the &#8220;Between group sum of squares&#8221;.
+&#64;param clustering: The clustering being checked.
+&#64;param D: Mean distance of the sum of all squared distances present in the matrix.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The value of BGSS.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.WGSS">
+<em class="property">classmethod </em><tt class="descname">WGSS</tt><big>(</big><em>clusters</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/CalinskiHarabasz.html#CalinskiHarabaszCalculator.WGSS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.WGSS" title="Permalink to this definition">¶</a></dt>
+<dd><p>C-H description of the &#8220;Within group sum of squares&#8221;.
+&#64;param clusters: An array with all clusters description (usually Clustering.clusters)
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The value of WGSS.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.ch_cluster_term">
+<em class="property">classmethod </em><tt class="descname">ch_cluster_term</tt><big>(</big><em>cluster</em>, <em>global_mean_distance</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/CalinskiHarabasz.html#CalinskiHarabaszCalculator.ch_cluster_term"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.ch_cluster_term" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates one of the formula terms (ng-1)(D-d_g)
+&#64;param cluster: The cluster to use in calculation.
+&#64;param global_mean_distance: &#8216;D&#8217;. Is the mean of the n*(n-1)/2 distances of all the elements.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: Calculated term.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/CalinskiHarabasz.html#CalinskiHarabaszCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.CalinskiHarabasz.CalinskiHarabaszCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the index value for a clustering.
+&#64;param clustering: The clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The calculated Calinski-Harabasz (VRC) index.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.CalinskiHarabasz.mean">
+<tt class="descclassname">pyproct.clustering.metrics.CalinskiHarabasz.</tt><tt class="descname">mean</tt><big>(</big><em>array</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/CalinskiHarabasz.html#mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.CalinskiHarabasz.mean" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.DaviesBouldin">
+<span id="pyproct-clustering-metrics-daviesbouldin-module"></span><h2>pyproct.clustering.metrics.DaviesBouldin module<a class="headerlink" href="#module-pyproct.clustering.metrics.DaviesBouldin" title="Permalink to this headline">¶</a></h2>
+<p>Created on May 30, 2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.DaviesBouldin.</tt><tt class="descname">DaviesBouldinCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/DaviesBouldin.html#DaviesBouldinCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Is an estimator of cluster validity. The lower the better.</p>
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.calc_average_distances">
+<em class="property">classmethod </em><tt class="descname">calc_average_distances</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/DaviesBouldin.html#DaviesBouldinCalculator.calc_average_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.calc_average_distances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.calculate_average_distance_from_prototype">
+<em class="property">classmethod </em><tt class="descname">calculate_average_distance_from_prototype</tt><big>(</big><em>cluster</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/DaviesBouldin.html#DaviesBouldinCalculator.calculate_average_distance_from_prototype"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.calculate_average_distance_from_prototype" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the average distance of the elements of a cluster with its medoid.
+&#64;param cluster: The cluster from which we want to calculate this distance.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The calculated value.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.d_b_term_calculation">
+<em class="property">classmethod </em><tt class="descname">d_b_term_calculation</tt><big>(</big><em>i</em>, <em>j</em>, <em>d</em>, <em>clusters</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/DaviesBouldin.html#DaviesBouldinCalculator.d_b_term_calculation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.d_b_term_calculation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates one of the terms as defined in the paper (di+dj) / d(ci,cj)
+&#64;param i: Is the index of the first cluster (in &#8216;clusters&#8217;) to calculate the term.
+&#64;param j: The index of the second cluster.
+&#64;param clusters: An array containing all the clusters of the clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The value of the term.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.db_index_calculation">
+<em class="property">classmethod </em><tt class="descname">db_index_calculation</tt><big>(</big><em>d</em>, <em>clusters</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/DaviesBouldin.html#DaviesBouldinCalculator.db_index_calculation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.db_index_calculation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the summation of the terms for all clusters vs all the other clusters of the clustering.
+&#64;param d: Array containing the mean distances to the centroid (medoid) for all clusters (with index
+correspondence).
+&#64;param clusters: An array containing all the clusters of the clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The index value.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.db_terms_for_cluster">
+<em class="property">classmethod </em><tt class="descname">db_terms_for_cluster</tt><big>(</big><em>i</em>, <em>d</em>, <em>clusters</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/DaviesBouldin.html#DaviesBouldinCalculator.db_terms_for_cluster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.db_terms_for_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the summation of the terms for a cluster vs all the other clusters of the clustering.
+&#64;param i: Is the index of the first cluster (in &#8216;clusters&#8217;) to calculate the term.
+&#64;param d: Array containing the mean distances to the centroid (medoid) for all clusters (with index
+correspondence).
+&#64;param clusters: An array containing all the clusters of the clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The value for each term (i vs j[0..n] j!=i).</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/DaviesBouldin.html#DaviesBouldinCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.DaviesBouldin.DaviesBouldinCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the index value for a clustering.
+&#64;param clustering: The clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The calculated Davies-Bouldin estimator value.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.Dunn">
+<span id="pyproct-clustering-metrics-dunn-module"></span><h2>pyproct.clustering.metrics.Dunn module<a class="headerlink" href="#module-pyproct.clustering.metrics.Dunn" title="Permalink to this headline">¶</a></h2>
+<p>Created on 06/06/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.Dunn.DunnCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.Dunn.</tt><tt class="descname">DunnCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/Dunn.html#DunnCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.Dunn.DunnCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Calculates Dunn index as presented in Krzystof Kryszczuk and Paul Hurley&#8217;s paper .</p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.Dunn.DunnCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/Dunn.html#DunnCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.Dunn.DunnCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.Dunn.DunnCalculator.max_intercluster_distance">
+<em class="property">classmethod </em><tt class="descname">max_intercluster_distance</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/Dunn.html#DunnCalculator.max_intercluster_distance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.Dunn.DunnCalculator.max_intercluster_distance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates d_max, the maximum inter clusters.
+&#64;param clustering: The clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: d_max&#8217; value</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.Dunn.DunnCalculator.min_intracluster_distances">
+<em class="property">classmethod </em><tt class="descname">min_intracluster_distances</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/Dunn.html#DunnCalculator.min_intracluster_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.Dunn.DunnCalculator.min_intracluster_distances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates d_min, the minimum internal distance.
+&#64;param clustering: The clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: d_min&#8217;s value</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.boundedCohesion">
+<span id="pyproct-clustering-metrics-boundedcohesion-module"></span><h2>pyproct.clustering.metrics.boundedCohesion module<a class="headerlink" href="#module-pyproct.clustering.metrics.boundedCohesion" title="Permalink to this headline">¶</a></h2>
+<p>Created on 09/01/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.boundedCohesion.MirrorCohesionCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.boundedCohesion.</tt><tt class="descname">MirrorCohesionCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/boundedCohesion.html#MirrorCohesionCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.boundedCohesion.MirrorCohesionCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Bounded in [0,1] where 0 means the perfect cohesion and 1 the worst. Doesn&#8217;t use the prototype.</p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.boundedCohesion.MirrorCohesionCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>condensed_distance_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/boundedCohesion.html#MirrorCohesionCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.boundedCohesion.MirrorCohesionCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the cohesion value of a cluster. The weight will be the number of elements
+of each cluster.</p>
+<p>The maximum value will be (in the case we have only one cluster) the sum of
+all the pair distances. We can avoid the 2x factor, increasing the performance.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.cohesion">
+<span id="pyproct-clustering-metrics-cohesion-module"></span><h2>pyproct.clustering.metrics.cohesion module<a class="headerlink" href="#module-pyproct.clustering.metrics.cohesion" title="Permalink to this headline">¶</a></h2>
+<p>Created on 09/01/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.cohesion.CohesionCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.cohesion.</tt><tt class="descname">CohesionCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/cohesion.html#CohesionCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.cohesion.CohesionCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.cohesion.CohesionCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/cohesion.html#CohesionCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.cohesion.CohesionCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.cohesion.CohesionCalculator.evaluate_cluster">
+<tt class="descname">evaluate_cluster</tt><big>(</big><em>cluster</em>, <em>condensed_distance_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/cohesion.html#CohesionCalculator.evaluate_cluster"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.cohesion.CohesionCalculator.evaluate_cluster" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the cohesion value of a cluster. The condensed matrix given as 
+parameter stores the distances of the elements of the dataset used to extract
+the cluster.</p>
+<p>The definition of cohesion would be weight*2*cohesion in the case we follow
+the exact formula in the book []. As we are going to do comparisons, the x2 global
+multiplication doesn&#8217;t affect.</p>
+<p>Cohesion of a cluster of 1 element should be infinite instead of 0...</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.common">
+<span id="pyproct-clustering-metrics-common-module"></span><h2>pyproct.clustering.metrics.common module<a class="headerlink" href="#module-pyproct.clustering.metrics.common" title="Permalink to this headline">¶</a></h2>
+<p>Created on 06/06/2013</p>
+<p>&#64;author: victor</p>
+<dl class="function">
+<dt id="pyproct.clustering.metrics.common.get_distances_of_elements_to">
+<tt class="descclassname">pyproct.clustering.metrics.common.</tt><tt class="descname">get_distances_of_elements_to</tt><big>(</big><em>from_this</em>, <em>to_those</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/common.html#get_distances_of_elements_to"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.common.get_distances_of_elements_to" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.common.get_inter_cluster_distances">
+<tt class="descclassname">pyproct.clustering.metrics.common.</tt><tt class="descname">get_inter_cluster_distances</tt><big>(</big><em>i</em>, <em>j</em>, <em>clusters</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/common.html#get_inter_cluster_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.common.get_inter_cluster_distances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.common.get_inter_cluster_prototype_distances">
+<tt class="descclassname">pyproct.clustering.metrics.common.</tt><tt class="descname">get_inter_cluster_prototype_distances</tt><big>(</big><em>clusters</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/common.html#get_inter_cluster_prototype_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.common.get_inter_cluster_prototype_distances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Precondition: cluster medoids have been updated.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.common.get_intra_cluster_distances">
+<tt class="descclassname">pyproct.clustering.metrics.common.</tt><tt class="descname">get_intra_cluster_distances</tt><big>(</big><em>cluster</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/common.html#get_intra_cluster_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.common.get_intra_cluster_distances" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.common.update_medoids">
+<tt class="descclassname">pyproct.clustering.metrics.common.</tt><tt class="descname">update_medoids</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/common.html#update_medoids"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.common.update_medoids" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.compactness">
+<span id="pyproct-clustering-metrics-compactness-module"></span><h2>pyproct.clustering.metrics.compactness module<a class="headerlink" href="#module-pyproct.clustering.metrics.compactness" title="Permalink to this headline">¶</a></h2>
+<p>Created on 06/06/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.compactness.CompactnessCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.compactness.</tt><tt class="descname">CompactnessCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/compactness.html#CompactnessCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.compactness.CompactnessCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.compactness.CompactnessCalculator.cluster_variance">
+<em class="property">classmethod </em><tt class="descname">cluster_variance</tt><big>(</big><em>cluster</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/compactness.html#CompactnessCalculator.cluster_variance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.compactness.CompactnessCalculator.cluster_variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>precondition, cluster medoid (prototype) it&#8217;s alread</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.compactness.CompactnessCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/compactness.html#CompactnessCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.compactness.CompactnessCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>mean is approximated to medoid</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.gaussianSeparation">
+<span id="pyproct-clustering-metrics-gaussianseparation-module"></span><h2>pyproct.clustering.metrics.gaussianSeparation module<a class="headerlink" href="#module-pyproct.clustering.metrics.gaussianSeparation" title="Permalink to this headline">¶</a></h2>
+<p>Created on 06/06/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.gaussianSeparation.</tt><tt class="descname">GaussianSeparationCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/gaussianSeparation.html#GaussianSeparationCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Cluster separation index calculation, as defined in Wu and H. Xiong 2002.</p>
+<dl class="attribute">
+<dt id="pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator.TWO_SIGMA_SQUARED">
+<tt class="descname">TWO_SIGMA_SQUARED</tt><em class="property"> = 0.25</em><a class="headerlink" href="#pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator.TWO_SIGMA_SQUARED" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/gaussianSeparation.html#GaussianSeparationCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the index.
+&#64;param clustering: The clustering being checked.
+&#64;param matrix: The condensed matrix containing all distances.
+&#64;return: The calculated value for the index.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator.exponential_list_generation">
+<em class="property">classmethod </em><tt class="descname">exponential_list_generation</tt><big>(</big><em>clustering</em>, <em>matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/gaussianSeparation.html#GaussianSeparationCalculator.exponential_list_generation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.gaussianSeparation.GaussianSeparationCalculator.exponential_list_generation" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.graphMetrics">
+<span id="pyproct-clustering-metrics-graphmetrics-module"></span><h2>pyproct.clustering.metrics.graphMetrics module<a class="headerlink" href="#module-pyproct.clustering.metrics.graphMetrics" title="Permalink to this headline">¶</a></h2>
+<p>Created on 13/08/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.graphMetrics.MinMaxCut">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">MinMaxCut</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#MinMaxCut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.MinMaxCut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Within cluster similarity.</p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.graphMetrics.MinMaxCut.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#MinMaxCut.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.MinMaxCut.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates:
+MinMaxCut = sum_{i=1}^k cut(A_i,A_i-complementary) / W(A_i,A_i)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyproct.clustering.metrics.graphMetrics.NCut">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">NCut</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#NCut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.NCut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Is a very simple separation measure.</p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.graphMetrics.NCut.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#NCut.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.NCut.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates:
+NCut = 1/2 sum_{i=1}^k W(A_i,A_i-complementary) / vol(A_i)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="pyproct.clustering.metrics.graphMetrics.RatioCut">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">RatioCut</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#RatioCut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.RatioCut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Is another simple separation measure.</p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.graphMetrics.RatioCut.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#RatioCut.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.RatioCut.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates:
+RatioCut = sum_{i=1}^k cut(A_i,A_i-complementary) / card(A_i)</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.graphMetrics.W">
+<tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">W</tt><big>(</big><em>A1</em>, <em>A2</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#W"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.W" title="Permalink to this definition">¶</a></dt>
+<dd><p>W(A,B) = sum_{i pert A, j pert B} w_i_j</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.graphMetrics.all_cut">
+<tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">all_cut</tt><big>(</big><em>clustering</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#all_cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.all_cut" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cut measure of the connected component A vs the complementary set.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.graphMetrics.d">
+<tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">d</tt><big>(</big><em>i</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.d" title="Permalink to this definition">¶</a></dt>
+<dd><p>Degree of a vertex:
+d_i = sum_{j=1}^n w_ij</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.graphMetrics.getClusterAndComplementary">
+<tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">getClusterAndComplementary</tt><big>(</big><em>i</em>, <em>all_clusters</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#getClusterAndComplementary"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.getClusterAndComplementary" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the list representing the elements of cluster &#8216;ith&#8217; and the 
+list representing the sum of elements of all other clusters.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.graphMetrics.single_cut">
+<tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">single_cut</tt><big>(</big><em>A</em>, <em>Acomp</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#single_cut"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.single_cut" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.graphMetrics.vol">
+<tt class="descclassname">pyproct.clustering.metrics.graphMetrics.</tt><tt class="descname">vol</tt><big>(</big><em>A</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/graphMetrics.html#vol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.graphMetrics.vol" title="Permalink to this definition">¶</a></dt>
+<dd><p>vol(A) = sum_{i pert A} d_i</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.meanMinimumDistance">
+<span id="pyproct-clustering-metrics-meanminimumdistance-module"></span><h2>pyproct.clustering.metrics.meanMinimumDistance module<a class="headerlink" href="#module-pyproct.clustering.metrics.meanMinimumDistance" title="Permalink to this headline">¶</a></h2>
+<p>Created on 09/01/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.meanMinimumDistance.</tt><tt class="descname">MeanMinimumDistanceCalculator</tt><big>(</big><em>seed_num=None</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/meanMinimumDistance.html#MeanMinimumDistanceCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>condensed_matrix</em>, <em>subsampling_percent=20</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/meanMinimumDistance.html#MeanMinimumDistanceCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.get_distances_less_than_mean">
+<tt class="descname">get_distances_less_than_mean</tt><big>(</big><em>distances</em>, <em>mean</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/meanMinimumDistance.html#MeanMinimumDistanceCalculator.get_distances_less_than_mean"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.get_distances_less_than_mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an array with distances wich are smaller than the given mean.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.get_mean_and_min_distances">
+<tt class="descname">get_mean_and_min_distances</tt><big>(</big><em>cluster1</em>, <em>cluster2</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/meanMinimumDistance.html#MeanMinimumDistanceCalculator.get_mean_and_min_distances"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.get_mean_and_min_distances" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the minimum distances for the elements of cluster1 vs cluster2.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.subsample">
+<tt class="descname">subsample</tt><big>(</big><em>cluster_size</em>, <em>subsampling_percent</em>, <em>distances</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/meanMinimumDistance.html#MeanMinimumDistanceCalculator.subsample"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.subsample" title="Permalink to this definition">¶</a></dt>
+<dd><p>It chooses a percent of random given distances and calculates the mean.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.subsampled_mean_min_dist">
+<tt class="descname">subsampled_mean_min_dist</tt><big>(</big><em>cluster1</em>, <em>cluster2</em>, <em>subsampling_percent</em>, <em>condensed_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/meanMinimumDistance.html#MeanMinimumDistanceCalculator.subsampled_mean_min_dist"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.meanMinimumDistance.MeanMinimumDistanceCalculator.subsampled_mean_min_dist" title="Permalink to this definition">¶</a></dt>
+<dd><p>Does the calculation for two clusters. This implies that for each pair of clusters it
+gets the min_dists and those of min_dists that are smaller than the mean to get the 
+subsampled value.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="pyproct.clustering.metrics.meanMinimumDistance.mean_function">
+<tt class="descclassname">pyproct.clustering.metrics.meanMinimumDistance.</tt><tt class="descname">mean_function</tt><big>(</big><em>my_list</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/meanMinimumDistance.html#mean_function"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.meanMinimumDistance.mean_function" title="Permalink to this definition">¶</a></dt>
+<dd><p>Function wrapper to handle difficult cases (like empty lists :/ ).</p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.pcaMetrics">
+<span id="pyproct-clustering-metrics-pcametrics-module"></span><h2>pyproct.clustering.metrics.pcaMetrics module<a class="headerlink" href="#module-pyproct.clustering.metrics.pcaMetrics" title="Permalink to this headline">¶</a></h2>
+<p>Created on 13/08/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.pcaMetrics.PCAMetric">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.pcaMetrics.</tt><tt class="descname">PCAMetric</tt><big>(</big><em>trajectory_handler</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/pcaMetrics.html#PCAMetric"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.pcaMetrics.PCAMetric" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>This is a metric based in the PCA of the clusters composing a clustering,</p>
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.pcaMetrics.PCAMetric.calculate_biggest_eigenvalue">
+<em class="property">classmethod </em><tt class="descname">calculate_biggest_eigenvalue</tt><big>(</big><em>covariance_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/pcaMetrics.html#PCAMetric.calculate_biggest_eigenvalue"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.pcaMetrics.PCAMetric.calculate_biggest_eigenvalue" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the eigenvectors and eigenvalues of a covariance matrix.</p>
+<p>&#64;param covariance_matrix: The covariance matrix.</p>
+<p>&#64;return: The first (bigger) eigenvalue, which gives an idea of the relative importance of the 
+axis responsible of most of the variance.</p>
+</dd></dl>
+
+<dl class="classmethod">
+<dt id="pyproct.clustering.metrics.pcaMetrics.PCAMetric.create_covariance_matrix">
+<em class="property">classmethod </em><tt class="descname">create_covariance_matrix</tt><big>(</big><em>coordinates</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/pcaMetrics.html#PCAMetric.create_covariance_matrix"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.pcaMetrics.PCAMetric.create_covariance_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the covariance matrix for a given number of conformations</p>
+<p>&#64;param coordinates: Coordinates of the trajectory frames we want to use in the covariance matrix calculation.
+This coordinates are stored in the format [conformation 1..N] where conformation is [Atom 1...N] Where atom is [x,y,z],
+so it&#8217;s a (C,A,3) shaped matrix where C is the number of conformations and N the number of atoms per conformation.</p>
+<p>&#64;return: The covariance matrix.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.pcaMetrics.PCAMetric.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/pcaMetrics.html#PCAMetric.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.pcaMetrics.PCAMetric.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates the value of the PCA metric, which is the mean of the largest eigenvalue obtained from the PCA (the one corresponding
+to the axis of bigger variability) weighted by the cluster size.</p>
+<p>&#64;param clustering: The clustering we want to calculate the metric.</p>
+<p>&#64;return: the value of the metric.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.separation">
+<span id="pyproct-clustering-metrics-separation-module"></span><h2>pyproct.clustering.metrics.separation module<a class="headerlink" href="#module-pyproct.clustering.metrics.separation" title="Permalink to this headline">¶</a></h2>
+<p>Created on 06/06/2013</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.separation.SeparationCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.separation.</tt><tt class="descname">SeparationCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/separation.html#SeparationCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.separation.SeparationCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.separation.SeparationCalculator.cluster_separation">
+<tt class="descname">cluster_separation</tt><big>(</big><em>cluster</em>, <em>clustering</em>, <em>clustering_cohesion</em>, <em>condensed_distance_matrix</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/separation.html#SeparationCalculator.cluster_separation"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.separation.SeparationCalculator.cluster_separation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the cohesion plus separation value of a cluster. The condensed matrix
+given as parameter stores the distances of the elements of the dataset used to
+extract the cluster.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="pyproct.clustering.metrics.separation.SeparationCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>condensed_distance_matrix</em>, <em>cohesions=None</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/separation.html#SeparationCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.separation.SeparationCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics.silhouette">
+<span id="pyproct-clustering-metrics-silhouette-module"></span><h2>pyproct.clustering.metrics.silhouette module<a class="headerlink" href="#module-pyproct.clustering.metrics.silhouette" title="Permalink to this headline">¶</a></h2>
+<p>Created on 02/05/2012</p>
+<p>&#64;author: victor</p>
+<dl class="class">
+<dt id="pyproct.clustering.metrics.silhouette.SilhouetteCoefficientCalculator">
+<em class="property">class </em><tt class="descclassname">pyproct.clustering.metrics.silhouette.</tt><tt class="descname">SilhouetteCoefficientCalculator</tt><a class="reference internal" href="_modules/pyproct/clustering/metrics/silhouette.html#SilhouetteCoefficientCalculator"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.silhouette.SilhouetteCoefficientCalculator" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <tt class="xref py py-class docutils literal"><span class="pre">object</span></tt></p>
+<p>Between -1 and 1. 1 Is the value for the better clustering (best separated and with best cohesion.
+0 can be a not-so-good-and-not-so-bad clustering, but a random clustering would get results
+around this.</p>
+<dl class="method">
+<dt id="pyproct.clustering.metrics.silhouette.SilhouetteCoefficientCalculator.evaluate">
+<tt class="descname">evaluate</tt><big>(</big><em>clustering</em>, <em>condensed_distance_matrix</em>, <em>element=None</em>, <em>cluster=None</em><big>)</big><a class="reference internal" href="_modules/pyproct/clustering/metrics/silhouette.html#SilhouetteCoefficientCalculator.evaluate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyproct.clustering.metrics.silhouette.SilhouetteCoefficientCalculator.evaluate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Evaluates the silhouette factor for 3 types of elements in the clusterization
+hierarchy:
+- element silhouette: it needs to define the element and the cluster to which
+this element belongs
+- cluster: only needs to define the cluster.
+- clusterization: calculates the silhouette factor of a whole clusterization.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-pyproct.clustering.metrics">
+<span id="module-contents"></span><h2>Module contents<a class="headerlink" href="#module-pyproct.clustering.metrics" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">pyproct.clustering.metrics package</a><ul>
+<li><a class="reference internal" href="#subpackages">Subpackages</a></li>
+<li><a class="reference internal" href="#submodules">Submodules</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.CalinskiHarabasz">pyproct.clustering.metrics.CalinskiHarabasz module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.DaviesBouldin">pyproct.clustering.metrics.DaviesBouldin module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.Dunn">pyproct.clustering.metrics.Dunn module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.boundedCohesion">pyproct.clustering.metrics.boundedCohesion module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.cohesion">pyproct.clustering.metrics.cohesion module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.common">pyproct.clustering.metrics.common module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.compactness">pyproct.clustering.metrics.compactness module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.gaussianSeparation">pyproct.clustering.metrics.gaussianSeparation module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.graphMetrics">pyproct.clustering.metrics.graphMetrics module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.meanMinimumDistance">pyproct.clustering.metrics.meanMinimumDistance module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.pcaMetrics">pyproct.clustering.metrics.pcaMetrics module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.separation">pyproct.clustering.metrics.separation module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics.silhouette">pyproct.clustering.metrics.silhouette module</a></li>
+<li><a class="reference internal" href="#module-pyproct.clustering.metrics">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/pyproct.clustering.metrics.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

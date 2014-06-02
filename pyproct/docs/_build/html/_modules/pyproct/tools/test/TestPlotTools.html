@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.tools.test.TestPlotTools &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.tools.test.TestPlotTools</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 13/12/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">unittest</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+<span class="kn">import</span> <span class="nn">pyproct.tools.plotTools</span>
+
+<div class="viewcode-block" id="Test"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPlotTools.Test">[docs]</a><span class="k">class</span> <span class="nc">Test</span><span class="p">(</span><span class="n">unittest</span><span class="o">.</span><span class="n">TestCase</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Test.test_normalize"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPlotTools.Test.test_normalize">[docs]</a>    <span class="k">def</span> <span class="nf">test_normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">test_list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">,</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]</span>
+        <span class="n">rescaled</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.333</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.666</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.666</span><span class="p">,</span> <span class="mf">1.333</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">]</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">plotTools</span><span class="o">.</span><span class="n">normalize</span><span class="p">(</span><span class="n">test_list</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">rescaled</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+   </div>
+<div class="viewcode-block" id="Test.test_normalize_in_range"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPlotTools.Test.test_normalize_in_range">[docs]</a>    <span class="k">def</span> <span class="nf">test_normalize_in_range</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mylist</span> <span class="o">=</span><span class="p">[</span><span class="mi">255</span><span class="p">,</span><span class="mi">40</span><span class="p">,</span><span class="mi">35</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">245</span><span class="p">]</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">plotTools</span><span class="o">.</span><span class="n">normalize_in_range</span><span class="p">(</span><span class="n">mylist</span><span class="p">,</span><span class="mf">0.3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">norm</span><span class="p">,[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.409</span><span class="p">,</span> <span class="mf">0.396</span><span class="p">,</span> <span class="mf">0.305</span><span class="p">,</span> <span class="mf">0.972</span><span class="p">],</span><span class="mi">3</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="Test.test_remove_zeros"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPlotTools.Test.test_remove_zeros">[docs]</a>    <span class="k">def</span> <span class="nf">test_remove_zeros</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">mylist</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+        <span class="n">numpy</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">plotTools</span><span class="o">.</span><span class="n">remove_zeros</span><span class="p">(</span><span class="n">mylist</span><span class="p">),</span> <span class="n">expected</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_tuple_to_int"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPlotTools.Test.test_tuple_to_int">[docs]</a>    <span class="k">def</span> <span class="nf">test_tuple_to_int</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertItemsEqual</span><span class="p">(</span><span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">plotTools</span><span class="o">.</span><span class="n">tuple_to_int</span><span class="p">((</span><span class="mf">0.1</span><span class="p">,</span><span class="mf">0.6</span><span class="p">,</span><span class="mf">7.3</span><span class="p">,</span><span class="o">-</span><span class="mf">3.2</span><span class="p">)),</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="o">-</span><span class="mi">3</span><span class="p">))</span>
+    </div>
+<div class="viewcode-block" id="Test.test_shorten_name"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPlotTools.Test.test_shorten_name">[docs]</a>    <span class="k">def</span> <span class="nf">test_shorten_name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">text</span> <span class="o">=</span> <span class="s">&quot;En un lugar de la mancha de cuyo nombre no quiero acordarme&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">plotTools</span><span class="o">.</span><span class="n">shorten_name</span><span class="p">(</span><span class="n">text</span><span class="p">,</span> <span class="n">max_length</span> <span class="o">=</span> <span class="mi">5</span><span class="p">),</span> <span class="s">&quot;...darme&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">assertEqual</span><span class="p">(</span><span class="n">pyproct</span><span class="o">.</span><span class="n">tools</span><span class="o">.</span><span class="n">plotTools</span><span class="o">.</span><span class="n">shorten_name</span><span class="p">(</span><span class="n">text</span><span class="p">),</span> <span class="s">&quot;... acordarme&quot;</span><span class="p">)</span>
+        </div>
+<div class="viewcode-block" id="Test.test_shrink_matrix"><a class="viewcode-back" href="../../../../pyproct.tools.test.html#pyproct.tools.test.TestPlotTools.Test.test_shrink_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">test_shrink_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fail</span><span class="p">(</span><span class="s">&quot;TODO&quot;</span><span class="p">)</span>
+    </div></div>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="c">#import sys;sys.argv = [&#39;&#39;, &#39;Test.testName&#39;]</span>
+    <span class="n">unittest</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

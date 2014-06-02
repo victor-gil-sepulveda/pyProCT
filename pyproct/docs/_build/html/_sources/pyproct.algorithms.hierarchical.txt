@@ -1,0 +1,45 @@
+pyproct.algorithms.hierarchical package
+=======================================
+
+Subpackages
+-----------
+
+.. toctree::
+
+    pyproct.algorithms.hierarchical.test
+
+Submodules
+----------
+
+pyproct.algorithms.hierarchical.hierarchicalAlgorithm module
+------------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.hierarchical.hierarchicalAlgorithm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.algorithms.hierarchical.hierarchicalTools module
+--------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.hierarchical.hierarchicalTools
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+pyproct.algorithms.hierarchical.parametersGeneration module
+-----------------------------------------------------------
+
+.. automodule:: pyproct.algorithms.hierarchical.parametersGeneration
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+
+Module contents
+---------------
+
+.. automodule:: pyproct.algorithms.hierarchical
+    :members:
+    :undoc-members:
+    :show-inheritance:

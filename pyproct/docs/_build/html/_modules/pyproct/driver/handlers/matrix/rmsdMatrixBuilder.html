@@ -1,0 +1,205 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.driver.handlers.matrix.rmsdMatrixBuilder &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.driver.handlers.matrix.rmsdMatrixBuilder</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 13/02/2013</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.RMSDCalculator</span> <span class="kn">import</span> <span class="n">RMSDCalculator</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.condensedMatrix</span> <span class="kn">import</span> <span class="n">CondensedMatrix</span>
+<span class="kn">import</span> <span class="nn">numpy</span>
+
+<div class="viewcode-block" id="RMSDMatrixBuilder"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder">[docs]</a><span class="k">class</span> <span class="nc">RMSDMatrixBuilder</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RMSDMatrixBuilder.build"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.build">[docs]</a>    <span class="k">def</span> <span class="nf">build</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">,</span> <span class="n">matrix_creation_parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a matrix with the method used in the handler creation.</span>
+
+<span class="sd">        @param trajectory_handler:</span>
+<span class="sd">        @param matrix_creation_parameters:</span>
+
+<span class="sd">        @return: The created matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">fit_selection_string</span> <span class="o">=</span> <span class="n">matrix_creation_parameters</span><span class="p">[</span><span class="s">&quot;fit_selection&quot;</span><span class="p">]</span>
+        <span class="n">fit_selection_coordsets</span> <span class="o">=</span> <span class="n">trajectory_handler</span><span class="o">.</span><span class="n">getSelection</span><span class="p">(</span><span class="n">fit_selection_string</span><span class="p">)</span>
+        <span class="n">trajectory_handler</span><span class="o">.</span><span class="n">setWorkingCoordinates</span><span class="p">(</span><span class="n">fit_selection_string</span><span class="p">)</span>
+
+        <span class="n">calculator_type</span> <span class="o">=</span> <span class="n">matrix_creation_parameters</span><span class="p">[</span><span class="s">&quot;calculator_type&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&quot;calculator_type&quot;</span> <span class="ow">in</span> <span class="n">matrix_creation_parameters</span> <span class="k">else</span> <span class="s">&quot;QTRFIT_OMP_CALCULATOR&quot;</span>
+
+        <span class="n">calculator</span> <span class="o">=</span> <span class="n">RMSDCalculator</span><span class="p">(</span><span class="n">calculatorType</span> <span class="o">=</span> <span class="n">calculator_type</span><span class="p">,</span>
+                                    <span class="n">fittingCoordsets</span>  <span class="o">=</span> <span class="n">fit_selection_coordsets</span><span class="p">)</span>
+
+        <span class="c"># Apply calculation selection if needed</span>
+        <span class="n">calc_selection_string</span> <span class="o">=</span> <span class="n">matrix_creation_parameters</span><span class="p">[</span><span class="s">&quot;calc_selection&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&quot;calc_selection&quot;</span> <span class="ow">in</span> <span class="n">matrix_creation_parameters</span> <span class="k">else</span>  <span class="s">&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">calc_selection_string</span> <span class="o">!=</span> <span class="s">&quot;&quot;</span> <span class="ow">and</span> <span class="n">calc_selection_string</span> <span class="o">!=</span> <span class="n">fit_selection_string</span><span class="p">:</span>
+            <span class="n">calc_selection_coordsets</span> <span class="o">=</span> <span class="n">trajectory_handler</span><span class="o">.</span><span class="n">getSelection</span><span class="p">(</span><span class="n">calc_selection_string</span><span class="p">)</span>
+            <span class="n">trajectory_handler</span><span class="o">.</span><span class="n">setWorkingCoordinates</span><span class="p">(</span><span class="n">calc_selection_string</span><span class="p">)</span>
+
+            <span class="n">symm_groups</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="s">&quot;symmetries&quot;</span> <span class="ow">in</span> <span class="n">matrix_creation_parameters</span><span class="p">:</span>
+                <span class="c"># Then prepare it to handle calculation symmetries</span>
+                <span class="c"># Description of equivalences must have the same number of atoms</span>
+                <span class="n">symm_groups</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">process_symm_groups</span><span class="p">(</span><span class="n">matrix_creation_parameters</span><span class="p">,</span>
+                                                      <span class="n">trajectory_handler</span><span class="p">,</span>
+                                                      <span class="n">calc_selection_coordsets</span><span class="p">)</span>
+                <span class="k">print</span> <span class="s">&quot;Using symmetries&quot;</span><span class="p">,</span><span class="n">symm_groups</span>
+
+            <span class="n">calculator</span> <span class="o">=</span> <span class="n">RMSDCalculator</span><span class="p">(</span><span class="n">calculatorType</span> <span class="o">=</span> <span class="n">calculator_type</span><span class="p">,</span>
+                                        <span class="n">fittingCoordsets</span>  <span class="o">=</span> <span class="n">fit_selection_coordsets</span><span class="p">,</span>
+                                        <span class="n">calculationCoordsets</span> <span class="o">=</span> <span class="n">calc_selection_coordsets</span><span class="p">,</span>
+                                        <span class="n">calcSymmetryGroups</span><span class="o">=</span><span class="n">symm_groups</span><span class="p">)</span>
+
+        <span class="n">rmsds</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">pairwiseRMSDMatrix</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">CondensedMatrix</span><span class="p">(</span><span class="n">rmsds</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RMSDMatrixBuilder.select_one_atom"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.select_one_atom">[docs]</a>    <span class="k">def</span> <span class="nf">select_one_atom</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">,</span> <span class="n">selection</span><span class="p">):</span>
+        <span class="c"># We pick coordinates only for first frame</span>
+        <span class="n">coordsets</span> <span class="o">=</span>  <span class="n">trajectory_handler</span><span class="o">.</span><span class="n">getSelection</span><span class="p">(</span><span class="n">selection</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordsets</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;[ERROR RMSDMatrixBuilder:select_one_atom] Selection returned 0 atoms (</span><span class="si">%s</span><span class="s">).&quot;</span><span class="o">%</span><span class="n">selection</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">coordsets</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;[ERROR RMSDMatrixBuilder:select_one_atom] Selection returned more than one atom (</span><span class="si">%s</span><span class="s">).&quot;</span><span class="o">%</span><span class="n">selection</span>
+            <span class="nb">exit</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">coordsets</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RMSDMatrixBuilder.process_symm_groups"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.process_symm_groups">[docs]</a>    <span class="k">def</span> <span class="nf">process_symm_groups</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">matrix_parameters</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">,</span> <span class="n">calc_selection_coordsets</span><span class="p">):</span>
+        <span class="n">symm_groups</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">equivalence_id</span> <span class="ow">in</span> <span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;symmetries&quot;</span><span class="p">]:</span>
+            <span class="c"># Example: [[&quot;name C10&quot;, &quot;name C30&quot;],[&quot;name O7&quot;, &quot;name O20&quot;]]</span>
+            <span class="n">symm_group</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">process_group</span><span class="p">(</span><span class="n">equivalence_id</span><span class="p">,</span>
+                                           <span class="n">matrix_parameters</span><span class="p">,</span>
+                                           <span class="n">trajectory_handler</span><span class="p">,</span>
+                                           <span class="n">calc_selection_coordsets</span><span class="p">)</span>
+
+            <span class="n">symm_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">symm_group</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">symm_groups</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RMSDMatrixBuilder.process_group"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.process_group">[docs]</a>    <span class="k">def</span> <span class="nf">process_group</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">equivalence_id</span><span class="p">,</span> <span class="n">matrix_parameters</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">,</span> <span class="n">calc_selection_coordsets</span><span class="p">):</span>
+
+        <span class="n">common_selection</span> <span class="o">=</span> <span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;symmetries&quot;</span><span class="p">][</span><span class="n">equivalence_id</span><span class="p">][</span><span class="s">&quot;common&quot;</span><span class="p">]</span>
+        <span class="n">atom_selections</span> <span class="o">=</span> <span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;symmetries&quot;</span><span class="p">][</span><span class="n">equivalence_id</span><span class="p">][</span><span class="s">&quot;equivalences&quot;</span><span class="p">]</span>
+
+        <span class="n">symm_group</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">atom_selection</span> <span class="ow">in</span> <span class="n">atom_selections</span><span class="p">:</span>
+            <span class="n">atom1_coords</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">select_one_atom</span><span class="p">(</span> <span class="n">trajectory_handler</span><span class="p">,</span>
+                                                <span class="s">&quot;</span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">common_selection</span><span class="p">,</span><span class="n">atom_selection</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+
+            <span class="n">atom1_index</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">locate_index</span><span class="p">(</span><span class="n">atom1_coords</span><span class="p">,</span> <span class="n">calc_selection_coordsets</span><span class="p">)</span>
+
+            <span class="n">atom2_coords</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">select_one_atom</span><span class="p">(</span> <span class="n">trajectory_handler</span><span class="p">,</span>
+                                                <span class="s">&quot;</span><span class="si">%s</span><span class="s"> and </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">common_selection</span><span class="p">,</span><span class="n">atom_selection</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+
+            <span class="n">atom2_index</span> <span class="o">=</span> <span class="n">cls</span><span class="o">.</span><span class="n">locate_index</span><span class="p">(</span><span class="n">atom2_coords</span><span class="p">,</span> <span class="n">calc_selection_coordsets</span><span class="p">)</span>
+
+            <span class="n">symm_group</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">atom1_index</span><span class="p">,</span> <span class="n">atom2_index</span><span class="p">))</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">symm_group</span><span class="p">)</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="RMSDMatrixBuilder.locate_index"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.rmsdMatrixBuilder.RMSDMatrixBuilder.locate_index">[docs]</a>    <span class="k">def</span> <span class="nf">locate_index</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">atom_coords</span><span class="p">,</span> <span class="n">coordsets</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">coord</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">coordsets</span><span class="p">[</span><span class="mi">0</span><span class="p">]):</span> <span class="c"># &lt;- we work with the first frame only</span>
+            <span class="k">if</span>  <span class="n">coord</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">atom_coords</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">coord</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">atom_coords</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="ow">and</span> <span class="n">coord</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">==</span> <span class="n">atom_coords</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">i</span>
+        <span class="k">return</span> <span class="bp">None</span>
+</pre></div></div></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

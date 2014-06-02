@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.algorithms.kmedoids.parametersGeneration &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.algorithms.kmedoids.parametersGeneration</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 27/05/2013</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">hashlib</span>
+
+
+<div class="viewcode-block" id="ParametersGenerator"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.parametersGeneration.ParametersGenerator">[docs]</a><span class="k">class</span> <span class="nc">ParametersGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">MAX_CLUSTERING_PARAMETERS</span> <span class="o">=</span> <span class="mf">15.</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">matrix_handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class creator.</span>
+
+<span class="sd">        @param parameters: Script parameters.</span>
+
+<span class="sd">        @param distance_matrix: The distance matrix we are using.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
+
+        <span class="k">if</span> <span class="s">&quot;max&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;algorithms&quot;</span><span class="p">][</span><span class="s">&quot;kmedoids&quot;</span><span class="p">]:</span>
+            <span class="n">max_gen_clusterings</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;algorithms&quot;</span><span class="p">][</span><span class="s">&quot;kmedoids&quot;</span><span class="p">][</span><span class="s">&quot;max&quot;</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">max_gen_clusterings</span> <span class="o">=</span> <span class="n">ParametersGenerator</span><span class="o">.</span><span class="n">MAX_CLUSTERING_PARAMETERS</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_clusters_step</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">ceil</span><span class="p">((</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;maximum_clusters&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;minimum_clusters&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="n">max_gen_clusterings</span><span class="p">))</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_clusters_step</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">num_clusters_step</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ParametersGenerator.get_base_parameters"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.parametersGeneration.ParametersGenerator.get_base_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_base_parameters</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Defines the base parameters needed for each of the algorithms. Each parameter created will be based</span>
+<span class="sd">        on one of those and must not have more keys than these.</span>
+
+<span class="sd">        @return: A dictionary with the base parameters for this algorithm.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+                 <span class="s">&quot;k&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                 <span class="s">&quot;seeding_type&quot;</span><span class="p">:</span> <span class="bp">None</span><span class="p">,</span>
+                 <span class="s">&quot;seeding_max_cutoff&quot;</span><span class="p">:</span> <span class="bp">None</span>
+        <span class="p">}</span>
+</div>
+<div class="viewcode-block" id="ParametersGenerator.get_parameters"><a class="viewcode-back" href="../../../../pyproct.algorithms.kmedoids.html#pyproct.algorithms.kmedoids.parametersGeneration.ParametersGenerator.get_parameters">[docs]</a>    <span class="k">def</span> <span class="nf">get_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This function creates some parameters to be used with K-Medoids.</span>
+<span class="sd">        @return: A tuple with the generated parameters and an empty list corresponding to the clusterings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">run_parameters</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">max_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;maximum_clusters&quot;</span><span class="p">]</span>
+        <span class="n">min_clusters</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;minimum_clusters&quot;</span><span class="p">]</span>
+        <span class="n">sizes</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_clusters</span><span class="p">,</span><span class="n">max_clusters</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">num_clusters_step</span><span class="p">)</span>
+
+        <span class="c"># Defaults</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;seeding_type&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;algorithms&quot;</span><span class="p">][</span><span class="s">&quot;kmedoids&quot;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;algorithms&quot;</span><span class="p">][</span><span class="s">&quot;kmedoids&quot;</span><span class="p">][</span><span class="s">&quot;seeding_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;EQUIDISTANT&quot;</span>
+
+        <span class="c"># This could be subclassed</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;algorithms&quot;</span><span class="p">][</span><span class="s">&quot;kmedoids&quot;</span><span class="p">][</span><span class="s">&quot;seeding_type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;RANDOM&quot;</span><span class="p">:</span>
+            <span class="n">tries</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;algorithms&quot;</span><span class="p">][</span><span class="s">&quot;kmedoids&quot;</span><span class="p">][</span><span class="s">&quot;tries&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&quot;tries&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;algorithms&quot;</span><span class="p">][</span><span class="s">&quot;kmedoids&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">10</span>
+
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">tries</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">one_size</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">:</span>
+                    <span class="n">run_parameter</span> <span class="o">=</span> <span class="n">ParametersGenerator</span><span class="o">.</span><span class="n">get_base_parameters</span><span class="p">()</span>
+                    <span class="n">run_parameter</span><span class="p">[</span><span class="s">&quot;k&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">one_size</span>
+                    <span class="n">run_parameter</span><span class="p">[</span><span class="s">&quot;seeding_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;RANDOM&quot;</span>
+                    <span class="n">run_parameter</span><span class="p">[</span><span class="s">&quot;rand_seed&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="nb">str</span><span class="p">({</span><span class="s">&quot;dic&quot;</span><span class="p">:</span><span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="p">,</span><span class="s">&quot;iter&quot;</span><span class="p">:</span><span class="n">i</span><span class="p">}))</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span><span class="n">base</span><span class="o">=</span><span class="mi">16</span><span class="p">)</span>
+                    <span class="n">run_parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_parameter</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">one_size</span> <span class="ow">in</span> <span class="n">sizes</span><span class="p">:</span>
+                <span class="n">run_parameter</span> <span class="o">=</span> <span class="n">ParametersGenerator</span><span class="o">.</span><span class="n">get_base_parameters</span><span class="p">()</span>
+                <span class="n">run_parameter</span><span class="p">[</span><span class="s">&quot;k&quot;</span><span class="p">]</span>  <span class="o">=</span> <span class="n">one_size</span>
+                <span class="n">run_parameter</span><span class="p">[</span><span class="s">&quot;seeding_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s">&quot;EQUIDISTANT&quot;</span>
+                <span class="n">run_parameters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">run_parameter</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">run_parameters</span><span class="p">,</span> <span class="p">[]</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

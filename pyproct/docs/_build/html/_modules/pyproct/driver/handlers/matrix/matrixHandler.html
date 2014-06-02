@@ -1,0 +1,208 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.driver.handlers.matrix.matrixHandler &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../../index.html" />
+    <link rel="up" title="Module code" href="../../../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.driver.handlers.matrix.matrixHandler</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 13/02/2013</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">pyRMSD.matrixHandler</span> <span class="kn">import</span> <span class="n">MatrixHandler</span> <span class="k">as</span> <span class="n">pyRMSD_MatrixHandler</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.handlers.matrix.rmsdMatrixBuilder</span> <span class="kn">import</span> <span class="n">RMSDMatrixBuilder</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder</span> <span class="kn">import</span> <span class="n">EuclideanDistanceMatrixBuilder</span>
+
+<div class="viewcode-block" id="MatrixHandler"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler">[docs]</a><span class="k">class</span> <span class="nc">MatrixHandler</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Class constructor.</span>
+<span class="sd">        </span>
+<span class="sd">        @param matrix_parameters</span>
+<span class="sd">        </span>
+<span class="sd">        One JSON entry with this entries:</span>
+<span class="sd">        </span>
+<span class="sd">        { </span>
+<span class="sd">            matrix: {</span>
+<span class="sd">                method: method_type,</span>
+<span class="sd">                parameters:{</span>
+<span class="sd">                    </span>
+<span class="sd">                }</span>
+<span class="sd">            }</span>
+<span class="sd">        }</span>
+<span class="sd">        </span>
+<span class="sd">        method_type: One of the available matrix generation types available. Currently:</span>
+<span class="sd">            </span>
+<span class="sd">            - &#39;load&#39;: Load an already created matrix from disk</span>
+<span class="sd">            </span>
+<span class="sd">                    parameters:{</span>
+<span class="sd">                        path: String,</span>
+<span class="sd">                    }</span>
+<span class="sd">                    </span>
+<span class="sd">                    &#39;path&#39; the path where the matrix is going to be loaded.</span>
+<span class="sd">            </span>
+<span class="sd">            - &#39;rmsd&#39;: Root Mean Square deviation of one body</span>
+<span class="sd">            </span>
+<span class="sd">                    parameters:{</span>
+<span class="sd">                        fit_selection: String,</span>
+<span class="sd">                        calc_selection: String,</span>
+<span class="sd">                        calculator_type: Enum</span>
+<span class="sd">                    }</span>
+<span class="sd">                    </span>
+<span class="sd">                    &#39;fit_selection&#39; is the Prody selection string used to describe the atoms to be superposed.</span>
+<span class="sd">                    &#39;calc_selection&#39; another Prody selection string that describes the atoms used to calculate RMSD.</span>
+<span class="sd">                    &#39;calculator_type&#39; one of the calculators in pyRMSD.</span>
+<span class="sd">                    </span>
+<span class="sd">            - &#39;distance&#39;: Euclidean distance of the geometrical center of one body.</span>
+<span class="sd">            </span>
+<span class="sd">                    parameters:{</span>
+<span class="sd">                        fit_selection:  String,</span>
+<span class="sd">                        body_selection: String,</span>
+<span class="sd">                    }</span>
+<span class="sd">                    </span>
+<span class="sd">                    &#39;fit_selection&#39; is the Prody selection string used to describe the atoms to be superposed.</span>
+<span class="sd">                    &#39;body_selection&#39; another Prody selection string that describes the element that will be used</span>
+<span class="sd">                    to get the euclidean distances.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span> <span class="o">=</span> <span class="n">matrix_parameters</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span> <span class="o">=</span> <span class="bp">None</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="ow">in</span> <span class="p">[</span><span class="s">&quot;load&quot;</span><span class="p">,</span><span class="s">&quot;rmsd&quot;</span><span class="p">,</span><span class="s">&quot;distance&quot;</span><span class="p">]:</span>
+            <span class="k">print</span> <span class="s">&quot;[Error] Incorrect matrix creation option: </span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;method&quot;</span><span class="p">]</span>
+            <span class="nb">exit</span><span class="p">()</span>
+        
+<div class="viewcode-block" id="MatrixHandler.create_matrix"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.create_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">create_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a matrix with the method used in the handler creation.</span>
+<span class="sd">        </span>
+<span class="sd">        @param matrix_base_path: </span>
+<span class="sd">        @param parameters: </span>
+<span class="sd">        </span>
+<span class="sd">        @return: The created matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;load&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span> <span class="o">=</span> <span class="n">pyRMSD_MatrixHandler</span><span class="o">.</span><span class="n">load_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;parameters&quot;</span><span class="p">][</span><span class="s">&quot;path&quot;</span><span class="p">])</span>
+            
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;rmsd&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span> <span class="o">=</span>  <span class="n">RMSDMatrixBuilder</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">trajectory_handler</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;parameters&quot;</span><span class="p">])</span>
+            
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;distance&quot;</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span> <span class="o">=</span>  <span class="n">EuclideanDistanceMatrixBuilder</span><span class="p">()</span><span class="o">.</span><span class="n">build</span><span class="p">(</span><span class="n">trajectory_handler</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">matrix_parameters</span><span class="p">[</span><span class="s">&quot;parameters&quot;</span><span class="p">])</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span>
+    </div>
+<div class="viewcode-block" id="MatrixHandler.save_matrix"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.save_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">save_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes matrix contents to disk.</span>
+<span class="sd">        </span>
+<span class="sd">        @param matrix_save_file: Complete path (with filename) where to save the matrix.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_matrix_calculated_error</span><span class="p">()</span>
+        <span class="n">pyRMSD_MatrixHandler</span><span class="o">.</span><span class="n">save_matrix</span><span class="p">(</span><span class="n">matrix_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="MatrixHandler.save_statistics"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.save_statistics">[docs]</a>    <span class="k">def</span> <span class="nf">save_statistics</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">matrix_base_path</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes matrix statistics to disk in JSON format.</span>
+<span class="sd">        </span>
+<span class="sd">        @param matrix_base_path: The folder where to save the &#39;statistics.json&#39; file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_matrix_calculated_error</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">pyRMSD_MatrixHandler</span><span class="o">.</span><span class="n">save_statistics</span><span class="p">(</span><span class="n">matrix_base_path</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">)</span>
+    </div>
+<div class="viewcode-block" id="MatrixHandler.check_matrix_calculated_error"><a class="viewcode-back" href="../../../../../pyproct.driver.handlers.matrix.html#pyproct.driver.handlers.matrix.matrixHandler.MatrixHandler.check_matrix_calculated_error">[docs]</a>    <span class="k">def</span> <span class="nf">check_matrix_calculated_error</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Exits the program if the matrix wasn&#39;t calculated yet.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">distance_matrix</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;[ERROR][MatrixHandler::save_statistics] Matrix is not been calculated yet.&quot;</span>
+            <span class="nb">exit</span><span class="p">()</span>
+        
+    </div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>pyproct.protocol.protocol &mdash; pyProCT 1.2.0 documentation</title>
+    
+    <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../../',
+        VERSION:     '1.2.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <link rel="up" title="Module code" href="../../index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <h1>Source code for pyproct.protocol.protocol</h1><div class="highlight"><pre>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">Created on 21/05/2012</span>
+
+<span class="sd">@author: victor</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">pyproct.driver.scheduling.tools</span> <span class="kn">as</span> <span class="nn">scheduling_tools</span>
+<span class="kn">from</span> <span class="nn">pyproct.protocol.exploration.clusteringExplorator</span> <span class="kn">import</span> <span class="n">ClusteringExplorer</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.filtering.clusteringFilter</span> <span class="kn">import</span> <span class="n">ClusteringFilter</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.analysis.analysisRunner</span> <span class="kn">import</span> <span class="n">AnalysisRunner</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.analysis.analysisPopulator</span> <span class="kn">import</span> <span class="n">AnalysisPopulator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.selection.bestClusteringSelector</span> <span class="kn">import</span> <span class="n">BestClusteringSelector</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.observer.observable</span> <span class="kn">import</span> <span class="n">Observable</span>
+<span class="kn">from</span> <span class="nn">pyproct.protocol.exploration.algorithmRunParametersGenerator</span> <span class="kn">import</span> <span class="n">AlgorithmRunParametersGenerator</span>
+
+<div class="viewcode-block" id="ClusteringProtocol"><a class="viewcode-back" href="../../../pyproct.protocol.html#pyproct.protocol.protocol.ClusteringProtocol">[docs]</a><span class="k">class</span> <span class="nc">ClusteringProtocol</span><span class="p">(</span><span class="n">Observable</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer</span><span class="p">,</span> <span class="n">observer</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ClusteringProtocol</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">timer</span>
+
+<div class="viewcode-block" id="ClusteringProtocol.run"><a class="viewcode-back" href="../../../pyproct.protocol.html#pyproct.protocol.protocol.ClusteringProtocol.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_parameters</span><span class="p">,</span> <span class="n">matrixHandler</span><span class="p">,</span> <span class="n">workspaceHandler</span><span class="p">,</span> <span class="n">trajectoryHandler</span><span class="p">):</span>
+
+        <span class="c">############################</span>
+        <span class="c"># Clustering exploration</span>
+        <span class="c">############################</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Exploration Started&quot;</span><span class="p">,</span> <span class="p">[])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Clustering Exploration&quot;</span><span class="p">)</span>
+        <span class="n">clusterings</span>  <span class="o">=</span> <span class="n">ClusteringExplorer</span><span class="p">(</span>
+                                            <span class="n">clustering_parameters</span><span class="p">,</span>
+                                            <span class="n">matrixHandler</span><span class="p">,</span>
+                                            <span class="n">workspaceHandler</span><span class="p">,</span>
+                                            <span class="n">scheduling_tools</span><span class="o">.</span><span class="n">build_scheduler</span><span class="p">(</span><span class="n">clustering_parameters</span><span class="p">[</span><span class="s">&quot;global&quot;</span><span class="p">][</span><span class="s">&quot;control&quot;</span><span class="p">],</span>
+                                                                             <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">),</span>
+                                            <span class="n">AlgorithmRunParametersGenerator</span><span class="p">(</span><span class="n">clustering_parameters</span><span class="p">,</span>
+                                                                            <span class="n">matrixHandler</span><span class="p">),</span>
+                                            <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Clusterings Created&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;number_of_clusters&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">clusterings</span><span class="p">)})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Clustering Exploration&quot;</span><span class="p">)</span>
+
+        <span class="c">######################</span>
+        <span class="c"># First filtering</span>
+        <span class="c">######################</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Clustering Filtering&quot;</span><span class="p">)</span>
+        <span class="n">selected_clusterings</span><span class="p">,</span> <span class="n">not_selected_clusterings</span> <span class="o">=</span> <span class="n">ClusteringFilter</span><span class="p">(</span><span class="n">clustering_parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">],</span>
+                                                                          <span class="n">matrixHandler</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">clusterings</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Filter&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;selected&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">selected_clusterings</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span><span class="s">&quot;not_selected&quot;</span><span class="p">:</span><span class="nb">len</span><span class="p">(</span><span class="n">not_selected_clusterings</span><span class="o">.</span><span class="n">keys</span><span class="p">())})</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Clustering Filtering&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">selected_clusterings</span> <span class="o">==</span> <span class="p">{}:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+
+        <span class="c">######################</span>
+        <span class="c"># Clustering scoring</span>
+        <span class="c">######################</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Evaluation&quot;</span><span class="p">)</span>
+        <span class="n">analyzer</span> <span class="o">=</span> <span class="n">AnalysisRunner</span><span class="p">(</span><span class="n">scheduling_tools</span><span class="o">.</span><span class="n">build_scheduler</span><span class="p">(</span>
+                                                       <span class="n">clustering_parameters</span><span class="p">[</span><span class="s">&quot;global&quot;</span><span class="p">][</span><span class="s">&quot;control&quot;</span><span class="p">],</span>
+                                                       <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">),</span>
+                                          <span class="n">selected_clusterings</span><span class="p">,</span>
+                                          <span class="n">AnalysisPopulator</span><span class="p">(</span><span class="n">matrixHandler</span><span class="p">,</span>
+                                                            <span class="n">trajectoryHandler</span><span class="p">,</span>
+                                                            <span class="n">clustering_parameters</span><span class="p">))</span>
+
+        <span class="n">analyzer</span><span class="o">.</span><span class="n">evaluate</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Evaluation&quot;</span><span class="p">)</span>
+
+        <span class="c">######################</span>
+        <span class="c"># Choose the best clustering</span>
+        <span class="c">######################</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Selection&quot;</span><span class="p">)</span>
+        <span class="n">best_clustering_id</span><span class="p">,</span> <span class="n">all_scores</span> <span class="o">=</span> <span class="n">BestClusteringSelector</span><span class="p">(</span><span class="n">clustering_parameters</span><span class="p">)</span><span class="o">.</span><span class="n">choose_best</span><span class="p">(</span><span class="n">selected_clusterings</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Selection&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">best_clustering_id</span><span class="p">,</span> <span class="n">selected_clusterings</span><span class="p">,</span> <span class="n">not_selected_clusterings</span><span class="p">,</span> <span class="n">all_scores</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+          <li><a href="../../index.html" >Module code</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
+    </div>
+  </body>
+</html>
