@@ -26,12 +26,20 @@ class MPIDriver(Driver):
         best_clustering, clustering_results = self.get_best_clustering(parameters)
         self.comm.Barrier()
         if self.rank == 0:
-            print best_clustering
             self.postprocess(parameters, best_clustering)
             #################################
             # Results are saved to a file
             #################################
             self.save_clustering_results(clustering_results)
+
+            #################################
+            # Small summary of the best_cluster is shown
+            #################################
+            print "======================="
+            print "This is the chosen cluster:"
+            print "\t- Used algorithm: ", best_clustering['type']
+            print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
+            print "\t- Noise: %.3f %%"%best_clustering['evaluation']['Noise level']
 
     def run(self, parameters):
         #####################

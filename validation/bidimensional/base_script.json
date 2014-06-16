@@ -25,7 +25,8 @@
         },
         "algorithms": {
             "spectral": {
-                "max": 100
+                "max": 100,
+                "use_kmedoids":false
             },
             "dbscan": {
                 "max": 100
@@ -35,7 +36,7 @@
             },
             "kmedoids": {
             	"seeding_type": "RANDOM",
-            	"tries":10,
+            	"tries":25,
                 "max": 100
             },
             "hierarchical": {

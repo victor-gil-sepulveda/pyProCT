@@ -243,12 +243,11 @@ class Driver(Observable):
         #################################
         # Small summary of the best_cluster is shown
         #################################
-        print best_clustering
         print "======================="
-        print "One clustering was found:"
+        print "This is the chosen cluster:"
         print "\t- Used algorithm: ", best_clustering['type']
         print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
-        print "\t- Noise: ", best_clustering['evaluation']['Noise level']
+        print "\t- Noise: %.3f %%"%best_clustering['evaluation']['Noise level']
 
 
 

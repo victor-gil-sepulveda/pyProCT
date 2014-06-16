@@ -923,9 +923,9 @@ scale_factor = {
 
 num_cluster_ranges={
                 'spaeth_01':(2,10),
-                'spaeth_02':(2,10),
+                'spaeth_02':(1,10),
                 'spaeth_03':(2,10),
-                'spaeth_04':(5,10),
+                'spaeth_04':(3,10),
                 'spaeth_05':(3,10),
                 'spaeth_06':(3,10),
                 'spaeth_07':(2,10),
@@ -955,7 +955,7 @@ noise = {
                 'spaeth_06': 10,
                 'spaeth_07': 10,
                 'spaeth_08': 10,
-                'concentric_circles': 0
+                'concentric_circles': 5
 }
 criteria = {
     "default":{

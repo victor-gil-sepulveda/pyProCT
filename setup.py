@@ -15,7 +15,7 @@ if __name__ == '__main__': # Comp. with sphynx
 
     setup(
           name='pyProCT',
-          version='1.1.0',
+          version='1.2.0',
           description='',
           author='Victor Alejandro Gil Sepulveda',
           author_email='victor.gil.sepulveda@gmail.com',

@@ -56,7 +56,11 @@ if __name__ == '__main__':
                                         scale = 20,
                                         margin = 20).save("clustering_images/%s.jpg"%dataset_name,
                                                  "JPEG")
-        print dataset_name,results["selected"][best]["type"],results["selected"][best]["parameters"]
-
+        print dataset_name,results["selected"][best]["type"],results["selected"][best]["clustering"]["number_of_clusters"], results["selected"][best]["evaluation"]["Noise level"],#results["selected"][best]["parameters"]
+        # look for the best criteria
+        criteria_scores = []
+        for criteria in results["scores"]:
+            criteria_scores.append((results["scores"][criteria][best],criteria))
+        print criteria_scores
 
     print "\nDone"
