@@ -9,7 +9,6 @@ pyProCT is quite easy to install using *pip*. Just write:
 
 ```Shell
 > sudo pip install pyProCT
-
 ```
 And *pip* will take care of all the dependencies (shown below).
 
@@ -33,7 +32,6 @@ The JSON script has 4 main parts, each one dealing with a different aspect of th
 * clustering: Handles algorithms and evaluation parameterization.
 * preprocessing: Handles what to do with the clustering we have calculated.
 
-
 ```JSON
 {
 	"global":{},
@@ -42,8 +40,38 @@ The JSON script has 4 main parts, each one dealing with a different aspect of th
 	"postprocessing":{}
 }
 ```
-A more detailed explanation of the script contents can be found [here](pdf/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](pdf/icv_info.pdf). 
 
+
+
+### Global
+```JSON
+{
+	"control": {
+		"scheduler_type": "Process/Parallel",
+		"number_of_processes": 4
+	},
+	"workspace": {
+		 "tmp": "tmp",
+		 "matrix": "matrix",
+		 "clusterings": "clusterings",
+		 "results": "results",
+		 "base": /home/john/ClusteringProject"
+	}
+}
+```
+This is an example of "global" 
+
+### Data
+
+### Clustering
+
+### Postprocessing
+
+### Checking the script
+As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
+
+### Learning more
+A more detailed explanation of the script contents can be found [here](pdf/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](pdf/icv_info.pdf). 
 
 ## Using pyProCT as part of other programs 
 pyProCT has been written as a collection of modules coupled by means of the different handlers and 
