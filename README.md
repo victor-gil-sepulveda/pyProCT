@@ -55,13 +55,63 @@ The JSON script has 4 main parts, each one dealing with a different aspect of th
 		 "matrix": "matrix",
 		 "clusterings": "clusterings",
 		 "results": "results",
-		 "base": /home/john/ClusteringProject"
+		 "base": "/home/john/ClusteringProject"
 	}
 }
 ```
 This is an example of "global" 
 
+This is a valid global section using a serial scheduler and default names for workspace inner folders:
+```JSON
+{
+	"control": {
+		"scheduler_type": "Serial"
+	},
+	"workspace": {
+		 "base": "/home/john/ClusteringProject"
+	}
+}
+```
+pyProCT allows the use of 3 different schedulers that help to improve the overall performance of the software by parallelizing some parts of the code. The available schedulers are "Serial", "Process/Parallel" (uses Python's multiprocessing) and "MPI/Parallel" (uses MPI through mpi4py).
+
 ### Data
+```JSON
+{
+	"type": "pdb_ensemble",
+	"files": [
+		"A.pdb",
+		"B.pdb",
+	],
+	"matrix": {
+		"method": "rmsd",
+		"parameters": {
+			"calculator_type": "QCP_OMP_CALCULATOR",
+			"fit_selection": "backbone",
+		}
+		"image": {
+			"filename": "matrix_plot"
+		},
+		"filename":"matrix"
+	}
+}
+```
+[Prody](http://prody.csb.pitt.edu/)
+
+```JSON
+{ 
+	"file": ... , 
+	"base_selection": ... 
+}
+```
+
+pyProCT allows to load ".pdb" and ".dcd" trajectories.
+ ```JSON
+{ 
+	"file": ...,
+	"atoms_file": ..., 
+	"base_selection": ... 
+}
+```
 
 ### Clustering
 
@@ -70,7 +120,7 @@ This is an example of "global"
 ### Checking the script
 As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
 
-### Learning more
+### Learn more
 A more detailed explanation of the script contents can be found [here](pdf/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](pdf/icv_info.pdf). 
 
 ## Using pyProCT as part of other programs 
