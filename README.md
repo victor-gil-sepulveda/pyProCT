@@ -208,9 +208,33 @@ Ex.
 }
 ```
 
-#### evaluation
-This section holds the _Clustering Hypothesis_
+Algorithm parameters can be explicitly written:
 
+```JSON
+"kmedoids": {
+	"seeding_type": "RANDOM",
+	"max": 50,
+	"tries": 5,
+	"parameters":[{"k":4},{"k":5},{"k":6}]
+}
+```
+
+#### evaluation
+This section holds the _Clustering Hypothesis_, the core of pyProCT. Here the user can define how will the expected cluste
+
+Ex.
+```JSON
+{
+	"maximum_noise": 15,
+	"minimum_cluster_size": 50,
+	"maximum_clusters": 200,
+	"minimum_clusters": 6,
+	"evaluation_criteria": { 
+		...
+	},          
+	"query_types": [ ... ]          
+}
+```
 ### Postprocessing
 
 ### Checking the script
