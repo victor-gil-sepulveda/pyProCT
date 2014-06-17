@@ -4,6 +4,25 @@ pyProCT
 pyProCT is an open source cluster analysis software especially adapted for jobs related with structural proteomics. Its approach allows users to define a clustering goal (clustering hypothesis) based on their domain knowledge. This hypothesis will guide the software in order to find the best algorithm and parameters (including the number of clusters) to obtain the result that fulfills their expectatives. In this way users do not need to use cluster analysis algorithms as a black box, improving this way the results.
 pyProCT not only generates a resulting clustering, it also implements some use cases like the extraction of representatives or trajectory redundance elimination.
 
+[Table of Contents**](http://doctoc.herokuapp.com/)
+
+- [pyProCT](#user-content-pyproct)
+	- [Installation](#user-content-installation)
+	- [Using pyProCT as a standalone program](#user-content-using-pyproct-as-a-standalone-program)
+		- [Global](#user-content-global)
+		- [Data](#user-content-data)
+		- [Clustering](#user-content-clustering)
+			- [generation](#user-content-generation)
+			- [algorithms](#user-content-algorithms)
+			- [evaluation](#user-content-evaluation)
+		- [Postprocessing](#user-content-postprocessing)
+		- [Checking the script](#user-content-checking-the-script)
+		- [Learn more](#user-content-learn-more)
+	- [Using pyProCT as part of other programs](#user-content-using-pyproct-as-part-of-other-programs)
+		- [Using it as a separate program from other Python script](#user-content-using-it-as-a-separate-program-from-other-python-script)
+	- [A parallel execution example](#user-content-a-parallel-execution-example)
+- [Documentation](#user-content-documentation)
+
 ## Installation
 pyProCT is quite easy to install using *pip*. Just write:
 
@@ -140,6 +159,8 @@ The _clustering_ section is divided in 3 other subsections:
 
 #### generation 
 Defines how the clustering will be generated (_load_ or _generate_). if _load_ is chosen, the section must contain the clustering that may be used. Ex:
+
+```JSON
 "clustering": {
 	"generation": {
 		"method" : "load",
@@ -157,10 +178,38 @@ Defines how the clustering will be generated (_load_ or _generate_). if _load_ i
 		]
 	}
 }
+```
 
 #### algorithms
-If pyProCT has to generate the clustering
+If pyProCT has to generate the clustering, this section defines the algorithms that will be used as well as their parameters (if necessary). The currently available algorithms are : _kmedoids_, _hierarchical_, _dbscan_, _gromos_, _spectral_ and _random_. Each algorithm can store its list of parameters, however the preferred way to work with pyProCT is to let it automatically generate them. Almost all algorithms accept the property _max_, that defines the maximum amount of parameter collections that will be generated for that algorithm.
+
+Ex.
+
+```JSON
+{
+	"kmedoids": {
+		"seeding_type": "RANDOM",
+		"max": 50,
+		"tries": 5
+	},
+	"hierarchical": {
+
+	},
+	"dbscan": {
+		"max": 50
+	},
+	"gromos": {
+		"max": 50
+	},
+	"spectral": {
+		"max": 50,
+		"force_sparse":true,
+	}
+}
+```
+
 #### evaluation
+This section holds the _Clustering Hypothesis_
 
 ### Postprocessing
 
