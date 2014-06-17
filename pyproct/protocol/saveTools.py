@@ -10,6 +10,8 @@ from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
 from pyproct.tools.pdbTools import get_model_boundaries,\
     repair_MODEL_ENDMDL_tags
 
+import prody
+
 
 #TODO: do_merged_files_have_correlative_models seems to be unnecessary
 def merge_pdbs(trajectories, temporary_merged_trajectory_path, do_merged_files_have_correlative_models = True):
@@ -70,9 +72,18 @@ def save_representatives(representatives,
 
     # Merge pdbs (in order)
     temporary_merged_trajectory_path = os.path.join(workspace_handler["tmp"],"tmp_merged_trajectory.pdb")
-    merge_pdbs(trajectory_holder,
-               temporary_merged_trajectory_path,
-               do_merged_files_have_correlative_models)
+
+#===========================================================
+    # THIS DOES NOT WORK IF USING DCD FILES
+#     merge_pdbs(trajectory_holder,
+#                temporary_merged_trajectory_path,
+#                do_merged_files_have_correlative_models)
+
+    # TEMPORARY HACK TO OVERCOME DCD MERGING BUG
+
+    merged_pdb = trajectory_holder.getMergedStructure()
+    prody.writePDB(temporary_merged_trajectory_path, merged_pdb)
+#==========================================================
 
     # Extract frames from the merged pdb
     file_handler_in = open(temporary_merged_trajectory_path,"r")
