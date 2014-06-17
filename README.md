@@ -101,8 +101,8 @@ The _data_ section defines how pyProCT must build the distance matrix that will 
 The matrix can be stored if the _filename_ property is defined. The matrix can also be stored as an image if the _image_ property is defined.
 
 pyProCT can currently load _pdb_ and _dcd_ files. When using _pdb_ files, files can be loaded in two ways:
-1 - Using a list of file paths.
-2 - Using a list of file objects:
+1. Using a list of file paths.
+2. Using a list of file objects:
 ```JSON
 { 
 	"file": ... , 
@@ -111,8 +111,8 @@ pyProCT can currently load _pdb_ and _dcd_ files. When using _pdb_ files, files 
 ```
 Where _base_selection_ is a [Prody](http://prody.csb.pitt.edu/) compatible selection string. Loading files this way can help in cases where not all files have structure with the same number of atoms: _base_selection_ should define the common region between them (if a 1 to 1 map does not exist, the RMSD calculation will be wrong).
 
-3 - Only for _dcd_ files:
- ```JSON
+3. Only for _dcd_ files:
+```JSON
 { 
 	"file": ...,
 	"atoms_file": ..., 
@@ -122,6 +122,45 @@ Where _base_selection_ is a [Prody](http://prody.csb.pitt.edu/) compatible selec
 Where _atoms_file_ is a _pdb_ file with at least one frame that holds the atomic information needed by the _dcd_ file.
 
 ### Clustering
+The _clustering_ section is divided in 3 other subsections: 
+
+```JSON
+{
+	"generation": {
+		“method”: “generate”
+	},
+	"algorithms": {
+		...
+	},
+	"evaluation": {
+		...
+	}
+}
+```
+
+#### generation 
+Defines how the clustering will be generated (_load_ or _generate_). if _load_ is chosen, the section must contain the clustering that may be used. Ex:
+"clustering": {
+	"generation": {
+		"method" : "load",
+		"clusters": [
+				{
+					"prototype " : 16,
+					"id": "cluster_00",
+					"elements" : "9, 14:20"
+				},
+				{
+					"prototype": 7,
+					"id": "cluster_01",
+					"elements": "0:8, 10:14, 21"
+				}
+		]
+	}
+}
+
+#### algorithms
+If pyProCT has to generate the clustering
+#### evaluation
 
 ### Postprocessing
 
@@ -129,31 +168,20 @@ Where _atoms_file_ is a _pdb_ file with at least one frame that holds the atomic
 As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
 
 ### Learn more
-A more detailed explanation of the script contents can be found [here](pdf/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](pdf/icv_info.pdf). 
+A more detailed explanation of the script contents can be found [here](pdf/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](pdf/icv_info.pdf).
 
 ## Using pyProCT as part of other programs 
 pyProCT has been written as a collection of modules coupled by means of the different handlers and 
 Algorithms can be used separately if the correct for example:
 
-
 The necessary documentation to use pyProCT classes is written inside the code. It has been extracted [here]() and [here](). We are currently trying to improve this documentation with better explanations and examples. 
 
 ### Using it as a separate program from other Python script
 
-
+Loading results
+generating scripts programatically
 
 ## A parallel execution example
 
-
 # Documentation 
 We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy). See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud solution like [readthedocs.org](https://readthedocs.org/)
-
-
-
-
-
-
-
-
-
-
