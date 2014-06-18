@@ -20,7 +20,7 @@ pyProCT not only generates a resulting clustering, it also implements some use c
 		- [Learn more](#user-content-learn-more)
 	- [Using pyProCT as part of other programs](#user-content-using-pyproct-as-part-of-other-programs)
 		- [Using it as a separate program from other Python script](#user-content-using-it-as-a-separate-program-from-other-python-script)
-	- [A parallel execution example](#user-content-a-parallel-execution-example)
+	- [Parallel execution](#user-content-parallel-execution)
 - [Documentation](#user-content-documentation)
 
 ## Installation
@@ -109,7 +109,7 @@ The _data_ section defines how pyProCT must build the distance matrix that will 
 		"parameters": {
 			"calculator_type": "QCP_OMP_CALCULATOR",
 			"fit_selection": "backbone",
-		}
+		},
 		"image": {
 			"filename": "matrix_plot"
 		},
@@ -146,7 +146,7 @@ The _clustering_ section is divided in 3 other subsections:
 ```JSON
 {
 	"generation": {
-		“method”: “generate”
+		"method": "generate"
 	},
 	"algorithms": {
 		...
@@ -158,25 +158,26 @@ The _clustering_ section is divided in 3 other subsections:
 ```
 
 #### generation 
-Defines how the clustering will be generated (_load_ or _generate_). if _load_ is chosen, the section must contain the clustering that may be used. Ex:
+Defines how the clustering will be generated (_load_ or _generate_). if _load_ is chosen, the section must contain the clustering that may be used. Ex.:
 
 ```JSON
-"clustering": {
-	"generation": {
-		"method" : "load",
-		"clusters": [
-				{
-					"prototype " : 16,
-					"id": "cluster_00",
-					"elements" : "9, 14:20"
-				},
-				{
-					"prototype": 7,
-					"id": "cluster_01",
-					"elements": "0:8, 10:14, 21"
-				}
-		]
-	}
+{
+	"clustering": {
+		"generation": {
+			"method" : "load",
+			"clusters": [
+					{
+						"prototype " : 16,
+						"id": "cluster_00",
+						"elements" : "9, 14:20"
+					},
+					{
+						"prototype": 7,
+						"id": "cluster_01",
+						"elements": "0:8, 10:14, 21"
+					}
+			]
+		}
 }
 ```
 
@@ -211,11 +212,13 @@ Ex.
 Algorithm parameters can be explicitly written:
 
 ```JSON
-"kmedoids": {
-	"seeding_type": "RANDOM",
-	"max": 50,
-	"tries": 5,
-	"parameters":[{"k":4},{"k":5},{"k":6}]
+{
+	"kmedoids": {
+		"seeding_type": "RANDOM",
+		"max": 50,
+		"tries": 5,
+		"parameters":[{"k":4},{"k":5},{"k":6}]
+	}
 }
 ```
 
@@ -289,15 +292,16 @@ The necessary documentation to use pyProCT classes is written inside the code. I
 
 ### Using it as a separate program from other Python script
 
-Loading results
-generating scripts programatically
+* Loading results
+* Generating scripts programatically
 
-## A parallel execution example
+## Parallel execution 
 To execute pyProCT in parallel you just need to issue this line:
 
 ´´´Shell
-> mpirun -m pyproct.main --mpi script.json
+> mpirun -np NumberOfProcesses -m pyproct.main --mpi script.json
 ´´´
+<img src="img/warning.png"></img>  When running pyProCT using MPI you will need to use the _MPI/Parallel_ Scheduler or it will just execute several independent serial runs.
 <img src="img/warning.png"></img>  Remember that you need to use the same libraries and versions to build mpi4py and mpirun, otherwise you won't be able to execute it.
 
 
@@ -306,7 +310,7 @@ We are still experimenting to see which documentation generator fits better with
 
 Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working or can be done better. It will help to improve the software! 
 
-# TODO
+## TODO
 
 - To improve this documentation (better explanations, more examples and downloadable scripts). 
 
