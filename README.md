@@ -33,9 +33,9 @@ And *pip* will take care of all the dependencies (shown below).
 
 <img src="img/dependencies.png"> </img>
 
-- <img src="img/warning.png"></img>  It is recommended to install Numpy and Scipy before starting the installation using your OS software manager. You can try to download and install them [manually](http://docs.scipy.org/doc/numpy/user/install.html) if you dare.
+<img src="img/warning.png"></img>  It is recommended to install Numpy and Scipy before starting the installation using your OS software manager. You can try to download and install them [manually](http://docs.scipy.org/doc/numpy/user/install.html) if you dare.
 
-- <img src="img/warning.png"></img>  mpi4py is pyProCT's last dependency. It can give problems when installing it in OS such as SUSE. If the installation of this last package is not succesful, pyProCT can still work in Serial and Parallel (using *multiprocessing*) modes.
+<img src="img/warning.png"></img>  mpi4py is pyProCT's last dependency. It can give problems when installing it in OS such as SUSE. If the installation of this last package is not succesful, pyProCT can still work in Serial and Parallel (using *multiprocessing*) modes.
 
 ## Using pyProCT as a standalone program
 
@@ -293,8 +293,67 @@ Loading results
 generating scripts programatically
 
 ## A parallel execution example
+To execute pyProCT in parallel you just need to issue this line:
+
+´´´Shell
+> mpirun -m pyproct.main --mpi script.json
+´´´
+<img src="img/warning.png"></img>  Remember that you need to use the same libraries and versions to build mpi4py and mpirun, otherwise you won't be able to execute it.
+
 
 # Documentation 
 We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy). See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud solution like [readthedocs.org](https://readthedocs.org/)
 
+Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working or can be done better. It will help to improve the software! 
+
 # TODO
+
+- To improve this documentation (better explanations, more examples and downloadable scripts). 
+
+- Refactoring and general improvements:
+    - Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)
+    - Rename script stuff
+    - Rename functions and vars
+    - Minimizing dependencies with scipy
+    - Minimizing dependencies with prody (create my own reader)
+    - Adding its own Hierarchical clustering code (educational motivations)
+    - Improve spectral algoritm (add more tests - comparisons with other implementations, adding new types)
+    - Improve MPI load balance (i.e. parameter generation must be processed in parallel)
+    - Improve test coverage
+    - The script must accept numbers and percentages
+    - Use JSON schema to validate the script. Try to delegate the full responsibility of validating to pyProCT (instead of the GUI)
+    - When loading a dcd file, we only want to load atomic data of the the associated pdb.
+    - Change "compression" by "redundancy_elimination"
+
+- Symetry handling:
+    - Symmetry handling for fitting coordinates.
+    - Improve symmetry handling for calculation coordinates (e.g. ligands).
+    - Simple chain mapping feature.
+
+- New algorithms:
+    - Modularity-based (Newman J. 2003)
+    - Passing messages (Frey and Dueck 2007)
+    - Flow simmulation (Stijin van Dongen)
+    - Fuzzy Clustering
+    - Jarvis-Patrick Algorithm (http://www.improvedoutcomes.com/docs/WebSiteDocs/Clustering/Jarvis-Patrick_Clustering_Overview.htm)
+    - Others (adaptative spectral clustering flavours)
+    
+- New quality functions.
+    - Balancedness: The sizes of the clusters must be balanced.
+    - J quality function: Cai Xiaoyan Proceedings of the 27th Chinese Control Conference
+    - Metastability function (Q) in Chodera et al. J. Chem. Phys. 126 155101 2007 .
+    - Improve separation quality functions.     
+    - New standard separation ICVs (require inmutable prototypes)
+	    ```
+	    Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
+	    -  Single linkage: It measures the distance between the closest members of the clusters.
+	    -  Complete linkage: It measures the distance between the most distant members.
+	    - Comparison of centroids: It measures the distance between the centers of the clusters.
+	    ```
+- New features:
+    - Refine noise in DBSCAN
+    - Refine a preselected cluster (e.g "noise"), or "heterogeneous".
+     
+- New postprocessing options:
+    - Refinement
+    - Kinetic analysis
