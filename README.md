@@ -1,10 +1,10 @@
 pyProCT
 ==========
 
-pyProCT is an open source cluster analysis software especially adapted for jobs related with structural proteomics. Its approach allows users to define a clustering goal (clustering hypothesis) based on their domain knowledge. This hypothesis will guide the software in order to find the best algorithm and parameters (including the number of clusters) to obtain the result that fulfills their expectatives. In this way users do not need to use cluster analysis algorithms as a black box, improving this way the results.
+pyProCT is an open source cluster analysis software especially adapted for jobs related with structural proteomics. Its approach allows users to define a clustering goal (clustering hypothesis) based on their domain knowledge. This hypothesis will guide the software in order to find the best algorithm and parameters (including the number of clusters) to obtain the result that better fulfills their expectatives. In this way users do not need to use cluster analysis algorithms as a black box, which will (hopefully) improve their results.
 pyProCT not only generates a resulting clustering, it also implements some use cases like the extraction of representatives or trajectory redundance elimination.
 
-[Table of Contents**](http://doctoc.herokuapp.com/)
+[Table of Contents](http://doctoc.herokuapp.com/)
 
 - [pyProCT](#user-content-pyproct)
 	- [Installation](#user-content-installation)
@@ -93,7 +93,7 @@ pyProCT allows the use of 3 different schedulers that help to improve the overal
 
 ### Data
 The _data_ section defines how pyProCT must build the distance matrix that will be used by the compression algorithms. Currently pyProCT offers up to three options to build that matrix: "load", "rmsd" and "distance"
-- rmsd: Calculates a all vs all rmsd matrix using any of the [pyRMSD](https://github.com/victor-gil-sepulveda/pyRMSD) calculators available. It can calculate the RMSD of the fitted region (defined by [Prody](http://prody.csb.pitt.edu/) compatible selection string in _fit_selection_) or one can use one selection to superimpose and another to calculate the rmsd (_calc_selection_) .
+- rmsd: Calculates a all vs all rmsd matrix using any of the [pyRMSD](https://github.com/victor-gil-sepulveda/pyRMSD#collective-operations) calculators available. It can calculate the RMSD of the fitted region (defined by [Prody](http://prody.csb.pitt.edu/) compatible selection string in _fit_selection_) or one can use one selection to superimpose and another to calculate the rmsd (_calc_selection_) .
 -  distance: After superimposing the selected region it calculates the all vs all distances of the geometrical center of the region of interest (_body_selection_).
 - load: Loads a precalculated matrix.
 
@@ -220,7 +220,7 @@ Algorithm parameters can be explicitly written:
 ```
 
 #### evaluation
-This section holds the _Clustering Hypothesis_, the core of pyProCT. Here the user can define how will the expected cluste
+This section holds the _Clustering Hypothesis_, the core of pyProCT. Here the user can define how the expected clustering will be. First the user must set the expected number of clusters range. Also, an estimation of the dataset noise and the cluster minimum size (the minimum number of elements a cluster must have to not be considered noise) will complete the quantitative definition of the target result.
 
 Ex.
 ```JSON
@@ -229,13 +229,51 @@ Ex.
 	"minimum_cluster_size": 50,
 	"maximum_clusters": 200,
 	"minimum_clusters": 6,
+	"query_types": [ ... ],
 	"evaluation_criteria": { 
 		...
-	},          
-	"query_types": [ ... ]          
+	}
 }
 ```
+
+The second part of the _Clustering Hypothesis_ tries to characterize the clustering internal traits in a more qualitative way. Concepts like cluster "Compactness" or "Separation" can be used here to define the expected clustering. To this end users must write their expectations in form of _criteria_. This criteria are, in general, linear combinations of Internal Clustering Validation Indices (ICVs). The best clustering will be the one that gets the best score in any of these _criteria_. See [this document](pdf/icv_info.pdf) to get more insight about the different implemented criteria and their meaning.
+
+Additionally users may choose to ask pyProCT about the results of this ICVs and other evaluation functions(e.g. the average cluster size) by adding them to the _queries_ array.
+
 ### Postprocessing
+Getting a good quality clustering is not enough, we would like to use them to extract information. pyProCT implements some use cases that may help users to extract this information.
+
+```JSON
+{
+	"rmsf":{},
+
+	"centers_and_trace":{},
+
+	"representatives":{
+		"keep_remarks": [true/false], 
+		"keep_frame_number": [true/false]
+	},
+
+	"pdb_clusters":{
+		"keep_remarks": [true/false], 
+		"keep_frame_number": [true/false]
+	},
+
+	"compression":{
+		"final_number_of_frames": INT
+		"file": STRING
+		"type":[‘RANDOM’,’KMEDOIDS’]
+	},
+
+	"conformational_space_comparison":{}
+}
+```
+- rmsf : Calculates the global and per-cluster (and per-residue) root mean square fluctuation (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).
+- centers_and_trace : Calculates all geometrical centers of the calculation selection of the system (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).
+- representatives : Extracts all the representatives of the clusters in the same pdb.
+- pdb_clusters : Extracts all clusters in separate pdbs.
+- compression : Reduces the redundancy of the trajectory using the resulting clustering.
+- conformational_space_comparison : Work in progress.
 
 ### Checking the script
 As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
@@ -258,3 +296,5 @@ generating scripts programatically
 
 # Documentation 
 We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy). See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud solution like [readthedocs.org](https://readthedocs.org/)
+
+# TODO

@@ -16,7 +16,7 @@ exec_path = os.getcwd()
 
 base_folder = {
               "level2":"scripts",
-              "level1":"",
+              "level1":"scripts",
               "level0":""
               }
 
