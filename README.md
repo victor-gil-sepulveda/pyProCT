@@ -239,7 +239,7 @@ Ex.
 }
 ```
 
-The second part of the _Clustering Hypothesis_ tries to characterize the clustering internal traits in a more qualitative way. Concepts like cluster "Compactness" or "Separation" can be used here to define the expected clustering. To this end users must write their expectations in form of _criteria_. This criteria are, in general, linear combinations of Internal Clustering Validation Indices (ICVs). The best clustering will be the one that gets the best score in any of these _criteria_. See [this document](pdf/icv_info.pdf) to get more insight about the different implemented criteria and their meaning.
+The second part of the _Clustering Hypothesis_ tries to characterize the clustering internal traits in a more qualitative way. Concepts like cluster "Compactness" or "Separation" can be used here to define the expected clustering. To this end users must write their expectations in form of _criteria_. This criteria are, in general, linear combinations of Internal Clustering Validation Indices (ICVs). The best clustering will be the one that gets the best score in any of these _criteria_. See [this document](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf) to get more insight about the different implemented criteria and their meaning.
 
 Additionally users may choose to ask pyProCT about the results of this ICVs and other evaluation functions(e.g. the average cluster size) by adding them to the _queries_ array.
 
@@ -278,35 +278,39 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 - compression : Reduces the redundancy of the trajectory using the resulting clustering.
 - conformational_space_comparison : Work in progress.
 
-### Checking the script
+### Script validation
 As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
 
-### Learn more
-A more detailed explanation of the script contents can be found [here](pdf/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](pdf/icv_info.pdf).
+## <img src="img/workinprogress.png"></img>  Using pyProCT as part of other programs 
+pyProCT has been written as a collection of modules coupled by means of the different handlers that can be 
 
-## Using pyProCT as part of other programs 
-pyProCT has been written as a collection of modules coupled by means of the different handlers and 
-Algorithms can be used separately if the correct for example:
+* Using algorithms 
+* Clustering from label lists
+* Using ICVs with custom clusterings
+* Performing the whole protocol
 
-The necessary documentation to use pyProCT classes is written inside the code. It has been extracted [here]() and [here](). We are currently trying to improve this documentation with better explanations and examples. 
+The necessary documentation to use pyProCT classes is written inside the code. It has been extracted [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We are currently trying to improve this documentation with better explanations and examples. 
 
 ### Using it as a separate program from other Python script
 
-* Loading results
-* Generating scripts programatically
+* <img src="img/workinprogress.png"></img>  Loading results
+* <img src="img/workinprogress.png"></img>  Generating scripts programatically
 
 ## Parallel execution 
 To execute pyProCT in parallel you just need to issue this line:
 
-´´´Shell
+```Shell
 > mpirun -np NumberOfProcesses -m pyproct.main --mpi script.json
-´´´
+```
 <img src="img/warning.png"></img>  When running pyProCT using MPI you will need to use the _MPI/Parallel_ Scheduler or it will just execute several independent serial runs.
 <img src="img/warning.png"></img>  Remember that you need to use the same libraries and versions to build mpi4py and mpirun, otherwise you won't be able to execute it.
 
 
 # Documentation 
 We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy). See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud solution like [readthedocs.org](https://readthedocs.org/)
+
+### Learn more
+A more detailed explanation of the script contents can be found [here](https://dl.dropboxusercontent.com/u/58918851/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf).
 
 Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working or can be done better. It will help to improve the software! 
 
@@ -339,7 +343,7 @@ Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with yo
     - Passing messages (Frey and Dueck 2007)
     - Flow simmulation (Stijin van Dongen)
     - Fuzzy Clustering
-    - Jarvis-Patrick Algorithm (http://www.improvedoutcomes.com/docs/WebSiteDocs/Clustering/Jarvis-Patrick_Clustering_Overview.htm)
+    - [Jarvis-Patrick Algorithm](http://www.improvedoutcomes.com/docs/WebSiteDocs/Clustering/Jarvis-Patrick_Clustering_Overview.htm)
     - Others (adaptative spectral clustering flavours)
     
 - New quality functions.
