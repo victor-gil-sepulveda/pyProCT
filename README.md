@@ -22,6 +22,7 @@ pyProCT not only generates a resulting clustering, it also implements some use c
 		- [Using it as a separate program from other Python script](#user-content-using-it-as-a-separate-program-from-other-python-script)
 	- [Parallel execution](#user-content-parallel-execution)
 - [Documentation](#user-content-documentation)
+- [TODO](#user-content-todo)
 
 ## Installation
 pyProCT is quite easy to install using *pip*. Just write:
@@ -282,19 +283,25 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
 
 ## <img src="img/workinprogress.png"></img>  Using pyProCT as part of other programs 
-pyProCT has been written as a collection of modules coupled by means of the different handlers that can be 
-
+p
 * Using algorithms 
 * Clustering from label lists
 * Using ICVs with custom clusterings
 * Performing the whole protocol
+```Python
+Driver(Observer()).run(parameters)
+``
 
 The necessary documentation to use pyProCT classes is written inside the code. It has been extracted [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We are currently trying to improve this documentation with better explanations and examples. 
+
+See [this file](https://github.com/victor-gil-sepulveda/pyProCT/blob/master/validation/bidimensional/validation_main.py).
 
 ### Using it as a separate program from other Python script
 
 * <img src="img/workinprogress.png"></img>  Loading results
 * <img src="img/workinprogress.png"></img>  Generating scripts programatically
+
+See [this project](https://github.com/victor-gil-sepulveda/PhD-GPCR) for some examples.
 
 ## Parallel execution 
 To execute pyProCT in parallel you just need to issue this line:
@@ -314,7 +321,7 @@ A more detailed explanation of the script contents can be found [here](https://d
 
 Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working or can be done better. It will help to improve the software! 
 
-## TODO
+# TODO
 
 - To improve this documentation (better explanations, more examples and downloadable scripts). 
 
