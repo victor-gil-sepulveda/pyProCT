@@ -264,8 +264,8 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 	},
 
 	"compression":{
-		"final_number_of_frames": INT
-		"file": STRING
+		"final_number_of_frames": INT,
+		"file": STRING,
 		"type":[‘RANDOM’,’KMEDOIDS’]
 	},
 
@@ -283,14 +283,14 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
 
 ## <img src="img/workinprogress.png"></img>  Using pyProCT as part of other programs 
-p
+
 * Using algorithms 
 * Clustering from label lists
 * Using ICVs with custom clusterings
 * Performing the whole protocol
 ```Python
 Driver(Observer()).run(parameters)
-``
+```
 
 The necessary documentation to use pyProCT classes is written inside the code. It has been extracted [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We are currently trying to improve this documentation with better explanations and examples. 
 
@@ -309,7 +309,9 @@ To execute pyProCT in parallel you just need to issue this line:
 ```Shell
 > mpirun -np NumberOfProcesses -m pyproct.main --mpi script.json
 ```
-<img src="img/warning.png"></img>  When running pyProCT using MPI you will need to use the _MPI/Parallel_ Scheduler or it will just execute several independent serial runs.
+
+<img src="img/warning.png"></img>  When running pyProCT using MPI you will need to use the _MPI/Parallel_ Scheduler or it will just execute several independent serial runs.  
+
 <img src="img/warning.png"></img>  Remember that you need to use the same libraries and versions to build mpi4py and mpirun, otherwise you won't be able to execute it.
 
 
