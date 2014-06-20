@@ -1,0 +1,70 @@
+{
+
+    "global": {
+        "control": {
+            "scheduler_type": "Process/Parallel",
+            "number_of_processes": 6
+        },
+        "workspace": {
+            "base": "%s"
+        }
+    },
+    "data": {
+        "files": ["%s"],
+        "type": "pdb_ensemble",
+        "matrix": {
+            "method": "rmsd",
+            "parameters": {
+                "calculator_type": "QCP_OMP_CALCULATOR",
+                "fit_selection": "name CA"
+            }
+        }
+    },
+    "clustering": {
+        "generation": {
+            "method": "generate"
+        },
+        "algorithms": {
+            "kmedoids": {
+		        "tries":5,
+                "max": 50
+            },
+            "hierarchical": {},
+            "dbscan": {
+            	"max": 50
+            },
+            "gromos": {
+                "max": 50
+            }
+        },
+        "evaluation": {
+            "minimum_cluster_size": 200,
+            "maximum_noise": 10,
+            "evaluation_criteria": {
+                "criteria_0": {
+                    "CythonSilhouette": {
+                        "action": ">",
+                        "weight": 3
+                    },
+                    "CythonMirrorCohesion": {
+                        "action": ">",
+                        "weight": 2
+                    }
+                }
+            },
+            "query_types": [
+                "NumClusters",
+                "NoiseLevel",
+                "MeanClusterSize"
+            ],
+            "maximum_clusters": 150,
+            "minimum_clusters": 10
+        }
+    },
+    "postprocess": {
+        "compression": {
+        	"type":"KMEDOIDS",
+        	"final_number_of_frames": 1300
+        }
+    }
+}

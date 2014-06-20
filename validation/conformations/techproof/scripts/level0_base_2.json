@@ -1,0 +1,73 @@
+{
+
+    "global": {
+        "control": {
+            "scheduler_type": "Process/Parallel",
+            "number_of_processes": 6
+        },
+        "workspace": {
+            "base": "compressions/level1/clustering_final"
+        }
+    },
+    "data": {
+        "files": [
+            "compressions/level1/clustering_reduction/results/compressed_pdb.pdb"
+        ],
+        "type": "pdb_ensemble",
+        "matrix": {
+            "method": "rmsd",
+            "parameters": {
+                "calculator_type": "QCP_OMP_CALCULATOR",
+                "fit_selection": "name CA"
+            }
+        }
+    },
+    "clustering": {
+        "generation": {
+            "method": "generate"
+        },
+        "algorithms": {
+            "kmedoids": {
+		"tries":7,
+                "max": 30
+            },
+            "hierarchical": {},
+            "dbscan": {
+            	"max": 30
+            },
+            "gromos": {
+                "max": 30
+            }
+        },
+        "evaluation": {
+            "minimum_cluster_size": 200,
+            "maximum_noise": 35,
+            "evaluation_criteria": {
+                "criteria_0": {
+                    "CythonSilhouette": {
+                        "action": ">",
+                        "weight": 3
+                    },
+                    "CythonMirrorCohesion": {
+                        "action": ">",
+                        "weight": 2
+                    }
+                }
+            },
+            "query_types": [
+                "NumClusters",
+                "NoiseLevel",
+                "MeanClusterSize"
+            ],
+            "maximum_clusters": 30,
+            "minimum_clusters": 5 
+        }
+    },
+    "postprocess": {
+        "rmsf":{},
+        "representatives":{
+            "keep_remarks": false, 
+            "keep_frame_number": true
+        }
+    }
+}

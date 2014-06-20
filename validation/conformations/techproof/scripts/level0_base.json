@@ -1,0 +1,89 @@
+{
+
+    "global": {
+        "control": {
+            "scheduler_type": "Process/Parallel",
+            "number_of_processes": 6
+        },
+        "workspace": {
+            "base": "compressions/level1/clustering_reduction"
+        }
+    },
+    "data": {
+        "files": [
+            "compressions/level1/clustering_0/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_1/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_2/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_3/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_4/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_5/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_6/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_7/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_8/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_9/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_10/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_11/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_12/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_13/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_14/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_15/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_16/results/compressed_pdb.pdb",
+            "compressions/level1/clustering_17/results/compressed_pdb.pdb"
+        ],
+        "type": "pdb_ensemble",
+        "matrix": {
+            "method": "rmsd",
+            "parameters": {
+                "calculator_type": "QCP_OMP_CALCULATOR",
+                "fit_selection": "name CA"
+            }
+        }
+    },
+    "clustering": {
+        "generation": {
+            "method": "generate"
+        },
+        "algorithms": {
+            "kmedoids": {
+		        "tries":5,
+                "max": 50
+            },
+            "hierarchical": {},
+            "dbscan": {
+            	"max": 50
+            },
+            "gromos": {
+                "max": 50
+            }
+        },
+        "evaluation": {
+            "minimum_cluster_size": 200,
+            "maximum_noise": 10,
+            "evaluation_criteria": {
+                "criteria_0": {
+                    "CythonSilhouette": {
+                        "action": ">",
+                        "weight": 3
+                    },
+                    "CythonMirrorCohesion": {
+                        "action": ">",
+                        "weight": 2
+                    }
+                }
+            },
+            "query_types": [
+                "NumClusters",
+                "NoiseLevel",
+                "MeanClusterSize"
+            ],
+            "maximum_clusters": 200,
+            "minimum_clusters": 10
+        }
+    },
+    "postprocess": {
+        "compression": {
+        	"type":"KMEDOIDS",
+        	"final_number_of_frames": 20000
+        }
+    }
+}
