@@ -80,6 +80,22 @@ class Test(unittest.TestCase):
 
         numpy.testing.assert_array_equal(expected, chainMapperStub.getRemappedCoordinates(switched_pdb_structure))
 
+#     def test(self):
+#         """
+#         Tests if changing the ID changes the coordinates order.
+#         """
+#         input = StringIO.StringIO(pdb_data)
+#         pdb_structure = prody.parsePDBStream(input)
+#         chains = pdb_structure.getHierView()
+#
+#         new_chains = ["X","A"]
+#         for i,chain in enumerate(chains):
+#             chain.setChid(new_chains[i])
+#         output = StringIO.StringIO()
+#         prody.writePDBStream(output,pdb_structure)
+#         print pdb_structure.getCoordsets()
+#         print output.getvalue()
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

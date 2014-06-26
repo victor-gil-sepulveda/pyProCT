@@ -6,6 +6,8 @@ Created on 25/06/2014
 
 import pyRMSD.RMSDCalculator
 import numpy
+from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
+from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure
 
 class ChainMapper:
     """
@@ -96,5 +98,16 @@ class ChainMapper:
             new_coordinates.append(cls.reorderCoordinates(structure_chains[i], chain_maps[i]))
         return numpy.array(new_coordinates)
 
+class TrajectoryHandlerMapper:
 
+    def __init__(self):
+        pass
 
+    def doAutoMapping(self, oldTrajectoryHandler):
+        newTrajectoryHandler = TrajectoryHandler(oldTrajectoryHandler.parameters, oldTrajectoryHandler.observer)
+        pdb_structure = newTrajectoryHandler.getMergedStructure()
+        new_coordinates = ChainMapper.getRemappedCoordinates(pdb_structure)
+        removeAllCoordsetsFromStructure(pdb_structure)
+        for coordset in new_coordinates:
+            pdb_structure.addCoordset(coordset)
+        return newTrajectoryHandler

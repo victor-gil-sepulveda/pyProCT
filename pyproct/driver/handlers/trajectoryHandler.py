@@ -15,6 +15,8 @@ class TrajectoryHandler(Observable):
         Class creator. It parses the needed files and extracts info and coordinates.
         """
         super(TrajectoryHandler,self).__init__(observer)
+        self.parameters = parameters
+
 
         matrix_parameters = parameters["data"]["matrix"]['parameters']
         self.files = parameters["data"]["files"]
@@ -37,10 +39,10 @@ class TrajectoryHandler(Observable):
         self.number_of_conformations = self.coordsets.shape[0]
         self.number_of_atoms = self.coordsets.shape[1]
 
-        self.handle_selection_paramters(matrix_parameters)
+        self.handle_selection_parameters(matrix_parameters)
 
 
-    def handle_selection_paramters(self, matrix_parameters):
+    def handle_selection_parameters(self, matrix_parameters):
         """
         Helper funtion to handle selection parameters (different parameter names can have almost the same
         functionality and are treated internally in the same way).
@@ -150,7 +152,6 @@ class TrajectoryHandler(Observable):
                 for coordset in coordsets:
                     structure.addCoordset(coordset)
             else:
-
                 structure = prody.parsePDB(path)
 
             if "base_selection" in file_info and file_info["base_selection"] !=  "":
