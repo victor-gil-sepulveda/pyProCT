@@ -19,7 +19,6 @@ from pyproct.clustering.clustering import Clustering
 from pyproct.tools import visualizationTools
 from pyproct.driver.postprocessing.clusters import save_representatives,\
     save_all_clusters
-from pyproct.preprocessing.chainMapping import ChainMappingRMSDMatrixCalculator
 
 class Driver(Observable):
 
