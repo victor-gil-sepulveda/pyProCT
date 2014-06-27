@@ -64,7 +64,7 @@ class Test(unittest.TestCase):
         chain_map = {"A":"X", "X":"A"}
         numpy.testing.assert_array_equal( [[-33.115,   1.294,  -1.163], [  1., 2., 3.]], ChainMapper.reorderCoordinates(chain, chain_map))
 
-    def test_getRmappedCoordinates(self):
+    def test_getRemappedCoordinates(self):
         input = StringIO.StringIO(switched_pdb_data)
         switched_pdb_structure = prody.parsePDBStream(input)
 

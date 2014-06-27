@@ -7,6 +7,7 @@ import pyproct.tools.commonTools as common
 from pyproct.driver.observer.observable import Observable
 import prody
 import os.path
+from pyproct.tools.prodyTools import removeAllCoordsetsFromStructureLeavingFirst
 
 class TrajectoryHandler(Observable):
 
@@ -146,6 +147,7 @@ class TrajectoryHandler(Observable):
                 structure_info["source of atoms"] = file_info["atoms_file"]
 
                 structure = prody.parsePDB(file_info["atoms_file"])
+                removeAllCoordsetsFromStructureLeavingFirst(structure)
                 dcd_data = prody.DCDFile(path)
                 coordsets = dcd_data.getCoordsets()
 
@@ -177,7 +179,7 @@ class TrajectoryHandler(Observable):
                     self.pdbs.append(structure_info)
 
                     if merged_pdb is None:
-                        merged_pdb = structure
+                        merged_pdb = structure.copy()
                     else:
                         for coordset in structure.getCoordsets():
                             merged_pdb.addCoordset(coordset)

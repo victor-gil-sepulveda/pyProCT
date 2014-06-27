@@ -61,7 +61,6 @@ def matrixToImage(condensed_distance_matrix, matrix_image_file, max_dim = 1000, 
     else:
         matrix = condensed_distance_matrix
 
-    print matrix.row_length
     complete = numpy.zeros([ matrix.row_length]*2, dtype=numpy.float)
 
     # fill diagonal if needed
@@ -76,10 +75,15 @@ def matrixToImage(condensed_distance_matrix, matrix_image_file, max_dim = 1000, 
             complete[j][i] = matrix[i,j]
 
     plt.clf()
-    imgplot = plt.imshow(complete, interpolation='nearest')
+    if condensed_distance_matrix.row_length > max_dim:
+        imgplot = plt.imshow(complete, interpolation='nearest')
+    else:
+        imgplot = plt.imshow(complete, interpolation='none')
     imgplot.set_cmap('gray')
     plt.colorbar()
     plt.savefig(matrix_image_file)
+#     plt.show()
+    plt.close()
 
 def pieChartCreation(graph_size, fracs, name1, name2, colors):
     """

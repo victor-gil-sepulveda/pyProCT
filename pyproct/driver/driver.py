@@ -19,6 +19,7 @@ from pyproct.clustering.clustering import Clustering
 from pyproct.tools import visualizationTools
 from pyproct.driver.postprocessing.clusters import save_representatives,\
     save_all_clusters
+from pyproct.preprocessing.chainMapping import ChainMappingRMSDMatrixCalculator
 
 class Driver(Observable):
 
@@ -197,7 +198,7 @@ class Driver(Observable):
                 print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
 
-#         if action_type == "comparison":
+#         if "KullbackLiebler" in parameters["postprocess"]:
 #             ############################################
 #             # Distribution analysis
 #             ############################################
@@ -250,7 +251,9 @@ class Driver(Observable):
             print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
             print "\t- Noise: %.3f %%"%best_clustering['evaluation']['Noise level']
 
-
+    def preprocessing(self, parameters):
+        if  "preprocess" in parameters:
+            pass
 
     def run(self, parameters):
 
@@ -276,6 +279,13 @@ class Driver(Observable):
         self.timer.start("Trajectory Loading")
         self.trajectoryHandler = TrajectoryHandler(parameters, self.observer)
         self.timer.stop("Trajectory Loading")
+
+        #####################
+        # Preprocessing
+        #####################
+        self.timer.start("Preprocessing")
+        self.preprocessing(parameters)
+        self.timer.stop("Preprocessing")
 
         ##############################
         # Distance Matrix Generation
