@@ -124,25 +124,25 @@ pyProCT can currently load _pdb_ and _dcd_ files. When using _pdb_ files, files 
 1. Using a list of file paths.
 2. Using a list of file objects:
 ```JSON
-{ 
-	"file": ... , 
-	"base_selection": ... 
+{
+	"file": ... ,
+	"base_selection": ...
 }
 ```
 Where _base_selection_ is a [Prody](http://prody.csb.pitt.edu/) compatible selection string. Loading files this way can help in cases where not all files have structure with the same number of atoms: _base_selection_ should define the common region between them (if a 1 to 1 map does not exist, the RMSD calculation will be wrong).
 
 3. Only for _dcd_ files:
 ```JSON
-{ 
+{
 	"file": ...,
-	"atoms_file": ..., 
-	"base_selection": ... 
+	"atoms_file": ...,
+	"base_selection": ...
 }
 ```
 Where _atoms_file_ is a _pdb_ file with at least one frame that holds the atomic information needed by the _dcd_ file.
 
 ### Clustering
-The _clustering_ section is divided in 3 other subsections: 
+The _clustering_ section is divided in 3 other subsections:
 
 ```JSON
 {
@@ -158,7 +158,7 @@ The _clustering_ section is divided in 3 other subsections:
 }
 ```
 
-#### generation 
+#### generation
 Defines how the clustering will be generated (_load_ or _generate_). if _load_ is chosen, the section must contain the clustering that may be used. Ex.:
 
 ```JSON
@@ -234,7 +234,7 @@ Ex.
 	"maximum_clusters": 200,
 	"minimum_clusters": 6,
 	"query_types": [ ... ],
-	"evaluation_criteria": { 
+	"evaluation_criteria": {
 		...
 	}
 }
@@ -254,12 +254,12 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 	"centers_and_trace":{},
 
 	"representatives":{
-		"keep_remarks": [true/false], 
+		"keep_remarks": [true/false],
 		"keep_frame_number": [true/false]
 	},
 
 	"pdb_clusters":{
-		"keep_remarks": [true/false], 
+		"keep_remarks": [true/false],
 		"keep_frame_number": [true/false]
 	},
 
@@ -280,11 +280,11 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 - conformational_space_comparison : Work in progress.
 
 ### Script validation
-As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/). 
+As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/).
 
-## <img src="img/workinprogress.png"></img>  Using pyProCT as part of other programs 
+## <img src="img/workinprogress.png"></img>  Using pyProCT as part of other programs
 
-* Using algorithms 
+* Using algorithms
 * Clustering from label lists
 * Using ICVs with custom clusterings
 * Performing the whole protocol
@@ -292,7 +292,7 @@ As the "script" is indeed a JSON object, any JSON validator can be used to disco
 Driver(Observer()).run(parameters)
 ```
 
-The necessary documentation to use pyProCT classes is written inside the code. It has been extracted [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We are currently trying to improve this documentation with better explanations and examples. 
+The necessary documentation to use pyProCT classes is written inside the code. It has been extracted [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We are currently trying to improve this documentation with better explanations and examples.
 
 See [this file](https://github.com/victor-gil-sepulveda/pyProCT/blob/master/validation/bidimensional/validation_main.py).
 
@@ -303,29 +303,29 @@ See [this file](https://github.com/victor-gil-sepulveda/pyProCT/blob/master/vali
 
 See [this project](https://github.com/victor-gil-sepulveda/PhD-GPCR) for some examples.
 
-## Parallel execution 
+## Parallel execution
 To execute pyProCT in parallel you just need to issue this line:
 
 ```Shell
 > mpirun -np NumberOfProcesses -m pyproct.main --mpi script.json
 ```
 
-<img src="img/warning.png"></img>  When running pyProCT using MPI you will need to use the _MPI/Parallel_ Scheduler or it will just execute several independent serial runs.  
+<img src="img/warning.png"></img>  When running pyProCT using MPI you will need to use the _MPI/Parallel_ Scheduler or it will just execute several independent serial runs.
 
 <img src="img/warning.png"></img>  Remember that you need to use the same libraries and versions to build mpi4py and mpirun, otherwise you won't be able to execute it.
 
 
-# Documentation 
+# Documentation
 We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy). See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud solution like [readthedocs.org](https://readthedocs.org/)
 
 ### Learn more
 A more detailed explanation of the script contents can be found [here](https://dl.dropboxusercontent.com/u/58918851/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf).
 
-Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working or can be done better. It will help to improve the software! 
+Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working or can be done better. It will help to improve the software!
 
 # TODO
 
-- To improve this documentation (better explanations, more examples and downloadable scripts). 
+- To improve this documentation (better explanations, more examples and downloadable scripts).
 
 - Refactoring and general improvements:
     - Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)
@@ -341,11 +341,12 @@ Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with yo
     - Use JSON schema to validate the script. Try to delegate the full responsibility of validating to pyProCT (instead of the GUI)
     - When loading a dcd file, we only want to load atomic data of the the associated pdb.
     - Change "compression" by "redundancy_elimination"
+    - Allow to load all files (or glob) from a folder.
 
 - Symetry handling:
     - Symmetry handling for fitting coordinates.
     - Improve symmetry handling for calculation coordinates (e.g. ligands).
-    - Simple chain mapping feature.
+    [x] - Simple chain mapping feature.
 
 - New algorithms:
     - Modularity-based (Newman J. 2003)
@@ -354,12 +355,12 @@ Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with yo
     - Fuzzy Clustering
     - [Jarvis-Patrick Algorithm](http://www.improvedoutcomes.com/docs/WebSiteDocs/Clustering/Jarvis-Patrick_Clustering_Overview.htm)
     - Others (adaptative spectral clustering flavours)
-    
+
 - New quality functions.
     - Balancedness: The sizes of the clusters must be balanced.
     - J quality function: Cai Xiaoyan Proceedings of the 27th Chinese Control Conference
     - Metastability function (Q) in Chodera et al. J. Chem. Phys. 126 155101 2007 .
-    - Improve separation quality functions.     
+    - Improve separation quality functions.
     - New standard separation ICVs (require inmutable prototypes)
 	    ```
 	    Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
@@ -370,7 +371,7 @@ Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with yo
 - New features:
     - Refine noise in DBSCAN
     - Refine a preselected cluster (e.g "noise"), or "heterogeneous".
-     
+
 - New postprocessing options:
     - Refinement
     - Kinetic analysis
