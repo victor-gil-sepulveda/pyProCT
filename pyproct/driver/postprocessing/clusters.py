@@ -8,9 +8,9 @@ from pyproct.tools.pdbTools import extract_frames_from_trajectory_sequentially,\
     get_number_of_frames
 import pyproct.protocol.saveTools as saveTools
 import tarfile
-from pyproct.protocol.saveTools import merge_pdbs
+import prody
 
-def save_all_clusters(my_params, pdb_params, workspaceHandler, clustering, generatedFiles, timer):
+def save_all_clusters(my_params, pdb_params, workspaceHandler, trajectoryHandler, clustering, generatedFiles, timer):
     timer.start("Save clusters")
 
     #Parameters
@@ -22,9 +22,18 @@ def save_all_clusters(my_params, pdb_params, workspaceHandler, clustering, gener
     clusters_place = workspaceHandler["clusters"]
     tmp_place = workspaceHandler["tmp"]
 
+    #===========================================================
+    # THIS DOES NOT WORK IF USING DCD OR STRUCTS
     # The real job
+#     input_path = os.path.join(tmp_place, "tmp_merged_trajectory.pdb")
+#     merge_pdbs(pdb_params, input_path)
+
+    # TEMPORARY HACK TO OVERCOME DCD MERGING BUG
+
+    merged_pdb = trajectoryHandler.getMergedStructure()
     input_path = os.path.join(tmp_place, "tmp_merged_trajectory.pdb")
-    merge_pdbs(pdb_params, input_path)
+    prody.writePDB(input_path, merged_pdb)
+#==========================================================
 
     number_of_frames = get_number_of_frames(input_path)
     cluster_files = []

@@ -19,6 +19,7 @@ from pyproct.clustering.clustering import Clustering
 from pyproct.tools import visualizationTools
 from pyproct.driver.postprocessing.clusters import save_representatives,\
     save_all_clusters
+from pyproct.driver.postprocessing.cluster_stats import calculate_per_cluster_stats
 
 class Driver(Observable):
 
@@ -146,7 +147,8 @@ class Driver(Observable):
         ##########################################
         if "pdb_clusters" in parameters["postprocess"]:
             save_all_clusters(parameters["postprocess"]["pdb_clusters"], parameters["data"]["files"],\
-                              self.workspaceHandler, best_clustering["clustering"], self.generatedFiles, self.timer)
+                              self.workspaceHandler, self.trajectoryHandler,
+                              best_clustering["clustering"], self.generatedFiles, self.timer)
 
 
         ##############################
@@ -196,6 +198,9 @@ class Driver(Observable):
             except Exception:
                 print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
 
+        if "cluster_stats" in parameters["postprocess"]:
+            calculate_per_cluster_stats(best_clustering["clustering"], self.matrixHandler.distance_matrix,
+                                        parameters, self.workspaceHandler["results"])
 
 #         if "KullbackLiebler" in parameters["postprocess"]:
 #             ############################################
@@ -210,7 +215,6 @@ class Driver(Observable):
 #                                         "path":matrix_image_file_path,
 #                                         "type":"text"})
 #             self.timer.stop("KL divergence")
-
 
         ##############################
         # Compress trajectory
