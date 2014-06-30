@@ -121,7 +121,15 @@ The _data_ section defines how pyProCT must build the distance matrix that will 
 The matrix can be stored if the _filename_ property is defined. The matrix can also be stored as an image if the _image_ property is defined.
 
 pyProCT can currently load _pdb_ and _dcd_ files. When using _pdb_ files, files can be loaded in two ways:
-1. Using a list of file paths.
+1. Using a list of file paths. If the file extension is ".txt" or ".list" it will be treated as a pdb list file. Each line of such files will
+be a pdb path or a pdb path and a selection string, separated by comma.
+
+```
+A.pdb, name CA
+B.pdb
+C.pdb, name CA
+...
+```
 2. Using a list of file objects:
 ```JSON
 {

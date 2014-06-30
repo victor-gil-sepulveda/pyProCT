@@ -20,6 +20,7 @@ class TrajectoryHandler(Observable):
 
 
         matrix_parameters = parameters["data"]["matrix"]['parameters']
+        parameters["data"]["files"] = self.expand_file_lists(parameters["data"]["files"])
         self.files = parameters["data"]["files"]
         self.pdbs = []
 
@@ -41,6 +42,31 @@ class TrajectoryHandler(Observable):
         self.number_of_atoms = self.coordsets.shape[1]
 
         self.handle_selection_parameters(matrix_parameters)
+
+    def expand_file_lists(self, files):
+        """
+        Loads the PDB files specified into a file (maintaining order).
+        """
+        tmp_file_list = []
+        for file_info in files:
+            if isinstance(file_info, basestring):
+                # Then it must be a txt file
+                name, ext = os.path.splitext(file_info)
+                if ext in [".txt", ".list"]:
+                    # Load the file
+                    lines = open(file_info,"r").readlines()
+                    for line in lines:
+                        l = line.strip()
+                        if "," in l:
+                            file_name, selection = l.split(",")
+                            tmp_file_list.append({"file":file_name,"base_selection":selection})
+                        else:
+                            tmp_file_list.append(l)
+                else:
+                    tmp_file_list.append(file_info)
+            else:
+                tmp_file_list.append(file_info)
+        return tmp_file_list
 
 
     def handle_selection_parameters(self, matrix_parameters):
