@@ -3,13 +3,8 @@ Created on 20/09/2012
 
 @author: victor
 '''
-import shutil
 import pyproct.tools.pdbTools as pdb_tools
 import os.path
-from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
-from pyproct.tools.pdbTools import get_model_boundaries,\
-    repair_MODEL_ENDMDL_tags
-
 import prody
 
 
