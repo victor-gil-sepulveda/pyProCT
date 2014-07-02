@@ -9,10 +9,33 @@ import pyRMSD.RMSDCalculator
 import pyRMSD.condensedMatrix
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure
 
+
+def combopermutations( elements_list, prefix = []):
+    """
+    Generator that produces ordered combinations of permutations e.g. for [[1,2],[3,4]] it will produce:
+    [[1,2],[3,4]]
+    [[2,1],[3,4]]
+    [[1,2],[4,3]]
+    [[2,1],[4,3]]
+
+    @param elements_list: A list of lists. Each list will be a single permutation.
+
+    @return: a different permutation it time it is called.
+    """
+    if len(elements_list) <= 1:
+        for perm in itertools.permutations(elements_list[0]):
+            yield prefix+list(perm)
+    else:
+        for perm in itertools.permutations(elements_list[0]):
+            for perm2 in combopermutations(elements_list[1:], prefix+list(perm)):
+                yield  list(perm2)
+
 class ChainMappingRMSDMatrixCalculator:
     """
     Some structures can be formed of repeated units that can be arbitrarily place. This class tries to reorder this units (chains)
-    in order to calculate the minimum possible RMSD. Ex. Given 3 structures formed of three equal domains:
+    in order to calculate the minimum possible RMSD.
+
+    Ex.1:  Given 3 structures formed of three equal domains:
 
 
                         B
@@ -38,11 +61,20 @@ class ChainMappingRMSDMatrixCalculator:
     for 1 -> 3 the best mapping is A -> B, B -> A and C -> C
     for 2 -> 3 the best mapping would be A -> C, B -> B and C -> A
 
-    Currently only works if all chains have exactly the same length. If chains are of different lengths
-    then the result is not well defined (padding would be needed).
+    Ex 2. Different length chains. Suppose we have 4 chains with the following lengths:
+    A -> 1
+    B -> 2
+    C -> 1
+    D -> 2
 
-
-    Improvement: Only do permutations of chains with the same length! -> Trivial solution with padding
+    In this case the permutations to check (for each of the structures) will be:
+          1    2
+        A, C  B, D
+        A, C  D, B
+        C, A  B, D
+        C, A  D, B
+    Note that chains are ordered by length, and that resulting permutations are a combination of the
+    possible permutations for groups of chains of the same length (please breathe here).
     """
     def __init__(self):
         pass
@@ -74,18 +106,15 @@ class ChainMappingRMSDMatrixCalculator:
         return numpy.array(new_coordinates)
 
     @classmethod
-    def reorderAllCoordinatesByChainLen(cls, structure, selection):
+    def getReorderedCoordinatesByLenGroups(cls, structure, selection, len_groups):
         chains = structure.select(selection).copy().getHierView()
-
-        new_structure = structure.select(selection).copy()
-        chain_lens = cls.getChainLengths(new_structure, selection)
-        sorted_chain_lens = sorted([(y,x) for x,y in chain_lens.items()])
         coordsets = None
-        for len,chid in sorted_chain_lens:
-            if coordsets is None:
-                coordsets = chains[chid].getCoordsets()
-            else:
-                coordsets = numpy.concatenate((coordsets, chains[chid].getCoordsets()), axis = 1)
+        for group_len in sorted(len_groups.keys()):
+            for chid in len_groups[group_len]:
+                if coordsets is None:
+                    coordsets = chains[chid].getCoordsets()
+                else:
+                    coordsets = numpy.concatenate((coordsets, chains[chid].getCoordsets()), axis = 1)
         return coordsets
 
 
@@ -98,21 +127,38 @@ class ChainMappingRMSDMatrixCalculator:
         return chain_len_map
 
     @classmethod
+    def getChainLenGroups(cls, chain_len_map):
+        groups = {}
+        for chid in chain_len_map:
+            try:
+                groups[chain_len_map[chid]].append(chid)
+            except:
+                groups[chain_len_map[chid]] = [chid]
+        return groups
+
+    @classmethod
+    def getPermGroups(cls, chain_len_groups):
+        perm_groups = []
+        for group_len in sorted(chain_len_groups.keys()):
+            perm_groups.append(chain_len_groups[group_len])
+        return perm_groups
+
+    @classmethod
     def calcRMSDMatrix(cls, structure, calculator_type, in_chain_selection ):
         """
 
         """
-        chain_structures = cls.getStructureChains(structure, in_chain_selection) # -> needs padding too!
-        chain_ids = chain_structures[0].keys()
+        chain_structures = cls.getStructureChains(structure, in_chain_selection)
+        chain_len_map = cls.getChainLengths(structure, in_chain_selection)
+        chain_len_groups = cls.getChainLenGroups(chain_len_map)
+        chain_coordsets = cls.getReorderedCoordinatesByLenGroups(structure, in_chain_selection, chain_len_groups)
 
-        chain_coordsets = structure.select(in_chain_selection).getCoordsets() # -> needs padding
-
+        perm_groups = cls.getPermGroups(chain_len_groups)
         matrix_data = []
-
         for i in range(len(chain_structures)-1):
             chain_structure = chain_structures[i]
             min_rmsd = None
-            for chain_perm in itertools.permutations(chain_ids):
+            for chain_perm in combopermutations(perm_groups):
                 new_coords = cls.reorderCoordinates(chain_structure, chain_perm)
                 calculator = pyRMSD.RMSDCalculator.RMSDCalculator(calculator_type,
                                                                   numpy.concatenate([[new_coords], chain_coordsets[i+1:]]))
@@ -121,7 +167,6 @@ class ChainMappingRMSDMatrixCalculator:
                     min_rmsd = rmsd
                 else:
                     min_rmsd = numpy.minimum(rmsd,min_rmsd)
-
 #                 print "structure:",i, "permutation:",chain_perm, "rmsd:", rmsd
 #             print "min rmsd", min_rmsd
             matrix_data.extend(min_rmsd)

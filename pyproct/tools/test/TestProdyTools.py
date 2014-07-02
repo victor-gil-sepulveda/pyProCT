@@ -26,20 +26,6 @@ class Test(unittest.TestCase):
         expected = [[[1.0, 2.0, 3.0], [-33.115, 1.294, -1.163]]]
         numpy.testing.assert_array_equal(expected, pdb_structure.getCoordsets())
 
-    def test_getMaximumChainLength(self):
-        input = StringIO.StringIO(chain_padding_proto_1)
-        structure = prody.parsePDBStream(input)
-        self.assertEqual(3, getMaximumChainLength(structure, "name CA"))
-        input = StringIO.StringIO(chain_padding_proto_2)
-        structure = prody.parsePDBStream(input)
-        self.assertEqual(3, getMaximumChainLength(structure, "name CA"))
-
-    def test_getChainPaddedCoordsets(self):
-        input = StringIO.StringIO(chain_padding_proto_2)
-        structure = prody.parsePDBStream(input)
-        pad_num = getMaximumChainLength(structure, "name CA")
-
-
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
