@@ -6,6 +6,7 @@ Created on 29/04/2013
 import json
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.clustering import Clustering
+from functools import cmp_to_key
 
 #http://stackoverflow.com/questions/4821940/how-to-make-simplejson-serializable-class
 class SerializerRegistry(object):
@@ -26,6 +27,17 @@ class SerializerRegistry(object):
     def default(self, obj):
         return obj.to_dic()
 
+def compare_func(a, b):
+    if a[1]["type"] == b[1]["type"]:
+        if "k" in a[1]["parameters"]:
+            return a[1]["parameters"]["k"] - b[1]["parameters"]["k"]
+        return 0
+    else:
+        return cmp(a[1]["type"], b[1]["type"])
+
+def sort_clustering_results(c_results):
+    return sorted([(id, c_results[id]) for id in c_results] , key=cmp_to_key(compare_func))
+
 class ClusteringResultsGatherer(object):
     def __init__(self):
         pass
@@ -36,8 +48,8 @@ class ClusteringResultsGatherer(object):
         results["trajectories"] = trajectory_handler.pdbs
         if(clustering_results is not None):
             results["best_clustering"] = clustering_results[0]
-            results["selected"] = clustering_results[1]
-            results["not_selected"] = clustering_results[2]
+            results["selected"] = sort_clustering_results(clustering_results[1])
+            results["not_selected"] = sort_clustering_results(clustering_results[2])
             results["scores"] = clustering_results[3]
         results["files"] = files
         results["workspace"] = workspace_handler.data
