@@ -48,8 +48,13 @@ class ClusteringResultsGatherer(object):
         results["trajectories"] = trajectory_handler.pdbs
         if(clustering_results is not None):
             results["best_clustering"] = clustering_results[0]
-            results["selected"] = sort_clustering_results(clustering_results[1])
-            results["not_selected"] = sort_clustering_results(clustering_results[2])
+            ####
+            # Removing "dict" allows to a easily comparable output format. This can help to
+            # locate or study possible bugs.
+            ####
+            results["selected"] = dict(sort_clustering_results(clustering_results[1]))
+            results["not_selected"] = dict(sort_clustering_results(clustering_results[2]))
+            ####
             results["scores"] = clustering_results[3]
         results["files"] = files
         results["workspace"] = workspace_handler.data

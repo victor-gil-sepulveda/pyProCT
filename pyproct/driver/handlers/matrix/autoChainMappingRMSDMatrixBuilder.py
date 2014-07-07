@@ -107,10 +107,15 @@ class ChainMappingRMSDMatrixCalculator:
 
     @classmethod
     def getReorderedCoordinatesByLenGroups(cls, structure, selection, len_groups):
+        """
+        Reordering the chains can affect enough the outcome of the matrix calculation to get different clusterings
+        than without ordering. One example is documented in ...
+        To diminish changes, all keys are sorted before using them (keys are arbitrary sorted in dics.).
+        """
         chains = structure.select(selection).copy().getHierView()
         coordsets = None
         for group_len in sorted(len_groups.keys()):
-            for chid in len_groups[group_len]:
+            for chid in sorted(len_groups[group_len]):
                 if coordsets is None:
                     coordsets = chains[chid].getCoordsets()
                 else:
@@ -152,7 +157,7 @@ class ChainMappingRMSDMatrixCalculator:
         chain_len_map = cls.getChainLengths(structure, in_chain_selection)
         chain_len_groups = cls.getChainLenGroups(chain_len_map)
         chain_coordsets = cls.getReorderedCoordinatesByLenGroups(structure, in_chain_selection, chain_len_groups)
-
+        perm_file = open("permutations_head_2.txt","w")
         perm_groups = cls.getPermGroups(chain_len_groups)
         matrix_data = []
         for i in range(len(chain_structures)-1):
@@ -163,6 +168,7 @@ class ChainMappingRMSDMatrixCalculator:
                 calculator = pyRMSD.RMSDCalculator.RMSDCalculator(calculator_type,
                                                                   numpy.concatenate([[new_coords], chain_coordsets[i+1:]]))
                 rmsd = calculator.oneVsFollowing(0)
+                perm_file.write(str(chain_perm)+" "+str(rmsd.tolist())+"\n")
                 if min_rmsd is None:
                     min_rmsd = rmsd
                 else:
@@ -170,5 +176,6 @@ class ChainMappingRMSDMatrixCalculator:
 #                 print "structure:",i, "permutation:",chain_perm, "rmsd:", rmsd
 #             print "min rmsd", min_rmsd
             matrix_data.extend(min_rmsd)
+        perm_file.close()
         return pyRMSD.condensedMatrix.CondensedMatrix(matrix_data)
 
