@@ -16,7 +16,7 @@ if __name__ == '__main__': # Comp. with sphynx
     setup(
           name='pyProCT',
           version='1.2.0',
-          description='',
+          description='pyProCT is an open source cluster analysis software especially adapted for jobs related with structural proteomics',
           author='Victor Alejandro Gil Sepulveda',
           author_email='victor.gil.sepulveda@gmail.com',
           url='https://github.com/victor-gil-sepulveda/pyProCT',
