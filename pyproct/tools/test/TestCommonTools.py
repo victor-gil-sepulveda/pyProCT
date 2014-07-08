@@ -5,10 +5,11 @@ Created on 16/03/2012
 '''
 import unittest
 import cStringIO
-from pyproct.tools.commonTools import merge_files, gen_consecutive_ranges,print_and_flush
+from pyproct.tools.commonTools import merge_files, gen_consecutive_ranges,print_and_flush,\
+    get_parameter_value
 
 class Test(unittest.TestCase):
-   
+
     def test_merge_files(self):
         file_text1 = """Lorem ipsum dolor sit amet, consectetur adipiscing elit.
 Proin nec felis mauris, sed semper odio.
@@ -56,7 +57,7 @@ Nulla pulvinar mattis lectus, non eleifend libero commodo ut.
         input3 = cStringIO.StringIO(file_text3)
         input4 = cStringIO.StringIO(file_text4)
         output = cStringIO.StringIO()
-        
+
         merge_files([input1,input2,input3,input4], output, verbose = False)
         self.assertEqual(output_text,output.getvalue())
 
@@ -66,12 +67,35 @@ Nulla pulvinar mattis lectus, non eleifend libero commodo ut.
         range_1,range_2 = gen_consecutive_ranges(5,3)
         self.assertItemsEqual(expected_range_1, range_1)
         self.assertItemsEqual(expected_range_2, range_2)
-    
+
     def test_print_and_flush(self):
         handler = cStringIO.StringIO()
         print_and_flush("Hello", handler)
         self.assertEqual(handler.getvalue(), "Hello")
-    
+
+    def test_get_parameter_value(self):
+        my_test_parameters = {
+                              "something":{
+                                           "this":[],
+                                           "and_this":{
+                                                       "and_that":True
+                                                       }
+                                           },
+                              "anything":{
+                                          "all_of_this": "Sure"
+                                          }
+                              }
+
+        self.assertEqual(True, get_parameter_value("something.and_this.and_that", my_test_parameters, False))
+        self.assertDictEqual({'something': {'this': [], 'and_this': {'and_that': True}}, 'anything': {'all_of_this': 'Sure'}},
+                             my_test_parameters)
+
+        self.assertEqual("yeha", get_parameter_value("anything.none_of_this", my_test_parameters, "yeha"))
+        self.assertDictEqual({'something': {'this': [], 'and_this': {'and_that': True}}, 'anything': {'all_of_this': 'Sure', 'none_of_this': 'yeha'}},
+                             my_test_parameters)
+
+
+
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()
