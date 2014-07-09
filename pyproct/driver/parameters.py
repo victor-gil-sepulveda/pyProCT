@@ -14,16 +14,29 @@ class ProtocolParameters():
         self.params_dic = params_dic
 
     def __getitem__(self,key):
-        return self.params_dic[key]
+        if isinstance(self.params_dic[key], dict):
+            return ProtocolParameters(self.params_dic[key])
+        else:
+            return self.params_dic[key]
+
+    def __setitem__(self,key,value):
+        self.params_dic[key] = value
 
     def __contains__(self, key):
         return key in self.params_dic
 
+    def __iter__(self):
+        for k in self.keys():
+            yield k
+
     def __str__(self):
         return json.dumps(self.params_dic, sort_keys = False, indent = 4, separators = (',', ': '))
 
-    def get_value(self, key_description, default_value):
-        get_parameter_value(key_description, self.params_dic, default_value)
+    def get_value(self, key_description, default_value = None):
+        return get_parameter_value(key_description, self.params_dic, default_value)
+
+    def keys(self):
+        return [k for k in self.params_dic.keys()]
 
     @classmethod
     def get_params_from_json(cls, json_string):

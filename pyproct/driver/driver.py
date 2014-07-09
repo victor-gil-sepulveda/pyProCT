@@ -55,7 +55,7 @@ class Driver(Observable):
         #########################
         # Matrix plot
         #########################
-        if "image" in parameters["data"]["matrix"].keys():
+        if "image" in parameters["data"]["matrix"]:
             self.timer.start("Matrix Imaging")
             matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["image"]["filename"])
             max_dim = parameters["data"]["matrix"]["image"]["dimension"] if "dimension" in parameters["data"]["matrix"]["image"] else 1000

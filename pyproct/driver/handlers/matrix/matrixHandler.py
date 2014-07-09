@@ -7,6 +7,7 @@ from pyRMSD.matrixHandler import MatrixHandler as pyRMSD_MatrixHandler
 from pyproct.driver.handlers.matrix.rmsdMatrixBuilder import RMSDMatrixBuilder
 from pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder import EuclideanDistanceMatrixBuilder
 from pyproct.driver.handlers.matrix.autoChainMappingRMSDMatrixBuilder import ChainMappingRMSDMatrixCalculator
+from pyproct.tools.commonTools import get_parameter_value
 
 class MatrixHandler(object):
 
@@ -86,7 +87,7 @@ class MatrixHandler(object):
 
         self.distance_matrix = None
 
-        if not self.matrix_parameters["method"] in ["load","rmsd","auto_chain_map_rmsd","distance"]:
+        if not self.matrix_parameters["method"] in ["load","rmsd","distance"]:
             print "[Error] Incorrect matrix creation option: %s"%self.matrix_parameters["method"]
             exit()
 
@@ -103,13 +104,26 @@ class MatrixHandler(object):
             self.distance_matrix = pyRMSD_MatrixHandler.load_matrix(self.matrix_parameters["parameters"]["path"])
 
         elif self.matrix_parameters["method"] == "rmsd":
-            self.distance_matrix =  RMSDMatrixBuilder.build(trajectory_handler, self.matrix_parameters["parameters"])
+            type = self.matrix_parameters.get_value("parameters.type", default_value="COORDINATES")
 
-        elif self.matrix_parameters["method"] == "auto_chain_map_rmsd":
-            self.distance_matrix =  ChainMappingRMSDMatrixCalculator.calcRMSDMatrix(trajectory_handler.getMergedStructure(),
-                                    self.matrix_parameters["parameters"]["calculator_type"] if "calculator_type" in self.matrix_parameters["parameters"] else "QCP_SERIAL_CALCULATOR",
-                                    self.matrix_parameters["parameters"]["fit_selection"] if "calculator_type" in self.matrix_parameters["parameters"] else "name CA")
+            if type == "COORDINATES":
+                mapping = self.matrix_parameters.get_value("parameters.chain_map", default_value=False)
 
+                if not mapping:
+                    self.distance_matrix =  RMSDMatrixBuilder.build(trajectory_handler, self.matrix_parameters["parameters"])
+                else:
+                    print "Performing Chain Mapping (please wait...)"
+                    self.distance_matrix =  ChainMappingRMSDMatrixCalculator.calcRMSDMatrix(trajectory_handler.getMergedStructure(),
+                                    self.matrix_parameters.get_value("parameters.calculator_type", default_value="QCP_SERIAL_CALCULATOR"),
+                                    self.matrix_parameters.get_value("parameters.fit_selection", default_value="name CA"))
+
+            elif type == "DIHEDRALS":
+#                 self.distance_matrix = DihedralRMSDMatrixCalculator.calcRMSDMatrix(trajectory_handler.getMergedStructure())
+                pass
+            else:
+                print self.matrix_parameters
+                print "[Error] Incorrect matrix 'rmsd' creation option: %s"%type
+                exit()
         elif self.matrix_parameters["method"] == "distance":
             self.distance_matrix =  EuclideanDistanceMatrixBuilder().build(trajectory_handler,self.matrix_parameters["parameters"])
 

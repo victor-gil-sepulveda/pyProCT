@@ -177,5 +177,5 @@ class ChainMappingRMSDMatrixCalculator:
 #             print "min rmsd", min_rmsd
             matrix_data.extend(min_rmsd)
         perm_file.close()
-        return pyRMSD.condensedMatrix.CondensedMatrix(matrix_data)
+        return pyRMSD.condensedMatrix.CondensedMatrix(numpy.array(matrix_data))
 
