@@ -40,17 +40,17 @@ And *pip* will take care of all the dependencies (shown below).
 
 ## Using pyProCT as a standalone program
 
-The preferred way to use pyProCT is throug a JSON "script" that describes the clustering task. It can be executed using the following line in your shell:
+The preferred way to use pyProCT is through a JSON "script" that describes the clustering task. It can be executed using the following line in your shell:
 
 ```Shell
 > python -m pyproct.main script.json
 ```
 
 The JSON script has 4 main parts, each one dealing with a different aspect of the clustering pipeline. This sections are:
-* global: Handles workspace and scheduler parameterization.
-* data: Handles distance matrix parameterization.
-* clustering: Handles algorithms and evaluation parameterization.
-* preprocessing: Handles what to do with the clustering we have calculated.
+* _"global"_: Handles workspace and scheduler parameterization.
+* _"data"_: Handles distance matrix parameterization.
+* _"clustering"_: Handles algorithms and evaluation parameterization.
+* _"preprocessing"_: Handles what to do with the clustering we have calculated.
 
 ```JSON
 {
@@ -77,7 +77,9 @@ The JSON script has 4 main parts, each one dealing with a different aspect of th
 	}
 }
 ```
-This is an example of _global_ section. It describes the work environment (workspace) and the type of scheduler that will be built. Defining the subfolders of the wokspace is not mandatory, however it may be convenient in some scenarios (for instance, in serial multiple clustering projects, sharing the _tmp_ folder would lower the disk usage as at each step it will be ooverwritten).
+This is an example of _"global"_ section. It describes the work environment (workspace) and the type of scheduler that will be built. Defining
+the subfolders of the wokspace is not mandatory, however it may be convenient in some scenarios (for instance, in serial multiple clustering
+projects, sharing the _tmp_ folder would lower the disk usage as at each step it will be overwritten).
 
 This is a valid global section using a serial scheduler and default names for workspace inner folders:
 ```JSON
@@ -90,7 +92,9 @@ This is a valid global section using a serial scheduler and default names for wo
 	}
 }
 ```
-pyProCT allows the use of 3 different schedulers that help to improve the overall performance of the software by parallelizing some parts of the code. The available schedulers are "Serial", "Process/Parallel" (uses Python's [multiprocessing](https://docs.python.org/2/library/multiprocessing.html)) and "MPI/Parallel" (uses MPI through the module [mpi4py](http://mpi4py.scipy.org/)).
+pyProCT allows the use of 3 different schedulers that help to improve the overall performance of the software by parallelizing some parts of the
+ code. The available schedulers are "Serial", "Process/Parallel" (uses Python's [multiprocessing](https://docs.python.org/2/library/multiprocessing.html))
+ and "MPI/Parallel" (uses MPI through the module [mpi4py](http://mpi4py.scipy.org/)).
 
 ### Data
 The _"data"_ section defines how pyProCT must build the distance matrix that will be used by the compression algorithms. Currently pyProCT offers up to three options to build that matrix: "load", "rmsd" and "distance"
@@ -130,14 +134,12 @@ JSON chunk to generate a dihedral angles RMSD matrix from one trajectories:
 {
 	"type": "pdb_ensemble",
 	"files": [
-		"A.pdb",
-		"B.pdb"
+		"A.pdb"
 	],
 	"matrix": {
 		"method": "rmsd",
 		"parameters": {
-			"calculator_type": "QCP_OMP_CALCULATOR",
-			"fit_selection": "backbone",
+			"type":"DIHEDRAL"
 		},
 		"image": {
 			"filename": "matrix_plot"
