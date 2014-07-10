@@ -22,7 +22,7 @@ def shrink_matrix(this_matrix, to_have_this_size):
     max_dim = number_of_boxes * box_size
     print "Box size, mid", box_size, box_mid, max_dim, row_dim, number_of_boxes
 
-    tmp_condensed = CondensedMatrix(numpy.zeros((number_of_boxes*(number_of_boxes-1))/2., dtype=numpy.float))
+    tmp_condensed = CondensedMatrix(numpy.zeros(int((number_of_boxes*(number_of_boxes-1))/2.), dtype=numpy.float))
 
     for k in range(0, max_dim, box_size):
         for l in range(0, max_dim, box_size):

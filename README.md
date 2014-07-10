@@ -93,11 +93,18 @@ This is a valid global section using a serial scheduler and default names for wo
 pyProCT allows the use of 3 different schedulers that help to improve the overall performance of the software by parallelizing some parts of the code. The available schedulers are "Serial", "Process/Parallel" (uses Python's [multiprocessing](https://docs.python.org/2/library/multiprocessing.html)) and "MPI/Parallel" (uses MPI through the module [mpi4py](http://mpi4py.scipy.org/)).
 
 ### Data
-The _data_ section defines how pyProCT must build the distance matrix that will be used by the compression algorithms. Currently pyProCT offers up to three options to build that matrix: "load", "rmsd" and "distance"
-- rmsd: Calculates a all vs all rmsd matrix using any of the [pyRMSD](https://github.com/victor-gil-sepulveda/pyRMSD#collective-operations) calculators available. It can calculate the RMSD of the fitted region (defined by [Prody](http://prody.csb.pitt.edu/) compatible selection string in _fit_selection_) or one can use one selection to superimpose and another to calculate the rmsd (_calc_selection_) .
--  distance: After superimposing the selected region it calculates the all vs all distances of the geometrical center of the region of interest (_body_selection_).
-- load: Loads a precalculated matrix.
+The _"data"_ section defines how pyProCT must build the distance matrix that will be used by the compression algorithms. Currently pyProCT offers up to three options to build that matrix: "load", "rmsd" and "distance"
+- _"rmsd"_: Calculates a all vs all rmsd matrix using any of the [pyRMSD](https://github.com/victor-gil-sepulveda/pyRMSD#collective-operations) calculators available. It can calculate the RMSD of the fitted region (defined by [Prody](http://prody.csb.pitt.edu/) compatible selection string in _fit_selection_) or one can use one selection to superimpose and another to calculate the rmsd (_calc_selection_).
+ There are two extra _parameters_ that must be considered when building an RMSD matrix.
+	- _"type"_: This property can only have two values: _"COORDINATES"_ or _"DIHEDRALS"_. If _DIHEDRALS_ is chosen, then the RMSD matrix will be calculated
+	with the RMSD of the array containing the phi-psi dihedral angle series for the protein.
+	- _"chain_map"_: If set to _true_ pyProCT will try to reorder the chains of the biomolecule in order to minimize the global RMSD value. This means that
+	it will correctly calculate the RMSD even if chain coordinates were permuted in any way. The price to pay if using this option will be an increase
+	of the calculation time that is directly proportional to the number of chains and the number of chains having the same length.
+- _"distance"_: After superimposing the selected region it calculates the all vs all distances of the geometrical center of the region of interest (_body_selection_).
+- _"load"_: Loads a precalculated matrix.
 
+JSON chunk needed to generate an RMSD matrix from two trajectories:
 ```JSON
 {
 	"type": "pdb_ensemble",
@@ -118,9 +125,33 @@ The _data_ section defines how pyProCT must build the distance matrix that will 
 	}
 }
 ```
+JSON chunk to generate a dihedral angles RMSD matrix from one trajectories:
+```JSON
+{
+	"type": "pdb_ensemble",
+	"files": [
+		"A.pdb",
+		"B.pdb"
+	],
+	"matrix": {
+		"method": "rmsd",
+		"parameters": {
+			"calculator_type": "QCP_OMP_CALCULATOR",
+			"fit_selection": "backbone",
+		},
+		"image": {
+			"filename": "matrix_plot"
+		},
+		"filename":"matrix"
+	}
+}
+```
+
 The matrix can be stored if the _filename_ property is defined. The matrix can also be stored as an image if the _image_ property is defined.
 
-pyProCT can currently load _pdb_ and _dcd_ files. When using _pdb_ files, files can be loaded in two ways:
+pyProCT can currently load _pdb_ and _dcd_ files. The details to load the files must be written into the array under the "files" keyword. There are
+many ways of telling pyProCT the files that have to be load and can be combined in any way you like:
+
 1. Using a list of file paths. If the file extension is ".txt" or ".list" it will be treated as a pdb list file. Each line of such files will
 be a pdb path or a pdb path and a selection string, separated by comma.
 
@@ -149,8 +180,10 @@ Where _base_selection_ is a [Prody](http://prody.csb.pitt.edu/) compatible selec
 ```
 Where _atoms_file_ is a _pdb_ file with at least one frame that holds the atomic information needed by the _dcd_ file.
 
+_*Note*: data.type is currently unsused_
+
 ### Clustering
-The _clustering_ section is divided in 3 other subsections:
+The _clustering_ section specifies how the clustering exploration will be done. It is divided in 3 other subsections:
 
 ```JSON
 {
@@ -165,9 +198,9 @@ The _clustering_ section is divided in 3 other subsections:
 	}
 }
 ```
-
-#### generation
-Defines how the clustering will be generated (_load_ or _generate_). if _load_ is chosen, the section must contain the clustering that may be used. Ex.:
+#### Generation
+Defines how to generate the clustering (_"load"_ or _"generate"_). if _"load"_ is chosen, this section will also contain the clustering
+that may be used in the _"clusters"_ property. Ex.:
 
 ```JSON
 {
@@ -190,10 +223,12 @@ Defines how the clustering will be generated (_load_ or _generate_). if _load_ i
 }
 ```
 
-#### algorithms
-If pyProCT has to generate the clustering, this section defines the algorithms that will be used as well as their parameters (if necessary). The currently available algorithms are : _kmedoids_, _hierarchical_, _dbscan_, _gromos_, _spectral_ and _random_. Each algorithm can store its list of parameters, however the preferred way to work with pyProCT is to let it automatically generate them. Almost all algorithms accept the property _max_, that defines the maximum amount of parameter collections that will be generated for that algorithm.
-
-Ex.
+#### Algorithms
+If clustering.generation.method equals "generate", this section defines the algorithms that will be used as well as their parameters (if
+necessary). The currently available algorithms are : _"kmedoids"_, _"hierarchical"_, _"dbscan"_, _"gromos"_, _"spectral"_ and _"random"_.
+Each algorithm can store its list of parameters, however the preferred way to work with pyProCT is to let it automatically generate them.
+Almost all algorithms accept the property _max_, that defines the maximum amount of parameter collections that will be generated for that
+algorithm. Ex.
 
 ```JSON
 {
@@ -218,7 +253,7 @@ Ex.
 }
 ```
 
-Algorithm parameters can be explicitly written:
+Algorithm parameters can be explicitly written, however it is not recommended:
 
 ```JSON
 {
@@ -231,8 +266,10 @@ Algorithm parameters can be explicitly written:
 }
 ```
 
-#### evaluation
-This section holds the _Clustering Hypothesis_, the core of pyProCT. Here the user can define how the expected clustering will be. First the user must set the expected number of clusters range. Also, an estimation of the dataset noise and the cluster minimum size (the minimum number of elements a cluster must have to not be considered noise) will complete the quantitative definition of the target result.
+#### Evaluation
+This section holds the _Clustering Hypothesis_, the core of pyProCT. Here the user can define how the expected clustering will be. First the user
+ must set the expected number of clusters range. Also, an estimation of the dataset noise and the cluster minimum size (the minimum number of
+ elements a cluster must have to not be considered noise) will complete the quantitative definition of the target result.
 
 Ex.
 ```JSON
@@ -248,12 +285,37 @@ Ex.
 }
 ```
 
-The second part of the _Clustering Hypothesis_ tries to characterize the clustering internal traits in a more qualitative way. Concepts like cluster "Compactness" or "Separation" can be used here to define the expected clustering. To this end users must write their expectations in form of _criteria_. This criteria are, in general, linear combinations of Internal Clustering Validation Indices (ICVs). The best clustering will be the one that gets the best score in any of these _criteria_. See [this document](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf) to get more insight about the different implemented criteria and their meaning.
+The second part of the _Clustering Hypothesis_ tries to characterize the clustering internal traits in a more qualitative way. Concepts like
+cluster "Compactness" or "Separation" can be used here to define the expected clustering. To this end users must write their expectations in
+form of _criteria_. This criteria are, in general, linear combinations of Internal Clustering Validation Indices (ICVs). The best clustering
+will be the one that gets the best score in any of these _criteria_. See [this document](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf)
+to get more insight about the different implemented criteria and their meaning.
 
-Additionally users may choose to ask pyProCT about the results of this ICVs and other evaluation functions(e.g. the average cluster size) by adding them to the _queries_ array.
+Additionally users may choose to ask pyProCT about the results of this ICVs and other evaluation functions(e.g. the average cluster size) by adding
+ them to the _queries_ array.
+
+```JSON
+{
+		...
+	"query_types": [
+	    "NumClusters",
+	    "NoiseLevel",
+	    "MeanClusterSize"
+	],
+	"evaluation_criteria": {
+	    "criteria_0": {
+	        "Silhouette": {
+	            "action": ">",
+	            "weight": 1
+	        }
+	    }
+	}
+}
+```
 
 ### Postprocessing
-Getting a good quality clustering is not enough, we would like to use them to extract information. pyProCT implements some use cases that may help users to extract this information.
+Getting a good quality clustering is not enough, we would like to use them to extract useful information. pyProCT implements some use cases that may help
+ users to extract this information.
 
 ```JSON
 {
@@ -285,10 +347,12 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 - representatives : Extracts all the representatives of the clusters in the same pdb.
 - pdb_clusters : Extracts all clusters in separate pdbs.
 - compression : Reduces the redundancy of the trajectory using the resulting clustering.
+-
 - conformational_space_comparison : Work in progress.
 
 ### Script validation
-As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example of such validators is [JSONLint](http://jsonlint.com/).
+As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example
+of such validators is [JSONLint](http://jsonlint.com/).
 
 ## <img src="img/workinprogress.png"></img>  Using pyProCT as part of other programs
 
@@ -324,12 +388,17 @@ To execute pyProCT in parallel you just need to issue this line:
 
 
 # Documentation
-We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy). See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud solution like [readthedocs.org](https://readthedocs.org/)
+We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one
+using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy).
+See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud
+solution like [readthedocs.org](https://readthedocs.org/)
 
 ### Learn more
-A more detailed explanation of the script contents can be found [here](https://dl.dropboxusercontent.com/u/58918851/script_info.pdf), and a discussion about the different implemented ICVs can be found [here](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf).
+A more detailed explanation of the script contents can be found [here](https://dl.dropboxusercontent.com/u/58918851/script_info.pdf), and a discussion
+ about the different implemented ICVs can be found [here](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf).
 
-Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working or can be done better. It will help to improve the software!
+Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working
+or can be done better. Any contribution can help to improve this software!
 
 # TODO
 

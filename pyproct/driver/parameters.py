@@ -6,10 +6,12 @@ Created on 04/06/2012
 import json
 from pyproct.tools.commonTools import convert_to_utf8, get_parameter_value
 
+
 class ProtocolParameters():
     """
     Stores the values of the parameters used to execute the protocol.
     """
+
     def __init__(self, params_dic):
         self.params_dic = params_dic
 
@@ -46,5 +48,7 @@ class ProtocolParameters():
     def get_default_params(cls, source):
         return ProtocolParameters.get_params_from_json(open(source,"r").read())
 
-
+    @classmethod
+    def empty(cls):
+        return ProtocolParameters({})
 

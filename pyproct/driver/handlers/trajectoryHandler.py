@@ -8,6 +8,7 @@ from pyproct.driver.observer.observable import Observable
 import prody
 import os.path
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructureLeavingFirst
+from pyproct.driver.parameters import ProtocolParameters
 
 class TrajectoryHandler(Observable):
 
@@ -19,7 +20,7 @@ class TrajectoryHandler(Observable):
         self.parameters = parameters
 
 
-        matrix_parameters = parameters["data"]["matrix"]['parameters']
+        matrix_parameters = parameters.get_value("data.matrix.parameters", default_value=ProtocolParameters.empty())
         parameters["data"]["files"] = self.expand_file_lists(parameters["data"]["files"])
         self.files = parameters["data"]["files"]
         self.pdbs = []

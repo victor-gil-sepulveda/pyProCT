@@ -42,6 +42,7 @@ class DihedralRMSDMatrixCalculator(object):
 
     @classmethod
     def build(cls, structure):
+        print "Calculating dihedral RMSD matrix (please wait) ..."
         all_dihedrals = []
         coordsets =  structure.getCoordsets()
         for coordset in coordsets:

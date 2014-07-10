@@ -8,6 +8,7 @@ from pyproct.driver.handlers.matrix.rmsdMatrixBuilder import RMSDMatrixBuilder
 from pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder import EuclideanDistanceMatrixBuilder
 from pyproct.driver.handlers.matrix.autoChainMappingRMSDMatrixBuilder import ChainMappingRMSDMatrixCalculator
 from pyproct.tools.commonTools import get_parameter_value
+from pyproct.driver.handlers.matrix.dihedralRMSDMatrixCalculator import DihedralRMSDMatrixCalculator
 
 class MatrixHandler(object):
 
@@ -118,7 +119,7 @@ class MatrixHandler(object):
                                     self.matrix_parameters.get_value("parameters.fit_selection", default_value="name CA"))
 
             elif type == "DIHEDRALS":
-#                 self.distance_matrix = DihedralRMSDMatrixCalculator.calcRMSDMatrix(trajectory_handler.getMergedStructure())
+                self.distance_matrix = DihedralRMSDMatrixCalculator.build(trajectory_handler.getMergedStructure())
                 pass
             else:
                 print self.matrix_parameters
@@ -152,6 +153,6 @@ class MatrixHandler(object):
         Exits the program if the matrix wasn't calculated yet.
         """
         if self.distance_matrix is None:
-            print "[ERROR][MatrixHandler::save_statistics] Matrix is not been calculated yet."
+            print "[ERROR][MatrixHandler::save_statistics] Matrix has not been calculated yet."
             exit()
 
