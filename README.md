@@ -361,11 +361,12 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 - _"compression"_ : Reduces the redundancy of the trajectory using the resulting clustering.  
 	Parameters:
 	- _"file"_: The name of the output file without extension. Default "compressed"(.pdb)
+	- _""final_number_of_frames""_: The expected (minimum) number of frames of the compressed file.
 	- _"type"_: The method used to get samples from each cluster. Options:
 		- "RANDOM": Gets a random sample of the elements of each cluster.
 		- "KMEDOIDS": Applies the k-medoids algorithm to the elements of a cluster and stores the representatives.  
 		Default: "KMEDOIDS".
-- _"cluster_stats"_: Generates a human readable file with the distances between cluster centers and their diameters.
+- _"cluster_stats"_: Generates a human readable file with the distances between cluster centers and their diameters.  
 	Parameters:
 	- _"file"_: The name of the output file without extension (will be sotred into the results folder). Default: "per_cluster_stats"(.csv).
 

@@ -58,7 +58,7 @@ class Driver(Observable):
         if "image" in parameters["data"]["matrix"]:
             self.timer.start("Matrix Imaging")
             matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["image"]["filename"])
-            max_dim = parameters["data"]["matrix"]["image"]["dimension"] if "dimension" in parameters["data"]["matrix"]["image"] else 1000
+            max_dim = parameters.get_value("data.matrix.image.dimension", default_value = 1000)
             plotTools.matrixToImage(self.matrixHandler.distance_matrix, matrix_image_file_path, max_dim=max_dim, observer=self.observer)
             self.generatedFiles.append({"description":"Matrix image",
                                         "path":os.path.abspath(matrix_image_file_path),

@@ -11,9 +11,7 @@ def calculate_per_cluster_stats(best_clustering, matrix, parameters, results_fol
     """
     CSV file
     """
-
-    file_name = parameters["file"]+".csv" if "file" in parameters else "per_cluster_stats.csv"
-
+    file_name = parameters.get_value("file", default_value = "per_cluster_stats") + ".csv"
     stats_file = open(os.path.join(results_folder,file_name),"w")
     header_line =","
     for i in range(len(best_clustering.clusters)):

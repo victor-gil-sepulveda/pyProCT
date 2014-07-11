@@ -14,8 +14,8 @@ def save_all_clusters(my_params, pdb_params, workspaceHandler, trajectoryHandler
     timer.start("Save clusters")
 
     #Parameters
-    keep_remarks = my_params["keep_remarks"] if "keep_remarks" in my_params else False
-    keep_frame_number = my_params["keep_frame_number"] if "keep_frame_number" in my_params else False
+    keep_remarks = my_params.get_value("keep_remarks", default_value = False)
+    keep_frame_number = my_params.get_value("keep_frame_number", default_value = False)
 
     # Places
     results_place = workspaceHandler["results"]
@@ -68,8 +68,8 @@ def save_representatives(clustering, my_params, matrixHandler, workspaceHandler,
     timer.start("Representatives")
 
     #Parameters
-    keep_remarks = my_params["keep_remarks"] if "keep_remarks" in my_params else False
-    keep_frame_number = my_params["keep_frame_number"] if "keep_frame_number" in my_params else False
+    keep_remarks = my_params.get_value("keep_remarks", default_value = False)
+    keep_frame_number = my_params.get_value("keep_frame_number", default_value = False)
 
     # The real job
     medoids = clustering.get_medoids(matrixHandler.distance_matrix)

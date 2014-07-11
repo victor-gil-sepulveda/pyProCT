@@ -17,9 +17,9 @@ class Compressor(object):
 
     def compress(self, clustering, workspace_handler, trajectory_handler, matrix_handler):
         representatives = []
-        compression_type = self.parameters["type"]
+        compression_type = self.parameters.get_value("type", default_value = "KMEDOIDS")
 
-        pdb_name =  self.parameters['file'] if 'file' in self.parameters else "compressed"
+        pdb_name =  self.parameters.get_value("file", default_value = "compressed")
 
         if compression_type == "RANDOM":
             representatives = self.__naive_compression(clustering, matrix_handler)
