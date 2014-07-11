@@ -4,6 +4,7 @@ Created on 16/03/2012
 @author: victor
 '''
 import sys
+import re
 
 def merge_files(file_handler_list, merged_handler, verbose = True):
     """
@@ -88,3 +89,12 @@ def get_parameter_value(key_description, param_dict, default_value):
         tmp_dic[keys[-1]] = default_value
 
     return tmp_dic[keys[-1]]
+
+
+def remove_comments(string):
+    """
+    From http://stackoverflow.com/questions/2319019/using-regex-to-remove-comments-from-source-files
+    """
+    string = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,string) # remove all occurance streamed comments (/*COMMENT */) from string
+    string = re.sub(re.compile("//.*?\n" ) ,"" ,string) # remove all occurance singleline comments (//COMMENT\n ) from string
+    return string

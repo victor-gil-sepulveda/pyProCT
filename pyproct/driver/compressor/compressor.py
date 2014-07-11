@@ -19,7 +19,7 @@ class Compressor(object):
         representatives = []
         compression_type = self.parameters["type"]
 
-        pdb_name =  self.parameters['file'] if 'file' in self.parameters else "compressed_pdb"
+        pdb_name =  self.parameters['file'] if 'file' in self.parameters else "compressed"
 
         if compression_type == "RANDOM":
             representatives = self.__naive_compression(clustering, matrix_handler)

@@ -344,17 +344,37 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 	"conformational_space_comparison":{}
 }
 ```
-- rmsf : Calculates the global and per-cluster (and per-residue) root mean square fluctuation (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).
-- centers_and_trace : Calculates all geometrical centers of the calculation selection of the system (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).
-- representatives : Extracts all the representatives of the clusters in the same pdb.
-- pdb_clusters : Extracts all clusters in separate pdbs.
-- compression : Reduces the redundancy of the trajectory using the resulting clustering.
--
-- conformational_space_comparison : Work in progress.
+- _"rmsf"_ : Calculates the global and per-cluster (and per-residue) root mean square fluctuation (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).  
+
+- _"centers_and_trace"_ : Calculates all geometrical centers of the calculation selection of the system (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).  
+
+- _"representatives"_ : Extracts all the representatives of the clusters in the same pdb.  
+	Parameters:
+	- _"keep_remarks"_: If true every stored model will be written along with its original remarks header. Default: false.
+	- _"keep_frame_number"_: If true, the model number of any stored conformation will be the original pdb one. Default: false. 
+
+- _"pdb_clusters"_ : Extracts all clusters in separate pdbs.  
+	Parameters:
+	- _"keep_remarks"_: If true every stored model will be written along with its original remarks header. Default: false.
+	- _"keep_frame_number"_: If true, the model number of any stored conformation will be the original pdb one. Default: false. 
+
+- _"compression"_ : Reduces the redundancy of the trajectory using the resulting clustering.  
+	Parameters:
+	- _"file"_: The name of the output file without extension. Default "compressed"(.pdb)
+	- _"type"_: The method used to get samples from each cluster. Options:
+		- "RANDOM": Gets a random sample of the elements of each cluster.
+		- "KMEDOIDS": Applies the k-medoids algorithm to the elements of a cluster and stores the representatives.  
+		Default: "KMEDOIDS".
+- _"cluster_stats"_: Generates a human readable file with the distances between cluster centers and their diameters.
+	Parameters:
+	- _"file"_: The name of the output file without extension (will be sotred into the results folder). Default: "per_cluster_stats"(.csv).
+
+- _"conformational_space_comparison"_ : Work in progress.
 
 ### Script validation
-As the "script" is indeed a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example
+As the control script is indeed holding a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example
 of such validators is [JSONLint](http://jsonlint.com/).
+pyProCT scripts accept javascript comments ( // and /* */)
 
 ## <img src="img/workinprogress.png"></img>  Using pyProCT as part of other programs
 

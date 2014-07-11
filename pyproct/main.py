@@ -10,6 +10,7 @@ import os.path
 from pyproct.driver.parameters import ProtocolParameters
 from pyproct.driver.observer.observer import Observer
 from pyproct.driver.driver import Driver
+import pyproct.tools.commonTools as tools
 
 class CmdLinePrinter(threading.Thread):
 
@@ -46,7 +47,7 @@ if __name__ == '__main__':
 
     parameters = None
     try:
-        parameters = ProtocolParameters.get_params_from_json(open(json_script).read())
+        parameters = ProtocolParameters.get_params_from_json(tools.remove_comments(open(json_script).read()))
         parameters["global"]["workspace"]["base"] = os.path.abspath(parameters["global"]["workspace"]["base"])
     except ValueError, e:
         print "Malformed json script."
