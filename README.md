@@ -439,7 +439,7 @@ or can be done better. Any contribution can help to improve this software!
     - Improve test coverage
     - The script must accept numbers and percentages
     - Use JSON schema to validate the script. Try to delegate the full responsibility of validating to pyProCT (instead of the GUI)
-    - Users must be able to comment their scripts (with '//' for instance).
+    [x] - Users must be able to comment their scripts (with '//' for instance).
     - When loading a dcd file, we only want to load atomic data of the the associated pdb.
     - Change "compression" by "redundancy_elimination"
     - Allow to load all files (or glob) from a folder.
