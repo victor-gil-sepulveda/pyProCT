@@ -247,12 +247,17 @@ class Driver(Observable):
         #################################
         # Small summary of the best_cluster is shown
         #################################
+        print "======================="
+        print "Summary:"
+        print "--------"
+        best_clustering_id, selected, not_selected, scores = clustering_results
+        print "- %d clusterings were generated."%(len(selected.keys())+len(not_selected.keys()))
         if parameters["clustering"]["generation"]["method"] != "load":
-            print "======================="
-            print "This is the chosen cluster:"
+            print "- Chosen cluster:"
             print "\t- Used algorithm: ", best_clustering['type']
             print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
-            print "\t- Noise: %.3f %%"%best_clustering['evaluation']['Noise level']
+            print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
+        print "======================="
 
     def preprocessing(self, parameters):
         if  "preprocess" in parameters:

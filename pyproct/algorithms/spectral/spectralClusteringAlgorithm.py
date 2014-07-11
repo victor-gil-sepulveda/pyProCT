@@ -49,7 +49,8 @@ class SpectralClusteringAlgorithm(object):
         """
         self.handle_params(kwargs, max_clusters_default = condensed_matrix.row_length-1)
 
-        self.verbose = True
+        print "Initializing Spectral clustering. This may take some time ..."
+#         self.verbose = True
 
         if self.sigma_sq is not None:
             if self.verbose: print "Calculating W with sigma = %f estimation..."%self.sigma_sq

@@ -113,7 +113,7 @@ class MatrixHandler(object):
                 if not mapping:
                     self.distance_matrix =  RMSDMatrixBuilder.build(trajectory_handler, self.matrix_parameters["parameters"])
                 else:
-                    print "Performing Chain Mapping (please wait...)"
+                    print "Performing Chain Mapping. This may take some time ..."
                     self.distance_matrix =  ChainMappingRMSDMatrixCalculator.calcRMSDMatrix(trajectory_handler.getMergedStructure(),
                                     self.matrix_parameters.get_value("parameters.calculator_type", default_value="QCP_SERIAL_CALCULATOR"),
                                     self.matrix_parameters.get_value("parameters.fit_selection", default_value="name CA"))

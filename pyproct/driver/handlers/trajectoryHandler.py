@@ -16,10 +16,13 @@ class TrajectoryHandler(Observable):
         """
         Class creator. It parses the needed files and extracts info and coordinates.
         """
+
         super(TrajectoryHandler,self).__init__(observer)
+
+        print "Reading conformations..."
+        prody.confProDy(verbosity="none")
+
         self.parameters = parameters
-
-
         matrix_parameters = parameters.get_value("data.matrix.parameters", default_value=ProtocolParameters.empty())
         parameters["data"]["files"] = self.expand_file_lists(parameters["data"]["files"])
         self.files = parameters["data"]["files"]
@@ -38,11 +41,13 @@ class TrajectoryHandler(Observable):
                              "selections": {}
         }
 
-        self.coordsets = self.getMergedStructure().getCoordsets()
+        merged_structure = self.getMergedStructure()
+        self.coordsets = merged_structure.getCoordsets()
         self.number_of_conformations = self.coordsets.shape[0]
         self.number_of_atoms = self.coordsets.shape[1]
 
         self.handle_selection_parameters(matrix_parameters)
+        print "%d conformations of %d atoms were read."% (merged_structure.numCoordsets(),merged_structure.numAtoms())
 
     def expand_file_lists(self, files):
         """
