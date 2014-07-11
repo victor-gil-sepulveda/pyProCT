@@ -462,13 +462,14 @@ or can be done better. Any contribution can help to improve this software!
     - J quality function: Cai Xiaoyan Proceedings of the 27th Chinese Control Conference
     - Metastability function (Q) in Chodera et al. J. Chem. Phys. 126 155101 2007 .
     - Improve separation quality functions.
-    - New standard separation ICVs (require inmutable prototypes)
-	    ```
-	    Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
-	    -  Single linkage: It measures the distance between the closest members of the clusters.
-	    -  Complete linkage: It measures the distance between the most distant members.
-	    - Comparison of centroids: It measures the distance between the centers of the clusters.
-	    ```
+    - New standard separation ICVs (require inmutable prototypes)  
+
+		>
+	    >Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
+	    >-  Single linkage: It measures the distance between the closest members of the clusters.
+	    >-  Complete linkage: It measures the distance between the most distant members.
+	    >- Comparison of centroids: It measures the distance between the centers of the clusters.
+	    
 - New features:
     - Refine noise in DBSCAN
     - Refine a preselected cluster (e.g "noise"), or "heterogeneous".
