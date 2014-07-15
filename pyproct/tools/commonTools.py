@@ -5,6 +5,7 @@ Created on 16/03/2012
 '''
 import sys
 import re
+import functools
 
 def merge_files(file_handler_list, merged_handler, verbose = True):
     """
@@ -98,3 +99,17 @@ def remove_comments(string):
     string = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,string) # remove all occurance streamed comments (/*COMMENT */) from string
     string = re.sub(re.compile("//.*?\n" ) ,"" ,string) # remove all occurance singleline comments (//COMMENT\n ) from string
     return string
+
+class timed_method(object):
+    def __init__(self, timer, alias):
+        self.timer = timer
+        self.alias = alias
+
+    def __call__(self, f):
+        def timer_wrap(*args, **kwargs):
+            self.timer.start(self.alias)
+            result = f(*args, **kwargs)
+            self.timer.stop(self.alias)
+            return result
+        functools.update_wrapper(timer_wrap, f)
+        return timer_wrap

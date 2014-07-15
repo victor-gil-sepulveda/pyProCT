@@ -157,7 +157,7 @@ class ChainMappingRMSDMatrixCalculator:
         chain_len_map = cls.getChainLengths(structure, in_chain_selection)
         chain_len_groups = cls.getChainLenGroups(chain_len_map)
         chain_coordsets = cls.getReorderedCoordinatesByLenGroups(structure, in_chain_selection, chain_len_groups)
-        perm_file = open("permutations_head_2.txt","w")
+#         perm_file = open("permutations_head_2.txt","w")
         perm_groups = cls.getPermGroups(chain_len_groups)
         matrix_data = []
         for i in range(len(chain_structures)-1):
@@ -168,7 +168,7 @@ class ChainMappingRMSDMatrixCalculator:
                 calculator = pyRMSD.RMSDCalculator.RMSDCalculator(calculator_type,
                                                                   numpy.concatenate([[new_coords], chain_coordsets[i+1:]]))
                 rmsd = calculator.oneVsFollowing(0)
-                perm_file.write(str(chain_perm)+" "+str(rmsd.tolist())+"\n")
+#                 perm_file.write(str(chain_perm)+" "+str(rmsd.tolist())+"\n")
                 if min_rmsd is None:
                     min_rmsd = rmsd
                 else:
@@ -176,6 +176,6 @@ class ChainMappingRMSDMatrixCalculator:
 #                 print "structure:",i, "permutation:",chain_perm, "rmsd:", rmsd
 #             print "min rmsd", min_rmsd
             matrix_data.extend(min_rmsd)
-        perm_file.close()
+#         perm_file.close()
         return pyRMSD.condensedMatrix.CondensedMatrix(numpy.array(matrix_data))
 

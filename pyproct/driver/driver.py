@@ -4,24 +4,25 @@ Created on Mar 26, 2013
 @author: victor
 '''
 import os
+import json
+import pyproct.tools.plotTools as plotTools
+from pyproct.tools.commonTools import timed_method
+from pyproct.protocol.protocol import ClusteringProtocol
+from pyproct.driver.compressor.compressor import Compressor
 from pyproct.driver.handlers.timerHandler import TimerHandler
 from pyproct.driver.handlers.workspaceHandler import WorkspaceHandler
 from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
 from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
 from pyproct.driver.observer.observable import Observable
-import pyproct.tools.plotTools as plotTools
-from pyproct.protocol.protocol import ClusteringProtocol
 from pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
-from pyproct.driver.compressor.compressor import Compressor
 from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
-import json
 from pyproct.clustering.clustering import Clustering
 from pyproct.tools import visualizationTools
-from pyproct.driver.postprocessing.clusters import save_representatives,\
-    save_all_clusters
+from pyproct.driver.postprocessing.clusters import save_representatives, save_all_clusters
 from pyproct.driver.postprocessing.cluster_stats import calculate_per_cluster_stats
 
 class Driver(Observable):
+    timer = TimerHandler()
 
     def __init__(self, observer):
         super(Driver, self).__init__(observer)
@@ -38,6 +39,11 @@ class Driver(Observable):
                                 "path":os.path.abspath(parameters_file_path),
                                 "type":"text"}]
 
+    @timed_method(timer, "Trajectory Loading")
+    def load_trajectory(self, parameters):
+        self.trajectoryHandler = TrajectoryHandler(parameters, self.observer)
+
+    @timed_method(timer, "Matrix Calculation")
     def create_matrix(self, parameters):
         self.matrixHandler = MatrixHandler(parameters["data"]["matrix"])
         self.notify("Matrix calculation", [])
@@ -47,23 +53,35 @@ class Driver(Observable):
         self.generatedFiles.append({"description":"Matrix statistics",
                                     "path":os.path.abspath(statistics_file_path),
                                     "type":"text"})
-        self.timer.stop("Matrix Generation")
-        if "filename" in parameters["data"]["matrix"]:
-            self.timer.start("Matrix Save")
-            self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["filename"]))
-            self.timer.stop("Matrix Save")
-        #########################
-        # Matrix plot
-        #########################
-        if "image" in parameters["data"]["matrix"]:
-            self.timer.start("Matrix Imaging")
-            matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["image"]["filename"])
-            max_dim = parameters.get_value("data.matrix.image.dimension", default_value = 1000)
-            plotTools.matrixToImage(self.matrixHandler.distance_matrix, matrix_image_file_path, max_dim=max_dim, observer=self.observer)
-            self.generatedFiles.append({"description":"Matrix image",
-                                        "path":os.path.abspath(matrix_image_file_path),
-                                        "type":"image"})
-            self.timer.stop("Matrix Imaging")
+
+    @timed_method(timer, "Matrix Save")
+    def save_matrix(self, parameters):
+        self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["filename"]))
+
+    @timed_method(timer, "Matrix Imaging")
+    def plot_matrix(self, parameters):
+        matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["image"]["filename"])
+        max_dim = parameters.get_value("data.matrix.image.dimension", default_value = 1000)
+        plotTools.matrixToImage(self.matrixHandler.distance_matrix, matrix_image_file_path, max_dim=max_dim, observer=self.observer)
+        self.generatedFiles.append({"description":"Matrix image",
+                                    "path":os.path.abspath(matrix_image_file_path),
+                                    "type":"image"})
+
+    def data_section(self, parameters):
+
+        matrix_parameters = parameters["data"]["matrix"]
+
+        self.load_trajectory(parameters)
+
+        self.create_matrix(parameters)
+
+        if "filename" in matrix_parameters:
+            self.save_matrix(parameters)
+
+        if "image" in matrix_parameters:
+            self.plot_matrix(parameters)
+
+
 
     def get_best_clustering(self, parameters):
         best_clustering = None
@@ -154,7 +172,6 @@ class Driver(Observable):
         ##############################
         # Generating rmsf plots
         ##############################
-
         if "rmsf" in parameters["postprocess"]:
             try:
                 displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(best_clustering,
@@ -259,50 +276,38 @@ class Driver(Observable):
             print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
         print "======================="
 
-    def preprocessing(self, parameters):
-        if  "preprocess" in parameters:
-            pass
 
+
+    @timed_method(timer, "Global")
     def run(self, parameters):
-
         #####################
-        # Start timing
-        #####################
-        self.timer = TimerHandler()
-        self.timer.start("Global")
-
-        #####################
-        # Workspace Creation
+        # Global Section
         #####################
         self.create_workspace(parameters)
-
-        #####################
-        # Saving Parameters
-        #####################
         self.save_parameters_file(parameters)
 
-        #####################
-        # Trajectory Loading
-        #####################
-        self.timer.start("Trajectory Loading")
-        self.trajectoryHandler = TrajectoryHandler(parameters, self.observer)
-        self.timer.stop("Trajectory Loading")
-
-        #####################
-        # Preprocessing
-        #####################
-        self.timer.start("Preprocessing")
-        self.preprocessing(parameters)
-        self.timer.stop("Preprocessing")
+        ##############################
+        # Data Section
+        ##############################
+        if "data" in parameters:
+            self.data_section(parameters)
+        else:
+            print "[Warning driver::run] 'data' object was not defined in the control script. pyProCT will now stop."
+            self.notify("Driver Finished", "\n"+str(Driver.timer))
+            return
 
         ##############################
-        # Distance Matrix Generation
+        # Clustering Section
         ##############################
-        self.create_matrix(parameters)
+        if "clustering" in parameters:
+            self.perform_actions(parameters)
+        else:
+            print "[Warning driver::run] 'clustering' object was not defined in the control script. pyProCT will now stop."
+            self.notify("Driver Finished", "\n"+str(Driver.timer))
+            return
 
         ##############################
-        # Actions
+        # Postprocessing Section
         ##############################
-        self.perform_actions(parameters)
 
-        self.notify("Driver Finished", "\n"+str(self.timer))
+        self.notify("Driver Finished", "\n"+str(Driver.timer))
