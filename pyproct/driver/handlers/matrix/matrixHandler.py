@@ -92,9 +92,9 @@ class MatrixHandler(object):
             print "[Error] Incorrect matrix creation option: %s"%self.matrix_parameters["method"]
             exit()
 
-    def create_matrix(self, trajectory_handler):
+    def calculate_matrix(self, trajectory_handler):
         """
-        Generates a matrix with the method used in the handler creation.
+        Calculates a matrix with the method used in the handler creation.
 
         @param matrix_base_path:
         @param parameters:

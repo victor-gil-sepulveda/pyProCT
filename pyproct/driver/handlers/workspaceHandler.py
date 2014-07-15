@@ -8,17 +8,23 @@ import json
 import shutil
 import pyproct.tools.scriptTools as scripts_common
 from pyproct.driver.observer.observable import Observable
+from pyproct.driver.parameters import ProtocolParameters
 
 class WorkspaceHandler(Observable):
 
     def __init__(self, workspace_parameters, observer):
         super(WorkspaceHandler,self).__init__(observer)
 
+        self.parameters = workspace_parameters.get_value("parameters", default_value = ProtocolParameters({
+                                                                                                       "overwrite":False,
+                                                                                                       "clear_after_exec":["tmp"]
+                                                                                                  }))
+
         self.data = {
-                      "results": os.path.join(workspace_parameters["base"], workspace_parameters["results"] if "results" in workspace_parameters else "results"),
-                      "tmp" : os.path.join(workspace_parameters["base"], workspace_parameters["tmp"] if "results" in workspace_parameters else "tmp"),
-                      "clusters" : os.path.join(workspace_parameters["base"], workspace_parameters["clusters"] if "clusters" in workspace_parameters else "clusters"),
-                      "matrix" : os.path.join(workspace_parameters["base"], workspace_parameters["matrix"] if "matrix" in workspace_parameters else "matrix")
+                      "results": os.path.join(workspace_parameters["base"], workspace_parameters.get_value("results", default_value="results")),
+                      "tmp" : os.path.join(workspace_parameters["base"], workspace_parameters.get_value("tmp", default_value= "tmp")),
+                      "clusters" : os.path.join(workspace_parameters["base"], workspace_parameters.get_value("clusters", default_value= "clusters")),
+                      "matrix" : os.path.join(workspace_parameters["base"], workspace_parameters.get_value("matrix", default_value= "matrix"))
         }
 
     def __getitem__(self,key):
@@ -27,13 +33,33 @@ class WorkspaceHandler(Observable):
     def __str__(self):
         return json.dumps(self.data, sort_keys=False, indent=4, separators=(',', ': '))
 
-    def create_directories(self, remove_existing = True):
+    def create_directories(self):
+        """
+        Recreates the workspace structure. Removes the old location if necessary.
+        """
         self.notify("MSG","Creating workspace...")
-        for path in self.data:
-            if os.path.exists(self.data[path]) and remove_existing:
-                self.notify("Removing Directory",self.data[path])
-                shutil.rmtree(self.data[path])
-            scripts_common.create_directory(self.data[path])
+        if self.parameters["overwrite"]:
+            self.clear_directories(self.data.keys())
 
+        for folder_key in self.data:
+            scripts_common.create_directory(self.data[folder_key])
 
+    def clear_directories(self, directory_keys):
+        """
+        Removes the directories given as parameters.
 
+        @param directory_keys: The keys of the 'data' object which defined paths will be erased.
+        """
+        for folder_key in directory_keys:
+            folder_path = self.data[folder_key]
+            if os.path.exists(folder_path):
+                shutil.rmtree(folder_path)
+                self.notify("MSG","Removing %s ..."%folder_path)
+#                 print "Removing %s ..."%folder_path
+
+    def __enter__(self):
+        self.create_directories()
+        return self
+
+    def __exit__(self, exception_type, exception_val, trace):
+        self.clear_directories(self.parameters["clear_after_exec"])

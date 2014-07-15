@@ -32,7 +32,7 @@ class ProtocolParameters():
             yield k
 
     def __str__(self):
-        return json.dumps(self.params_dic, sort_keys = False, indent = 4, separators = (',', ': '))
+        return json.dumps(ProtocolParameters.to_dict(self.params_dic), sort_keys = False, indent = 4, separators = (',', ': '))
 
     def get_value(self, key_description, default_value = None):
         return get_parameter_value(key_description, self.params_dic, default_value)
@@ -51,4 +51,25 @@ class ProtocolParameters():
     @classmethod
     def empty(cls):
         return ProtocolParameters({})
+
+    @classmethod
+    def to_dict(cls, proParam):
+        new_dic = {}
+        for k in proParam.keys():
+            item  = proParam[k]
+            if isinstance(item, ProtocolParameters):
+                new_dic[k] = ProtocolParameters.to_dict(item)
+
+            elif isinstance(item, dict):
+                new_dic[k] = ProtocolParameters.to_dict(ProtocolParameters(proParam[k]))
+
+            else:
+                new_dic[k] = proParam[k]
+        return new_dic
+
+
+
+
+
+
 
