@@ -8,7 +8,6 @@ import json
 import pyproct.tools.plotTools as plotTools
 from pyproct.tools.commonTools import timed_method
 from pyproct.protocol.protocol import ClusteringProtocol
-from pyproct.driver.compressor.compressor import Compressor
 from pyproct.driver.handlers.timerHandler import TimerHandler
 from pyproct.driver.handlers.workspaceHandler import WorkspaceHandler
 from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
@@ -17,9 +16,7 @@ from pyproct.driver.observer.observable import Observable
 from pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 from pyproct.clustering.clustering import Clustering
-from pyproct.tools import visualizationTools
-from pyproct.driver.postprocessing.clusters import save_representatives, save_all_clusters
-from pyproct.driver.postprocessing.cluster_stats import calculate_per_cluster_stats
+from pyproct.driver.sections.postprocessing.postprocessing import PostprocessingDriver
 
 class Driver(Observable):
     timer = TimerHandler()
@@ -108,11 +105,12 @@ class Driver(Observable):
         elif parameters["clustering"]["generation"]["method"] == "generate":
             return self.perform_clustering_exploration(parameters)
 
-
+    @timed_method(timer, "Clustering Load")
     def load_clustering(self, parameters):
         best_clustering = {"clustering":Clustering.from_dic(parameters["clustering"]["generation"])}
         return ( "loaded_clustering", {"loaded_clustering":best_clustering}, {}, None)
 
+    @timed_method(timer, "Clustering Exploration")
     def perform_clustering_exploration(self, parameters):
         best_clustering = None
 
@@ -145,135 +143,14 @@ class Driver(Observable):
         else:
             return selected[best_clustering_id]
 
-    #TODO: This needs to be refactored
     @timed_method(timer, "Postprocessing")
     def postprocess(self, parameters, clustering_results):
-        best_clustering = self.get_best_clustering(clustering_results)
-
-
-        ##############################
-        # Specialized post-processing
-        ##############################
-
-        if not "postprocess" in parameters:
-            return
-
-        ##############################
-        # Saving representatives
-        ##############################
-        if "representatives" in parameters["postprocess"]:
-            save_representatives(best_clustering["clustering"], parameters["postprocess"]["representatives"], self.matrixHandler,
-                                 self.workspaceHandler, self.trajectoryHandler,
-                                 self.generatedFiles, self.timer)
-
-        ##########################################
-        # Saving all clusters in different files
-        ##########################################
-        if "pdb_clusters" in parameters["postprocess"]:
-            save_all_clusters(parameters["postprocess"]["pdb_clusters"], parameters["data"]["files"],\
-                              self.workspaceHandler, self.trajectoryHandler,
-                              best_clustering["clustering"], self.generatedFiles, self.timer)
-
-
-        ##############################
-        # Generating rmsf plots
-        ##############################
-        if "rmsf" in parameters["postprocess"]:
-            try:
-                displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(best_clustering,
-                                                                                                     self.trajectoryHandler,
-                                                                                                     self.workspaceHandler,
-                                                                                                     self.matrixHandler)
-
-                self.generatedFiles.append({
-                                            "description":"Alpha Carbon mean square displacements",
-                                            "path":os.path.abspath(displacements_path),
-                                            "type":"text"
-                })
-
-                open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements,
-                                                      sort_keys=False,
-                                                      indent=4,
-                                                      separators=(',', ': ')))
-            except Exception:
-                print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
-
-
-        ##############################
-        # Generating 3D plots of center of mass + trace
-        ##############################
-        if "centers_and_trace" in parameters["postprocess"]:
-            try:
-                centers_path, centers_contents = visualizationTools.generate_selection_centers_file(best_clustering,
-                                                                                                    self.workspaceHandler,
-                                                                                                    self.trajectoryHandler)
-
-                self.generatedFiles.append({
-                                            "description":"Centers of the selection used to calculate distances",
-                                            "path":os.path.abspath(centers_path),
-                                            "type":"text"
-                })
-
-                open(centers_path,"w").write(json.dumps(centers_contents,
-                                          sort_keys=False,
-                                          indent=4,
-                                          separators=(',', ': ')))
-            except Exception:
-                print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
-
-        if "cluster_stats" in parameters["postprocess"]:
-            calculate_per_cluster_stats(best_clustering["clustering"], self.matrixHandler.distance_matrix,
-                                        parameters, self.workspaceHandler["results"])
-
-#         if "KullbackLiebler" in parameters["postprocess"]:
-#             ############################################
-#             # Distribution analysis
-#             ############################################
-#             self.timer.start("KL divergence")
-#             klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)
-#             kl_file_path = os.path.join(self.workspaceHandler["matrix"], "kullback_liebler_divergence")
-#             klDiv.save(kl_file_path)
-#             matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["matrix"]["image"]["filename"])
-#             self.generatedFiles.append({"description":"Kullback-Leibler divergence",
-#                                         "path":matrix_image_file_path,
-#                                         "type":"text"})
-#             self.timer.stop("KL divergence")
-
-        ##############################
-        # Compress trajectory
-        ##############################
-        if "compression" in parameters["postprocess"]:
-            ############################################
-            # Compress
-            ############################################
-            self.timer.start("Compression")
-            compressor = Compressor(parameters["postprocess"]["compression"])
-            compressed_file_path = compressor.compress(best_clustering["clustering"],
-                                                       self.workspaceHandler,
-                                                       self.trajectoryHandler,
-                                                       self.matrixHandler)
-            self.generatedFiles.append({"description":"Compressed file",
-                                        "path":os.path.abspath(compressed_file_path),
-                                        "type":"pdb"})
-            self.timer.stop("Compression")
-
-
-    def show_summary(self, parameters, clustering_results):
-        """
-        Writes a small summary of the execution.
-        """
-        best_clustering_id, selected, not_selected, scores = clustering_results
-        best_clustering = self.get_best_clustering(clustering_results)
-        print "======================="
-        print "Summary:"
-        print "--------"
-        print "- %d clusterings were generated."%(len(selected.keys())+len(not_selected.keys()))
-        if parameters["clustering"]["generation"]["method"] != "load":
-            print "- Chosen cluster:"
-            print "\t- Used algorithm: ", best_clustering['type']
-            print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
-            print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
-        print "======================="
+        best_clustering = self.get_best_clustering(clustering_results)["clustering"]
+        PostprocessingDriver().run(best_clustering,
+                                   parameters["postprocess"],
+                                   self.trajectoryHandler,
+                                   self.workspaceHandler,
+                                   self.matrixHandler)
 
     def save_results(self, clustering_results):
         results_path = os.path.join(self.workspaceHandler["results"], "results.json")
@@ -288,3 +165,23 @@ class Driver(Observable):
 
         # Results are first added and saved later to avoid metareferences :D
         open(results_path, "w").write(json_results)
+
+    def show_summary(self, parameters, clustering_results):
+        """
+        Writes a small summary of the execution.
+        """
+        selected = clustering_results[1]
+        not_selected = clustering_results[2]
+        best_clustering = self.get_best_clustering(clustering_results)
+
+        print "======================="
+        print "Summary:"
+        print "--------"
+        print "- %d clusterings were generated."%(len(selected.keys())+len(not_selected.keys()))
+        if parameters["clustering"]["generation"]["method"] != "load":
+            print "- Chosen cluster:"
+            print "\t- Used algorithm: ", best_clustering['type']
+            print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
+            print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
+        print "======================="
+

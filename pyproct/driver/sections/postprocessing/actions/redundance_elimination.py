@@ -9,13 +9,33 @@ from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproct.clustering.cluster import Cluster
 from pyproct.protocol.refinement.Refiner import Refiner
 from pyproct.tools.matrixTools import get_submatrix
+import os
 
-class Compressor(object):
+
+class RedundanceEliminationPostAction(object):
+    KEYWORD = "compression"
+
+    def __init__(self):
+        pass
+
+    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+        if RedundanceEliminationPostAction.KEYWORD in postprocessing_parameters:
+            compressor = RedundanceElimination(postprocessing_parameters[RedundanceEliminationPostAction.KEYWORD])
+            compressed_file_path = compressor.compress(clustering,
+                                                       workspaceHandler,
+                                                       trajectoryHandler,
+                                                       matrixHandler)
+            generatedFiles.append({"description":"Compressed file",
+                                        "path":os.path.abspath(compressed_file_path),
+                                        "type":"pdb"})
+
+
+class RedundanceElimination(object):
 
     def __init__(self, parameters):
         self.parameters = parameters
 
-    def compress(self, clustering, workspace_handler, trajectory_handler, matrix_handler):
+    def do(self, clustering, workspace_handler, trajectory_handler, matrix_handler):
         representatives = []
         compression_type = self.parameters.get_value("type", default_value = "KMEDOIDS")
 

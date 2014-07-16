@@ -7,12 +7,31 @@ from pyproct.clustering.metrics.common import get_intra_cluster_distances
 import os.path
 
 
+class ClusterStatsPostAction(object):
+    KEYWORD = "cluster_stats"
+
+    def __init__(self):
+        pass
+
+    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+        if ClusterStatsPostAction.KEYWORD in postprocessing_parameters:
+            stats_file_path = calculate_per_cluster_stats(clustering,
+                                                          matrixHandler.distance_matrix,
+                                                          postprocessing_parameters[ClusterStatsPostAction.KEYWORD],
+                                                          trajectoryHandler["results"])
+            generatedFiles.append({
+                                        "description":"Stats for all clusterings (diameter and distances from center)",
+                                        "path":os.path.abspath(stats_file_path),
+                                        "type":"text"
+            })
+
 def calculate_per_cluster_stats(best_clustering, matrix, parameters, results_folder):
     """
     CSV file
     """
     file_name = parameters.get_value("file", default_value = "per_cluster_stats") + ".csv"
-    stats_file = open(os.path.join(results_folder,file_name),"w")
+    stats_file_path = os.path.join(results_folder,file_name)
+    stats_file = open(stats_file_path,"w")
     header_line =","
     for i in range(len(best_clustering.clusters)):
         cluster = best_clustering.clusters[i]
@@ -37,6 +56,7 @@ def calculate_per_cluster_stats(best_clustering, matrix, parameters, results_fol
         line = line[:-1] + "\n"
         stats_file.write(line)
     stats_file.close()
+    return stats_file_path
 
 
 
