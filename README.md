@@ -99,12 +99,10 @@ pyProCT allows the use of 3 different schedulers that help to improve the overal
 ### Data
 The _"data"_ section defines how pyProCT must build the distance matrix that will be used by the compression algorithms. Currently pyProCT offers up to three options to build that matrix: "load", "rmsd" and "distance"
 - _"rmsd"_: Calculates a all vs all rmsd matrix using any of the [pyRMSD](https://github.com/victor-gil-sepulveda/pyRMSD#collective-operations) calculators available. It can calculate the RMSD of the fitted region (defined by [Prody](http://prody.csb.pitt.edu/) compatible selection string in _fit_selection_) or one can use one selection to superimpose and another to calculate the rmsd (_calc_selection_).
- There are two extra _parameters_ that must be considered when building an RMSD matrix.
-	- _"type"_: This property can only have two values: _"COORDINATES"_ or _"DIHEDRALS"_. If _DIHEDRALS_ is chosen, then the RMSD matrix will be calculated
-	with the RMSD of the array containing the phi-psi dihedral angle series for the protein.
+There are two extra _parameters_ that must be considered when building an RMSD matrix.
+	- _"type"_: This property can have two values: _"COORDINATES"_ or _"DIHEDRALS"_. If _DIHEDRALS_ is chosen, each element _(i,j)_ of the distance matrix will be the RMSD of the arrays containing the phi-psi dihedral angle series of conformation _i_ and _j_.
 	- _"chain_map"_: If set to _true_ pyProCT will try to reorder the chains of the biomolecule in order to minimize the global RMSD value. This means that
-	it will correctly calculate the RMSD even if chain coordinates were permuted in any way. The price to pay if using this option will be an increase
-	of the calculation time that is directly proportional to the number of chains and the number of chains having the same length.
+	it will correctly calculate the RMSD even if chain coordinates were permuted in some way. The price to pay is an increase of the calculation time (directly proportional to the number of chains or the number of chains having the same length).
 - _"distance"_: After superimposing the selected region it calculates the all vs all distances of the geometrical center of the region of interest (_body_selection_).
 - _"load"_: Loads a precalculated matrix.
 
@@ -341,7 +339,14 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 		"type":[‘RANDOM’,’KMEDOIDS’]
 	},
 
-	"conformational_space_comparison":{}
+	"cluster_stats":{
+		"file": STRING
+	},
+
+
+	"conformational_space_comparison":{},
+	
+	"kullback_liebler":{}
 }
 ```
 - _"rmsf"_ : Calculates the global and per-cluster (and per-residue) root mean square fluctuation (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).  
@@ -361,16 +366,19 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 - _"compression"_ : Reduces the redundancy of the trajectory using the resulting clustering.  
 	Parameters:
 	- _"file"_: The name of the output file without extension. Default "compressed"(.pdb)
-	- _""final_number_of_frames""_: The expected (minimum) number of frames of the compressed file.
+	- _"final_number_of_frames"_: The expected (minimum) number of frames of the compressed file.
 	- _"type"_: The method used to get samples from each cluster. Options:
 		- "RANDOM": Gets a random sample of the elements of each cluster.
 		- "KMEDOIDS": Applies the k-medoids algorithm to the elements of a cluster and stores the representatives.  
 		Default: "KMEDOIDS".
+
 - _"cluster_stats"_: Generates a human readable file with the distances between cluster centers and their diameters.  
 	Parameters:
 	- _"file"_: The name of the output file without extension (will be sotred into the results folder). Default: "per_cluster_stats"(.csv).
 
-- _"conformational_space_comparison"_ : Work in progress.
+- _"conformational_space_comparison"_ : Work in progress.  
+
+- _"kullback_liebler"_ : Work in progress.
 
 ### Script validation
 As the control script is indeed holding a JSON object, any JSON validator can be used to discover the errors in case of script loading problems. A good example

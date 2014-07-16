@@ -4,7 +4,7 @@ Created on 25/02/2013
 @author: victor
 '''
 
-if __name__ == '__main__': # Comp. with sphynx
+if __name__ == '__main__': # Compatibility with sphynx
     from distutils.core import setup, Extension
     import numpy
     import distutils.sysconfig
