@@ -50,9 +50,10 @@ if __name__ == '__main__': # Compatibility with sphynx
                     'pyproct.driver.handlers.matrix',
                     'pyproct.driver.observer',
                     'pyproct.driver.scheduling',
-                    'pyproct.driver.compressor',
                     'pyproct.driver.results',
-                    'pyproct.driver.postprocessing'
+                    'pyproct.driver.sections',
+                    'pyproct.driver.sections.postprocessing',
+                    'pyproct.driver.sections.postprocessing.actions',
           ],
 
           include_dirs = [numpy.get_include(),

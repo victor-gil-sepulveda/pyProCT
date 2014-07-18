@@ -41,6 +41,8 @@ class Driver(Observable):
                     self.postprocess(parameters, clustering_results)
                     self.save_results(clustering_results)
                     self.show_summary(parameters, clustering_results)
+                    return self.get_best_clustering(clustering_results)
+
                 else:
                     print "[Warning driver::run] 'clustering' object was not defined in the control script. pyProCT will now stop."
                     self.notify("Driver Finished", "\n"+str(Driver.timer))
@@ -110,7 +112,7 @@ class Driver(Observable):
         best_clustering = {"clustering":Clustering.from_dic(parameters["clustering"]["generation"])}
         return ( "loaded_clustering", {"loaded_clustering":best_clustering}, {}, None)
 
-    @timed_method(timer, "Clustering Exploration")
+    @timed_method(timer, "Clustering Section")
     def perform_clustering_exploration(self, parameters):
         best_clustering = None
 
@@ -184,4 +186,3 @@ class Driver(Observable):
             print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
             print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
         print "======================="
-

@@ -3,17 +3,17 @@ Created on Mar 26, 2013
 
 @author: victor
 '''
-from pyproct.driver.handlers.timerHandler import TimerHandler
-from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
-from pyproct.driver.driver import Driver
 from mpi4py import MPI
+from pyproct.driver.driver import Driver
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
 from pyproct.tools.commonTools import timed_method
+from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
 from pyproct.driver.handlers.MPIWorkspaceHandler import MPIWorkspaceHandler
 
 class MPIDriver(Driver):
-
+    """
+    MPI version of the driver.
+    """
     def __init__(self, observer):
         super(MPIDriver, self).__init__(observer)
         self.comm = MPI.COMM_WORLD
@@ -48,6 +48,9 @@ class MPIDriver(Driver):
             self.notify("MPI-Driver Finished", "\n"+str(self.timer))
 
     def data_section(self, parameters):
+        """
+        MPI implementation of the data protocol.
+        """
         matrix_parameters = parameters["data"]["matrix"]
 
         self.load_trajectory(parameters)
@@ -63,7 +66,6 @@ class MPIDriver(Driver):
         matrix_contents = list(self.comm.bcast(self.matrixHandler.distance_matrix.get_data(), root=0))
         if self.rank != 0:
             self.matrixHandler.distance_matrix = CondensedMatrix(matrix_contents)
-        self.comm.Barrier()
 
         if self.nprocs > 1:
 
@@ -74,6 +76,7 @@ class MPIDriver(Driver):
             if self.rank == 1:
                 if "image" in matrix_parameters:
                     self.plot_matrix(parameters)
+        self.comm.Barrier()
 
 
 

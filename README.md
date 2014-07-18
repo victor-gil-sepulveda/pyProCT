@@ -96,6 +96,24 @@ pyProCT allows the use of 3 different schedulers that help to improve the overal
  code. The available schedulers are "Serial", "Process/Parallel" (uses Python's [multiprocessing](https://docs.python.org/2/library/multiprocessing.html))
  and "MPI/Parallel" (uses MPI through the module [mpi4py](http://mpi4py.scipy.org/)).
 
+####Workspace parameters
+
+The workspace structure accepts two parameters that modify the way the workspace is created (and cleared).
+_"overwrite"_ : The contents existing folders will be removed before executing.
+_"clear_after_exec"_: An array containing the folders that must be removed after execution.
+
+Example:
+
+```JSON
+"workspace": {
+	 "base": "/home/john/ClusteringProject",
+	 "parameters":{
+		 "overwrite": true,
+		 "clear_after_exec":["tmp","clusterings"]
+	 }
+}
+```
+
 ### Data
 The _"data"_ section defines how pyProCT must build the distance matrix that will be used by the compression algorithms. Currently pyProCT offers up to three options to build that matrix: "load", "rmsd" and "distance"
 - _"rmsd"_: Calculates a all vs all rmsd matrix using any of the [pyRMSD](https://github.com/victor-gil-sepulveda/pyRMSD#collective-operations) calculators available. It can calculate the RMSD of the fitted region (defined by [Prody](http://prody.csb.pitt.edu/) compatible selection string in _fit_selection_) or one can use one selection to superimpose and another to calculate the rmsd (_calc_selection_).
@@ -118,7 +136,7 @@ JSON chunk needed to generate an RMSD matrix from two trajectories:
 		"method": "rmsd",
 		"parameters": {
 			"calculator_type": "QCP_OMP_CALCULATOR",
-			"fit_selection": "backbone",
+			"fit_selection": "backbone"
 		},
 		"image": {
 			"filename": "matrix_plot"
@@ -152,7 +170,7 @@ The matrix can be stored if the _filename_ property is defined. The matrix can a
 pyProCT can currently load _pdb_ and _dcd_ files. The details to load the files must be written into the array under the "files" keyword. There are
 many ways of telling pyProCT the files that have to be load and can be combined in any way you like:
 
-1. Using a list of file paths. If the file extension is ".txt" or ".list" it will be treated as a pdb list file. Each line of such files will
+1 - Using a list of file paths. If the file extension is ".txt" or ".list" it will be treated as a pdb list file. Each line of such files will
 be a pdb path or a pdb path and a selection string, separated by comma.
 
 ```
@@ -161,7 +179,7 @@ B.pdb
 C.pdb, name CA
 ...
 ```
-2. Using a list of file objects:
+2 - Using a list of file objects:
 ```JSON
 {
 	"file": ... ,
@@ -170,7 +188,7 @@ C.pdb, name CA
 ```
 Where _base_selection_ is a [Prody](http://prody.csb.pitt.edu/) compatible selection string. Loading files this way can help in cases where not all files have structure with the same number of atoms: _base_selection_ should define the common region between them (if a 1 to 1 map does not exist, the RMSD calculation will be wrong).
 
-3. Only for _dcd_ files:
+3 - Only for _dcd_ files:
 ```JSON
 {
 	"file": ...,
@@ -345,38 +363,38 @@ Getting a good quality clustering is not enough, we would like to use them to ex
 
 
 	"conformational_space_comparison":{},
-	
+
 	"kullback_liebler":{}
 }
 ```
-- _"rmsf"_ : Calculates the global and per-cluster (and per-residue) root mean square fluctuation (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).  
+- _"rmsf"_ : Calculates the global and per-cluster (and per-residue) root mean square fluctuation (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).
 
-- _"centers_and_trace"_ : Calculates all geometrical centers of the calculation selection of the system (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).  
+- _"centers_and_trace"_ : Calculates all geometrical centers of the calculation selection of the system (to be visualized using the [GUI](https://github.com/victor-gil-sepulveda/pyProCT-GUI)).
 
-- _"representatives"_ : Extracts all the representatives of the clusters in the same pdb.  
+- _"representatives"_ : Extracts all the representatives of the clusters in the same pdb.
 	Parameters:
 	- _"keep_remarks"_: If true every stored model will be written along with its original remarks header. Default: false.
-	- _"keep_frame_number"_: If true, the model number of any stored conformation will be the original pdb one. Default: false. 
+	- _"keep_frame_number"_: If true, the model number of any stored conformation will be the original pdb one. Default: false.
 
-- _"pdb_clusters"_ : Extracts all clusters in separate pdbs.  
+- _"pdb_clusters"_ : Extracts all clusters in separate pdbs.
 	Parameters:
 	- _"keep_remarks"_: If true every stored model will be written along with its original remarks header. Default: false.
-	- _"keep_frame_number"_: If true, the model number of any stored conformation will be the original pdb one. Default: false. 
+	- _"keep_frame_number"_: If true, the model number of any stored conformation will be the original pdb one. Default: false.
 
-- _"compression"_ : Reduces the redundancy of the trajectory using the resulting clustering.  
+- _"compression"_ : Reduces the redundancy of the trajectory using the resulting clustering.
 	Parameters:
 	- _"file"_: The name of the output file without extension. Default "compressed"(.pdb)
 	- _"final_number_of_frames"_: The expected (minimum) number of frames of the compressed file.
 	- _"type"_: The method used to get samples from each cluster. Options:
 		- "RANDOM": Gets a random sample of the elements of each cluster.
-		- "KMEDOIDS": Applies the k-medoids algorithm to the elements of a cluster and stores the representatives.  
+		- "KMEDOIDS": Applies the k-medoids algorithm to the elements of a cluster and stores the representatives.
 		Default: "KMEDOIDS".
 
-- _"cluster_stats"_: Generates a human readable file with the distances between cluster centers and their diameters.  
+- _"cluster_stats"_: Generates a human readable file with the distances between cluster centers and their diameters.
 	Parameters:
 	- _"file"_: The name of the output file without extension (will be sotred into the results folder). Default: "per_cluster_stats"(.csv).
 
-- _"conformational_space_comparison"_ : Work in progress.  
+- _"conformational_space_comparison"_ : Work in progress.
 
 - _"kullback_liebler"_ : Work in progress.
 
@@ -450,7 +468,8 @@ or can be done better. Any contribution can help to improve this software!
     [x] - Users must be able to comment their scripts (with '//' for instance).
     - When loading a dcd file, we only want to load atomic data of the the associated pdb.
     - Change "compression" by "redundancy_elimination"
-    - Allow to load all files (or glob) from a folder.
+    - Allow to load all files (or [glob](https://docs.python.org/3.1/library/glob.html)) from a folder.
+    - Plotting distance matrix distances distribution.
 
 - Symetry handling:
     - Symmetry handling for fitting coordinates.
@@ -470,14 +489,14 @@ or can be done better. Any contribution can help to improve this software!
     - J quality function: Cai Xiaoyan Proceedings of the 27th Chinese Control Conference
     - Metastability function (Q) in Chodera et al. J. Chem. Phys. 126 155101 2007 .
     - Improve separation quality functions.
-    - New standard separation ICVs (require inmutable prototypes)  
+    - New standard separation ICVs (require inmutable prototypes)
 
 		>
 	    >Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
 	    >-  Single linkage: It measures the distance between the closest members of the clusters.
 	    >-  Complete linkage: It measures the distance between the most distant members.
 	    >- Comparison of centroids: It measures the distance between the centers of the clusters.
-	    
+
 - New features:
     - Refine noise in DBSCAN
     - Refine a preselected cluster (e.g "noise"), or "heterogeneous".
