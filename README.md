@@ -102,6 +102,7 @@ The workspace structure accepts two parameters that modify the way the workspace
 _"overwrite"_ : The contents existing folders will be removed before executing.
 _"clear_after_exec"_: An array containing the folders that must be removed after execution.
 
+
 Example:
 
 ```JSON
