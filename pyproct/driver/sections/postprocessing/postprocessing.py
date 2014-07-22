@@ -29,6 +29,8 @@ class PostprocessingDriver(object):
                     if "PostAction" in element_name:
                         self.available_actions.append(obj())
 
-    def run(self, clustering, postprocessing_parameters, trajectory_handler, workspace_handler, matrix_handler):
+    def run(self, clustering, postprocessing_parameters, trajectory_handler, workspace_handler, matrix_handler, generatedFiles):
+        self.available_actions = []
+        self.get_available_actions()
         for postprocessing_action in self.available_actions:
-            postprocessing_action.run(clustering, postprocessing_parameters, trajectory_handler, workspace_handler, matrix_handler)
+            postprocessing_action.run(clustering, postprocessing_parameters, trajectory_handler, workspace_handler, matrix_handler, generatedFiles)

@@ -25,7 +25,7 @@ class Timer(object):
         if self.stopped :
             return self.end_t - self.start_t
         else:
-            return -1
+            return time.time() - self.start_t
 
 class TimerHandler(object):
 

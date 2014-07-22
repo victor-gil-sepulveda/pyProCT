@@ -57,10 +57,12 @@ class KMedoidsAlgorithm(object):
             - 'k': Number of clusters to generate.
             - 'seeding_type': One of the initial medoid selectors available (@see seeding_types() ).
                 If seeding type is 'GROMOS', 'seeding_max_cutoff' must be also defined, containing the
-                cutoff that the GROMOS Algorithm will use.
+                cutoff that the GROMOS Algorithm will use. Default is EQUIDISTANT
         """
         self.k = kwargs["k"]
-        self.seeding_type = kwargs["seeding_type"]
+
+        self.seeding_type =  kwargs["seeding_type"] if "seeding_type" in kwargs else  "EQUIDISTANT"
+
         if self.seeding_type == 'GROMOS':
             self.seeding_max_cutoff = kwargs["seeding_max_cutoff"]
         else:

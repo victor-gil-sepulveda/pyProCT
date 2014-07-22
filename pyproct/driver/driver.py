@@ -66,8 +66,9 @@ class Driver(Observable):
     @timed_method(timer, "Matrix Calculation")
     def calculate_matrix(self, parameters):
         self.matrixHandler = MatrixHandler(parameters["data"]["matrix"])
-        self.notify("Matrix calculation", [])
+        self.notify("Matrix calculation", "Start")
         self.matrixHandler.calculate_matrix(self.trajectoryHandler)
+        self.notify("Matrix calculation", "Done")
         statistics_file_path = self.matrixHandler.save_statistics(self.workspaceHandler["matrix"])
         self.generatedFiles.append({"description":"Matrix statistics",
                                     "path":os.path.abspath(statistics_file_path),
@@ -152,7 +153,8 @@ class Driver(Observable):
                                    parameters["postprocess"],
                                    self.trajectoryHandler,
                                    self.workspaceHandler,
-                                   self.matrixHandler)
+                                   self.matrixHandler,
+                                   self.generatedFiles)
 
     def save_results(self, clustering_results):
         results_path = os.path.join(self.workspaceHandler["results"], "results.json")

@@ -16,7 +16,7 @@ class RepresentativesPostAction(object):
     def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
         if RepresentativesPostAction.KEYWORD in postprocessing_parameters:
             save_representatives(clustering, postprocessing_parameters[RepresentativesPostAction.KEYWORD],
-                                 matrixHandler, workspaceHandler, trajectoryHandler, generatedFiles)
+                                 trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles)
 
 
 def save_representatives(clustering, my_params, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):

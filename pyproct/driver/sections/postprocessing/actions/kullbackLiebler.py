@@ -13,6 +13,7 @@ class KullbackLieblerPostAction(object):
 
     def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
         if KullbackLieblerPostAction.KEYWORD in postprocessing_parameters:
+            pass
 #             klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)
 #             kl_file_path = os.path.join(self.workspaceHandler["matrix"], "kullback_liebler_divergence")
 #             klDiv.save(kl_file_path)

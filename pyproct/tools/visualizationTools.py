@@ -13,7 +13,7 @@ from pyproct.clustering.comparison.rmsf import calc_rmsf_of_cluster
 
 
 def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
-    global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
+    global_cluster = Cluster(None, best_clustering.get_all_clustered_elements())
     global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
     ca_pdb_coordsets =numpy.copy(trajectoryHandler.getMergedStructure().select("name CA").getCoordsets())
     calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
@@ -22,7 +22,7 @@ def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixH
     CA_mean_square_displacements= {
                                    "global":list(calc_rmsf_of_cluster(ca_pdb_coordsets,global_cluster))
                                    }
-    clusters = best_clustering["clustering"].clusters
+    clusters = best_clustering.clusters
     for i in range(len(clusters)):
         cluster = clusters[i]
         # Pick the coordinates (ensuring that we are copying them)
@@ -41,7 +41,7 @@ def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixH
     return displacements_path, CA_mean_square_displacements
 
 def generate_CA_displacements_file(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
-    global_cluster = Cluster(None, best_clustering["clustering"].get_all_clustered_elements())
+    global_cluster = Cluster(None, best_clustering.get_all_clustered_elements())
     global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
     ca_pdb_coordsets =numpy.copy(trajectoryHandler.getMergedStructure().select("name CA").getCoordsets())
     calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
@@ -51,7 +51,7 @@ def generate_CA_displacements_file(best_clustering, trajectoryHandler, workspace
                                    "global":list(CA_mean_square_displacement_of_cluster(ca_pdb_coordsets,\
                                                                                         global_cluster))
                                    }
-    clusters = best_clustering["clustering"].clusters
+    clusters = best_clustering.clusters
     for i in range(len(clusters)):
         cluster = clusters[i]
         # Pick the coordinates (ensuring that we are copying them)
@@ -116,13 +116,12 @@ def generate_CA_or_P_trace(trajectoryHandler, backbone_atoms_selection = "name C
         print "[ERROR visualizationTools::generate_CA_or_P_trace] Impossible to get coordinates for trace"
     return coordsets.tolist()
 
-def generate_selection_centers_file(best_clustering, workspaceHandler, trajectoryHandler):
+def generate_selection_centers_file(clustering, workspaceHandler, trajectoryHandler):
     # TODO: Superpose and center coords (or getting already superposed confs)
     #########################
 
     #########################
     centers_path = os.path.join(workspaceHandler["results"], "selection_centers.json")
-    clustering = best_clustering["clustering"]
     ligand_coords = trajectoryHandler.getCalculationCoordinates()
 
     centers_contents={}

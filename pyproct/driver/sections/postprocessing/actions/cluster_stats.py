@@ -18,7 +18,7 @@ class ClusterStatsPostAction(object):
             stats_file_path = calculate_per_cluster_stats(clustering,
                                                           matrixHandler.distance_matrix,
                                                           postprocessing_parameters[ClusterStatsPostAction.KEYWORD],
-                                                          trajectoryHandler["results"])
+                                                          workspaceHandler["results"])
             generatedFiles.append({
                                         "description":"Stats for all clusterings (diameter and distances from center)",
                                         "path":os.path.abspath(stats_file_path),

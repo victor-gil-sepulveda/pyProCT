@@ -16,13 +16,13 @@ class RmsfPostAction(object):
 
     def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
         if RmsfPostAction.KEYWORD in postprocessing_parameters:
-            try:
+#             try:
                 displacements_path, CA_mean_square_displacements = visualizationTools.calculate_RMSF(clustering,
                                                                                                      trajectoryHandler,
                                                                                                      workspaceHandler,
                                                                                                      matrixHandler)
 
-                self.generatedFiles.append({
+                generatedFiles.append({
                                             "description":"Alpha Carbon mean square displacements",
                                             "path":os.path.abspath(displacements_path),
                                             "type":"text"
@@ -32,5 +32,5 @@ class RmsfPostAction(object):
                                                       sort_keys=False,
                                                       indent=4,
                                                       separators=(',', ': ')))
-            except Exception:
-                print "[ERROR][Driver::postprocess] Impossible to calculate CA displacements file."
+#             except Exception:
+#                 print "[ERROR][Driver::postprocess] Impossible to calculate rmsf file."

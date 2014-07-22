@@ -88,6 +88,9 @@ class TrajectoryHandler(Observable):
         if "fit_selection" in matrix_parameters:
             self.fitting_selection = matrix_parameters["fit_selection"]
 
+        if "dist_fit_selection" in matrix_parameters:
+            self.fitting_selection = matrix_parameters["dist_fit_selection"]
+
         if "calc_selection" in matrix_parameters:
             self.calculation_selection = matrix_parameters["calc_selection"]
 
