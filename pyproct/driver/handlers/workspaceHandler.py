@@ -16,7 +16,7 @@ class WorkspaceHandler(Observable):
         super(WorkspaceHandler,self).__init__(observer)
 
         self.parameters = ProtocolParameters(workspace_parameters.get_value("parameters", default_value = ProtocolParameters({
-                                                                                                       "overwrite":False,
+                                                                                                       "overwrite":True,
                                                                                                        "clear_after_exec":["tmp"]
                                                                                                   })))
 
@@ -38,7 +38,7 @@ class WorkspaceHandler(Observable):
         Recreates the workspace structure. Removes the old location if necessary.
         """
         self.notify("MSG","Creating workspace...")
-        if self.parameters.get_value("overwrite", default_value = False)  :
+        if self.parameters.get_value("overwrite", default_value = True)  :
             self.clear_directories(self.data.keys())
 
         for folder_key in self.data:
