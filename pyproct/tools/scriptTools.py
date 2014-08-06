@@ -1,8 +1,8 @@
-'''
+"""
 Created on 19/04/2012
 
 @author: victor
-'''
+"""
 import errno
 import os.path
 

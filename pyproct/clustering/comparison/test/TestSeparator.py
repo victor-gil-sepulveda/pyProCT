@@ -1,8 +1,8 @@
-'''
+"""
 Created on 23/12/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.comparison.comparator import Separator, getAllElements

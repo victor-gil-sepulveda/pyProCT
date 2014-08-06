@@ -1,8 +1,8 @@
-'''
+"""
 Created on 09/01/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from  pyproct.clustering.metrics.cython.normNCut import CythonNCut

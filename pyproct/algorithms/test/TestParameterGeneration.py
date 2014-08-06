@@ -1,8 +1,8 @@
-'''
+"""
 Created on 07/02/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.driver.parameters import ProtocolParameters
 from pyRMSD.condensedMatrix import CondensedMatrix

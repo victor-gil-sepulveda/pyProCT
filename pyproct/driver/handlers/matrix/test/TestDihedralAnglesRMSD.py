@@ -1,8 +1,8 @@
-'''
+"""
 Created on 08/07/2014
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.driver.handlers.matrix.test.data.dihedral_angles_pdb_data import pdb1, expected_dihedrals
 import prody

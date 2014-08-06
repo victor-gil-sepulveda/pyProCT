@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/03/2012
 
 @author: victor
-'''
+"""
 import sys
 import re
 import functools
@@ -94,6 +94,7 @@ def get_parameter_value(key_description, param_dict, default_value):
 
 def remove_comments(string):
     """
+    Removes /**/ and // comments from a string (used with the control script).
     From http://stackoverflow.com/questions/2319019/using-regex-to-remove-comments-from-source-files
     """
     string = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,string) # remove all occurance streamed comments (/*COMMENT */) from string

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 12/06/2012
 
 @author: victor
-'''
+"""
 import numpy
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.metrics.common import get_distances_of_elements_to

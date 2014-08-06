@@ -1,8 +1,8 @@
-'''
+"""
 Created on 23/04/2012
 
 @author: victor
-'''
+"""
 # gcc -pthread -fno-strict-aliasing -DNDEBUG -g -fwrapv -O2 -Wall -Wstrict-prototypes -fPIC -I/usr/lib/python2.7/dist-packages/numpy/core/include -I/usr/include/python2.7 -c cythonDbscanTools.c -o build/temp.linux-x86_64-2.7/cythonDbscanTools.o -O3
 # gcc -pthread -shared -Wl,-O1 -Wl,-Bsymbolic-functions -Wl,-Bsymbolic-functions -Wl,-z,relro build/temp.linux-x86_64-2.7/cythonDbscanTools.o -o /home/victor/workspaces/Python/pyProClust/pyproct/algorithms/dbscan/cython/cythonDbscanTools.so
 

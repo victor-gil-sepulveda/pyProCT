@@ -1,8 +1,8 @@
-'''
+"""
 Created on 20/04/2012
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.algorithms.random.RandomAlgorithm import RandomClusteringAlgorithm
 from pyproct.matrix.condensedMatrix import CondensedDistanceMatrix

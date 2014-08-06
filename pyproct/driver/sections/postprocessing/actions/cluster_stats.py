@@ -1,8 +1,8 @@
-'''
+"""
 Created on 30/06/2014
 
 @author: victor
-'''
+"""
 from pyproct.clustering.metrics.common import get_intra_cluster_distances
 import os.path
 

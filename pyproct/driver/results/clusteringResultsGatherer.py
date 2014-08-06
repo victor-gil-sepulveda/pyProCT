@@ -1,8 +1,8 @@
-'''
+"""
 Created on 29/04/2013
 
 @author: victor
-'''
+"""
 import json
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.clustering import Clustering

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/03/2012
 
 @author: victor
-'''
+"""
 import unittest
 import pyproct.tools.pdbTools
 import pyproct.tools.test.data as test_data

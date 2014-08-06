@@ -1,8 +1,8 @@
-'''
+"""
 Created on 23/04/2012
 
 @author: victor
-'''
+"""
 import numpy
 import math
 

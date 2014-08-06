@@ -1,8 +1,8 @@
-'''
+"""
 Created on 23/02/2012
 
 @author: victor
-'''
+"""
 import random
 import numpy
 from PIL import Image, ImageDraw

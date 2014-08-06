@@ -1,8 +1,8 @@
-'''
+"""
 Created on 10/09/2012
 
 @author: victor
-'''
+"""
 
 import sys
 import prody

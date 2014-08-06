@@ -1,8 +1,8 @@
-'''
+"""
 Created on 19/09/2012
 
 @author: victor
-'''
+"""
 import pyproct.tools.commonTools as common
 from pyproct.driver.observer.observable import Observable
 import prody

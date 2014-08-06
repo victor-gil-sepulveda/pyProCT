@@ -1,8 +1,8 @@
-'''
+"""
 Created on 11/12/2013
 
 @author: victor
-'''
+"""
 from pyproct.driver.parameters import ProtocolParameters
 from pyproct.driver.driver import Driver
 from pyproct.driver.observer.observer import Observer

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 29/05/2012
 
 @author: victor
-'''
+"""
 def run_all_analysis_for_a_clustering(clustering_id, clustering, analysis):
     """
     Is the function to be run in parallel.

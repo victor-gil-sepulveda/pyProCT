@@ -1,8 +1,8 @@
-'''
+"""
 Created on 12/12/2012
 
 @author: victor
-'''
+"""
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence,\

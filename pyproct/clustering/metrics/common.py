@@ -1,8 +1,8 @@
-'''
+"""
 Created on 06/06/2013
 
 @author: victor
-'''
+"""
 def get_intra_cluster_distances(cluster, matrix):
     distances = []
     cluster_elements = cluster.all_elements

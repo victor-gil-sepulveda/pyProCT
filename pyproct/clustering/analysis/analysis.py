@@ -1,8 +1,8 @@
-'''
+"""
 Created on 04/06/2012
 
 @author: victor
-'''
+"""
 class Analysis(object):
     def __init__(self, name, analysis_function, other_params = None):
         """

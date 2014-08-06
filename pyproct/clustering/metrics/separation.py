@@ -1,13 +1,13 @@
-'''
+"""
 Created on 06/06/2013
 
 @author: victor
-'''
-'''
+"""
+"""
 Created on 09/01/2013
 
 @author: victor
-'''
+"""
 from pyproct.clustering.metrics.cohesion import CohesionCalculator
 
 class SeparationCalculator(object):

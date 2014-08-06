@@ -1,8 +1,8 @@
-'''
+"""
 Created on 27/05/2013
 
 @author: victor
-'''
+"""
 import numpy
 
 class ParametersGenerator(object):

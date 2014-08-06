@@ -1,8 +1,8 @@
-'''
+"""
 Created on 27/05/2013
 
 @author: victor
-'''
+"""
 import pyproct.algorithms.dbscan.cython.cythonDbscanTools as dbscanTools
 from pyproct.algorithms.dbscan.cython.cythonDbscanTools import k_scale_gen,\
     k_dist, zhou_adaptative_determination

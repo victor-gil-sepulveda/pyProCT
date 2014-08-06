@@ -1,8 +1,8 @@
-'''
+"""
 Created on 09/01/2013
 
 @author: victor
-'''
+"""
 import numpy
 from pyproct.tools.matrixTools import get_submatrix
 

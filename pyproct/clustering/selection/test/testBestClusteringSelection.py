@@ -1,8 +1,8 @@
-'''
+"""
 Created on 07/09/2012
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.clustering.selection.bestClusteringSelector import BestClusteringSelector
 

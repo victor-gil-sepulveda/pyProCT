@@ -1,8 +1,8 @@
-'''
+"""
 Created on 14/08/2012
 
 @author: victor
-'''
+"""
 import numpy
 from scipy.spatial.distance import pdist
 from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
@@ -25,10 +25,10 @@ import pyproct.algorithms.spectral.cython.spectralTools as SpectralTools
 
 
 class SpectralClusteringAlgorithm(object):
-    '''
+    """
     Implementation of Normalized Spectral clustering with Lrw Laplacian (Shi and Malik 2000).
     It tries to be both fast and memory efficient in order to be able to work with very big datasets.
-    '''
+    """
     spectral_types_enum =  ["UNNORMALIZED","NORMALIZED"]
 
 

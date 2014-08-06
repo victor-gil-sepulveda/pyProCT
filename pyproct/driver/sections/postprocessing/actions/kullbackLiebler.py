@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/07/2014
 
 @author: victor
-'''
+"""
 
 
 class KullbackLieblerPostAction(object):

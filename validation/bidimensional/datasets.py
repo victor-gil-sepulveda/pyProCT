@@ -1,8 +1,8 @@
-'''
+"""
 Created on 20/02/2012
 
 @author: victor
-'''
+"""
 
 
 spaeth_01 = """41 45

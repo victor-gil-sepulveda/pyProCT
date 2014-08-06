@@ -1,8 +1,8 @@
-'''
+"""
 Created on 23/03/2012
 
 @author: victor
-'''
+"""
 import unittest
 from scipy.spatial.distance import pdist
 from pyRMSD.condensedMatrix import CondensedMatrix

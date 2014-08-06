@@ -1,16 +1,16 @@
-'''
+"""
 Created on 16/07/2014
 
 @author: victor
-'''
+"""
 from pyproct.driver.handlers.workspaceHandler import WorkspaceHandler
 
 class MPIWorkspaceHandler(WorkspaceHandler):
 
     def __init__(self, rank, allowed_rank, workspace_parameters, observer):
-        '''
+        """
         Constructor
-        '''
+        """
         super(MPIWorkspaceHandler,self).__init__(workspace_parameters, observer)
         self.disk_modif_allowed = (rank == allowed_rank)
 

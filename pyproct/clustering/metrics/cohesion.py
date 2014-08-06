@@ -1,8 +1,8 @@
-'''
+"""
 Created on 09/01/2013
 
 @author: victor
-'''
+"""
 
 class CohesionCalculator(object):
     def __init__(self):

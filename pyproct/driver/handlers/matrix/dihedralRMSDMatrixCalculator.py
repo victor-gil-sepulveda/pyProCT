@@ -1,8 +1,8 @@
-'''
+"""
 Created on 08/07/2014
 
 @author: victor
-'''
+"""
 from prody.measure.measure import calcPhi, calcPsi
 from pyRMSD.condensedMatrix import CondensedMatrix
 import numpy
@@ -13,13 +13,13 @@ def rmsd(a,b):
     return math.sqrt(((a-b)**2).sum()/len(a))
 
 class DihedralRMSDMatrixCalculator(object):
-    '''
+    """
     classdocs
-    '''
+    """
     def __init__(self):
-        '''
+        """
         Constructor
-        '''
+        """
         pass
 
     @classmethod

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 06/06/2013
 
 @author: victor
-'''
+"""
 import numpy
 from pyproct.clustering.metrics.common import get_distances_of_elements_to,\
     update_medoids

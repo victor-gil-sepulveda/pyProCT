@@ -1,8 +1,8 @@
-'''
+"""
 Created on 27/06/2014
 
 @author: victor
-'''
+"""
 import numpy
 import itertools
 import pyRMSD.RMSDCalculator

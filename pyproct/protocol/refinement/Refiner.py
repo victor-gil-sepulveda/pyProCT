@@ -1,8 +1,8 @@
-'''
+"""
 Created on 11/02/2013
 
 @author: victor
-'''
+"""
 from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from pyproct.tools.matrixTools import get_submatrix
 from pyproct.clustering.cluster import Cluster

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 13/12/2012
 
 @author: victor
-'''
+"""
 import unittest
 import numpy
 import pyproct.tools.plotTools

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/03/2012
 
 @author: victor
-'''
+"""
 import subprocess
 import prody 
 

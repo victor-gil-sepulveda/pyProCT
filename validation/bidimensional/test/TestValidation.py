@@ -1,8 +1,8 @@
-'''
+"""
 Created on 19/03/2012
 
 @author: victor
-'''
+"""
 import unittest
 from validation.validationTools import params_to_string, dataset_loading_2D,\
     get_2D_bounding_box

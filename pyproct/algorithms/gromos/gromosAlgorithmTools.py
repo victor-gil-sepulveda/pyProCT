@@ -1,8 +1,8 @@
-'''
+"""
 Created on 14/02/2012
 
 @author: victor
-'''
+"""
 
 """
 Separated static functions of the gromos algorithm for the sake of testing.

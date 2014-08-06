@@ -1,8 +1,8 @@
-'''
+"""
 Created on 20/02/2012
 
 @author: victor
-'''
+"""
 
 import json
 import os.path

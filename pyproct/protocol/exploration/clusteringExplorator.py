@@ -1,8 +1,8 @@
-'''
+"""
 Created on 05/02/2013
 
 @author: victor
-'''
+"""
 import os
 from pyproct.clustering.clustering import Clustering
 from pyproct.driver.observer.observable import Observable

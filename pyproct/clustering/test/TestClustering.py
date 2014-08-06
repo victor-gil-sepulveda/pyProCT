@@ -1,8 +1,8 @@
-'''
+"""
 Created on 20/03/2012
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.clustering import Clustering

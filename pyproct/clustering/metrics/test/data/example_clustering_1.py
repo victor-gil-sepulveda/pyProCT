@@ -1,8 +1,8 @@
-'''
+"""
 Created on 27/01/2014
 
 @author: victor
-'''
+"""
 
 # -> with spectral
 clustering_01 = {'clusters': [

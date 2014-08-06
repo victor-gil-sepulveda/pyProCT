@@ -1,8 +1,8 @@
-'''
+"""
 Created on 21/05/2012
 
 @author: victor
-'''
+"""
 
 def find_cutoff_limit(starting_cutoff, min_clusters, max_clusters, grain, hie_algorithm):
     """

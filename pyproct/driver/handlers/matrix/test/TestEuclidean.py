@@ -1,8 +1,8 @@
-'''
+"""
 Created on 28/03/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder import EuclideanDistanceMatrixBuilder
 import numpy

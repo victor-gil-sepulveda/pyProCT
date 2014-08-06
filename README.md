@@ -19,6 +19,7 @@ pyProCT not only generates a resulting clustering, it also implements some use c
 		- [Checking the script](#user-content-checking-the-script)
 		- [Learn more](#user-content-learn-more)
 	- [Using pyProCT as part of other programs](#user-content-using-pyproct-as-part-of-other-programs)
+		- [Interfacing with Scikit-Learn (aka sklearn)](#user-content-using-pyproct-as-part-of-other-programs)
 		- [Using it as a separate program from other Python script](#user-content-using-it-as-a-separate-program-from-other-python-script)
 	- [Parallel execution](#user-content-parallel-execution)
 - [Documentation](#user-content-documentation)
@@ -418,6 +419,55 @@ The necessary documentation to use pyProCT classes is written inside the code. I
 
 See [this file](https://github.com/victor-gil-sepulveda/pyProCT/blob/master/validation/bidimensional/validation_main.py).
 
+### Interfacing with Scikit-Learn (aka sklearn)
+
+```
+import numpy.random
+import sklearn.cluster
+
+# Imports needed for the matrix
+import scipy.spatial.distance as distance
+
+# Imports needed for the conversion
+from pyproct.clustering.cluster import gen_clusters_from_class_list
+from pyproct.clustering.clustering import Clustering
+
+# Imports needed for the calculation
+from pyRMSD.condensedMatrix import CondensedMatrix
+from pyproct.clustering.metrics.DaviesBouldin import DaviesBouldinCalculator
+
+# Plotting
+import matplotlib.cm as cm
+from pylab import *
+
+if __name__ == "__main__":
+    # This uses sklearn to create a clustering in label form.
+    dataset = numpy.random.rand(1000,2)*100
+    clustering_labels = sklearn.cluster.KMeans(10).fit_predict(dataset)
+
+    # Importing the clustering. Calculating the cluster prototypes is not needed
+    # for the calculation, but this piece of code shows how to do it. In addition
+    # it whows how tto calculate the distance matrix, which in this case is needed by
+    # the scoring function.
+    distance_matrix = CondensedMatrix(distance.pdist(dataset))
+    pyproct_clustering = Clustering(gen_clusters_from_class_list(clustering_labels))
+
+    for cluster in pyproct_clustering.clusters:
+        cluster.set_prototype(cluster.calculate_medoid(distance_matrix))
+
+    # Using Davies-Boulding; distance matrix is necessary.
+    print "Davies - Bouldin score: %f"%(DaviesBouldinCalculator().evaluate(pyproct_clustering, distance_matrix))
+
+    # Showing the clustering
+    colors = iter(cm.rainbow(np.linspace(0, 1, len(pyproct_clustering.clusters))))
+    for cluster in pyproct_clustering.clusters:
+        coordinates = dataset[cluster.all_elements]
+        scatter(coordinates.T[0], coordinates.T[1], color=next(colors))
+
+    show()
+```
+
+
 ### Using it as a separate program from other Python script
 
 * <img src="img/workinprogress.png"></img>  Loading results
@@ -456,6 +506,8 @@ or can be done better. Any contribution can help to improve this software!
 
 - Refactoring and general improvements:
     - Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)
+    - Data refactoring (Create a wrapper that stores the prody object, temporary selection storage, etc...).
+    - Check current tests.
     - Rename script stuff
     - Rename functions and vars
     - Minimizing dependencies with scipy
@@ -501,6 +553,7 @@ or can be done better. Any contribution can help to improve this software!
 - New features:
     - Refine noise in DBSCAN
     - Refine a preselected cluster (e.g "noise"), or "heterogeneous".
+    - TM-Score
 
 - New postprocessing options:
     - Refinement

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 13/02/2013
 
 @author: victor
-'''
+"""
 from pyRMSD.matrixHandler import MatrixHandler as pyRMSD_MatrixHandler
 from pyproct.driver.handlers.matrix.rmsdMatrixBuilder import RMSDMatrixBuilder
 from pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder import EuclideanDistanceMatrixBuilder

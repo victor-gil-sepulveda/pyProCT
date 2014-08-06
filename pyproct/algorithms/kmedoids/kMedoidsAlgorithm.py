@@ -1,8 +1,8 @@
-'''
+"""
 Created on 29/05/2012
 
 @author: victor
-'''
+"""
 
 import random
 from pyproct.algorithms.gromos.gromosAlgorithm import GromosAlgorithm

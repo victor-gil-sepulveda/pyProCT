@@ -1,8 +1,8 @@
-'''
+"""
 Created on 07/02/2013
 
 @author: victor
-'''
+"""
 
 class MeanObserver(object):
     def __init__(self):

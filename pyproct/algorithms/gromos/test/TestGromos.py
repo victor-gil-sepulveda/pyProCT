@@ -1,8 +1,8 @@
-'''
+"""
 Created on 15/02/2012
 
 @author: victor
-'''
+"""
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.clustering.cluster import cluster_from_tuple, Cluster

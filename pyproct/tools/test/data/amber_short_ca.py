@@ -1,8 +1,8 @@
-'''
+"""
 Created on 23/03/2012
 
 @author: victor
-'''
+"""
 amber_short_ca_contents = """MODEL        1
 ATOM      5  CA  NME     1      38.847  47.372  32.703  1.00  0.00            
 ATOM     22  CA  GLN     2      38.967  49.052  29.293  1.00  0.00            

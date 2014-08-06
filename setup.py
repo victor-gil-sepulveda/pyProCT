@@ -1,8 +1,8 @@
-'''
+"""
 Created on 25/02/2013
 
 @author: victor
-'''
+"""
 
 if __name__ == '__main__': # Compatibility with sphynx
     from distutils.core import setup, Extension

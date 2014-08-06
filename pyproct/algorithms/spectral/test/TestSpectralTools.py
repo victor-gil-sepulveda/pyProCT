@@ -1,8 +1,8 @@
-'''
+"""
 Created on 07/05/2014
 
 @author: victor
-'''
+"""
 import unittest
 import numpy
 

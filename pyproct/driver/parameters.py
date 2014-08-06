@@ -1,8 +1,8 @@
-'''
+"""
 Created on 04/06/2012
 
 @author: victor
-'''
+"""
 import json
 from pyproct.tools.commonTools import convert_to_utf8, get_parameter_value
 

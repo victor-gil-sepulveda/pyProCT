@@ -1,8 +1,8 @@
-'''
+"""
 Created on 26/11/2013
 
 @author: victor
-'''
+"""
 from pyproct.clustering.cluster import Cluster
 import numpy
 from pyRMSD.RMSDCalculator import RMSDCalculator

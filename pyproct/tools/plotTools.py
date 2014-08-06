@@ -1,8 +1,8 @@
-'''
+"""
 Created on 15/10/2012
 
 @author: victor
-'''
+"""
 import numpy
 import PIL.Image as Image
 import PIL.ImageDraw as ImageDraw

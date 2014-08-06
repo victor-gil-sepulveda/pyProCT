@@ -1,8 +1,8 @@
-'''
+"""
 Created on 06/06/2013
 
 @author: victor
-'''
+"""
 from pyproct.clustering.metrics.common import update_medoids,\
     get_inter_cluster_prototype_distances
 import numpy

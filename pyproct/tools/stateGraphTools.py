@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/05/2012
 
 @author: victor
-'''
+"""
 from pygraph.classes.digraph import digraph #@UnresolvedImport
 from pygraph.readwrite.dot import write #@UnresolvedImport
 import pyproct.clustering.cluster as clusTools

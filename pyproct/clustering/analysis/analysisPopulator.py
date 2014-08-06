@@ -1,8 +1,8 @@
-'''
+"""
 Created on 06/06/2012
 
 @author: victor
-'''
+"""
 import numpy
 from pyproct.clustering.cluster import get_cluster_sizes
 from pyproct.clustering.analysis.analysis import Analysis

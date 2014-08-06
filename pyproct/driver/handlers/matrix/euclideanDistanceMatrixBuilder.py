@@ -1,8 +1,8 @@
-'''
+"""
 Created on 13/02/2013
 
 @author: victor
-'''
+"""
 from pyRMSD.RMSDCalculator import RMSDCalculator
 from pyRMSD.condensedMatrix import CondensedMatrix
 import scipy.spatial.distance

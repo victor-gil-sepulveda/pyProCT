@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/03/2012
 
 @author: victor
-'''
+"""
 import unittest
 import cStringIO
 from pyproct.tools.commonTools import merge_files, gen_consecutive_ranges,print_and_flush,\

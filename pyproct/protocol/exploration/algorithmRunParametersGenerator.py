@@ -1,8 +1,8 @@
-'''
+"""
 Created on 06/02/2013
 
 @author: victor
-'''
+"""
 
 import pyproct.algorithms.gromos.parametersGeneration as gromosParametersGeneration
 import pyproct.algorithms.kmedoids.parametersGeneration as kmedoidsParametersGeneration

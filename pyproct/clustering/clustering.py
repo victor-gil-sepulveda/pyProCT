@@ -1,8 +1,8 @@
-'''
+"""
 Created on 20/03/2012
 
 @author: victor
-'''
+"""
 import os
 import pickle
 import math
@@ -10,13 +10,13 @@ from pyproct.tools import scriptTools
 from pyproct.clustering.cluster import Cluster
 
 class Clustering(object):
-    '''
+    """
     Class representing the result of a clustering algorithm (a set of clusters).
-    '''
+    """
     def __init__(self, clusters, details="", sort = True):
-        '''
+        """
         Constructor
-        '''
+        """
         self.total_number_of_elements  = 0
         self.clusters = []
         for c in clusters:

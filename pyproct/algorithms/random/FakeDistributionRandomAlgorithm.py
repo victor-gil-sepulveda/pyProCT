@@ -1,25 +1,23 @@
-'''
+"""
 Created on 19/04/2012
 
 @author: victor
-'''
+"""
 import random
 from pyproct.clustering.cluster import gen_clusters_from_class_list
 from pyproct.clustering.clusterization import Clustering
 
 class FakeDistributionRandomClusteringAlgorithm(object):
-    '''
-    '''
 
     def __init__(self,condensed_matrix,  **kwargs):
-        '''
+        """
         Constructor
-        '''
+        """
         self.condensed_matrix = condensed_matrix
-        
+
     def perform_clustering(self,kwargs):
         """
-        Creates a clustering where the clusters have been created by random selection of 
+        Creates a clustering where the clusters have been created by random selection of
         the elements in the dataset, following a cluster size distribution.
         """
         distribution = kwargs["distribution"]

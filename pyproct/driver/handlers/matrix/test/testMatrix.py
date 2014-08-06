@@ -1,8 +1,8 @@
-'''
+"""
 Created on 05/02/2014
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.driver.handlers.matrix.rmsdMatrixBuilder import RMSDMatrixBuilder
 import numpy

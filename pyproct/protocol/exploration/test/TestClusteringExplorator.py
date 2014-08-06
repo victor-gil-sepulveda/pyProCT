@@ -1,8 +1,8 @@
-'''
+"""
 Created on 07/02/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.protocol.exploration.clusteringExplorator import ClusteringExplorer
 

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 17/04/2012
 
 @author: victor
-'''
+"""
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm,\

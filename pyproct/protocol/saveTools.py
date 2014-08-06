@@ -1,8 +1,8 @@
-'''
+"""
 Created on 20/09/2012
 
 @author: victor
-'''
+"""
 import pyproct.tools.pdbTools as pdb_tools
 import os.path
 import prody

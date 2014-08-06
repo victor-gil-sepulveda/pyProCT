@@ -1,8 +1,8 @@
-'''
+"""
 Created on 19/12/2013
 
 @author: victor
-'''
+"""
 import sys
 from pyproct.tools.commonTools import convert_to_utf8
 import json

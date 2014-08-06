@@ -1,8 +1,8 @@
-'''
+"""
 Created on 21/05/2012
 
 @author: victor
-'''
+"""
 import pyproct.driver.scheduling.tools as scheduling_tools
 from pyproct.protocol.exploration.clusteringExplorator import ClusteringExplorer
 from pyproct.clustering.filtering.clusteringFilter import ClusteringFilter

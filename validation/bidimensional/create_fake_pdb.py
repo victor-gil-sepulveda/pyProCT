@@ -1,8 +1,8 @@
-'''
+"""
 Created on 09/12/2013
 
 @author: victor
-'''
+"""
 
 if __name__ == '__main__':
     output = open("fake.pdb","w")

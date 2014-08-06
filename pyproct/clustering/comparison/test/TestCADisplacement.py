@@ -1,8 +1,8 @@
-'''
+"""
 Created on 19/11/2013
 
 @author: victor
-'''
+"""
 import os
 import prody
 import unittest

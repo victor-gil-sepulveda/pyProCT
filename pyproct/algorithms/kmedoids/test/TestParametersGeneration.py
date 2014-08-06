@@ -1,8 +1,8 @@
-'''
+"""
 Created on 20/11/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.algorithms.kmedoids.parametersGeneration import ParametersGenerator
 

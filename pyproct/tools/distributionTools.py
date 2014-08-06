@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/05/2012
 
 @author: victor
-'''
+"""
 import numpy
 
 def get_distances_for_elems(elems,center,condensed_distance_matrix):

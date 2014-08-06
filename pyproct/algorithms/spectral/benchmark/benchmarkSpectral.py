@@ -1,8 +1,8 @@
-'''
+"""
 Created on 14/01/2013
 
 @author: victor
-'''
+"""
 import numpy
 import time 
 from pyRMSD.condensedMatrix import CondensedMatrix

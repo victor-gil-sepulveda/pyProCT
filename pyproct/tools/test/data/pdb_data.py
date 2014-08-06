@@ -1,8 +1,8 @@
-'''
+"""
 Created on 28/02/2012
 
 @author: victor
-'''
+"""
 pdb_1_num_of_models = 7
 pdb1_num_of_atoms = 5
 pdb_1_file_content = """MODEL        0

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 16/03/2012
 
 @author: victor
-'''
+"""
 import unittest
 import pyproct.clustering.test.data as test_data
 from pyproct.clustering.cluster import Cluster, cluster_from_tuple, get_cluster_sizes, gen_clusters_from_class_list

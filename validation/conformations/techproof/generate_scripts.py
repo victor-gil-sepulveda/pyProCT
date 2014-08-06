@@ -1,8 +1,8 @@
-'''
+"""
 Created on 05/06/2014
 
 @author: victor
-'''
+"""
 import pyproct.tools.scriptTools as tools
 import os.path
 

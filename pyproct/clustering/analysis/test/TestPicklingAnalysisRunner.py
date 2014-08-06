@@ -1,8 +1,8 @@
-'''
+"""
 Created on 15/06/2012
 
 @author: victor
-'''
+"""
 import unittest
 import pickle
 import tempfile

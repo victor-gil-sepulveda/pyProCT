@@ -1,8 +1,8 @@
-'''
+"""
 Created on 04/04/2013
 
 @author: victor
-'''
+"""
 import pyproct.protocol.saveTools as saveTools
 import math
 from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm

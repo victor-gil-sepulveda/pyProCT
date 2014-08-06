@@ -1,8 +1,8 @@
-'''
+"""
 Created on 08/07/2014
 
 @author: victor
-'''
+"""
 pdb1 = """MODEL        0
 ATOM      1  CH3 ACE A   1       2.045  18.340  -8.750  1.00  0.00
 ATOM      2  C   ACE A   1       3.250  18.910  -8.010  1.00  0.00

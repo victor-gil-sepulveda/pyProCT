@@ -1,8 +1,8 @@
-'''
+"""
 Created on 27/05/2013
 
 @author: victor
-'''
+"""
 from pyproct.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
 import pyproct.algorithms.hierarchical.hierarchicalTools as  hierarchicalTools
 

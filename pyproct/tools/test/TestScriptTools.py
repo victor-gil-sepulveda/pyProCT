@@ -1,8 +1,8 @@
-'''
+"""
 Created on 02/05/2012
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.tools.scriptTools import get_not_repeated_file_name,\
     create_directory

@@ -1,8 +1,8 @@
-'''
+"""
 Created on 12/03/2012
 
 @author: victor
-'''
+"""
 import sys
 import random
 
@@ -52,17 +52,17 @@ def gen_clusters_from_class_list(group_list,skip_list=[]):
     return clusters
 
 class Cluster(object):
-    '''
+    """
     A cluster object is defined a group of elements which have one or more characteristics in common
-    and one element which is the most representative element of the cluster. 
-    '''
+    and one element which is the most representative element of the cluster.
+    """
     most_representative_element = None
     all_elements = []
-    
+
     def __init__(self, prototype , elements):
-        '''
+        """
         TODOC
-        '''
+        """
         self.set_elements(elements)
         self.id = ""
         try:
@@ -71,10 +71,10 @@ class Cluster(object):
             raise
 
     def set_prototype(self,this_one):
-        '''
+        """
         Adds a representative element which must already be inside the
-        internal elements list. 
-        '''
+        internal elements list.
+        """
         if this_one == None:
             self.prototype = None
         else:
@@ -82,10 +82,10 @@ class Cluster(object):
                 self.prototype = this_one
             else:
                 raise TypeError("[Error in Cluster::set_prototype] the prototype is not in the elements list.")
-    
+
     def set_elements(self,elements):
         self.all_elements = elements
-    
+
     def get_size(self):
         """
         Returns the size of the cluster (which is indeed the size of its elements list)
@@ -109,28 +109,28 @@ class Cluster(object):
 
     def __str__(self):
         return "["+str(self.prototype)+str(self.all_elements)+"]"
-    
+
     def __getitem__(self, index):
         return self.all_elements[index]
-    
+
     def calculate_biased_medoid(self,condensed_distance_matrix,elements_into_account):
         """
-        Calculates the medoid (element with minimal distance to all other objects) of the 
-        elements of the cluster which are in elements_into_account. 
+        Calculates the medoid (element with minimal distance to all other objects) of the
+        elements of the cluster which are in elements_into_account.
         """
         all_elems_set = set(self.all_elements)
         accountable_set = set(elements_into_account)
-        
+
         # Check that elements_into_account is a subset of all_elements
         elem_inters = all_elems_set.intersection(accountable_set)
         if len(elem_inters) != len(elements_into_account):
-            print "[ERROR Cluster::calculate_biased_medoid] 'elements_into_account' is not a subset of the elements of this cluster."  
+            print "[ERROR Cluster::calculate_biased_medoid] 'elements_into_account' is not a subset of the elements of this cluster."
             exit()
-        
+
         if len(elements_into_account) == 0:
-            print "[ERROR Cluster::calculate_biased_medoid] This cluster is empty."  
+            print "[ERROR Cluster::calculate_biased_medoid] This cluster is empty."
             return -1
-        
+
         min_dist_pair = (sys.maxint, -1)
         for ei in elements_into_account:
             # Calculate distances for this vs all the others
@@ -140,25 +140,25 @@ class Cluster(object):
             for ej in elements_into_account:
                 summed_distance = summed_distance + condensed_distance_matrix[ei,ej]
             min_dist_pair = min(min_dist_pair,(summed_distance,ei))
-        
+
         medoid_element = min_dist_pair[1]
-        
+
         return medoid_element
- 
+
     def calculate_medoid(self,condensed_distance_matrix):
         """
         Calculates the medoid for all_elements of the cluster and updates the prototype.
         """
         return self.calculate_biased_medoid(condensed_distance_matrix, self.all_elements)
-    
+
     def get_random_sample(self, n, rand_seed = None):
         """
         Returns a random sample of the elements.
-        
+
         @param n: Number of random elements to get.
-        
+
         @param rand_seed: Seed for the random package. Used for testing (repeteability)
-        
+
         @return: A random sample of the cluster elements.
         """
         if not rand_seed is None:
@@ -166,7 +166,7 @@ class Cluster(object):
         temporary_list = list(self.all_elements)
         random.shuffle(temporary_list)
         return temporary_list[0:n]
-    
+
     def to_dic(self):
         """
         Converts this cluster into a dictionary (to be used with json serializers).
@@ -185,33 +185,33 @@ class Cluster(object):
                     str_elements += str(start)+":"+str(elements[i-1])+", "
                     start = elements[i]
         json_dic["elements"] =str_elements[:-2]
-        
+
         if self.prototype is not None:
             json_dic["prototype"] = int(self.prototype)
-        
+
         if self.id != "":
             json_dic["id"] = self.id
-        
+
         return json_dic
-    
+
     @classmethod
     def from_dic(cls, cluster_dic):
         """
         Creates a cluster from a cluster dictionary describing it (as reverse operation of
         'to_dic').
-        
+
         @param cluster_dic: The cluster in dictionary form (output of 'to_dic')
         """
         if "prototype" in cluster_dic:
             proto = cluster_dic["prototype"]
         else:
             proto = None
-        
+
         if "id" in cluster_dic:
             cid = cluster_dic["id"]
         else:
             cid = None
-        
+
         values_string_parts = cluster_dic["elements"].split(",");
         elements = []
         for value_part in values_string_parts:
@@ -220,9 +220,8 @@ class Cluster(object):
                 elements.extend(range(int(ini),int(end)+1))
             else:
                 elements.append(int(value_part))
-        
+
         cluster = Cluster(proto, elements)
         cluster.id = cid
-        
+
         return cluster
-        

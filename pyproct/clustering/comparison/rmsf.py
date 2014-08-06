@@ -1,8 +1,8 @@
-'''
+"""
 Created on 19/11/2013
 
 @author: victor
-'''
+"""
 import numpy
 
 def calc_rmsf_of_cluster(alpha_carbons_trajectory_coordsets, cluster):

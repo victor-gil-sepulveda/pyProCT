@@ -1,8 +1,8 @@
-'''
+"""
 Created on 21/12/2012
 
 @author: victor
-'''
+"""
 import time
 import os
 import prody

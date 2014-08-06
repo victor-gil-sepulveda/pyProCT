@@ -1,8 +1,8 @@
-'''
+"""
 Created on 11/06/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.clustering.metrics.test.data import CH_table1
 from pyproct.clustering.metrics.CalinskiHarabasz import CalinskiHarabaszCalculator

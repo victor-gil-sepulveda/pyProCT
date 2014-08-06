@@ -1,17 +1,17 @@
-'''
+"""
 Created on 19/03/2012
 
 @author: victor
-'''
+"""
 import scipy.cluster.hierarchy as hcluster
 import  fastcluster as hcluster_fast
 from pyproct.clustering.cluster import gen_clusters_from_class_list
 from pyproct.clustering.clustering import Clustering
 
 class HierarchicalClusteringAlgorithm(object):
-    '''
+    """
     TODOC
-    '''
+    """
     def __init__(self,condensed_matrix, **kwargs):
         """
         Constructor.

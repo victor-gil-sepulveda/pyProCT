@@ -1,8 +1,8 @@
-'''
+"""
 Created on Mar 26, 2013
 
 @author: victor
-'''
+"""
 from mpi4py import MPI
 from pyproct.driver.driver import Driver
 from pyRMSD.condensedMatrix import CondensedMatrix

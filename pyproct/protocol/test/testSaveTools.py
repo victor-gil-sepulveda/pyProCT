@@ -1,8 +1,8 @@
-'''
+"""
 Created on 28/05/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.tools.test.data.pdb_data import premerged_pdb_1, premerged_pdb_2,\
     premerged_pdb_3, merged_pdb, merged_1_5, merged_renumbered_pdb,\

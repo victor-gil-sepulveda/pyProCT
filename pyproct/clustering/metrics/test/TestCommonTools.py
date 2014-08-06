@@ -1,8 +1,8 @@
-'''
+"""
 Created on 12/06/2013
 
 @author: victor
-'''
+"""
 import unittest
 from pyproct.clustering.metrics.common import get_intra_cluster_distances,\
     get_inter_cluster_distances, get_distances_of_elements_to, update_medoids,\

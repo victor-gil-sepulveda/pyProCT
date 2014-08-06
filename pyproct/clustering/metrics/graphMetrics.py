@@ -1,8 +1,8 @@
-'''
+"""
 Created on 13/08/2012
 
 @author: victor
-'''
+"""
 
 from itertools import product
 

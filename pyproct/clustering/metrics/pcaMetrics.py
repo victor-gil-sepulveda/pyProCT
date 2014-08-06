@@ -1,8 +1,8 @@
-'''
+"""
 Created on 13/08/2012
 
 @author: victor
-'''
+"""
 import numpy
 from pyRMSD.RMSDCalculator import RMSDCalculator
 from pyproct.driver.handlers.timerHandler import TimerHandler
