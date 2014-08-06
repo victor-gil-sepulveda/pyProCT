@@ -421,7 +421,7 @@ See [this file](https://github.com/victor-gil-sepulveda/pyProCT/blob/master/vali
 
 ### Interfacing with Scikit-Learn (aka sklearn)
 
-```
+```Python
 import numpy.random
 import sklearn.cluster
 

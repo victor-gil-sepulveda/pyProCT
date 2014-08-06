@@ -13,7 +13,7 @@ from pyproct.clustering.comparison.caDisplacement import CA_mean_square_displace
     calc_norms
 
 class Test(unittest.TestCase):
-    
+
     @classmethod
     def setUpClass(cls):
         # Generate and read the pdb
@@ -23,7 +23,8 @@ class Test(unittest.TestCase):
         os.system("rm %s"%cls.pdb_path)
 
     def test_CA_mean_square_displacement_of_cluster(self):
-        alpha_carbons_trajectory_pdb = self.pdb.select("name CA")
+        alpha_carbons_trajectory_pdb = self.pdb.select("name CA").getCoordsets()
+
         expected = [ 1.32850684, 1.56350125, 1.51248423, 1.96403403, 1.81467535, 2.44374607,
                      3.36425126, 3.95337708, 3.3888146,  3.10514178, 2.69929018, 2.35866313,
                      2.23312347, 2.05268284, 1.55179237, 1.3045629,  0.66721661, 0.33162028,
@@ -37,8 +38,9 @@ class Test(unittest.TestCase):
                      1.51140317, 1.7199428,  1.71083824, 2.161764,   2.305442,   2.34243684,
                      1.64746632, 2.01549208, 1.8223211,  2.20481542, 2.53409383, 2.38280986,
                      3.19762438, 3.08093492, 3.17642258, 4.22996496]
-        numpy.testing.assert_array_almost_equal(expected, CA_mean_square_displacement_of_cluster(alpha_carbons_trajectory_pdb, Cluster(2,[2,3,5])))
-    
+        numpy.testing.assert_array_almost_equal(expected,
+                                                CA_mean_square_displacement_of_cluster(alpha_carbons_trajectory_pdb, Cluster(2,[2,3,5])))
+
     def test_calc_norms(self):
         cooordsets = numpy.array([[[1,2,3],
                                    [4,5,6],

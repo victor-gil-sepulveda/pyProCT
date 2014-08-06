@@ -11,6 +11,7 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 
 
 class Test(unittest.TestCase):
+
     @classmethod
     def setUpClass(cls):
         cls.separated_decomposed_clusters = {
@@ -74,62 +75,65 @@ class Test(unittest.TestCase):
                              'num_mixed_elements': 6,
                              'total_num_clusters': 5,
                              'num_pure_elements': 10,
-                             'total_num_elements': 16
+                             'total_num_elements': 16,
+                             'overlap': 0.054930609464645341,
                              }
         analysis = {}
-        Analyzer.analyze_clustering(separated_decomposed_clusters, analysis)
+        Analyzer.analyze_clustering(separated_decomposed_clusters, self.matrix, analysis)
         self.assertDictEqual(expected_analysis, analysis)
 
     def test_analyze_clusters(self):
 
         expected_analysis = {
             'cluster_2': {
-                          'global': {
-                                     'mean': 1.1313708305358887,
-                                     'std': 0.56568541526794436,
-                                     'max': 1.4142135381698608,
-                                     'num_elements': 5
-                                     }
-                          },
+                'global': {
+                    'std': 0.56568541526794436,
+                    'max': 1.4142135381698608,
+                    'num_elements': 5,
+                    'mean': 1.1313708305358887
+                }
+            },
             'cluster_3': {
-                          'global': {
-                                     'mean': 1.1313708305358887,
-                                     'std': 0.56568541526794436,
-                                     'max': 1.4142135381698608,
-                                     'num_elements': 5
-                                     }
-                          },
+                'global': {
+                    'std': 0.56568541526794436,
+                    'max': 1.4142135381698608,
+                    'num_elements': 5,
+                    'mean': 1.1313708305358887
+                }
+            },
             'cluster_1': {
-                          'centers_mean_diff': 5.6903559366861982,
-                          'global': {
-                                     'mean': 3.3646855751673379,
-                                     'std': 1.5095995219901064,
-                                     'max': 5.385164737701416,
-                                     'num_elements': 15
-                                     },
-                          'traj_A': {
-                                     'mean': 1.1313708305358887,
-                                     'std': 0.56568541526794436,
-                                     'max': 1.4142135381698608,
-                                     'num_elements': 5
-                                     },
-                          'traj_B': {
-                                     'mean': 1.1313708305358887,
-                                     'std': 0.56568541526794436,
-                                     'max': 1.4142135381698608,
-                                     'num_elements': 5
-                                     },
-                          'traj_C': {
-                                     'mean': 1.1313708305358887,
-                                     'std': 0.56568541526794436,
-                                     'max': 1.4142135381698608,
-                                     'num_elements': 5
-                                     }
-                          }
+                'centers_mean_diff': 5.6903559366861982,
+                'global': {
+                    'std': 1.5095995219901064,
+                    'num_elements': 15,
+                    'max': 5.385164737701416,
+                    'overlap': 0.49575698403605678,
+                    'traj_C': {
+                        'std': 0.56568541526794436,
+                        'max': 1.4142135381698608,
+                        'num_elements': 5,
+                        'mean': 1.1313708305358887
+                    },
+                    'traj_A': {
+                        'std': 0.56568541526794436,
+                        'max': 1.4142135381698608,
+                        'num_elements': 5,
+                        'mean': 1.1313708305358887
+                    },
+                    'traj_B': {
+                        'std': 0.56568541526794436,
+                        'max': 1.4142135381698608,
+                        'num_elements': 5,
+                        'mean': 1.1313708305358887
+                    },
+                    'mean': 3.3646855751673379
+                }
             }
+        }
 
         analysis = {}
         Analyzer.analyze_clusters(self.separated_decomposed_clusters, self.matrix, analysis)
+
         self.assertDictEqual(expected_analysis, analysis)
 
 if __name__ == "__main__":

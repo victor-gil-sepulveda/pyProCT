@@ -4,53 +4,10 @@ Created on 12/06/2012
 @author: victor
 """
 import numpy
-from pyproct.clustering.cluster import Cluster
-from pyproct.clustering.metrics.common import get_distances_of_elements_to
-
-def calculate_mean_center_differences(decomposed_cluster, matrix):
-    """
-    Given a mixed decomposed cluster, it calculates the mean of all center differences (giving a qualitative
-    view of how separated the inner subclusters are).
-    @param decomposed_cluster: A MIXED decomposed cluster.
-    @param matrix: The condensed distance matrix used.
-
-    @return: The mean of center distances.
-    """
-    centers = []
-    for traj_id in decomposed_cluster:
-        cluster = Cluster(None, decomposed_cluster[traj_id])
-        centers.append(cluster.calculate_medoid(matrix))
-    center_distances = []
-    for i in range(len(centers)-1):
-        for j in range(i+1, len(centers)):
-            center_distances.append(matrix[centers[i],centers[j]])
-    return numpy.mean(center_distances)
-
-def calculate_distance_stats(elements, matrix):
-    """
-    Calculates the mean, dispersion and radius of all the distances to the central element of a set of
-    elements.
-    @param elements: The elements we are working with.
-    @param matrix: The used condensed matrix.
-
-    @return: Mean, std deviation and radius of all the elements with respect to their central element.
-    """
-    cluster = Cluster(None, elements)
-    medoid = cluster.calculate_medoid(matrix)
-
-    # We also get a 0 distance from the medoid vs itself (it is contained in 'elements')
-    distances = get_distances_of_elements_to(medoid, elements, matrix)
-    return numpy.mean(distances), numpy.std(distances), numpy.max(distances)
-
-def getAllElements(decomposed_cluster):
-    """
-    Returns a list of all the elements of a decomposed cluster (the elements of the original cluster)
-    @param decomposed_cluster: One decomposed cluster (trajectory_id: elements dictionary)
-    """
-    all_elements = []
-    for traj_id in decomposed_cluster:
-        all_elements.extend(decomposed_cluster[traj_id])
-    return all_elements
+from pyproct.clustering.comparison.overlapCalculator import OverlapCalculator
+from pyproct.clustering.comparison.tools import mergeSeparatedClusters,\
+    getAllElements, calculate_mean_center_differences, calculate_distance_stats
+import sys
 
 class Separator(object):
 
@@ -155,38 +112,39 @@ class Analyzer(object):
         analysis["total_num_elements"] = 0
         analysis["total_num_clusters"] = 0
 
-        self.analyze_clustering(decomposed_clusters, analysis)
+        self.analyze_clustering(decomposed_clusters, matrix, analysis)
 
         self.analyze_clusters(decomposed_clusters, matrix, analysis)
 
         return analysis
 
     @classmethod
-    def analyze_clustering(cls, separated_decomposed_clusters, analysis):
-
+    def analyze_clustering(cls, separated_decomposed_clusters, distance_matrix, analysis):
         analysis["total_num_clusters"] = 0
         analysis["total_num_elements"] = 0
-
+        analysis["overlap"] = OverlapCalculator.calculate_global_overlap(mergeSeparatedClusters(separated_decomposed_clusters), distance_matrix, 2, 1)
         for cluster_type in separated_decomposed_clusters:
             analysis["num_" + cluster_type] = len(separated_decomposed_clusters[cluster_type])
             analysis["total_num_clusters"] += analysis["num_" + cluster_type]
             analysis["num_" + cluster_type + "_elements"] = numpy.sum([len(getAllElements(separated_decomposed_clusters[cluster_type][dc_id])) for dc_id in separated_decomposed_clusters[cluster_type]])
             analysis["total_num_elements"] += analysis["num_" + cluster_type + "_elements"]
-
         return cluster_type
 
     @classmethod
-    def analyze_clusters(cls, separated_decomposed_clusters, matrix, analysis):
+    def analyze_clusters(cls, separated_decomposed_clusters, distance_matrix, analysis):
         for cluster_type in separated_decomposed_clusters:
             for cluster_id in separated_decomposed_clusters[cluster_type]:
                 decomposed_cluster = separated_decomposed_clusters[cluster_type][cluster_id]
-                analysis[cluster_id] = {"global":{}}
-                analysis[cluster_id]["global"]["mean"], analysis[cluster_id]["global"]["std"], analysis[cluster_id]["global"]["max"] = calculate_distance_stats(getAllElements(decomposed_cluster), matrix)
+                analysis[cluster_id] = {"components":decomposed_cluster.keys(),"global":{}}
+                analysis[cluster_id]["global"]["mean"], analysis[cluster_id]["global"]["std"], analysis[cluster_id]["global"]["max"] = calculate_distance_stats(getAllElements(decomposed_cluster), distance_matrix)
                 analysis[cluster_id]["global"]["num_elements"] = len(getAllElements(decomposed_cluster))
+
+                for traj_id in decomposed_cluster:
+                    analysis[cluster_id]["global"][traj_id] = {}
+                    analysis[cluster_id]["global"][traj_id]["mean"], analysis[cluster_id]["global"][traj_id]["std"], analysis[cluster_id]["global"][traj_id]["max"] = calculate_distance_stats(decomposed_cluster[traj_id], distance_matrix)
+                    analysis[cluster_id]["global"][traj_id]["num_elements"] = len(decomposed_cluster[traj_id])
+
                 if cluster_type == "mixed":
-                    analysis[cluster_id]["centers_mean_diff"] = calculate_mean_center_differences(decomposed_cluster, matrix)
-                    for traj_id in decomposed_cluster:
-                        analysis[cluster_id][traj_id] = {}
-                        analysis[cluster_id][traj_id]["mean"], analysis[cluster_id][traj_id]["std"], analysis[cluster_id][traj_id]["max"] = calculate_distance_stats(decomposed_cluster[traj_id], matrix)
-                        analysis[cluster_id][traj_id]["num_elements"] = len(decomposed_cluster[traj_id])
+                    analysis[cluster_id]["centers_mean_diff"] = calculate_mean_center_differences(decomposed_cluster, distance_matrix)
+                    analysis[cluster_id]["global"]["overlap"] = OverlapCalculator.calculate_cluster_overlap(2, decomposed_cluster, distance_matrix)
 

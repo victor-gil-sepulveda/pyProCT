@@ -30,7 +30,7 @@ class Refiner(Observable):
 
 
     @classmethod
-    def redefine_cluster_with_map(cls,initial_cluster, new_cluster):
+    def redefine_cluster_with_map(cls, initial_cluster, new_cluster):
         """
         It renames the elements of a cluster using a map array.For instance, if our dataset has 5
         elements and the cluster to remap contains element 1, 3 and 4, then the elements map will
@@ -76,6 +76,7 @@ class Refiner(Observable):
             submatrix = get_submatrix(matrix, cluster.all_elements)
 
             # Proceed with some K Medoids partitions
+            # TODO: Generate parameters with parameter generator
             for k in range(2,max_partitions,try_step):
                 clustering = self.repartition_with_kmedoids(cluster, k, submatrix)
                 clusterings["%s_%d"%(base_id,k)] = {"type":"refined",
