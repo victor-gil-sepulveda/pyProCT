@@ -523,6 +523,7 @@ or can be done better. Any contribution can help to improve this software!
     - Change "compression" by "redundancy_elimination"
     - Allow to load all files (or [glob](https://docs.python.org/3.1/library/glob.html)) from a folder.
     - Plotting distance matrix distances distribution.
+    - Change errors to std. error.
 
 - Symetry handling:
     - Symmetry handling for fitting coordinates.

@@ -4,19 +4,16 @@ Created on Mar 26, 2013
 @author: victor
 """
 import os
-import json
 import pyproct.tools.plotTools as plotTools
-from pyproct.tools.commonTools import timed_method
-from pyproct.protocol.protocol import ClusteringProtocol
-from pyproct.driver.handlers.timerHandler import TimerHandler
-from pyproct.driver.handlers.workspaceHandler import WorkspaceHandler
-from pyproct.driver.handlers.trajectoryHandler import TrajectoryHandler
-from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
+from pyproct.driver.time.timerHandler import TimerHandler, timed_method
+from pyproct.driver.workspace.workspaceHandler import WorkspaceHandler
+from pyproct.data.proteins.trajectoryHandler import TrajectoryHandler
 from pyproct.driver.observer.observable import Observable
-from pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence
 from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 from pyproct.clustering.clustering import Clustering
-from pyproct.driver.sections.postprocessing.postprocessing import PostprocessingDriver
+from pyproct.data.proteins.matrix.matrixHandler import MatrixHandler
+from pyproct.clustering.protocol.protocol import ClusteringProtocol
+from pyproct.postprocess.postprocessing import PostprocessingDriver
 
 class Driver(Observable):
     timer = TimerHandler()

@@ -4,11 +4,11 @@ Created on Mar 26, 2013
 @author: victor
 """
 from mpi4py import MPI
-from pyproct.driver.driver import Driver
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.tools.commonTools import timed_method
-from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
-from pyproct.driver.handlers.MPIWorkspaceHandler import MPIWorkspaceHandler
+from pyproct.driver.driver import Driver
+from pyproct.driver.workspace.MPIWorkspaceHandler import MPIWorkspaceHandler
+from pyproct.data.proteins.matrix.matrixHandler import MatrixHandler
 
 class MPIDriver(Driver):
     """

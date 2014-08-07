@@ -3,10 +3,9 @@ Created on 07/09/2012
 
 @author: victor
 """
-import math
 import random
 import numpy
-from pyproct.clustering.analysis.analysisPopulator import AnalysisPopulator
+from pyproct.clustering.evaluation.analysis.analysisPopulator import AnalysisPopulator
 
 class BestClusteringSelector(object):
 
