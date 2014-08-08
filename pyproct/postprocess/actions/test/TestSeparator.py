@@ -5,10 +5,11 @@ Created on 23/12/2013
 """
 import unittest
 from pyproct.clustering.cluster import Cluster
-from pyproct.clustering.comparison.comparator import Separator, getAllElements
+from pyproct.postprocess.actions.confSpaceComparison.tools import getAllElements
+from pyproct.postprocess.actions.confSpaceComparison.comparator import Separator
 
 
-class Test(unittest.TestCase):
+class TestSeparator(unittest.TestCase):
 
     def test_decompose(self):
         traj_ranges = {"traj_A":(0,6),"traj_B":(7,15)}

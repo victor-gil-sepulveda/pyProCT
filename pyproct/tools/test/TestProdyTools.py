@@ -7,10 +7,9 @@ import unittest
 import prody
 import numpy
 import StringIO
-from pyproct.driver.handlers.matrix.test.data.pdb_data import switched_pdb_data
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure,\
-    removeAllCoordsetsFromStructureLeavingFirst, getMaximumChainLength
-from pyproct.tools.test.data.pdb_data import chain_padding_proto_1, chain_padding_proto_2
+    removeAllCoordsetsFromStructureLeavingFirst
+from pyproct.data.proteins.matrix.test.data.pdb_data import switched_pdb_data
 
 class Test(unittest.TestCase):
     def test_removeAllCoordsetsFromStructure(self):

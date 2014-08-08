@@ -8,9 +8,14 @@ import scipy.spatial.distance
 import numpy
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.postprocess.actions.confSpaceComparison.comparator import Analyzer
+import json
+
+# Force smarter float rep. to compare
+from json import encoder
+encoder.FLOAT_REPR = lambda o: format(o, '.4f')
 
 
-class Test(unittest.TestCase):
+class TestAnalizer(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
@@ -86,22 +91,37 @@ class Test(unittest.TestCase):
 
         expected_analysis = {
             'cluster_2': {
+                'components': ['traj_A'],
                 'global': {
-                    'std': 0.56568541526794436,
+                    'std': 0.5656854152679444,
                     'max': 1.4142135381698608,
                     'num_elements': 5,
-                    'mean': 1.1313708305358887
+                    'mean': 1.1313708305358887,
+                    "traj_A":{
+                        "max":1.4142,
+                        "mean":1.1314,
+                        "num_elements":5,
+                        "std":0.5657
+                    }
                 }
             },
             'cluster_3': {
+                'components': ['traj_B'],
                 'global': {
                     'std': 0.56568541526794436,
                     'max': 1.4142135381698608,
                     'num_elements': 5,
-                    'mean': 1.1313708305358887
+                    'mean': 1.1313708305358887,
+                    "traj_B":{
+                        "max":1.4142,
+                        "mean":1.1314,
+                        "num_elements":5,
+                        "std":0.5657
+                    }
                 }
             },
             'cluster_1': {
+                'components': ['traj_A', 'traj_B', 'traj_C'],
                 'centers_mean_diff': 5.6903559366861982,
                 'global': {
                     'std': 1.5095995219901064,
@@ -133,9 +153,20 @@ class Test(unittest.TestCase):
 
         analysis = {}
         Analyzer.analyze_clusters(self.separated_decomposed_clusters, self.matrix, analysis)
-
-        self.assertDictEqual(expected_analysis, analysis)
+        self.maxDiff = None
+        self.assertEqual(json.dumps(expected_analysis, 
+                                        sort_keys = True, 
+                                        indent = 0, 
+                                        separators = (',', ':')), 
+                             json.dumps(analysis,
+                                        sort_keys = True, 
+                                        indent = 0, 
+                                        separators = (',', ':')))
+#         self.assertEqual(expected_analysis, analysis)
 
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_']
     unittest.main()
+
+
+

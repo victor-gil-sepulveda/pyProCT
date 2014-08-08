@@ -60,11 +60,11 @@ class Test(unittest.TestCase):
         input_file = cStringIO.StringIO(test_data.pdb_1_sub2_file_content)
         lines = pyproct.tools.pdbTools.read_to_TAG(input_file,"TER")
         expected_lines = """MODEL 0
-ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            
-ATOM      4  CA  PHE     4      -8.605   2.189  -0.292  1.00  1.00            
-ATOM      5  CA  VAL     5      -5.540   2.776  -2.541  1.00  1.00            
-ATOM      6  CA  LYP     6      -5.228   5.331  -5.451  1.00  1.00            
-ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00            
+ATOM      3  CA  ILE     3      -0.039   0.638   3.156  1.00  1.00
+ATOM      4  CA  PHE     4      -8.605   2.189  -0.292  1.00  1.00
+ATOM      5  CA  VAL     5      -5.540   2.776  -2.541  1.00  1.00
+ATOM      6  CA  LYP     6      -5.228   5.331  -5.451  1.00  1.00
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00
 """.split('\n')
         for i in range(len(lines)):
             self.assertEqual(lines[i][:-1], expected_lines[i])
@@ -75,7 +75,7 @@ ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00
         pyproct.tools.pdbTools.advance_to_TAG(input_file,"MODEL") # MODEL 2
         pyproct.tools.pdbTools.advance_to_TAG(input_file,"MODEL") # MODEL 3
         line =  input_file.readline()
-        expected_line = "ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  3.00            \n"
+        expected_line = "ATOM      3  CA  ILE     3      -2.039   0.638   3.156  1.00  3.00\n"
         self.assertEqual(line, expected_line)
         
     def test_create_CA_file(self):

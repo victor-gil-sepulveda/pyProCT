@@ -5,11 +5,11 @@ Created on 12/12/2012
 """
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence import KullbackLeiblerDivergence,\
-    smoothed
 import numpy
+from pyproct.postprocess.actions.kullbackLiebler import KullbackLeiblerDivergence,\
+    smoothed
 
-class Test(unittest.TestCase):
+class TestKullbackLiebler(unittest.TestCase):
 
 
     def test_get_matrix_data(self):
@@ -51,6 +51,7 @@ class Test(unittest.TestCase):
         """
         Regression Test.
         """
+        self.fail("TO UPDATE")
         condensed_matrix = CondensedMatrix([1.0, 4.5, 7.2, 3.3, 6.8, 6.1, 
                                                  8.5, 4.5, 4.6, 9.0, 1.0,
                                                       7.8, 1.0, 0.0, 6.5,

@@ -17,9 +17,8 @@ class SaveAllClustersPostAction(object):
         pass
 
     def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
-        if SaveAllClustersPostAction.KEYWORD in postprocessing_parameters:
-            save_all_clusters(clustering, postprocessing_parameters[SaveAllClustersPostAction.KEYWORD],
-                              workspaceHandler, trajectoryHandler, generatedFiles)
+        save_all_clusters(clustering, postprocessing_parameters[SaveAllClustersPostAction.KEYWORD],
+                          workspaceHandler, trajectoryHandler, generatedFiles)
 
 def save_all_clusters(clustering, my_params, workspaceHandler, trajectoryHandler,  generatedFiles):
 

@@ -4,15 +4,14 @@ Created on 03/03/2014
 @author: victor
 '''
 import unittest
-from pyproct.clustering.comparison.tools import getAllElements,\
-    mergeSeparatedClusters, calculate_mean_center_differences,\
-    calculate_distance_stats
 import numpy
 from pyRMSD.condensedMatrix import CondensedMatrix
 import scipy.spatial.distance
+from pyproct.postprocess.actions.confSpaceComparison.tools import calculate_mean_center_differences,\
+    calculate_distance_stats, getAllElements, mergeSeparatedClusters
 
 
-class Test(unittest.TestCase):
+class TestCompTools(unittest.TestCase):
 
 
     @classmethod

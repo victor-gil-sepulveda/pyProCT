@@ -19,15 +19,14 @@ class RedundanceEliminationPostAction(object):
         pass
 
     def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
-        if RedundanceEliminationPostAction.KEYWORD in postprocessing_parameters:
-            compressor = RedundanceElimination(postprocessing_parameters[RedundanceEliminationPostAction.KEYWORD])
-            compressed_file_path = compressor.compress(clustering,
-                                                       workspaceHandler,
-                                                       trajectoryHandler,
-                                                       matrixHandler)
-            generatedFiles.append({"description":"Compressed file",
-                                        "path":os.path.abspath(compressed_file_path),
-                                        "type":"pdb"})
+        compressor = RedundanceElimination(postprocessing_parameters[RedundanceEliminationPostAction.KEYWORD])
+        compressed_file_path = compressor.compress(clustering,
+                                                   workspaceHandler,
+                                                   trajectoryHandler,
+                                                   matrixHandler)
+        generatedFiles.append({"description":"Compressed file",
+                                    "path":os.path.abspath(compressed_file_path),
+                                    "type":"pdb"})
 
 
 class RedundanceElimination(object):

@@ -5,8 +5,8 @@ Created on 27/02/2014
 '''
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.clustering.comparison.overlapCalculator import OverlapCalculator
 import numpy
+from pyproct.postprocess.actions.confSpaceComparison.overlapCalculator import OverlapCalculator
 
 
 class Test(unittest.TestCase):

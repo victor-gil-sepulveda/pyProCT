@@ -136,7 +136,7 @@ class Analyzer(object):
                 decomposed_cluster = separated_decomposed_clusters[cluster_type][cluster_id]
                 analysis[cluster_id] = {"components":decomposed_cluster.keys(),"global":{}}
                 analysis[cluster_id]["global"]["mean"], analysis[cluster_id]["global"]["std"], analysis[cluster_id]["global"]["max"] = calculate_distance_stats(getAllElements(decomposed_cluster), distance_matrix)
-                analysis[cluster_id]["global"]["num_elements"] = len(getAllElements(decomposed_cluster)(decomposed_cluster))
+                analysis[cluster_id]["global"]["num_elements"] = len(getAllElements(decomposed_cluster))
 
                 for traj_id in decomposed_cluster:
                     analysis[cluster_id]["global"][traj_id] = {}
