@@ -15,7 +15,7 @@ if __name__ == '__main__': # Compatibility with sphynx
 
     setup(
           name='pyProCT',
-          version='1.4.0',
+          version='1.4.3',
           description='pyProCT is an open source cluster analysis software especially adapted for jobs related with structural proteomics',
           author='Victor Alejandro Gil Sepulveda',
           author_email='victor.gil.sepulveda@gmail.com',
@@ -62,39 +62,39 @@ if __name__ == '__main__': # Compatibility with sphynx
           include_dirs = [numpy.get_include(),
                           distutils.sysconfig.get_python_inc()],
           ext_modules=[
-                       Extension('pyproct.clustering.metrics.cython.normNCut',[
-                                    'pyproct/clustering/metrics/cython/normNCut.c'
+                       Extension('pyproct.clustering.evaluation.metrics.cython.normNCut',[
+                                    'pyproct/clustering/evaluation/metrics/cython/normNCut.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension('pyproct.clustering.metrics.cython.boundedCohesion', [
-                                    'pyproct/clustering/metrics/cython/boundedCohesion.c'
+                       Extension('pyproct.clustering.evaluation.metrics.cython.boundedCohesion', [
+                                    'pyproct/clustering/evaluation/metrics/cython/boundedCohesion.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension('pyproct.clustering.metrics.cython.silhouette',[
-                                    'pyproct/clustering/metrics/cython/silhouette.c'
+                       Extension('pyproct.clustering.evaluation.metrics.cython.silhouette',[
+                                    'pyproct/clustering/evaluation/metrics/cython/silhouette.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension('pyproct.clustering.metrics.cython.meanMinimumDistance', [
-                                    'pyproct/clustering/metrics/cython/meanMinimumDistance.c'
+                       Extension('pyproct.clustering.evaluation.metrics.cython.meanMinimumDistance', [
+                                    'pyproct/clustering/evaluation/metrics/cython/meanMinimumDistance.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension('pyproct.clustering.metrics.cython.meanMinimumDistance', [
-                                    'pyproct/clustering/metrics/cython/meanMinimumDistance.c'
+                       Extension('pyproct.clustering.evaluation.metrics.cython.meanMinimumDistance', [
+                                    'pyproct/clustering/evaluation/metrics/cython/meanMinimumDistance.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension("pyproct.algorithms.dbscan.cython.cythonDbscanTools", [
-                                    'pyproct/algorithms/dbscan/cython/cythonDbscanTools.c'
+                       Extension("pyproct.clustering.algorithms.dbscan.cython.cythonDbscanTools", [
+                                    'pyproct/clustering/algorithms/dbscan/cython/cythonDbscanTools.c'
                        ],extra_compile_args=["-O3","-ffast-math"]),
-                       Extension("pyproct.algorithms.spectral.cython.spectralTools", [
-                                    'pyproct/algorithms/spectral/cython/spectralTools.c'
+                       Extension("pyproct.clustering.algorithms.spectral.cython.spectralTools", [
+                                    'pyproct/clustering/algorithms/spectral/cython/spectralTools.c'
                        ],extra_compile_args=["-O3","-ffast-math"])
           ],
 
           install_requires=[
-            "numpy>=1.6.1",
-            "PIL>=1.1.6",
-            "scipy>=0.9.0",
-            "matplotlib>=1.1.1rc",
-            "ProDy>=1.4.2",
-            "fastcluster>=1.1.6",
-            "scikit-learn>=0.12",
-            "pyScheduler>=0.1.0",
             "pyRMSD>=4.0.0",
+            "pyScheduler>=0.1.0",
+            "fastcluster>=1.1.6",
+            "PIL>=1.1.6",
+            "ProDy>=1.4.2",
+            "numpy>=1.6.1",
+            "matplotlib>=1.1.1rc",
+            "scipy>=0.9.0",
+            "scikit-learn>=0.12",
             "mpi4py>=1.3"
           ]
     )

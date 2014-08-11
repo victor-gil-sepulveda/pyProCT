@@ -34,7 +34,7 @@ class RedundanceElimination(object):
     def __init__(self, parameters):
         self.parameters = parameters
 
-    def do(self, clustering, workspace_handler, trajectory_handler, matrix_handler):
+    def compress(self, clustering, workspace_handler, trajectory_handler, matrix_handler):
         representatives = []
         compression_type = self.parameters.get_value("type", default_value = "KMEDOIDS")
 

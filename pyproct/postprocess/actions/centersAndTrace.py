@@ -15,23 +15,20 @@ class CentersAndTracePostAction(object):
         pass
 
     def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
-        try:
-            centers_path, centers_contents = generate_selection_centers_file(clustering,
-                                                                            workspaceHandler,
-                                                                            trajectoryHandler)
+        centers_path, centers_contents = generate_selection_centers_file(clustering,
+                                                                        workspaceHandler,
+                                                                        trajectoryHandler)
 
-            open(centers_path,"w").write(json.dumps(centers_contents,
-                                      sort_keys=False,
-                                      indent=4,
-                                      separators=(',', ': ')))
-            generatedFiles.append({
-                                        "description":"Centers of the selection used to calculate distances",
-                                        "path":os.path.abspath(centers_path),
-                                        "type":"text"
-            })
+        open(centers_path,"w").write(json.dumps(centers_contents,
+                                  sort_keys=False,
+                                  indent=4,
+                                  separators=(',', ': ')))
+        generatedFiles.append({
+                                    "description":"Centers of the selection used to calculate distances",
+                                    "path":os.path.abspath(centers_path),
+                                    "type":"text"
+        })
 
-        except Exception:
-            print "[ERROR][Driver::postprocess] Impossible to calculate selection centers file."
                 
 def calculate_bounding_box(coordinates, backbone_trace = []):
     """

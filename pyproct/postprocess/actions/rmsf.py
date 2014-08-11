@@ -16,42 +16,36 @@ class RmsfPostAction(object):
         pass
 
     def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
-        try:
-            displacements_path, CA_mean_square_displacements = calculate_RMSF(clustering,
-                                                                                                 trajectoryHandler,
-                                                                                                 workspaceHandler,
-                                                                                                 matrixHandler)
+        
+        rmsf_per_cluster = calculate_RMSF(clustering, trajectoryHandler, workspaceHandler, matrixHandler)
 
-            generatedFiles.append({
-                                        "description":"Alpha Carbon mean square displacements",
-                                        "path":os.path.abspath(displacements_path),
-                                        "type":"text"
-            })
+        rmsf_file_path = os.path.join(workspaceHandler["results"], "CA_displacements.json")
+        open(rmsf_file_path,"w").write(json.dumps(rmsf_per_cluster,
+                                              sort_keys=False,
+                                              indent=4,
+                                              separators=(',', ': ')))
+         
+        generatedFiles.append({
+                                "description":"Alpha Carbon mean square displacements",
+                                "path":os.path.abspath(rmsf_file_path),
+                                "type":"text"
+        })
 
-            open(displacements_path,"w").write(json.dumps(CA_mean_square_displacements,
-                                                  sort_keys=False,
-                                                  indent=4,
-                                                  separators=(',', ': ')))
-        except Exception:
-            print "[ERROR][Driver::postprocess] Impossible to calculate rmsf file."
-
+       
 
 def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
-    global_cluster = Cluster(None, best_clustering.get_all_clustered_elements())
-    global_cluster.prototype = global_cluster.calculate_medoid(matrixHandler.distance_matrix)
-    ca_pdb_coordsets =numpy.copy(trajectoryHandler.getMergedStructure().select("name CA").getCoordsets())
-    calculator = RMSDCalculator(calculatorType = "QTRFIT_SERIAL_CALCULATOR",
-                                    fittingCoordsets = ca_pdb_coordsets)
-    calculator.iterativeSuperposition()
-    CA_mean_square_displacements= {
-                                   "global":list(calc_rmsf_of_cluster(ca_pdb_coordsets,global_cluster))
-                                   }
-    clusters = best_clustering.clusters
-    for cluster in range(len(clusters)):
-        CA_mean_square_displacements[cluster.id] = superpose_and_calc_rmsf(ca_pdb_coordsets, cluster)
-    displacements_path = os.path.join(workspaceHandler["results"], "CA_displacements.json")
+    ca_pdb_coordsets = numpy.copy(trajectoryHandler.getMergedStructure().select("name CA").getCoordsets())
 
-    return displacements_path, CA_mean_square_displacements
+    global_cluster = Cluster(None, best_clustering.get_all_clustered_elements())
+    global_cluster.id = "global"
+    
+    clusters = best_clustering.clusters + [global_cluster]
+    rmsf_per_cluster = {}
+    for cluster in clusters:
+        rmsf_per_cluster[cluster.id] = superpose_and_calc_rmsf(ca_pdb_coordsets, cluster)
+    
+
+    return rmsf_per_cluster
 
 def superpose_and_calc_rmsf(ca_pdb_coordsets, cluster):
     # Pick the coordinates (ensuring that we are copying them)
