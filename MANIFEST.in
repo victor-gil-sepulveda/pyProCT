@@ -1,10 +1,10 @@
-include pyproclust/clustering/metrics/cython/normNCut.c
-include pyproclust/clustering/metrics/cython/boundedCohesion.c
-include pyproclust/clustering/metrics/cython/silhouette.c
-include pyproclust/clustering/metrics/cython/meanMinimumDistance.c
-include pyproclust/clustering/metrics/cython/meanMinimumDistance.c
-include pyproclust/algorithms/dbscan/cython/cythonDbscanTools.c
-include pyproct/algorithms/spectral/cython/spectralTools.c
+include pyproct/clustering/evaluation/metrics/cython/normNCut.c
+include pyproct/clustering/evaluation/metrics/cython/boundedCohesion.c
+include pyproct/clustering/evaluation/metrics/cython/silhouette.c
+include pyproct/clustering/evaluation/metrics/cython/meanMinimumDistance.c
+include pyproct/clustering/evaluation/metrics/cython/meanMinimumDistance.c
+include pyproct/clustering/algorithms/dbscan/cython/cythonDbscanTools.c
+include pyproct/clustering/algorithms/spectral/cython/spectralTools.c
 include README.md
 include README.rst
 include LICENSE
