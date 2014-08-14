@@ -4,11 +4,11 @@ Created on 12/06/2013
 @author: victor
 """
 import unittest
-from pyproct.clustering.metrics.common import get_intra_cluster_distances,\
+from pyproct.clustering.evaluation.metrics.common import get_intra_cluster_distances,\
     get_inter_cluster_distances, get_distances_of_elements_to, update_medoids,\
     get_inter_cluster_prototype_distances
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.clustering.metrics.test.data import CH_table1, squared_CH_table1
+from pyproct.clustering.evaluation.metrics.test.data import CH_table1, squared_CH_table1
 from pyproct.clustering.cluster import Cluster
 import numpy
 from pyproct.clustering.clustering import Clustering

@@ -5,7 +5,6 @@ Created on 27/05/2013
 """
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.algorithms.gromos.parametersGeneration import ParametersGenerator
 
 class MatrixHandlerMock:
     def __init__(self, matrix):

@@ -4,36 +4,12 @@ Created on 28/05/2013
 @author: victor
 """
 import unittest
-from pyproct.tools.test.data.pdb_data import premerged_pdb_1, premerged_pdb_2,\
-    premerged_pdb_3, merged_pdb, merged_1_5, merged_renumbered_pdb,\
-    merged_1_5_correlative, proto_pdb
-from pyproct.protocol.saveTools import merge_pdbs, save_representatives
-from pyproct.data.proteins.trajectoryHandler import TrajectoryHandler
+from pyproct.tools.test.data.pdb_data import  merged_1_5, merged_1_5_correlative, proto_pdb
+from pyproct.postprocess.actions.representatives import save_representatives
 
 
 class Test(unittest.TestCase):
 
-    def test_merge_pdbs(self):
-        pdbs = {"data/pdb1.pdb":premerged_pdb_1,
-                "data/pdb2.pdb":premerged_pdb_2,
-                "data/pdb3.pdb":premerged_pdb_3}
-
-        for pdb_file in pdbs:
-            open(pdb_file,"w").write(pdbs[pdb_file])
-
-        merge_pdbs(sorted(pdbs.keys()),
-                   "data/merged.pdb",
-                   do_merged_files_have_correlative_models=False)
-        merged = "".join(open("data/merged.pdb","r").readlines())
-        self.assertEqual(merged, merged_pdb)
-
-        trajectoryHandler = TrajectoryHandler({"data":{"files":["data/pdb1.pdb", "data/pdb2.pdb", "data/pdb3.pdb"]}},None)
-
-        merge_pdbs(trajectoryHandler,
-                   "data/merged.pdb",
-                   do_merged_files_have_correlative_models=True)
-        merged = "".join(open("data/merged.pdb","r").readlines())
-        self.assertEqual(merged, merged_renumbered_pdb)
 
     def test_save_representatives(self):
         representatives = [1,5]

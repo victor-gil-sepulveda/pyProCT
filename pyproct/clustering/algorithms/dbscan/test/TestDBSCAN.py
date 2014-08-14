@@ -5,13 +5,12 @@ Created on 17/04/2012
 """
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm,\
-    PointClassType
-# from pyproct.algorithms.dbscan.dbscanTools import kth_elements_distance, k_dist,\
-#     k_scale_gen, zhou_adaptative_determination,dbscan_param_space_search
-from pyproct.algorithms.dbscan.cython.cythonDbscanTools import kth_elements_distance, k_dist,\
-    k_scale_gen,dbscan_param_space_search,zhou_adaptative_determination
 import numpy
+from pyproct.clustering.algorithms.dbscan.dbscanAlgorithm import DBSCANAlgorithm,\
+    PointClassType
+from pyproct.clustering.algorithms.dbscan.cython.cythonDbscanTools import kth_elements_distance,\
+    k_dist, k_scale_gen, zhou_adaptative_determination,\
+    dbscan_param_space_search
 
 class Test(unittest.TestCase):
 

@@ -5,8 +5,8 @@ Created on 06/06/2012
 """
 import unittest
 from pyproct.clustering.cluster import Cluster
-from pyproct.clustering.analysis.analysisPopulator import AnalysisPopulator
 from pyproct.clustering.clustering import Clustering
+from pyproct.clustering.evaluation.analysis.analysisPopulator import AnalysisPopulator
         
 class AnalysisPopulatorMock(AnalysisPopulator):
     def __init__(self ,parameters):
@@ -41,30 +41,32 @@ class TestAnalysisPopulator(unittest.TestCase):
     
     def test_get_query_and_evaluation_analysis_types(self):
         parameters = {
-                        "evaluation": {
-                                        "evaluation_criteria": {
-                                                                "criteria_0": {
-                                                                               "CythonMirrorCohesion":{
-                                                                                    "action": ">",
-                                                                                    "weight": 0.05
-                                                                                },
-                                                                                "CythonMinimumMeanSeparation":{
-                                                                                    "action": ">",
-                                                                                    "weight": 0.1
-                                                                                },
-                                                                                "CythonSilhouette":{
-                                                                                    "action": ">",
-                                                                                    "weight": 0.15
-                                                                                }
-                                                                }
-                                        },
-                                        "query_types": [
-                                                        "NumClusters",
-                                                        "CythonMinimumMeanSeparation",
-                                                        "NoiseLevel"
-                                        ]
-                                       }
-                        }
+                      "clustering":{
+                            "evaluation": {
+                                            "evaluation_criteria": {
+                                                                    "criteria_0": {
+                                                                                   "CythonMirrorCohesion":{
+                                                                                        "action": ">",
+                                                                                        "weight": 0.05
+                                                                                    },
+                                                                                    "CythonMinimumMeanSeparation":{
+                                                                                        "action": ">",
+                                                                                        "weight": 0.1
+                                                                                    },
+                                                                                    "CythonSilhouette":{
+                                                                                        "action": ">",
+                                                                                        "weight": 0.15
+                                                                                    }
+                                                                    }
+                                            },
+                                            "query_types": [
+                                                            "NumClusters",
+                                                            "CythonMinimumMeanSeparation",
+                                                            "NoiseLevel"
+                                            ]
+                                           }
+                            }
+                      }
         
         self.assertItemsEqual( AnalysisPopulator.get_evaluation_analysis_types(parameters),
             ['CythonMinimumMeanSeparation', 'CythonMirrorCohesion', 'CythonSilhouette'])
@@ -74,7 +76,8 @@ class TestAnalysisPopulator(unittest.TestCase):
 
     def test_populate_analyzer(self):
         queue = AnalysisPopulatorMock({
-            "evaluation": {
+            "clustering":{
+                          "evaluation": {
                             "evaluation_criteria": {
                                                     "criteria_0": {
                                                                     "Analysis1":{
@@ -97,6 +100,7 @@ class TestAnalysisPopulator(unittest.TestCase):
                                             "Analysis4"
                             ]
                            }
+            }
         }).get_analysis_list()
         
         self.assertItemsEqual(queue, ["Analysis Object 1", "Analysis Object 2", "Analysis Object 3", "Analysis Object 4"])

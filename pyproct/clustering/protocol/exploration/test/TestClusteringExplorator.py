@@ -4,13 +4,13 @@ Created on 07/02/2013
 @author: victor
 """
 import unittest
-from pyproct.protocol.exploration.clusteringExplorator import ClusteringExplorer
+from pyproct.clustering.protocol.exploration.clusteringExplorer import ClusteringExplorer
 
 
 class TestClusteringExplorator(unittest.TestCase):
 
     def test_generate_clustering_info(self):
-        explorator = ClusteringExplorer({"evaluation":{},"clustering":{}},None, None, None, None)
+        explorator = ClusteringExplorer({"clustering":{"evaluation":{}}},None, None, None, None)
         run_parameters = []
         for i in range(10):
             run_parameters.append({"lol":i})

@@ -6,9 +6,9 @@ Created on 13/08/2012
 import unittest
 from pyproct.clustering.clustering import Clustering
 from pyproct.clustering.cluster import Cluster
-from pyproct.clustering.metrics.graphMetrics import getClusterAndComplementary,W,d,vol,\
-all_cut, MinMaxCut, NCut
 from pyRMSD.condensedMatrix import CondensedMatrix
+from pyproct.clustering.evaluation.metrics.graphMetrics import getClusterAndComplementary, W, d, vol,\
+    all_cut, MinMaxCut, NCut
 
 class TestGraphMetrics(unittest.TestCase):
 
@@ -21,62 +21,62 @@ class TestGraphMetrics(unittest.TestCase):
         self.assertItemsEqual(Acomp,[5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19])
     
     def test_W(self):
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                 9,3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         self.assertEqual(W(range(3),range(3,6),matrix), 37)
         
     def test_d(self):
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                9, 3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         self.assertEqual(d(2, matrix),13.0)
         
     def test_vol(self):
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                9, 3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         
         self.assertEqual( vol([2,4,3],matrix),71)
         
     def test_all_cut(self):
         clustering = Clustering([Cluster(1,[0,1]),Cluster(2,[2,3]),Cluster(4,[4,5])])
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                9, 3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         
         self.assertEqual(  all_cut(clustering,matrix), 52)
         
     def test_single_cut(self):
         clustering = Clustering([Cluster(1,[0,1]),Cluster(2,[2,3]),Cluster(4,[4,5])])
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                9, 3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         
         self.assertEqual(  all_cut(clustering,matrix), 52)
         
     def test_regression_MinMaxCut(self):
         clustering = Clustering([Cluster(1,[0,1]),Cluster(2,[2,3]),Cluster(4,[4,5])])
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                9, 3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         
         calculator = MinMaxCut()
@@ -85,24 +85,24 @@ class TestGraphMetrics(unittest.TestCase):
     
     def test_regression_NCut(self):
         clustering = Clustering([Cluster(1,[0,1]),Cluster(2,[2,3]),Cluster(4,[4,5])])
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                9, 3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         
         calculator = NCut()
         
-        self.assertAlmostEqual( calculator.evaluate(clustering, matrix),1.21017786561,4)
+        self.assertAlmostEqual( calculator.evaluate(clustering, matrix), 7.4983003265331849, 4)
         
     def test_regression_RatioCut(self):
         clustering = Clustering([Cluster(1,[0,1]),Cluster(2,[2,3]),Cluster(4,[4,5])])
-        matrix_data = [1, 4, 6, 2, 5,
-                          3, 9, 7, 2,
-                             4, 1, 1,
-                                9, 3,
-                                   8]
+        matrix_data = [1., 4., 6., 2., 5.,
+                           3., 9., 7., 2.,
+                               4., 1., 1.,
+                                   9., 3.,
+                                       8.]
         matrix = CondensedMatrix(matrix_data)
         
         calculator = MinMaxCut()

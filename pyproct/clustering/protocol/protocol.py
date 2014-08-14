@@ -6,7 +6,7 @@ Created on 21/05/2012
 import pyproct.driver.scheduling.tools as scheduling_tools
 from pyproct.clustering.selection.bestClusteringSelector import BestClusteringSelector
 from pyproct.driver.observer.observable import Observable
-from pyproct.clustering.protocol.exploration.clusteringExplorator import ClusteringExplorer
+from pyproct.clustering.protocol.exploration.clusteringExplorer import ClusteringExplorer
 from pyproct.clustering.protocol.exploration.algorithmRunParametersGenerator import AlgorithmRunParametersGenerator
 from pyproct.clustering.filtering.clusteringFilter import ClusteringFilter
 from pyproct.clustering.evaluation.analysis.analysisRunner import AnalysisRunner

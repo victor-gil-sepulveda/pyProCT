@@ -6,10 +6,10 @@ Created on 23/03/2012
 import unittest
 from scipy.spatial.distance import pdist
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
 import cStringIO
-from pyproct.algorithms.hierarchical.hierarchicalTools import get_cutoff_range
 import math
+from pyproct.clustering.algorithms.hierarchical.hierarchicalAlgorithm import HierarchicalClusteringAlgorithm
+from pyproct.clustering.algorithms.hierarchical.hierarchicalTools import get_cutoff_range
 
 class HierarchicalStub:
     def __init__(self,cutoff_map):

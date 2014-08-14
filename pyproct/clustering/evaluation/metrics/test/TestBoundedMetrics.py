@@ -7,9 +7,9 @@ import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.clustering.clustering import Clustering
 from pyproct.clustering.cluster import Cluster
-from pyproct.clustering.metrics.boundedCohesion import MirrorCohesionCalculator
-from pyproct.clustering.metrics.cython.boundedCohesion import CythonMirrorCohesionCalculator
-from pyproct.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
+from pyproct.clustering.evaluation.metrics.boundedCohesion import MirrorCohesionCalculator
+from pyproct.clustering.evaluation.metrics.cython.boundedCohesion import CythonMirrorCohesionCalculator
+from pyproct.clustering.evaluation.metrics.silhouette import SilhouetteCoefficientCalculator
 
 class TestBoundedMetrics(unittest.TestCase):
     def test_bounded_cohesion(self):

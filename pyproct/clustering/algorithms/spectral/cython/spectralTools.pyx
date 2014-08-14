@@ -55,7 +55,8 @@ def local_sigma_estimation(matrix):
 
     """
     cdef int N = matrix.row_length
-    cdef int K = 7 # as stated in the paper
+    cdef PREFERRED_K = 7
+    cdef int K = min(matrix.row_length-1, PREFERRED_K) # as stated in the paper
     cdef int i = 0
     cdef int j = 0
 

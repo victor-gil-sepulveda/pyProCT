@@ -7,12 +7,12 @@ import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.clustering.clustering import Clustering
 from pyproct.clustering.cluster import Cluster
-from pyproct.clustering.metrics.test import matrix
-from pyproct.algorithms.random import RandomAlgorithm
-from pyproct.clustering.metrics.meanMinimumDistance import mean_function,\
-    MeanMinimumDistanceCalculator
-from pyproct.clustering.metrics.cohesion import CohesionCalculator
-from pyproct.clustering.metrics.separation import SeparationCalculator
+from pyproct.clustering.evaluation.metrics.test import matrix
+from pyproct.clustering.evaluation.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator,\
+    mean_function
+from pyproct.clustering.algorithms.random import RandomAlgorithm
+from pyproct.clustering.evaluation.metrics.cohesion import CohesionCalculator
+from pyproct.clustering.evaluation.metrics.separation import SeparationCalculator
 
 class TestMetrics(unittest.TestCase):
     
@@ -119,10 +119,10 @@ class TestMetrics(unittest.TestCase):
         
         sep_calctor = SeparationCalculator()
         
-        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[1],distances),7.0)
-        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_1[0],clusters_1[2],distances),20.0)
-        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_1[1],clusters_1[2],distances),17.0)
-        self.assertEqual( sep_calctor._SeparationCalculator__clusters_mixed_cohesion(clusters_2[0],clusters_2[1],distances),34.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__between_cluster_distance(clusters_1[0],clusters_1[1],distances),7.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__between_cluster_distance(clusters_1[0],clusters_1[2],distances),20.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__between_cluster_distance(clusters_1[1],clusters_1[2],distances),17.0)
+        self.assertEqual( sep_calctor._SeparationCalculator__between_cluster_distance(clusters_2[0],clusters_2[1],distances),34.0)
     
     def test_cluster_cohe_sep_wo_prot_eval(self):
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,

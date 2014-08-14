@@ -6,9 +6,9 @@ Created on 15/02/2012
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.clustering.cluster import cluster_from_tuple, Cluster
-from pyproct.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
-from pyproct.algorithms.gromos.gromosAlgorithmTools import eliminate_cluster_from_node_list
 import numpy
+from pyproct.clustering.algorithms.gromos.gromosAlgorithm import GromosAlgorithm
+from pyproct.clustering.algorithms.gromos.gromosAlgorithmTools import eliminate_cluster_from_node_list
 
 class Test(unittest.TestCase):
 
@@ -146,7 +146,7 @@ class Test(unittest.TestCase):
             self.assertEqual(nodes[i],nodes_left[i])
     
     def test_specific_case(self):
-        condensed_matrix = CondensedMatrix(list(numpy.load("data/matrix.npy")))
+        condensed_matrix = CondensedMatrix(list(numpy.asfarray(numpy.load("data/matrix.npy"))))
         gromos_alg = GromosAlgorithm(condensed_matrix)
         # If we cut below the minimum (1.16 here) You obtain all single element clusters 
         clustering = gromos_alg.perform_clustering({"cutoff": 1})

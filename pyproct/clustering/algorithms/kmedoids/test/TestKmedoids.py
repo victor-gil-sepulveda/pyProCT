@@ -6,8 +6,8 @@ Created on 06/06/2012
 import unittest
 import numpy
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 from scipy.spatial.distance import pdist
+from pyproct.clustering.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
 
 class TestKMedoids(unittest.TestCase):
     @classmethod

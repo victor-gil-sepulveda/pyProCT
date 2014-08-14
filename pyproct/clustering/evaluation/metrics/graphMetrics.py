@@ -5,6 +5,7 @@ Created on 13/08/2012
 """
 
 from itertools import product
+from pyproct.clustering.algorithms.spectral.cython import spectralTools
 
 """
 Application of graph theory's metrics to clustering, where each connected component is
@@ -21,7 +22,17 @@ def getClusterAndComplementary(i,all_clusters):
             complementary.extend(all_clusters[j].all_elements)
     return(all_clusters[i].all_elements,complementary)
 
-def W(A1,A2,condensed_matrix):
+def W_partition (A1, A2, W):
+    """
+    W(A,B) = sum_{i pert A, j pert B} w_i_j
+    """
+    w = 0.
+
+    for i,j in product(A1,A2):
+        w = w + W[i,j]
+    return w
+
+def W(A1, A2, condensed_matrix):
     """
     W(A,B) = sum_{i pert A, j pert B} w_i_j
     """
@@ -49,6 +60,15 @@ def vol(A,condensed_matrix):
     vol_val = 0
     for i in  A:
         vol_val += d(i,condensed_matrix)   
+    return vol_val
+
+def vol2(A, D, condensed_matrix):
+    """
+    vol2(A) = sum_{i pert A} d_i
+    """
+    vol_val = 0
+    for i in  A:
+        vol_val += D[i]
     return vol_val
 
 def all_cut(clustering,condensed_matrix):
@@ -91,16 +111,21 @@ class NCut(object):
     def __init__(self):
         pass
     
-    def evaluate(self,clustering,condensed_matrix):
+    def evaluate(self, clustering, condensed_matrix):
         """
         Evaluates:
-        NCut = 1/2 sum_{i=1}^k W(A_i,A_i-complementary) / vol(A_i)
+        NCut = 1/2 sum_{i=1}^k W(A_i,A_i-complementary) / vol2(A_i)
         """
+        # Calculate similarity graph
+        sigmas = spectralTools.local_sigma_estimation(condensed_matrix)
+        W = spectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix, sigmas)
+        D = spectralTools.calculate_degree_matrix(W)
+        
         clusters = clustering.clusters
         ncut_val = 0
         for i in range(len(clusters)):
             A,Acomp = getClusterAndComplementary(i,clusters)
-            ncut_val += W(A,Acomp,condensed_matrix) / vol(A,condensed_matrix)
+            ncut_val += W_partition(A, Acomp, condensed_matrix) / vol2(A, D, condensed_matrix)
         return 0.5*ncut_val
 
 class RatioCut(object):

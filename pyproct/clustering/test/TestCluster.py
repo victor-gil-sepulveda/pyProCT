@@ -6,8 +6,10 @@ Created on 16/03/2012
 import unittest
 import pyproct.clustering.test.data as test_data
 from pyproct.clustering.cluster import Cluster, cluster_from_tuple, get_cluster_sizes, gen_clusters_from_class_list
-import numpy as np
+import numpy
 from pyRMSD.condensedMatrix import CondensedMatrix
+import os
+
 
 class Test(unittest.TestCase):
 
@@ -20,10 +22,10 @@ class Test(unittest.TestCase):
         for c in test_data.clusters:
             myclusters.append(cluster_from_tuple(c))
         sizes = [5,4,4,4,3]
-        np.testing.assert_array_equal(sizes, get_cluster_sizes(myclusters)[1], "Cluster sizes are different")
+        numpy.testing.assert_array_equal(sizes, get_cluster_sizes(myclusters)[1], "Cluster sizes are different")
      
     def test_gen_clusters_from_grouping_list(self):
-        #  np.random.random_integers(0,4,20)
+        #  numpy.random.random_integers(0,4,20)
         numclusters = 5
         group_list = [4, 1, 2, 2, 4, 4, 3, 4, 2, 0, 0, 3, 3, 4, 0, 3, 1, 1, 1, 2]
         true_clusters = [Cluster(0,[0,4,5,7,13]),
@@ -96,7 +98,7 @@ class Test(unittest.TestCase):
         obtained = cluster.all_elements
          
         # Are they equal?
-        np.testing.assert_array_equal(elements, obtained)
+        numpy.testing.assert_array_equal(elements, obtained)
          
         # A modification in this list modifies the cluster
         obtained[2] = -1
@@ -119,7 +121,7 @@ class Test(unittest.TestCase):
                                     "elements": "0:46, 49, 51, 53, 57:58, 62:67",
                                     "id": "cluster_0"
         })
-        matrix = CondensedMatrix(list(np.load("data/matrix.npy")))
+        matrix = CondensedMatrix(list(numpy.asfarray(numpy.load(os.path.join(test_data.__path__[0],"matrix.npy")))))
         self.assertEqual(cluster.prototype, cluster.calculate_medoid(matrix))
         
         cluster = Cluster.from_dic({

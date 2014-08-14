@@ -8,10 +8,10 @@ import numpy
 import prody
 
 from pyproct.tools.test.data.amber_short_ca import amber_short_ca_contents
-from pyproct.clustering.metrics.pcaMetrics import PCAMetric
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.clustering import Clustering
 import os
+from pyproct.clustering.evaluation.metrics.pcaMetrics import PCAMetric
 
 class TrajectoryHandlerStub:
     def __init__(self, coords, apc):

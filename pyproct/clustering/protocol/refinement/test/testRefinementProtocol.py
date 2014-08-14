@@ -4,9 +4,9 @@ Created on 17/09/2012
 @author: victor
 """
 import unittest
-from pyproct.protocol.refinement.Refiner import Refiner
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.clustering import Clustering
+from pyproct.clustering.protocol.refinement.Refiner import Refiner
 
 class ClusterStub():
     def __init__(self,elements):

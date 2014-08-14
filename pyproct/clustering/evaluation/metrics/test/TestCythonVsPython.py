@@ -5,14 +5,14 @@ Created on 09/01/2013
 """
 import unittest
 from pyRMSD.condensedMatrix import CondensedMatrix
-from  pyproct.clustering.metrics.cython.normNCut import CythonNCut
-from pyproct.clustering.metrics.cython.boundedCohesion import CythonBoundedCohesionCalculator
-from pyproct.clustering.metrics.cython.meanMinimumDistance import CythonMeanMinimumDistanceCalculator
-from pyproct.clustering.metrics.cython.silhouette import CythonSilhouetteCoefficientCalculator
-from pyproct.clustering.metrics.graphMetrics import NCut
-from pyproct.clustering.metrics.boundedCohesion import BoundedCohesionCalculator
-from pyproct.clustering.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator
-from pyproct.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
+from  pyproct.clustering.evaluation.metrics.cython.normNCut import CythonNCut
+from pyproct.clustering.evaluation.metrics.cython.boundedCohesion import CythonMirrorCohesionCalculator
+from pyproct.clustering.evaluation.metrics.cython.meanMinimumDistance import CythonMeanMinimumDistanceCalculator
+from pyproct.clustering.evaluation.metrics.cython.silhouette import CythonSilhouetteCoefficientCalculator
+from pyproct.clustering.evaluation.metrics.graphMetrics import NCut
+from pyproct.clustering.evaluation.metrics.boundedCohesion import MirrorCohesionCalculator
+from pyproct.clustering.evaluation.metrics.meanMinimumDistance import MeanMinimumDistanceCalculator
+from pyproct.clustering.evaluation.metrics.silhouette import SilhouetteCoefficientCalculator
 from pyproct.clustering.clustering import Clustering
 from pyproct.clustering.cluster import Cluster
 import numpy
@@ -24,11 +24,11 @@ class TestCythonVsPython(unittest.TestCase):
         #metrics with a Cython implementation
         metrics = {
                "NCut":(CythonNCut(),NCut()),
-               "BoundedCohesion":(CythonBoundedCohesionCalculator(),BoundedCohesionCalculator()),
+               "BoundedCohesion":(CythonMirrorCohesionCalculator(),MirrorCohesionCalculator()),
                "MeanMinimumDistance":(CythonMeanMinimumDistanceCalculator(10), MeanMinimumDistanceCalculator(10)),
                "Silhouette":(CythonSilhouetteCoefficientCalculator(),SilhouetteCoefficientCalculator())}
         
-        for i in range(10):
+        for i in range(5):
             print "\n%dth try"%i
             matrix = CondensedMatrix(numpy.random.rand((1000*999)/2))
             clusters = []
@@ -45,7 +45,7 @@ class TestCythonVsPython(unittest.TestCase):
                     # Use of randomness can change results a bit
                     self.assertAlmostEqual(cyresult, result, 2)
                 else:
-                    self.assertEqual(cyresult, result)
+                    self.assertAlmostEqual(cyresult, result, 8)
                 
 
 if __name__ == "__main__":

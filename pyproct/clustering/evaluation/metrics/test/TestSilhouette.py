@@ -6,9 +6,9 @@ Created on 27/01/2014
 import unittest
 
 from pyproct.clustering.clustering import Clustering
-import pyproct.clustering.metrics.test.data.example_clustering_1 as data
-from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
-from pyproct.clustering.metrics.silhouette import SilhouetteCoefficientCalculator
+import pyproct.clustering.evaluation.metrics.test.data.example_clustering_1 as data
+from pyproct.data.proteins.matrix.matrixHandler import MatrixHandler
+from pyproct.clustering.evaluation.metrics.silhouette import SilhouetteCoefficientCalculator
 
 
 class Test(unittest.TestCase):

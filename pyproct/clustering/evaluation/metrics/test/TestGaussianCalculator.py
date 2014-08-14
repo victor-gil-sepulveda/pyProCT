@@ -6,12 +6,12 @@ Created on 13/06/2013
 import unittest
 
 from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.clustering.metrics.test.data import  CH_table1
 from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.clustering import Clustering
-from pyproct.clustering.metrics.gaussianSeparation import GaussianSeparationCalculator
-from pyproct.clustering.metrics.common import update_medoids
 import numpy
+from pyproct.clustering.evaluation.metrics.test.data import CH_table1
+from pyproct.clustering.evaluation.metrics.gaussianSeparation import GaussianSeparationCalculator
+from pyproct.clustering.evaluation.metrics.common import update_medoids
 
 class Test(unittest.TestCase):
 
