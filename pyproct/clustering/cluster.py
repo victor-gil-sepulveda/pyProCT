@@ -61,7 +61,9 @@ class Cluster(object):
 
     def __init__(self, prototype , elements):
         """
-        TODOC
+        Constructor, needs the prototype and the elements of the clustering.
+        TODO: change it by (elements, [prototype]). Prototype must be calculated on demand
+        and use bookkeeping
         """
         self.set_elements(elements)
         self.id = ""

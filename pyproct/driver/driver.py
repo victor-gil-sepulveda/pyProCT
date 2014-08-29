@@ -13,7 +13,7 @@ from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGa
 from pyproct.clustering.clustering import Clustering
 from pyproct.data.proteins.matrix.matrixHandler import MatrixHandler
 from pyproct.clustering.protocol.protocol import ClusteringProtocol
-from pyproct.postprocess.postprocessing import PostprocessingDriver
+from pyproct.postprocess.postprocessingDriver import PostprocessingDriver
 
 class Driver(Observable):
     timer = TimerHandler()

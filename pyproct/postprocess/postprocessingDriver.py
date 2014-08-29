@@ -3,7 +3,6 @@ Created on 16/07/2014
 
 @author: victor
 """
-import sys
 import traceback
 from pyproct.tools.plugins import PluginHandler
 
