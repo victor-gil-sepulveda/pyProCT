@@ -10,20 +10,21 @@ import os.path
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructureLeavingFirst
 from pyproct.driver.parameters import ProtocolParameters
 
-class TrajectoryHandler(Observable):
+class EnsembleLoader(Observable):
 
     def __init__(self, parameters, observer):
         """
         Class creator. It parses the needed files and extracts info and coordinates.
         """
 
-        super(TrajectoryHandler,self).__init__(observer)
+        super(EnsembleLoader, self).__init__(observer)
 
         print "Reading conformations..."
         prody.confProDy(verbosity="none")
 
         self.parameters = parameters
-        matrix_parameters = parameters.get_value("data.matrix.parameters", default_value=ProtocolParameters.empty())
+        matrix_parameters = parameters.get_value("data.matrix.parameters", 
+                                                 default_value=ProtocolParameters.empty())
         parameters["data"]["files"] = self.expand_file_lists(parameters["data"]["files"])
         self.files = parameters["data"]["files"]
         self.pdbs = []

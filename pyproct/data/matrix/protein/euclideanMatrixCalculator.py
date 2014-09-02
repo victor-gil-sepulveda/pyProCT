@@ -7,21 +7,35 @@ import scipy.spatial.distance
 from pyRMSD.RMSDCalculator import RMSDCalculator
 from pyRMSD.condensedMatrix import CondensedMatrix
 
-class EuclideanDistanceMatrixBuilder(object):
-
+class EuclideanMatrixCalculator(object):
+    
+    CALCULATION_METHOD = "distance"
+    
     def __init__(self):
         pass
 
     @classmethod
-    def build(cls, trajectory_handler, matrix_creation_parameters):
+    def calculate(cls, trajectory_handler, matrix_parameters):
         """
         Will generate the CondensedMatrix filled with the all vs all geometric center distances of the "body_selection"
         coordinates (which will usually be a ligand).
 
         @param trajectory_handler: The handler containing selection strings, pdb info and coordsets.
-        @param matrix_creation_parameters: The creation parameters (from the initial script).
+        @param matrix_parameters: The creation parameters (from the initial script).
+        
+         - "distance": Euclidean distance of the geometrical center of one body.
+    
+                "parameters":{
+                    "fit_selection":  String,
+                    "body_selection": String,
+                }
+    
+                "fit_selection": The Prody selection string used to describe the atoms to be superposed.
+                "body_selection": Another Prody selection string that describes the element that will be used
+                to get the euclidean distances.
+        
 
-        @return: The created distances matrix.
+        @return: The created distance matrix.
         """
 
         # Build calculator with fitting coordinate sets ...
