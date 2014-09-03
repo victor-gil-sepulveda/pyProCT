@@ -3,76 +3,9 @@ Created on 2/9/2014
 
 @author: victor
 """
-import glob
-import os
-
-class DataSource(object):
-    
-    def __init__(self, source):
-        if isinstance(source, basestring):
-            self.source = {"source": source}
-        else:
-            self.source = source
-    
-    def __cmp__(self, other):
-        if isinstance(other, basestring):
-            cmp_string = other
-        else:
-            cmp_string = other.source["source"]
-        
-        if self.source > cmp_string:
-            return 1
-        elif self.source < cmp_string:
-            return -1
-        else:
-            return 0
-
-class ElementRange(object):
-    
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
-    
-    def inflate(self):
-        return range(self.start, self.end+1)
-    
-    def __contains__(self, item):
-        return item>=self.start and item<=self.end
-    
-    def __iter__(self):
-        for i in range(self.start, self.end+1):
-            yield i
-
-class SourceIterator(object):
-    """
-    Performs source expansion and yields data sources.
-    """
-    def __init__(self, source_list):
-        self.source_list = []
-        
-        for source in source_list:
-            if isinstance(source, basestring):
-                self.source_list.append(DataSource(source))
-            else:
-                tmp_sources = glob.glob(source)
-                for tmp_source in tmp_sources:
-                    _, ext = os.path.splitext(tmp_source)
-                    if ext == ".lst": #pyProCT file list
-                        # load the dict
-                        # TODO
-                        # Then extend
-                        self.source_list.extend([DataSource(list_source) for list_source in list_sources])
-                    else:
-                        self.source_list.append(DataSource(tmp_source))
-                        
-    def next(self):
-        if len(self.source_list) == 0:
-            raise StopIteration
-        else:
-            return self.source_list.pop(0)
-        
-    def __iter__(self):
-        return self
+from pyproct.data.handler.dataSource import DataSource
+from pyproct.data.handler.sourceGenerator import SourceGenerator
+from pyproct.tools.plugins import PluginHandler
 
 class DataHandler(object):
     
@@ -80,16 +13,19 @@ class DataHandler(object):
         """
         """
         self.elements = {}
-        self.file_type = params["data"]["type"]
+        self.data_type = params["data"]["type"]
+        self.sources = SourceGenerator(params["data"]["files"])
+        
+        loader_class = self.get_loader(self.file_type)
+        loader = loader_class(params["data"])
         for source in self.sources:
-            element_range = self.loader.load(source)
+            element_range = loader.load(source)
             self.add_elements_with_same_source(element_range, source)
-    
-    
-    def add_elements(self, elements, source_str):
+        self.data = loader.close()
+        
+    def add_elements(self, elements, source):
         """
         """
-        source = DataSource(source_str)
         if not source in self.elements:
             self.elements[source] = elements
         else:
@@ -108,5 +44,22 @@ class DataHandler(object):
             if element in self.elements[source]:
                 return source
         return None
+    
+    def get_loader(self, data_type):
+        # Get all available loaders
+        available_loaders = PluginHandler.get_classes('pyproct.data.handler', 
+                                                          selection_keyword = "DataLoader", 
+                                                          skip_list = ["test"],
+                                                          plugin_name = "data_loader")
+        
+        loaders = filter(lambda x: x.LOADER_TYPE == data_type, available_loaders)
+        
+        if len(loaders) == 0:
+            print "[ERROR][DataHandler::get_loader] There is not a registered data loader for %s data type."%(data_type)
+            exit()
+        else:
+            return loaders[0]
+        
+        
         
         

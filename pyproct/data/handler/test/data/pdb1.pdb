@@ -1,0 +1,8 @@
+MODEL        1
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  1.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  1.00            
+ENDMDL
+MODEL        2
+ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  2.00            
+ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00            
+ENDMDL

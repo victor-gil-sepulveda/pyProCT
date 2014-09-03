@@ -14,6 +14,20 @@ class MatrixCalculator(object):
     
     @classmethod
     def calculate(cls, data_handler, matrix_params):
+        
+        calculator_class = cls.get_calculator(matrix_params)
+        
+        try:
+            distance_matrix = calculator_class.calculate(data_handler, matrix_params)
+        except Exception, e:
+            print "[ERROR][Driver::postprocess] Impossible to matrix calculation for method: %s"%(calculator.CALCULATION_METHOD)
+            print "Message: %s"%str(e)
+            traceback.print_exc()
+        
+        return MatrixHandler(distance_matrix, matrix_params)
+    
+    @classmethod
+    def get_calculator(cls, matrix_params):
         # Get all available calculators
         available_calculators = PluginHandler.get_classes('pyproct.data.matrix', 
                                                           selection_keyword = "MatrixCalculator", 
@@ -21,21 +35,11 @@ class MatrixCalculator(object):
                                                           plugin_name = "matrix")
         
         # Choose the calculator we need
-        calculator_class = None
         calculation_method = matrix_params["method"]
-        for calculator in available_calculators:
-            if calculator.CALCULATION_METHOD == calculation_method:
-                calculator_class = calculator  
+        calculator_classes = filter(lambda x: x.CALCULATION_METHOD == calculation_method, available_calculators)
         
-        if calculator_class is None:
+        if len(calculator_classes) == 0:
             print "[ERROR][MatrixCalculator::calculate] %s is not a registered matrix calculation method."%(calculation_method)
             exit()
-            
-        try:
-            distance_matrix = calculator_class.calculate(data_handler, matrix_params)
-        except Exception, e:
-            print "[ERROR][Driver::postprocess] Impossible to perform '%s' postprocessing action."%(calculator.CALCULATION_METHOD)
-            print "Message: %s"%str(e)
-            traceback.print_exc()
-        
-        return MatrixHandler(distance_matrix, matrix_params)
+        else:
+            return calculator_classes[0] 
