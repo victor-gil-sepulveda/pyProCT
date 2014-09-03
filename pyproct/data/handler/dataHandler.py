@@ -25,7 +25,6 @@ class DataHandler(object):
         # Retrieve the data object
         self.data = loader.close()
     
-    
     def add_elements(self, elements, source):
         """
         """
@@ -34,10 +33,10 @@ class DataHandler(object):
         else:
             self.elements[source].extend(elements)
         
-    def get_elements(self, source_str):
+    def get_elements_with_source(self, source_str):
         """
         """
-        return self.elements[DataSource(source_str)].inflate()
+        return [i for i in self.elements[DataSource(source_str)]]
         
     def get_source_of_element(self, element):
         """
@@ -49,6 +48,9 @@ class DataHandler(object):
         return None
     
     def get_loader(self, data_type):
+        """
+        Chooses the best loader for the type of data we have.
+        """
         # Get all available loaders
         available_loaders = PluginHandler.get_classes('pyproct.data.handler', 
                                                           selection_keyword = "DataLoader", 
