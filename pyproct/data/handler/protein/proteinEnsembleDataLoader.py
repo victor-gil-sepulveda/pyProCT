@@ -8,9 +8,11 @@ from pyproct.driver.observer.observable import Observable
 import prody
 import os.path
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure
+from pyproct.data.handler.protein.proteinEnsembleData import ProteinEnsembleData
 from pyproct.tools.commonTools import get_parameter_value
+from pyproct.data.handler.elementRange import ElementRange
 
-class ProteinStructureEnsembleDataLoader(Observable):
+class ProteinEnsembleDataLoader(Observable):
     LOADER_TYPE = "protein::ensemble"
     
     def __init__(self, data_parameters, observer):
@@ -18,17 +20,26 @@ class ProteinStructureEnsembleDataLoader(Observable):
         """
         self.structures = []
         self.structure_ensemble = None
-        self.handle_selection_parameters(get_parameter_value("matrix", {"fit_selection":"all"}))
+        self.number_of_elements = 0
 
     def load(self, data_source):
         """
         Adds a new ensemble.
+        
+        :param data_source: One DataSource object containing at least the path of the file to load.
+        
+        :return: An ElementRange object with the element ids of the loaded structures. A 1 to 1 map 
+        is established between the element id and the real datum (in this case conformation).
         """
         self.structures.append(self.load_structure_ensemble(data_source))
-    
+        current_number_of_elements = self.number_of_elements + data_source.get_info("number_of_conformations")
+        e_range = ElementRange(self.number_of_elements, current_number_of_elements-1) 
+        self.number_of_elements += current_number_of_elements
+        return e_range
+        
     def close(self):
         """
-        Prepares the merged structure.
+        Prepares the merged structure and returns the ensemble data object
         """
         if len(self.structures) == 0:
             common.print_and_flush("[ERROR ProteinStructureEnsembleData:close] No loaded structures. Exiting...\n")
@@ -40,6 +51,8 @@ class ProteinStructureEnsembleDataLoader(Observable):
         del self.structures
         
         print "%d conformations of %d atoms were read."% (self.structure_ensemble.numCoordsets(),self.structure_ensemble.numAtoms())
+        
+        return ProteinEnsembleData(self.structure_ensemble, get_parameter_value("matrix", {"fit_selection":"all"}))
 
     def load_structure_ensemble(self, source):
         """
@@ -99,8 +112,8 @@ class ProteinStructureEnsembleDataLoader(Observable):
                 common.print_and_flush("[ERROR ProteinStructureEnsembleData::get_structure] Improductive base selection (%s). Exiting...\n"%source.get_info("base_selection"))
                 exit()
 
-        source.add_info("number of conformations", structure.numCoordsets())
-        source.add_info(["number of atoms"], structure.numAtoms())
+        source.add_info("number_of_conformations", structure.numCoordsets())
+        source.add_info(["number_of_atoms"], structure.numAtoms())
         
         return  structure
 
@@ -119,41 +132,4 @@ class ProteinStructureEnsembleDataLoader(Observable):
                     merged_ensemble.addCoordset(coordset)
         return merged_ensemble
 
-    def getSelection(self, selection_string):
-        """
-        """
-        return self.structure_ensemble.select(selection_string).copy().getCoordsets()
-
-    def getFittingCoordinates(self):
-        if self.fitting_selection is not None:
-            return self.getSelection(self.fitting_selection)
-        else:
-            return None
-
-    def getCalculationCoordinates(self):
-        if self.calculation_selection is not None:
-            return self.structure_ensemble(self.calculation_selection)
-        else:
-            return None
     
-    def handle_selection_parameters(self, matrix_parameters):
-        """
-        Helper funtion to handle selection parameters (different parameter names can have almost the same
-        functionality and are treated internally in the same way).
-
-        @param matrix_parameters: The parameters chunk that controls matrix selections.
-        """
-        # Store the main selections we can do
-        self.fitting_selection = self.calculation_selection = None
-
-        if "fit_selection" in matrix_parameters:
-            self.fitting_selection = matrix_parameters["fit_selection"]
-
-        if "dist_fit_selection" in matrix_parameters:
-            self.fitting_selection = matrix_parameters["dist_fit_selection"]
-
-        if "calc_selection" in matrix_parameters:
-            self.calculation_selection = matrix_parameters["calc_selection"]
-
-        if "body_selection" in matrix_parameters:
-            self.calculation_selection = matrix_parameters["body_selection"]

@@ -21,8 +21,11 @@ class DataHandler(object):
         for source in self.sources:
             element_range = loader.load(source)
             self.add_elements_with_same_source(element_range, source)
-        self.data = loader.close()
         
+        # Retrieve the data object
+        self.data = loader.close()
+    
+    
     def add_elements(self, elements, source):
         """
         """
