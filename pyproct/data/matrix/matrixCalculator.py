@@ -18,7 +18,7 @@ class MatrixCalculator(object):
         calculator_class = cls.get_calculator(matrix_params)
         
         try:
-            distance_matrix = calculator_class.calculate(data_handler, matrix_params)
+            distance_matrix = calculator_class.calculate(data_handler, matrix_params["parameters"])
         except Exception, e:
             print "[ERROR][Driver::postprocess] Impossible to perform matrix calculation for method: %s"%(calculator_class.CALCULATION_METHOD)
             print "Message: %s"%str(e)

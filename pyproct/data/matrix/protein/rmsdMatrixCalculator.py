@@ -18,7 +18,7 @@ class RMSDMatrixCalculator(object):
         pass
 
     @classmethod
-    def calculate(cls, trajectory_handler, matrix_params):
+    def calculate(cls, data_handler, matrix_params):
         """
         :param parameters: One dictionary entry with at least the keys "method" and
         "parameters":
@@ -68,20 +68,19 @@ class RMSDMatrixCalculator(object):
         @return: The created matrix.
         """
         
-        coords_type = matrix_params.get_value("parameters.type", default_value="COORDINATES")
+        coords_type = matrix_params.get_value("type", default_value="COORDINATES")
 
         if coords_type == "COORDINATES":
-            mapping = matrix_params.get_value("parameters.chain_map", default_value=False)
+            mapping = matrix_params.get_value("chain_map", default_value=False)
 
             if not mapping:
-                return  RMSDMatrixBuilder.build(trajectory_handler, matrix_params["parameters"])
+                return  RMSDMatrixBuilder.build(trajectory_handler, matrix_params)
             else:
                 print "Performing Chain Mapping. This may take some time ..."
-                return ChainMappingBuilder.calcRMSDMatrix(trajectory_handler.getMergedStructure(),
-                                matrix_params.get_value("parameters.calculator_type", default_value="QCP_SERIAL_CALCULATOR"),
-                                matrix_params.get_value("parameters.fit_selection", default_value="name CA"))
+                return ChainMappingBuilder.calcRMSDMatrix(data_handler.get_data(),
+                                matrix_params.get_value("calculator_type", default_value="QCP_SERIAL_CALCULATOR"),
+                                matrix_params.get_value("fit_selection", default_value="name CA"))
 
         elif coords_type == "DIHEDRALS":
             return DihedralRMSDBuilder.build(trajectory_handler.getMergedStructure())
 
-        return self.distance_matrix

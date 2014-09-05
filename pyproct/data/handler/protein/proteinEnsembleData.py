@@ -13,6 +13,7 @@ class ProteinEnsembleData(Data):
     """
     
     def __init__(self,  structure_ensemble, selection_params):
+        # Add number of elements to data instead of handler
         self.structure_ensemble = structure_ensemble
         self.handle_selection_parameters(selection_params)
     

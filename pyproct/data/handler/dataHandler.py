@@ -34,6 +34,9 @@ class DataHandler(object):
         # Retrieve the data object
         self.data = self.loader.close()
     
+    def get_data(self):
+        return self.data
+    
     def add_elements(self, elements, source):
         """
         """

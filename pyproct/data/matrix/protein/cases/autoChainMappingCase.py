@@ -83,7 +83,7 @@ class ChainMappingBuilder:
         """
 
         """
-        chains = pdb_structure.select(in_chain_selection).copy().getHierView()
+        chains = pdb_structure.getSelection(in_chain_selection).getHierView()
         number_of_models = pdb_structure.numCoordsets()
         structure_chains = []
         for i in range(number_of_models):
@@ -111,7 +111,7 @@ class ChainMappingBuilder:
         than without ordering. One example is documented in ...
         To diminish changes, all keys are sorted before using them (keys are arbitrary sorted in dics.).
         """
-        chains = structure.select(selection).copy().getHierView()
+        chains = structure.getSelection(selection).copy().getHierView()
         coordsets = None
         for group_len in sorted(len_groups.keys()):
             for chid in sorted(len_groups[group_len]):
