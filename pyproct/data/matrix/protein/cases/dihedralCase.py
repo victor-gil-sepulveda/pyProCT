@@ -11,7 +11,7 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 def rmsd(a,b):
     return math.sqrt(((a-b)**2).sum()/len(a))
 
-class DihedralRMSDMatrixCalculator(object):
+class DihedralRMSDBuilder(object):
     """
     classdocs
     """

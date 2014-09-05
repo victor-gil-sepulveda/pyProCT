@@ -3,11 +3,11 @@ Created on 1/9/2014
 
 @author: victor
 """
-from pyproct.data.matrix.protein.cases.dihedralCase import DihedralRMSDMatrixCalculator
-from pyproct.data.matrix.protein.cases.autoChainMappingCase import ChainMappingRMSDMatrixCalculator
 from pyproct.data.matrix.protein.cases.rmsdCase import RMSDMatrixBuilder
+from pyproct.data.matrix.protein.cases.autoChainMappingCase import ChainMappingBuilder
+from pyproct.data.matrix.protein.cases.dihedralCase import DihedralRMSDBuilder
 
-class matrixCalculator(object):
+class RMSDMatrixCalculator(object):
     """
     Handles the rmsd for trajectories cases 
     """
@@ -17,7 +17,8 @@ class matrixCalculator(object):
     def __init__(self, params):
         pass
 
-    def calculate(self, trajectory_handler, matrix_params):
+    @classmethod
+    def calculate(cls, trajectory_handler, matrix_params):
         """
         :param parameters: One dictionary entry with at least the keys "method" and
         "parameters":
@@ -67,20 +68,20 @@ class matrixCalculator(object):
         @return: The created matrix.
         """
         
-        coords_type = self.matrix_parameters.get_value("parameters.type", default_value="COORDINATES")
+        coords_type = matrix_params.get_value("parameters.type", default_value="COORDINATES")
 
         if coords_type == "COORDINATES":
-            mapping = self.matrix_parameters.get_value("parameters.chain_map", default_value=False)
+            mapping = matrix_params.get_value("parameters.chain_map", default_value=False)
 
             if not mapping:
-                return  RMSDMatrixBuilder.build(trajectory_handler, self.matrix_parameters["parameters"])
+                return  RMSDMatrixBuilder.build(trajectory_handler, matrix_params["parameters"])
             else:
                 print "Performing Chain Mapping. This may take some time ..."
-                return ChainMappingRMSDMatrixCalculator.calcRMSDMatrix(trajectory_handler.getMergedStructure(),
-                                self.matrix_parameters.get_value("parameters.calculator_type", default_value="QCP_SERIAL_CALCULATOR"),
-                                self.matrix_parameters.get_value("parameters.fit_selection", default_value="name CA"))
+                return ChainMappingBuilder.calcRMSDMatrix(trajectory_handler.getMergedStructure(),
+                                matrix_params.get_value("parameters.calculator_type", default_value="QCP_SERIAL_CALCULATOR"),
+                                matrix_params.get_value("parameters.fit_selection", default_value="name CA"))
 
         elif coords_type == "DIHEDRALS":
-            return DihedralRMSDMatrixCalculator.build(trajectory_handler.getMergedStructure())
+            return DihedralRMSDBuilder.build(trajectory_handler.getMergedStructure())
 
         return self.distance_matrix

@@ -11,6 +11,8 @@ class DataLoader(object):
     Almost an interface for the data loader. A data loader must implement at least
     the close and load_data_from_source methods.
     """
+    LOADER_TYPE = "none"
+    
     def __init__(self, data_params):
         self.loaded_data = []
         self.number_of_elements = 0

@@ -20,9 +20,10 @@ class MatrixCalculator(object):
         try:
             distance_matrix = calculator_class.calculate(data_handler, matrix_params)
         except Exception, e:
-            print "[ERROR][Driver::postprocess] Impossible to matrix calculation for method: %s"%(calculator.CALCULATION_METHOD)
+            print "[ERROR][Driver::postprocess] Impossible to perform matrix calculation for method: %s"%(calculator_class.CALCULATION_METHOD)
             print "Message: %s"%str(e)
             traceback.print_exc()
+            exit()
         
         return MatrixHandler(distance_matrix, matrix_params)
     
@@ -31,7 +32,7 @@ class MatrixCalculator(object):
         # Get all available calculators
         available_calculators = PluginHandler.get_classes('pyproct.data.matrix', 
                                                           selection_keyword = "MatrixCalculator", 
-                                                          skip_list = ["test", "cases"],
+                                                          skip_list = ["test", "cases", "matrixCalculator"],
                                                           plugin_name = "matrix")
         
         # Choose the calculator we need

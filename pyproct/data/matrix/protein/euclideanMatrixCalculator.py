@@ -9,7 +9,7 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 
 class EuclideanMatrixCalculator(object):
     
-    CALCULATION_METHOD = "distance"
+    CALCULATION_METHOD = "euclidean_distance::ensemble"
     
     def __init__(self):
         pass

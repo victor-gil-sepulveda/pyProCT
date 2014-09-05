@@ -7,13 +7,12 @@ import os
 import pyproct.tools.plotTools as plotTools
 from pyproct.driver.time.timerHandler import TimerHandler, timed_method
 from pyproct.driver.workspace.workspaceHandler import WorkspaceHandler
-from pyproct.data.proteins.trajectoryHandler import TrajectoryHandler
 from pyproct.driver.observer.observable import Observable
 from pyproct.driver.results.clusteringResultsGatherer import ClusteringResultsGatherer
 from pyproct.clustering.clustering import Clustering
-from pyproct.data.proteins.matrix.matrixHandler import MatrixHandler
 from pyproct.clustering.protocol.protocol import ClusteringProtocol
 from pyproct.postprocess.postprocessingDriver import PostprocessingDriver
+from pyproct.data.dataDriver import DataDriver
 
 class Driver(Observable):
     timer = TimerHandler()
@@ -31,7 +30,7 @@ class Driver(Observable):
             self.save_parameters_file(parameters)
 
             if "data" in parameters:
-                self.data_section(parameters)
+                self.data_handler, self.matrix_handler = DataDriver(parameters["data"])
 
                 if "clustering" in parameters:
                     clustering_results = self.clustering_section(parameters)
@@ -85,6 +84,7 @@ class Driver(Observable):
                                     "type":"image"})
 
     def data_section(self, parameters):
+        
         matrix_parameters = parameters["data"]["matrix"]
 
         self.load_trajectory(parameters)

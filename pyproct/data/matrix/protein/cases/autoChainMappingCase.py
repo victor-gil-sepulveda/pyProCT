@@ -29,7 +29,7 @@ def combopermutations( elements_list, prefix = []):
             for perm2 in combopermutations(elements_list[1:], prefix+list(perm)):
                 yield  list(perm2)
 
-class ChainMappingRMSDMatrixCalculator:
+class ChainMappingBuilder:
     """
     Some structures can be formed of repeated units that can be arbitrarily place. This class tries to reorder this units (chains)
     in order to calculate the minimum possible RMSD.
