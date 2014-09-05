@@ -15,7 +15,7 @@ from pyproct.data.handler.elementRange import ElementRange
 class ProteinEnsembleDataLoader(Observable):
     LOADER_TYPE = "protein::ensemble"
     
-    def __init__(self, data_parameters, observer):
+    def __init__(self):
         """
         """
         self.structures = []
@@ -101,7 +101,7 @@ class ProteinEnsembleDataLoader(Observable):
                 structure.addCoordset(coordset)
             
         elif ext == ".pdb":
-            structure = prody.parsePDB(path)
+            structure = prody.parsePDB(source.get_path())
         else:
             print "[ERROR][ProteinStructureEnsembleData::get_structure] pyProCT does not know hot to load the file %s (unknown extension '%s')"%(path,ext)
             exit()
@@ -113,7 +113,7 @@ class ProteinEnsembleDataLoader(Observable):
                 exit()
 
         source.add_info("number_of_conformations", structure.numCoordsets())
-        source.add_info(["number_of_atoms"], structure.numAtoms())
+        source.add_info("number_of_atoms", structure.numAtoms())
         
         return  structure
 

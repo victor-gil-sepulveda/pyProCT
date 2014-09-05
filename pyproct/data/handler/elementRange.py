@@ -9,7 +9,10 @@ class ElementRange(object):
     def __init__(self, start, end):
         self.start = start
         self.end = end
-    
+        
+    def __len__(self):
+        return self.end - self.start + 1     
+        
     def __contains__(self, item):
         return item>=self.start and item<=self.end
     

@@ -12,6 +12,7 @@ class Test(unittest.TestCase):
 
 
     def test_save_representatives(self):
+        self.fail("TODO: Update Test")
         representatives = [1,5]
         pdbs = ["data/pdb1.pdb", "data/pdb2.pdb", "data/pdb3.pdb"]
         file_path = save_representatives(representatives,
@@ -31,6 +32,7 @@ class Test(unittest.TestCase):
         self.assertEqual("".join(open(file_path,"r").readlines()), merged_1_5)
 
     def test_extract_prototypes(self):
+        self.fail("TODO: Update Test")
         prototypes =  [2,26,48,56,100]
         open("data/prototypes.pdb","w").write(proto_pdb)
         file_path = save_representatives([prototypes[3]],

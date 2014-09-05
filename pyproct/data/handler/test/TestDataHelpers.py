@@ -44,6 +44,10 @@ class TestDataHelpers(unittest.TestCase):
             c_list.append(i)
         self.assertEqual([4, 5, 6, 7, 8, 9], c_list)
     
+    def test_element_range_len(self):
+        erange = ElementRange(4,9)
+        self.assertEqual(6, len(erange))
+        
     def test_source_generator(self):
         """
         TODO: test inflating independently (string, file list, dict) and recursive inflating
@@ -81,14 +85,25 @@ class TestDataHelpers(unittest.TestCase):
                                     'four.txt', 
                                     'six.txt', 
                                     'seven.txt', 
-                                    {'source': '/home/victor/git/pyProClust/pyproct/data/handler/test/data/pdb3.pdb', 'selection': 'all'}, 
-                                    {'source': '/home/victor/git/pyProClust/pyproct/data/handler/test/data/pdb2.pdb', 'selection': 'all'}, 
-                                    {'source': '/home/victor/git/pyProClust/pyproct/data/handler/test/data/pdb1.pdb', 'selection': 'all'}]
+                                    {'source': 'pdb3.pdb', 'selection': 'all'}, 
+                                    {'source': 'pdb2.pdb', 'selection': 'all'}, 
+                                    {'source': 'pdb1.pdb', 'selection': 'all'}]
 
         
         sources =  SourceGeneratorMock.inflate_source_list(sources_list)
-        self.assertEqual(expected_ordered_sources, sources)
-
+        def normalize_sources(sources):
+            norm_sources = []
+            for s in norm_sources:
+                try:
+                    s = s['source']
+                except Exception:
+                    s = s
+                norm_sources.append(os.path.basename(s))
+            return norm_sources
+            
+        self.assertItemsEqual(normalize_sources(expected_ordered_sources), 
+                              normalize_sources(sources))
+                
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']
     unittest.main()

@@ -8,7 +8,9 @@ import unittest
 
 class TestTrajectoryHandler(unittest.TestCase):
 
-
+    
+    def 
+    
     def test_get_joined_pdbs(self):
         self.fail("TODO")
 
