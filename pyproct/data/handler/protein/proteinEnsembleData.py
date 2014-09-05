@@ -3,21 +3,41 @@ Created on Sep 3, 2014
 
 @author: victor
 """
+from pyproct.data.handler.data import Data
+from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure
 
-class ProteinEnsembleData(object):
+class ProteinEnsembleData(Data):
     """
-    Holds a protein ensemble and helps to handle it (selections etc...)
+    Holds a protein ensemble with ALL conformations and helps to handle it (selections etc...).
+    TODO: Methods to lowecase.
     """
     
     def __init__(self,  structure_ensemble, selection_params):
         self.structure_ensemble = structure_ensemble
         self.handle_selection_parameters(selection_params)
     
+    def get_element(self, element_id):
+        """
+        We must override this guy. In this case the behaviour is to obtain a 
+        full Prody structure.
+        """
+        element_coordinates = self.structure_ensemble.getCoordsets()[element_id]
+        structure = self.structure_ensemble.copy()
+        removeAllCoordsetsFromStructure(structure)
+        structure.addCoordset(element_coordinates)
+        return structure
+    
     def getSelection(self, selection_string):
         """
-        Returns a Prody modifiable selection.
+        Returns a Prody modifiable selection (is a copy).
         """
         return self.structure_ensemble.select(selection_string).copy()
+    
+    def getCoordinates(self):
+        """
+        Returns all the coordinates of the ensemble.
+        """
+        return self.getSelection("all").getCoordsets()
     
     def getSelectionCoordinates(self, selection_string):
         """

@@ -6,24 +6,33 @@ Created on 2/9/2014
 from pyproct.data.handler.dataSource import DataSource
 from pyproct.data.handler.sourceGenerator import SourceGenerator
 from pyproct.tools.plugins import PluginHandler
+from pyproct.data.handler.elementRange import ElementRange
 
 class DataHandler(object):
-    
-    def __init__(self, params):
+    """
+    Loads the data. Handles element ids and keeps a mapping with loaded datum. 
+    Element ids are always in the range [0, number_of_datum]. The id for an element
+    depends on the file load ordering (the order in the "file" array in the parameters
+    and the order inside a file. 
+    """
+    def __init__(self, params, source_generator_class = SourceGenerator):
         """
         """
         self.elements = {}
-        self.data_type = params["data"]["type"]
-        self.sources = SourceGenerator(params["data"]["files"])
+        self.data_type = params["type"]
+        self.sources = source_generator_class(params["files"]).source_list
+        self.number_of_loaded_elements = 0
         
-        loader_class = self.get_loader(self.file_type)
-        loader = loader_class(params["data"])
+        loader_class = self.get_loader(self.data_type)
+        self.loader = loader_class(params)
+
         for source in self.sources:
-            element_range = loader.load(source)
-            self.add_elements_with_same_source(element_range, source)
+            e_range = self.loader.load(source)
+            self.number_of_loaded_elements += len(e_range)
+            self.add_elements(e_range, source)
         
         # Retrieve the data object
-        self.data = loader.close()
+        self.data = self.loader.close()
     
     def add_elements(self, elements, source):
         """
@@ -37,6 +46,9 @@ class DataHandler(object):
         """
         """
         return [i for i in self.elements[DataSource(source_str)]]
+    
+    def get_all_elements(self):
+        return ElementRange(0, self.number_of_loaded_elements-1)
         
     def get_source_of_element(self, element):
         """

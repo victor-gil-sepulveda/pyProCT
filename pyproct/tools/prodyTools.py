@@ -11,7 +11,7 @@ def removeAllCoordsetsFromStructure(structure):
     """
     """
     num_conformations = structure.numCoordsets()
-    for i in range(num_conformations):
+    for _ in range(num_conformations):
         structure.delCoordset(0)
 
 

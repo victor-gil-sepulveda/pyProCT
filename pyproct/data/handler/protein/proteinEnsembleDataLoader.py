@@ -4,57 +4,40 @@ Created on 19/09/2012
 @author: victor
 """
 import pyproct.tools.commonTools as common
-from pyproct.driver.observer.observable import Observable
 import prody
 import os.path
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure
 from pyproct.data.handler.protein.proteinEnsembleData import ProteinEnsembleData
-from pyproct.tools.commonTools import get_parameter_value
 from pyproct.data.handler.elementRange import ElementRange
+from pyproct.data.handler.dataLoader import DataLoader
 
-class ProteinEnsembleDataLoader(Observable):
+class ProteinEnsembleDataLoader(DataLoader):
+    """
+    A loader for pdb and dcd ensemble files. As a DataLoader, it must implement
+    its own load and close methods 
+    """
+    
     LOADER_TYPE = "protein::ensemble"
     
-    def __init__(self):
-        """
-        """
-        self.structures = []
-        self.structure_ensemble = None
-        self.number_of_elements = 0
-
-    def load(self, data_source):
-        """
-        Adds a new ensemble.
-        
-        :param data_source: One DataSource object containing at least the path of the file to load.
-        
-        :return: An ElementRange object with the element ids of the loaded structures. A 1 to 1 map 
-        is established between the element id and the real datum (in this case conformation).
-        """
-        self.structures.append(self.load_structure_ensemble(data_source))
-        current_number_of_elements = self.number_of_elements + data_source.get_info("number_of_conformations")
-        e_range = ElementRange(self.number_of_elements, current_number_of_elements-1) 
-        self.number_of_elements += current_number_of_elements
-        return e_range
-        
     def close(self):
         """
         Prepares the merged structure and returns the ensemble data object
         """
-        if len(self.structures) == 0:
-            common.print_and_flush("[ERROR ProteinStructureEnsembleData:close] No loaded structures. Exiting...\n")
-            exit()
-
-        self.structure_ensemble = self.generate_merged_structure_ensemble(self.structures) 
+        super(ProteinEnsembleDataLoader, self).close()
+        
+        structure_ensemble = self.generate_merged_structure_ensemble(self.loaded_data) 
         
         # We free some memory
-        del self.structures
+        del self.loaded_data
         
-        print "%d conformations of %d atoms were read."% (self.structure_ensemble.numCoordsets(),self.structure_ensemble.numAtoms())
+        print "%d conformations of %d atoms were read."% (structure_ensemble.numCoordsets(),
+                                                          structure_ensemble.numAtoms())
         
-        return ProteinEnsembleData(self.structure_ensemble, get_parameter_value("matrix", {"fit_selection":"all"}))
+        return ProteinEnsembleData(structure_ensemble, 
+                                   self.data_params.get_value("matrix", 
+                                                       {"fit_selection": "all"}))
 
-    def load_structure_ensemble(self, source):
+    def load_data_from_source(self, source):
         """
         Loads a structure file (pdb or dcd) and updates source info.
 
@@ -115,7 +98,7 @@ class ProteinEnsembleDataLoader(Observable):
         source.add_info("number_of_conformations", structure.numCoordsets())
         source.add_info("number_of_atoms", structure.numAtoms())
         
-        return  structure
+        return  structure, structure.numCoordsets()
 
     def generate_merged_structure_ensemble(self, structures):
         """
