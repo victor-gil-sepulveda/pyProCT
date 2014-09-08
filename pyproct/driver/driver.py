@@ -36,7 +36,7 @@ class Driver(Observable):
 
                 if "clustering" in parameters:
                     clustering_results = self.clustering_section(parameters)
-                    #self.postprocess(parameters, clustering_results)
+                    self.postprocess(parameters, clustering_results)
                     self.save_results(clustering_results)
                     self.show_summary(parameters, clustering_results)
                     return self.get_best_clustering(clustering_results)
@@ -110,9 +110,9 @@ class Driver(Observable):
         best_clustering = self.get_best_clustering(clustering_results)["clustering"]
         PostprocessingDriver().run(best_clustering,
                                    parameters["postprocess"],
-                                   self.trajectoryHandler,
+                                   self.data_handler,
                                    self.workspaceHandler,
-                                   self.matrixHandler,
+                                   self.matrix_handler,
                                    self.generatedFiles)
 
     def save_results(self, clustering_results):

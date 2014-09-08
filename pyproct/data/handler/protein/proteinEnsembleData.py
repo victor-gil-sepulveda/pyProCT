@@ -29,6 +29,9 @@ class ProteinEnsembleData(Data):
         structure.addCoordset(element_coordinates)
         return structure
     
+    def get_structure_ensemble(self):
+        return self.structure_ensemble
+    
     def get_num_elements(self):
         return self.structure_ensemble.numCoordsets()
     

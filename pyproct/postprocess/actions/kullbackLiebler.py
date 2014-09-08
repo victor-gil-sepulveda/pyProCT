@@ -14,7 +14,7 @@ class KullbackLieblerPostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
         if KullbackLieblerPostAction.KEYWORD in postprocessing_parameters:
             pass
 #             klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)

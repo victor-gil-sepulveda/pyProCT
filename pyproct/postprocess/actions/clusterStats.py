@@ -13,7 +13,7 @@ class ClusterStatsPostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
         stats_file_path = calculate_per_cluster_stats(clustering,
                                                       matrixHandler.distance_matrix,
                                                       postprocessing_parameters[ClusterStatsPostAction.KEYWORD],

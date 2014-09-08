@@ -15,9 +15,9 @@ class RmsfPostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
         
-        rmsf_per_cluster = calculate_RMSF(clustering, trajectoryHandler, workspaceHandler, matrixHandler)
+        rmsf_per_cluster = calculate_RMSF(clustering, data_handler, workspaceHandler, matrixHandler)
 
         rmsf_file_path = os.path.join(workspaceHandler["results"], "CA_displacements.json")
         open(rmsf_file_path,"w").write(json.dumps(rmsf_per_cluster,
@@ -33,8 +33,8 @@ class RmsfPostAction(object):
 
        
 
-def calculate_RMSF(best_clustering, trajectoryHandler, workspaceHandler, matrixHandler):
-    ca_pdb_coordsets = numpy.copy(trajectoryHandler.getMergedStructure().select("name CA").getCoordsets())
+def calculate_RMSF(best_clustering, data_handler, workspaceHandler, matrixHandler):
+    ca_pdb_coordsets = data_handler.get_data().getSelectionCoordinates("name CA")
 
     global_cluster = Cluster(None, best_clustering.get_all_clustered_elements())
     global_cluster.id = "global"

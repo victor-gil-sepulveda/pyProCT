@@ -14,12 +14,12 @@ class RepresentativesPostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
         save_representatives_wrapper(clustering, postprocessing_parameters[RepresentativesPostAction.KEYWORD],
-                             trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles)
+                             data_handler, workspaceHandler, matrixHandler, generatedFiles)
 
 
-def save_representatives_wrapper(clustering, my_params, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+def save_representatives_wrapper(clustering, my_params, data_handler, workspaceHandler, matrixHandler, generatedFiles):
 
     #Parameters
     keep_remarks = my_params.get_value("keep_remarks", default_value = False)
@@ -34,7 +34,7 @@ def save_representatives_wrapper(clustering, my_params, trajectoryHandler, works
     representatives_path = save_representatives(medoids,
                                                           "representatives",
                                                           workspaceHandler,
-                                                          trajectoryHandler,
+                                                          data_handler,
                                                           do_merged_files_have_correlative_models=True,
                                                           write_frame_number_instead_of_correlative_model_number = keep_frame_number,
                                                           keep_remarks = keep_remarks )
@@ -50,7 +50,7 @@ def save_representatives_wrapper(clustering, my_params, trajectoryHandler, works
 def save_representatives(representatives,
                          pdb_name,
                          workspace_handler,
-                         trajectory_holder,
+                         data_handler,
                          do_merged_files_have_correlative_models,
                          write_frame_number_instead_of_correlative_model_number,
                          keep_remarks = False):
@@ -61,7 +61,7 @@ def save_representatives(representatives,
 
     @param workspace_handler: The workspace handler of this run.
 
-    @param trajectory_holder: The trajectory handler for this run or an array with pdb file paths.
+    @param data_handler: The trajectory handler for this run or an array with pdb file paths.
 
     @param do_merged_files_have_correlative_models: When merging, output file will have models from 0 to M, where M is the total number
     of frames of the merged file.
@@ -83,7 +83,7 @@ def save_representatives(representatives,
 
     # TEMPORARY HACK TO OVERCOME DCD MERGING BUG
 
-    merged_pdb = trajectory_holder.getMergedStructure()
+    merged_pdb = data_handler.get_data().get_structure_ensemble()
     prody.writePDB(temporary_merged_trajectory_path, merged_pdb)
 #==========================================================
 

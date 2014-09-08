@@ -20,8 +20,11 @@ class SaveAllClustersPostAction(object):
         save_all_clusters(clustering, postprocessing_parameters[SaveAllClustersPostAction.KEYWORD],
                           workspaceHandler, trajectoryHandler, generatedFiles)
 
-def save_all_clusters(clustering, my_params, workspaceHandler, trajectoryHandler,  generatedFiles):
-
+def save_all_clusters(clustering, my_params, workspaceHandler, data_handler,  generatedFiles):
+    """
+    TODO: Update with data_handler latest changes
+    """
+    
     #Parameters
     keep_remarks = my_params.get_value("keep_remarks", default_value = False)
     keep_frame_number = my_params.get_value("keep_frame_number", default_value = False)
@@ -32,7 +35,7 @@ def save_all_clusters(clustering, my_params, workspaceHandler, trajectoryHandler
     tmp_place = workspaceHandler["tmp"]
 
 
-    merged_pdb = trajectoryHandler.getMergedStructure()
+    merged_pdb = data_handler.get_data().get_structure_ensemble()
     input_path = os.path.join(tmp_place, "tmp_merged_trajectory.pdb")
     prody.writePDB(input_path, merged_pdb)
 

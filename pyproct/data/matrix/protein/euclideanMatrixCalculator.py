@@ -15,7 +15,7 @@ class EuclideanMatrixCalculator(object):
         pass
 
     @classmethod
-    def calculate(cls, trajectory_handler, matrix_parameters):
+    def calculate(cls, data_handler, matrix_parameters):
         """
         Will generate the CondensedMatrix filled with the all vs all geometric center distances of the "body_selection"
         coordinates (which will usually be a ligand).
@@ -39,10 +39,10 @@ class EuclideanMatrixCalculator(object):
         """
 
         # Build calculator with fitting coordinate sets ...
-        fit_selection_coordsets = trajectory_handler.getSelection(trajectory_handler.fitting_selection)
+        fit_selection_coordsets = data_handler.get_data().getFittingCoordinates()
 
         # and calculation coordsets (we want them to be moved along with the fitting ones)
-        body_selection_coordsets = trajectory_handler.getSelection(trajectory_handler.calculation_selection)
+        body_selection_coordsets = data_handler.get_data().getCalculationCoordinates()
 
         calculator = RMSDCalculator(calculatorType = "QTRFIT_OMP_CALCULATOR",
                  fittingCoordsets = fit_selection_coordsets,
@@ -51,12 +51,9 @@ class EuclideanMatrixCalculator(object):
         # Superpose iteratively (will modify all coordinates)
         calculator.iterativeSuperposition()
 
-        # Working coordinates are changed to the body coordinates (to be used later for instance
-        # with clustering metrics)
-        trajectory_handler.setWorkingCoordinates(trajectory_handler.calculation_selection)
         distances = cls.calculate_geom_center(body_selection_coordsets)
-        matrix = CondensedMatrix(distances)
-        return matrix
+        
+        return CondensedMatrix(distances)
 
     @classmethod
     def calculate_geom_center(cls, coordinates):
@@ -68,7 +65,7 @@ class EuclideanMatrixCalculator(object):
 
         @return: The contents of the condensed matrix resulting of calculating all euclidean distances between the aforemetioned centers.
         """
-        # Calculate geom centers
+        # Calculate geom. centers
         centers = coordinates.mean(1)
         distances = scipy.spatial.distance.pdist(centers, 'euclidean')
         return  distances

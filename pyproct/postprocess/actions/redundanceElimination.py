@@ -18,11 +18,11 @@ class RedundanceEliminationPostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
         compressor = RedundanceElimination(postprocessing_parameters[RedundanceEliminationPostAction.KEYWORD])
         compressed_file_path = compressor.compress(clustering,
                                                    workspaceHandler,
-                                                   trajectoryHandler,
+                                                   data_handler,
                                                    matrixHandler)
         generatedFiles.append({"description":"Compressed file",
                                     "path":os.path.abspath(compressed_file_path),
@@ -34,7 +34,7 @@ class RedundanceElimination(object):
     def __init__(self, parameters):
         self.parameters = parameters
 
-    def compress(self, clustering, workspace_handler, trajectory_handler, matrix_handler):
+    def compress(self, clustering, workspace_handler, data_handler, matrix_handler):
         representatives = []
         compression_type = self.parameters.get_value("type", default_value = "KMEDOIDS")
 
@@ -52,7 +52,7 @@ class RedundanceElimination(object):
         return save_representatives(representatives,
                                   pdb_name,
                                   workspace_handler,
-                                  trajectory_handler,
+                                  data_handler,
                                   do_merged_files_have_correlative_models=True,
                                   write_frame_number_instead_of_correlative_model_number=False,
                                   keep_remarks = (lambda params: params['keep_remarks'] if 'keep_remarks' in params else False)(self.parameters))

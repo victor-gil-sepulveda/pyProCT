@@ -14,10 +14,10 @@ class CentersAndTracePostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
+    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
         centers_path, centers_contents = generate_selection_centers_file(clustering,
                                                                         workspaceHandler,
-                                                                        trajectoryHandler)
+                                                                        data_handler)
 
         open(centers_path,"w").write(json.dumps(centers_contents,
                                   sort_keys=False,
@@ -60,7 +60,7 @@ def calculate_bounding_box(coordinates, backbone_trace = []):
             [min_x, min_y, max_z],
             [min_x, min_y, min_z]], center.tolist(), [max_x,max_y,max_z])
 
-def generate_CA_or_P_trace(trajectoryHandler, backbone_atoms_selection = "name CA P"):
+def generate_CA_or_P_trace(data_handler, backbone_atoms_selection = "name CA P"):
     """
     Gets the coordinates of the atoms forming the backbone of a protein. By default We consider the CA atoms in
     proteins and P atoms in DNA/RNA, but of course is an arbitrary choice.
@@ -71,24 +71,24 @@ def generate_CA_or_P_trace(trajectoryHandler, backbone_atoms_selection = "name C
     coordsets = numpy.array([])
     try:
         # Only get first frame of the selection
-        coordsets = trajectoryHandler.getMergedStructure().select(backbone_atoms_selection).getCoordsets()[0]
+        coordsets = data_handler.get_data().getSelectionCoordinates(backbone_atoms_selection)[0]
     except:
         print "[ERROR visualizationTools::generate_CA_or_P_trace] Impossible to get coordinates for trace"
     return coordsets.tolist()
 
-def generate_selection_centers_file(clustering, workspaceHandler, trajectoryHandler):
+def generate_selection_centers_file(clustering, workspaceHandler, data_handler):
     # TODO: Superpose and center coords (or getting already superposed confs)
     #########################
 
     #########################
     centers_path = os.path.join(workspaceHandler["results"], "selection_centers.json")
-    ligand_coords = trajectoryHandler.getCalculationCoordinates()
+    ligand_coords = data_handler.get_data().getCalculationCoordinates()
 
     centers_contents={}
     centers = []
 
     # Calculate trace
-    centers_contents["backbone_trace"] = generate_CA_or_P_trace(trajectoryHandler)
+    centers_contents["backbone_trace"] = generate_CA_or_P_trace(data_handler)
 
     # Get Bounding Box
     (centers_contents["bounding_box"] ,
