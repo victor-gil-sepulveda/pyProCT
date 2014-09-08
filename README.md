@@ -505,26 +505,26 @@ or can be done better. Any contribution can help to improve this software!
 - To improve this documentation (better explanations, more examples and downloadable scripts).
 
 - Refactoring and general improvements:
-    - Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)
-    [x] - Data refactoring (Create a wrapper that stores the prody object, temporary selection storage, etc...).
-    - Rename script stuff
-    - Rename functions and vars
-    - Minimizing dependencies with scipy
-    - Minimizing dependencies with prody (create an standalone reader)
-    - Add its own Hierarchical clustering code (educational motivations)
-    - Improve spectral algorithm (add more tests - comparisons with other implementations, adding new types)
-    - Improve MPI load balance (i.e. parameter generation must be processed in parallel)
-    - Check current tests. Improve test coverage
-    - The script must accept numbers and percentages
-    - Use JSON schema to validate the script. Try to delegate the full responsibility of validating to pyProCT (instead of the GUI)
-    [x] - Users must be able to comment their scripts (with '//' for instance).
-    [x] - When loading a dcd file, we only want to load atomic data of the the associated pdb.
-    - Change "compression" by "redundancy_elimination"
-    [x] - Allow to load all files (or [glob](https://docs.python.org/3.1/library/glob.html)) from a folder.
-    - Plotting distance matrix distances distribution.
-    - Change errors to std. error. Add logs.
-    - Improve postprocessing actions (must take advantage of new data layout).
-    - Rename 'get_structure_ensemble' by get_inner_data (add virtual function too).
+    - [ ] Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)
+    - [x] Data refactoring (Create a wrapper that stores the prody object, temporary selection storage, etc...).
+    - [ ] Rename script stuff
+    - [ ] Rename functions and vars
+    - [ ] Minimizing dependencies with scipy
+    - [ ] Minimizing dependencies with prody (create an standalone reader)
+    - [ ] Add its own Hierarchical clustering code (educational motivations)
+    - [ ] Improve spectral algorithm (add more tests - comparisons with other implementations, adding new types)
+    - [ ] Improve MPI load balance (i.e. parameter generation must be processed in parallel)
+    - [ ] Check current tests. Improve test coverage
+    - [ ] The script must accept numbers and percentages
+    - [ ] Use JSON schema to validate the script. Try to delegate the full responsibility of validating to pyProCT (instead of the GUI)  
+    - [x] Users must be able to comment their scripts (with '//' for instance).  
+    - [x] When loading a dcd file, we only want to load atomic data of the the associated pdb.
+    - [ ] Change "compression" by "redundancy_elimination"  
+    - [x] Allow to load all files (or [glob](https://docs.python.org/3.1/library/glob.html)) from a folder.
+    - [ ] Plotting distance matrix distances distribution.
+    - [ ] Change errors to std. error. Add logs.
+    - [ ] Improve postprocessing actions (must take advantage of new data layout).
+    - [ ] Rename 'get_structure_ensemble' by get_inner_data (add virtual function too).  
 
 - Symetry handling:
     - Symmetry handling for fitting coordinates.
