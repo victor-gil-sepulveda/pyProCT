@@ -39,7 +39,7 @@ class AnalysisPopulator(object):
         self.build_all_analysis(matrix_handler, data_handler)
         self.parameters = parameters
 
-    def build_all_analysis(self, matrix_handler, trajectory_handler):
+    def build_all_analysis(self, matrix_handler, data_handler):
         """
         Create an instance of all possible analysis. If you're not able to create it... you're not able to use it.
 

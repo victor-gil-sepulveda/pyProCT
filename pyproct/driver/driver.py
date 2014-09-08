@@ -36,7 +36,7 @@ class Driver(Observable):
 
                 if "clustering" in parameters:
                     clustering_results = self.clustering_section(parameters)
-                    self.postprocess(parameters, clustering_results)
+                    #self.postprocess(parameters, clustering_results)
                     self.save_results(clustering_results)
                     self.show_summary(parameters, clustering_results)
                     return self.get_best_clustering(clustering_results)
@@ -76,9 +76,9 @@ class Driver(Observable):
 
         clustering_results = ClusteringProtocol(Driver.timer, 
                                                 self.observer).run(parameters, 
-                                                                   self.matrixHandler,
-                                                                   self.workspaceHandler,
-                                                                   self.trajectoryHandler)
+                                                                   self.matrix_handler,
+                                                                   self.data_handler,
+                                                                   self.workspaceHandler)
         if clustering_results is not None:
             best_clustering = self.get_best_clustering(clustering_results)
 
@@ -121,7 +121,7 @@ class Driver(Observable):
                                     "path":os.path.abspath(results_path),
                                     "type":"text"})
         json_results = ClusteringResultsGatherer().gather(Driver.timer,
-                                                            self.trajectoryHandler,
+                                                            self.data_handler,
                                                             self.workspaceHandler,
                                                             clustering_results,
                                                             self.generatedFiles)

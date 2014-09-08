@@ -56,7 +56,7 @@ class DataDriver(object):
         
     @classmethod
     @timed_method(timer, "Matrix Calculation")
-    def calc_matrix(data_handler, matrix_parameters):
+    def calc_matrix(cls, data_handler, matrix_parameters):
         return MatrixCalculator.calculate(data_handler, matrix_parameters)
     
     @classmethod

@@ -27,25 +27,24 @@ class SerializerRegistry(object):
     def default(self, obj):
         return obj.to_dic()
 
-def compare_func(a, b):
-    if a[1]["type"] == b[1]["type"]:
-        if "k" in a[1]["parameters"]:
-            return a[1]["parameters"]["k"] - b[1]["parameters"]["k"]
-        return 0
-    else:
-        return cmp(a[1]["type"], b[1]["type"])
-
 def sort_clustering_results(c_results):
-    return sorted([(id, c_results[id]) for id in c_results] , key=cmp_to_key(compare_func))
+    def compare_func(a, b):
+        if a[1]["type"] == b[1]["type"]:
+            if "k" in a[1]["parameters"]:
+                return a[1]["parameters"]["k"] - b[1]["parameters"]["k"]
+            return 0
+        else:
+            return cmp(a[1]["type"], b[1]["type"])
+    return sorted([(cid, c_results[cid]) for cid in c_results] , key=cmp_to_key(compare_func))
 
 class ClusteringResultsGatherer(object):
     def __init__(self):
         pass
 
-    def gather(self, timer_handler, trajectory_handler, workspace_handler, clustering_results, files):
+    def gather(self, timer_handler, data_handler, workspace_handler, clustering_results, files):
         results = {}
         results["timing"] = timer_handler.get_elapsed()
-        results["trajectories"] = trajectory_handler.pdbs
+        results["source_files"] = [s.source for s in data_handler.sources]
         if(clustering_results is not None):
             results["best_clustering"] = clustering_results[0]
             ####
@@ -56,7 +55,7 @@ class ClusteringResultsGatherer(object):
             results["not_selected"] = dict(sort_clustering_results(clustering_results[2]))
             ####
             results["scores"] = clustering_results[3]
-        results["files"] = files
+        results["created_files"] = files
         results["workspace"] = workspace_handler.data
 
         serializer = SerializerRegistry()
