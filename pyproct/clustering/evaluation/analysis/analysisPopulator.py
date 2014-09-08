@@ -26,7 +26,7 @@ from pyproct.clustering.evaluation.metrics.compactness import CompactnessCalcula
 
 class AnalysisPopulator(object):
 
-    def __init__(self, matrix_handler, trajectory_handler, parameters):
+    def __init__(self, matrix_handler, data_handler, parameters):
         """
         Class creator.
 
@@ -36,7 +36,7 @@ class AnalysisPopulator(object):
 
         @param parameters: The script parameters containing a correct 'evaluation' section.
         """
-        self.build_all_analysis(matrix_handler, trajectory_handler)
+        self.build_all_analysis(matrix_handler, data_handler)
         self.parameters = parameters
 
     def build_all_analysis(self, matrix_handler, trajectory_handler):
@@ -98,15 +98,17 @@ class AnalysisPopulator(object):
                                                           {"class":RatioCut,"matrix":distance_matrix})
         self.all_possible_analysis["NCut"] = Analysis("NCut", self.evaluate_with_calculator,
                                                       {"class":NCut,"matrix":distance_matrix})
-        self.all_possible_analysis["NormNCut"] = Analysis("NormNCut", self.analysis_function_norm_n_cut,distance_matrix)
+        self.all_possible_analysis["NormNCut"] = Analysis("NormNCut", self.analysis_function_norm_n_cut,
+                                                          distance_matrix)
         self.all_possible_analysis["MinMaxCut"] = Analysis("MinMaxCut", self.evaluate_with_calculator,
                                                            {"class":MinMaxCut,"matrix":distance_matrix})
 
         # Cython & Graph
-        self.all_possible_analysis["CythonNormNCut"] = Analysis("CythonNormNCut", self.analysis_function_cython_norm_n_cut,distance_matrix)
+        self.all_possible_analysis["CythonNormNCut"] = Analysis("CythonNormNCut", self.analysis_function_cython_norm_n_cut,
+                                                                distance_matrix)
 
         # PCA
-        self.all_possible_analysis["PCAanalysis"] = Analysis("PCAanalysis", self.analysis_function_pca, trajectory_handler)
+        self.all_possible_analysis["PCAanalysis"] = Analysis("PCAanalysis", self.analysis_function_pca, data_handler)
 
     def get_analysis_list(self):
         """
@@ -222,14 +224,20 @@ class AnalysisPopulator(object):
         calculator = key_args['class']()
         return calculator.evaluate(clustering, key_args['matrix'])
 
-    def analysis_function_pca(self,clustering, trajectory_handler):
-        calculator = PCAMetric(trajectory_handler)
+    def analysis_function_pca(self,clustering, data_handler):
+        """
+        """
+        calculator = PCAMetric(data_handler)
         return calculator.evaluate(clustering)
 
-    def analysis_function_cython_norm_n_cut(self,clustering,condensed_matrix):
+    def analysis_function_cython_norm_n_cut(self,clustering, condensed_matrix):
+        """
+        """
         calculator = CythonNCut()
         return calculator.evaluate(clustering, condensed_matrix) / len(clustering.clusters)
 
     def analysis_function_norm_n_cut(self,clustering,condensed_matrix):
+        """
+        """
         calculator = NCut()
         return calculator.evaluate(clustering, condensed_matrix) / len(clustering.clusters)
