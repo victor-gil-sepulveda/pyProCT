@@ -5,7 +5,6 @@ Created on 08/07/2014
 """
 import numpy
 import math
-from prody.measure.measure import calcPhi, calcPsi
 from pyRMSD.condensedMatrix import CondensedMatrix
 
 def rmsd(a,b):
@@ -13,7 +12,6 @@ def rmsd(a,b):
 
 class DihedralRMSDBuilder(object):
     """
-    classdocs
     """
     def __init__(self):
         """
@@ -21,42 +19,20 @@ class DihedralRMSDBuilder(object):
         """
         pass
 
+    
     @classmethod
-    def calculateDihedralsForCoordset(cls,structure, coordset):
-        structure.setCoords(coordset)
-        dihedral_angles = []
-        for residue in structure.iterResidues():
-            try:
-                dihedral_angles.append(calcPhi(residue, radian=False, dist=None))
-            except ValueError:
-                dihedral_angles.append(0)
-
-            try:
-                dihedral_angles.append(calcPsi(residue, radian=False, dist=None))
-            except ValueError:
-                dihedral_angles.append(0)
-
-        # 0 links with Nth residue and Nth with 0th. Those values are not needed anyway.
-        return dihedral_angles[1:-1]
-
-    @classmethod
-    def build(cls, structure):
+    def build(cls, structure_data):
         print "Calculating dihedral RMSD matrix.  This may take some time ..."
         all_dihedrals = []
-        coordsets =  structure.getCoordsets()
-        for coordset in coordsets:
-            dihedral_angles =  cls.calculateDihedralsForCoordset( structure, coordset)
-            all_dihedrals.append(dihedral_angles)
+        num_conformations = structure_data.get_num_elements()
+        for i in range(num_conformations):
+            all_dihedrals.append(structure_data.get_dihedrals_for_conformation(i))
 
         data = []
         all_dihedrals = numpy.array(all_dihedrals)
-        for i in range(structure.numCoordsets()-1):
+        for i in range(num_conformations-1):
             dihedrals_i = all_dihedrals[i]
-            for j in range(i+1, structure.numCoordsets()):
+            for j in range(i+1, num_conformations):
                 data.append(rmsd(dihedrals_i,all_dihedrals[j]))
-#                 print "1",dihedrals_i.tolist()
-#                 print "2",all_dihedrals[j].tolist()
-#                 print "RMSD", data[-1]
         return CondensedMatrix(numpy.array(data))
-#         return CondensedMatrix(data)
 

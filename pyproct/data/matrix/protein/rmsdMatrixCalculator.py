@@ -74,7 +74,7 @@ class RMSDMatrixCalculator(object):
             mapping = matrix_params.get_value("chain_map", default_value=False)
 
             if not mapping:
-                return  RMSDMatrixBuilder.build(trajectory_handler, matrix_params)
+                return  RMSDMatrixBuilder.build(data_handler, matrix_params)
             else:
                 print "Performing Chain Mapping. This may take some time ..."
                 return ChainMappingBuilder.calcRMSDMatrix(data_handler.get_data(),
@@ -82,5 +82,5 @@ class RMSDMatrixCalculator(object):
                                 matrix_params.get_value("fit_selection", default_value="name CA"))
 
         elif coords_type == "DIHEDRALS":
-            return DihedralRMSDBuilder.build(trajectory_handler.getMergedStructure())
+            return DihedralRMSDBuilder.build(data_handler.get_data())
 

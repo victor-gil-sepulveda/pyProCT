@@ -79,12 +79,12 @@ class ChainMappingBuilder:
         pass
 
     @classmethod
-    def getStructureChains(cls, pdb_structure, in_chain_selection):
+    def getStructureChains(cls, structure, in_chain_selection):
         """
 
         """
-        chains = pdb_structure.getSelection(in_chain_selection).getHierView()
-        number_of_models = pdb_structure.numCoordsets()
+        chains = structure.getHierView()
+        number_of_models = structure.numCoordsets()
         structure_chains = []
         for i in range(number_of_models):
             struct_chain = {}
@@ -111,7 +111,7 @@ class ChainMappingBuilder:
         than without ordering. One example is documented in ...
         To diminish changes, all keys are sorted before using them (keys are arbitrary sorted in dics.).
         """
-        chains = structure.getSelection(selection).copy().getHierView()
+        chains = structure.getHierView()
         coordsets = None
         for group_len in sorted(len_groups.keys()):
             for chid in sorted(len_groups[group_len]):
@@ -124,7 +124,7 @@ class ChainMappingBuilder:
 
     @classmethod
     def getChainLengths(cls, structure, selection):
-        chains = structure.select(selection).copy().getHierView()
+        chains = structure.getHierView()
         chain_len_map = {}
         for chain in chains:
             chain_len_map[chain.getChid()] = chain.numAtoms()
@@ -148,10 +148,11 @@ class ChainMappingBuilder:
         return perm_groups
 
     @classmethod
-    def calcRMSDMatrix(cls, structure, calculator_type, in_chain_selection ):
+    def calcRMSDMatrix(cls, structure_data, calculator_type, in_chain_selection ):
         """
 
         """
+        structure = structure_data.getSelection(in_chain_selection)
         chain_structures = cls.getStructureChains(structure, in_chain_selection)
         chain_len_map = cls.getChainLengths(structure, in_chain_selection)
         chain_len_groups = cls.getChainLenGroups(chain_len_map)

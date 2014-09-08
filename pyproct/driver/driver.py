@@ -4,7 +4,6 @@ Created on Mar 26, 2013
 @author: victor
 """
 import os
-import pyproct.tools.plotTools as plotTools
 from pyproct.driver.time.timerHandler import TimerHandler, timed_method
 from pyproct.driver.workspace.workspaceHandler import WorkspaceHandler
 from pyproct.driver.observer.observable import Observable
@@ -30,7 +29,10 @@ class Driver(Observable):
             self.save_parameters_file(parameters)
 
             if "data" in parameters:
-                self.data_handler, self.matrix_handler = DataDriver(parameters["data"])
+                self.data_handler, self.matrix_handler = DataDriver.run(parameters["data"],
+                                                                        self.workspaceHandler,
+                                                                        Driver.timer,
+                                                                        self.generatedFiles)
 
                 if "clustering" in parameters:
                     clustering_results = self.clustering_section(parameters)
@@ -55,48 +57,6 @@ class Driver(Observable):
                                 "path":os.path.abspath(parameters_file_path),
                                 "type":"text"}]
 
-    @timed_method(timer, "Trajectory Loading")
-    def load_trajectory(self, parameters):
-        self.trajectoryHandler = TrajectoryHandler(parameters, self.observer)
-
-    @timed_method(timer, "Matrix Calculation")
-    def calculate_matrix(self, parameters):
-        self.matrixHandler = MatrixHandler(parameters["data"]["matrix"])
-        self.notify("Matrix calculation", "Start")
-        self.matrixHandler.calculate_matrix(self.trajectoryHandler)
-        self.notify("Matrix calculation", "Done")
-        statistics_file_path = self.matrixHandler.save_statistics(self.workspaceHandler["matrix"])
-        self.generatedFiles.append({"description":"Matrix statistics",
-                                    "path":os.path.abspath(statistics_file_path),
-                                    "type":"text"})
-
-    @timed_method(timer, "Matrix Save")
-    def save_matrix(self, parameters):
-        self.matrixHandler.save_matrix(os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["filename"]))
-
-    @timed_method(timer, "Matrix Imaging")
-    def plot_matrix(self, parameters):
-        matrix_image_file_path = os.path.join(self.workspaceHandler["matrix"], parameters["data"]["matrix"]["image"]["filename"])
-        max_dim = parameters.get_value("data.matrix.image.dimension", default_value = 1000)
-        plotTools.matrixToImage(self.matrixHandler.distance_matrix, matrix_image_file_path, max_dim=max_dim, observer=self.observer)
-        self.generatedFiles.append({"description":"Matrix image",
-                                    "path":os.path.abspath(matrix_image_file_path),
-                                    "type":"image"})
-
-    def data_section(self, parameters):
-        
-        matrix_parameters = parameters["data"]["matrix"]
-
-        self.load_trajectory(parameters)
-
-        self.calculate_matrix(parameters)
-
-        if "filename" in matrix_parameters:
-            self.save_matrix(parameters)
-
-        if "image" in matrix_parameters:
-            self.plot_matrix(parameters)
-
     def clustering_section(self, parameters):
 
         if parameters["clustering"]["generation"]["method"] == "load":
@@ -114,9 +74,11 @@ class Driver(Observable):
     def perform_clustering_exploration(self, parameters):
         best_clustering = None
 
-        clustering_results = ClusteringProtocol(Driver.timer, self.observer).run(parameters, self.matrixHandler,
-                                                                                                self.workspaceHandler,
-                                                                                                self.trajectoryHandler)
+        clustering_results = ClusteringProtocol(Driver.timer, 
+                                                self.observer).run(parameters, 
+                                                                   self.matrixHandler,
+                                                                   self.workspaceHandler,
+                                                                   self.trajectoryHandler)
         if clustering_results is not None:
             best_clustering = self.get_best_clustering(clustering_results)
 

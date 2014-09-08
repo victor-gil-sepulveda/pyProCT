@@ -49,7 +49,7 @@ class SourceGenerator(object):
         if len(paths) > 0:
             return paths
         else:
-            print "[ERROR SourceGenerator::init] Impossible to find one or any of this files: %s"%path
+            print "[ERROR SourceGenerator::init] Impossible to find one or all of this files: %s"%path
             exit()
     
     @classmethod                

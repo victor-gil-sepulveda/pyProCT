@@ -8,7 +8,6 @@ import prody
 import os.path
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure
 from pyproct.data.handler.protein.proteinEnsembleData import ProteinEnsembleData
-from pyproct.data.handler.elementRange import ElementRange
 from pyproct.data.handler.dataLoader import DataLoader
 
 class ProteinEnsembleDataLoader(DataLoader):
@@ -34,7 +33,7 @@ class ProteinEnsembleDataLoader(DataLoader):
                                                           structure_ensemble.numAtoms())
         
         return ProteinEnsembleData(structure_ensemble, 
-                                   self.data_params.get_value("matrix", 
+                                   self.data_params.get_value("matrix.parameters", 
                                                        {"fit_selection": "all"}))
 
     def load_data_from_source(self, source):
@@ -86,7 +85,7 @@ class ProteinEnsembleDataLoader(DataLoader):
         elif ext == ".pdb":
             structure = prody.parsePDB(source.get_path())
         else:
-            print "[ERROR][ProteinStructureEnsembleData::get_structure] pyProCT does not know hot to load the file %s (unknown extension '%s')"%(path,ext)
+            print "[ERROR][ProteinStructureEnsembleData::get_structure] pyProCT does not know hot to load the file %s (unknown extension '%s')"%(source.get_path(),ext)
             exit()
         
         if source.has_info("base_selection"):

@@ -25,7 +25,6 @@ class MatrixHandler(object):
 
         @param matrix_save_file: Complete path (with filename) where to save the matrix.
         """
-        self.check_matrix_calculated_error()
         pyRMSD_MatrixHandler.save_matrix(matrix_path, self.distance_matrix)
 
     def save_statistics(self, matrix_base_path):
@@ -34,7 +33,6 @@ class MatrixHandler(object):
 
         @param matrix_base_path: The folder where to save the 'statistics.json' file.
         """
-        self.check_matrix_calculated_error()
         return pyRMSD_MatrixHandler.save_statistics(matrix_base_path, self.distance_matrix)
     
 

@@ -18,15 +18,14 @@ class ClusteringProtocol(Observable):
         super(ClusteringProtocol, self).__init__(observer)
         self.timer = timer
 
-    def run(self, clustering_parameters, matrixHandler, workspaceHandler, trajectoryHandler):
+    def run(self, clustering_parameters, matrix_handler, data_handler, workspaceHandler):
 
         ############################
         # Clustering exploration
         ############################
         self.notify("Exploration Started", [])
         self.timer.start("Clustering Exploration")
-        clusterings  = ClusteringExplorer(
-                                            clustering_parameters,
+        clusterings  = ClusteringExplorer(  clustering_parameters,
                                             matrixHandler,
                                             workspaceHandler,
                                             scheduling_tools.build_scheduler(clustering_parameters["global"]["control"],
