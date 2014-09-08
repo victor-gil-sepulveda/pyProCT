@@ -500,9 +500,9 @@ A more detailed explanation of the script contents can be found [here](https://d
 Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working
 or can be done better. Any contribution can help to improve this software!
 
-# TODO
+# Improvements (TODO)
 
-- To improve this documentation (better explanations, more examples and downloadable scripts).
+- [ ] To improve this documentation (better explanations, more examples and downloadable scripts).
 
 ### Refactoring and general improvements:  
 
@@ -525,7 +525,7 @@ or can be done better. Any contribution can help to improve this software!
 - [ ] Plotting distance matrix distances distribution.  
 - [ ] Change errors to std. error. Add logs.  
 - [ ] Improve postprocessing actions (must take advantage of new data layout).  
-- [ ] Rename 'get_structure_ensemble' by get_inner_data (add virtual function too).    
+- [x] Rename 'get_structure_ensemble' by get_inner_data (add virtual function too). Finally changed to 'get_all_elements'    
 
 ### Specific improvements 
 ####Symetry handling:  
@@ -549,10 +549,10 @@ or can be done better. Any contribution can help to improve this software!
 - [ ] New standard separation ICVs (require inmutable prototypes)
 
 	>
-    >Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
-    >-  Single linkage: It measures the distance between the closest members of the clusters.
-    >-  Complete linkage: It measures the distance between the most distant members.
-    >- Comparison of centroids: It measures the distance between the centers of the clusters.
+	>Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
+	>-  Single linkage: It measures the distance between the closest members of the clusters.
+	>-  Complete linkage: It measures the distance between the most distant members.
+	>- Comparison of centroids: It measures the distance between the centers of the clusters.
 
 ####New features:
 - [ ] Refine noise in DBSCAN

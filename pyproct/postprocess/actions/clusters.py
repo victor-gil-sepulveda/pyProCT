@@ -35,7 +35,7 @@ def save_all_clusters(clustering, my_params, workspaceHandler, data_handler,  ge
     tmp_place = workspaceHandler["tmp"]
 
 
-    merged_pdb = data_handler.get_data().get_structure_ensemble()
+    merged_pdb = data_handler.get_data().get_all_elements()
     input_path = os.path.join(tmp_place, "tmp_merged_trajectory.pdb")
     prody.writePDB(input_path, merged_pdb)
 

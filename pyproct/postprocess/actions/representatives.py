@@ -83,7 +83,7 @@ def save_representatives(representatives,
 
     # TEMPORARY HACK TO OVERCOME DCD MERGING BUG
 
-    merged_pdb = data_handler.get_data().get_structure_ensemble()
+    merged_pdb = data_handler.get_data().get_all_elements()
     prody.writePDB(temporary_merged_trajectory_path, merged_pdb)
 #==========================================================
 
