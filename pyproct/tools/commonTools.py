@@ -5,7 +5,6 @@ Created on 16/03/2012
 """
 import sys
 import re
-import functools
 
 def merge_files(file_handler_list, merged_handler, verbose = True):
     """

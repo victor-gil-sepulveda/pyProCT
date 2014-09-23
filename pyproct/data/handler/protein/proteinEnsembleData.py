@@ -29,10 +29,29 @@ class ProteinEnsembleData(Data):
         structure.addCoordset(element_coordinates)
         return structure
     
+    def get_elements(self, elements_list):
+        """
+        When we work with ensembles it is better to return a single prody ensemble with all
+        the elements we want.
+        Returns a copy! Modifying it does not modify the stored structure.
+        """
+        element_coordinates = self.structure_ensemble.getCoordsets()[elements_list]
+        structure = self.structure_ensemble.copy()
+        removeAllCoordsetsFromStructure(structure)
+        for coordset in element_coordinates:
+            structure.addCoordset(coordset)
+        return structure
+    
     def get_all_elements(self):
+        """
+        """
         return self.structure_ensemble
     
     def get_num_elements(self):
+        """
+        TODO: This is repeated (The Data handler already has it through the loader, it looks better
+        to change it and get it trough the data itself :P )
+        """
         return self.structure_ensemble.numCoordsets()
     
     def getSelection(self, selection_string):

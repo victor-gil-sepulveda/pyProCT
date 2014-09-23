@@ -21,18 +21,19 @@ class DataHandler(object):
         self.elements = {}
         self.data_type = params["type"]
         self.sources = source_generator_class(params["files"]).source_list
-        self.number_of_loaded_elements = 0
         
         loader_class = self.get_loader(self.data_type)
         self.loader = loader_class(params)
 
         for source in self.sources:
             e_range = self.loader.load(source)
-            self.number_of_loaded_elements += len(e_range)
             self.add_elements(e_range, source)
         
         # Retrieve the data object
         self.data = self.loader.close()
+    
+    def get_number_of_elements(self):
+        return self.loader.number_of_elements
     
     def get_data(self):
         return self.data
@@ -51,7 +52,7 @@ class DataHandler(object):
         return [i for i in self.elements[DataSource(source_str)]]
     
     def get_all_elements(self):
-        return ElementRange(0, self.number_of_loaded_elements-1)
+        return ElementRange(0, self.get_number_of_elements()-1)
         
     def get_source_of_element(self, element):
         """

@@ -19,6 +19,13 @@ class Data(object):
         """
         print "[ERROR Data::get_element] This method must be overriden. Exiting..."
         exit()
+        
+    def get_elements(self, element_list):
+        """
+        Returns an array with all the requested elements. Can be overriden to improve the 
+        retrieving speed or changing the packaging style.
+        """
+        return [self.get_element(i) for i in element_list]
     
     def get_all_elements(self):
         """

@@ -12,7 +12,6 @@ class Test(unittest.TestCase):
 
 
     def test_save_representatives(self):
-        self.fail("TODO: Update Test")
         representatives = [1,5]
         pdbs = ["data/pdb1.pdb", "data/pdb2.pdb", "data/pdb3.pdb"]
         file_path = save_representatives(representatives,
