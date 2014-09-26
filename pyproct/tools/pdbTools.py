@@ -3,21 +3,90 @@ Created on 16/03/2012
 
 @author: victor
 """
-import subprocess
-import prody 
+
+def get_model_tags(pdb_file):
+    """
+    Uses the 'egrep' shell command to count the number of times MODEL appears in the trajectory file, which will be indeed
+    the number of different structures.
+    
+    :param pdb_file: The pdb file (path) from which the number of frames will be counted.
+    
+    :return: The lines containing the found model tags.
+    """
+    model_lines = []
+    for line in open(pdb_file, "r"):
+        if line[0:5] == "MODEL":
+            model_lines.append(line)
+    return model_lines
 
 def get_number_of_frames(pdb_file):
     """
     Uses the 'egrep' shell command to count the number of times MODEL appears in the trajectory file, which will be indeed
     the number of different structures.
     
-    @param pdb_file: The pdb file (path) from which the number of frames will be counted.
+    :param pdb_file: The pdb file (path) from which the number of frames will be counted.
     
-    @return: The number of MODEL tags found.
+    :return: The number of MODEL tags found.
     """
-    process = subprocess.Popen(["egrep","-c",''"^MODEL"'',pdb_file],stdout=subprocess.PIPE)
-    lines = process.stdout.readlines()
-    return int(lines[0])
+    return len(get_model_tags(pdb_file))
+
+def get_remarks(pdb_file):
+    """
+    Sometimes pdb files have remarks with extra information before the MODEL tag. 
+    This remarks have a fixed format, however sometimes, when adding user information, this 
+    format is not honored.
+    :param pdb_file: The pdb file (path) from which the number of frames will be counted.
+    
+    :return: an array of arrays with the remarks (one array of lines per model). 
+    
+    """
+  
+    handler = open(pdb_file, "r")
+    line_groups = []
+    lines = []
+    for line in handler:
+        if line[0:6] == "REMARK":
+            lines.append(line)
+        
+        if line[0:5] == "MODEL":
+            line_groups.append(lines)
+            lines = []
+    
+    handler.close()
+    
+    return line_groups
+
+def filter_remarks(remarks_list, subset="NONE"):
+    """
+    Filters a remarks list using a subset criteria.
+    :param remarks_list: the list we want to filter.
+    :param subset: The criteria to do the filtering. Possible values are:
+            - "NONE": not to store remarks (Default)
+            - "STANDARD": stores remarks that follow pdb standard
+            - "NOT STANDARD": stores remarks not following the pdb standard
+            - "ALL": stores all remarks
+    :return: The filtered list of remarks. 
+    """
+    available =  ["NONE","ALL","STANDARD", "NOT STANDARD"]
+    if not subset in available:
+        print "[WARNING proteinEnsembleDataLoader::filter_remarks] %s subset is not an available option %s."%(subset, str(available))
+        return []
+    
+    filtered_groups = []
+    for group in remarks_list:
+        filtered_remarks = []
+        for remark in group:        
+            standard_remark = (remark[6] == " " and remark[7:10].isdigit() and remark[10] == " ")
+            if subset == "ALL":
+                filtered_remarks.append(remark)
+            
+            elif subset == "STANDARD" and standard_remark: 
+                filtered_remarks.append(remark)
+            
+            elif subset == "NOT STANDARD" and not standard_remark:
+                filtered_remarks.append(remark)
+        filtered_groups.append(filtered_remarks)
+    return filtered_groups
 
 def get_number_of_atoms(pdb_file):
     """

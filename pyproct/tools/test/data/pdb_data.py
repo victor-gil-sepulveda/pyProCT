@@ -135,6 +135,7 @@ ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  3.00
 ENDMDL
 THINGHIE ************
 THINGIE *******
+REMARK 400 REGULAR REMARK
 LOL LINE ------
 MODEL 3
 ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  4.00
@@ -206,6 +207,7 @@ ATOM      7  CA  THR     7      -3.037   3.652  -8.112  1.00  2.00
 ENDMDL
 THINGHIE ************
 THINGIE *******
+REMARK 400 REGULAR REMARK
 LOL LINE ------
 MODEL        2
 ATOM      3  CA  ILE     3      -9.039   0.638   3.156  1.00  4.00

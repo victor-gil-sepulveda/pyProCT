@@ -13,11 +13,13 @@ class ProteinEnsembleData(Data):
     TODO: Methods to lowecase.
     """
     
-    def __init__(self,  structure_ensemble, selection_params):
+    def __init__(self,  structure_ensemble, model_numbers, model_remarks, selection_params):
         # Add number of elements to data instead of handler
         self.structure_ensemble = structure_ensemble
         self.handle_selection_parameters(selection_params)
-    
+        self.model_numbers = model_numbers
+        self.model_remarks = model_remarks
+
     def get_element(self, element_id):
         """
         We must override this guy. In this case the behaviour is to obtain a 
@@ -135,3 +137,9 @@ class ProteinEnsembleData(Data):
 
         # 0 links with Nth residue and Nth with 0th. Those values are not needed anyway.
         return dihedral_angles[1:-1]
+    
+    def get_all_remarks(self):
+        return self.model_remarks
+    
+    def get_all_model_numbers(self):
+        return self.model_numbers

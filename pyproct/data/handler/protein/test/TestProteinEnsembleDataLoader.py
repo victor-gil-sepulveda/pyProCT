@@ -3,12 +3,13 @@ Created on 5/9/2014
 
 @author: victor
 '''
-import unittest
-import pyproct.data.handler.protein.test.data as test_data
+
 import os
-from pyproct.data.handler.protein.proteinEnsembleDataLoader import ProteinEnsembleDataLoader
+import unittest
 from pyproct.data.handler.dataSource import DataSource
 from pyproct.driver.parameters import ProtocolParameters
+import pyproct.data.handler.protein.test.data as test_data
+from pyproct.data.handler.protein.proteinEnsembleDataLoader import ProteinEnsembleDataLoader
 
 
 class TestProteinEnsembleDataLoader(unittest.TestCase):
@@ -51,7 +52,7 @@ class TestProteinEnsembleDataLoader(unittest.TestCase):
                               "base_selection": "resnum 3"
         })
         final_range = loader.load(source3)
-        self.assertEqual([4,5], list(final_range))
+        self.assertSequenceEqual([4,5], list(final_range))
         self.assertEqual(source3.source['number_of_conformations'], 2)
         self.assertEqual(source3.source['number_of_atoms'], 1)
         self.assertEqual(loader.loaded_data[-1].getResnames(), ['ILE'])
@@ -78,8 +79,28 @@ class TestProteinEnsembleDataLoader(unittest.TestCase):
         coordinates = data.getCoordinates()
         x_coords = self.get_x_coords(coordinates)
                 
-        self.assertEqual( range(1,9), x_coords)
-        
+        self.assertSequenceEqual( range(1,9), x_coords)
+    
+    def test_close_with_model_remark(self):
+        """
+        Tests that model number and remark info was acquired
+        """
+        loader = self.setup_loader()
+        source3 = DataSource(os.path.join(test_data.__path__[0], "pdb3.pdb"))
+        loader.load(source3)
+        loader.close()
+        expected_models = [1,2,1,2,8,9] #[1,2,5,6,8,9] -> this if whe have a pdb
+        expected_remarks = [
+                            ["REMARK 400 HELLO\n"], 
+                            ["REMARK 400 WORLD\n"],
+                            [],
+                            [],
+                            [],
+                            ["REMARKS NINETH MODEL\n"]
+                           ]
+        self.assertSequenceEqual(expected_remarks, loader.model_remarks)
+        self.assertSequenceEqual(expected_models, loader.model_numbers)
+    
     def test_data(self):
         """
         Tests that the mandatory method 'get_element' works as expected.
@@ -87,7 +108,7 @@ class TestProteinEnsembleDataLoader(unittest.TestCase):
         loader = self.setup_loader()
         data = loader.close()
         x_coords = self.get_x_coords(data.get_element(2).getCoordsets())
-        self.assertEqual( [5,6], x_coords)
+        self.assertSequenceEqual( [5,6], x_coords)
         
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.testName']

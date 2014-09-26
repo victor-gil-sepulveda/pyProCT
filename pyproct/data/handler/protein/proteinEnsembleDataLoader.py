@@ -4,6 +4,7 @@ Created on 19/09/2012
 @author: victor
 """
 import pyproct.tools.commonTools as common
+import pyproct.tools.pdbTools as pdb_tools
 import prody
 import os.path
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure
@@ -18,6 +19,11 @@ class ProteinEnsembleDataLoader(DataLoader):
     
     LOADER_TYPE = "protein::ensemble"
     
+    def __init__(self, data_params):
+        super(ProteinEnsembleDataLoader, self).__init__(data_params)
+        self.model_numbers = []
+        self.model_remarks = []
+        
     def close(self):
         """
         Prepares the merged structure and returns the ensemble data object
@@ -32,9 +38,26 @@ class ProteinEnsembleDataLoader(DataLoader):
         print "%d conformations of %d atoms were read."% (structure_ensemble.numCoordsets(),
                                                           structure_ensemble.numAtoms())
         
-        return ProteinEnsembleData(structure_ensemble, 
+        return ProteinEnsembleData(structure_ensemble,
+                                   self.model_numbers,
+                                   self.model_remarks, 
                                    self.data_params.get_value("matrix.parameters", 
                                                        {"fit_selection": "all"}))
+
+    def generate_merged_structure_ensemble(self, structures):
+        """
+        Merges all handled structures into a single Prody AtomGroup object.
+
+        @return: The prody object with all read coordsets for certain selection.
+        """
+        merged_ensemble = None
+        for structure in structures:
+            if merged_ensemble is None:
+                merged_ensemble = structure
+            else:
+                for coordset in structure.getCoordsets():
+                    merged_ensemble.addCoordset(coordset)
+        return merged_ensemble
 
     def load_data_from_source(self, source):
         """
@@ -97,21 +120,37 @@ class ProteinEnsembleDataLoader(DataLoader):
         source.add_info("number_of_conformations", structure.numCoordsets())
         source.add_info("number_of_atoms", structure.numAtoms())
         
+        self.model_numbers.extend(self.get_model_numbers(source, structure.numCoordsets()))
+        self.model_remarks.extend(self.get_remarks(source, structure.numCoordsets()))
+        
         return  structure, structure.numCoordsets()
 
-    def generate_merged_structure_ensemble(self, structures):
-        """
-        Merges all handled structures into a single Prody AtomGroup object.
 
-        @return: The prody object with all read coordsets for certain selection.
+    def get_model_numbers(self, source, number_of_conformations):
         """
-        merged_ensemble = None
-        for structure in structures:
-            if merged_ensemble is None:
-                merged_ensemble = structure
+        :param source:  
+        """
+        _, ext = os.path.splitext(source.get_path())
+        
+        if ext == ".dcd":
+            return range(1, number_of_conformations+1)
+        else:
+            model_lines = pdb_tools.get_model_tags(source.get_path())
+            if len(model_lines) != number_of_conformations:
+                # by default
+                return range(1, number_of_conformations+1)
             else:
-                for coordset in structure.getCoordsets():
-                    merged_ensemble.addCoordset(coordset)
-        return merged_ensemble
-
-    
+                return [int(model.split()[1]) for model in model_lines]
+            
+    def get_remarks(self, source, number_of_conformations):
+        _, ext = os.path.splitext(source.get_path())
+        
+        if ext == ".dcd":
+            return [[]]*number_of_conformations
+        else:
+            remark_groups =  pdb_tools.get_remarks(source.get_path())
+            if len(remark_groups) != number_of_conformations:
+                # TODO: WARNING HERE
+                return [[]]*number_of_conformations
+            else:
+                return remark_groups
