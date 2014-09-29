@@ -5,6 +5,7 @@ Created on 10/02/2014
 """
 import os.path
 import prody
+import cStringIO
 
 class RepresentativesPostAction(object):
 
@@ -21,7 +22,7 @@ class RepresentativesPostAction(object):
         
         representatives_file_path = os.path.join( workspaceHandler["results"],"%s.pdb"%pdb_name)
     
-        save_representatives( medoids,
+        save_cluster_elements( medoids,
                               representatives_file_path,
                               data_handler,
                               postprocessing_parameters)
@@ -32,7 +33,7 @@ class RepresentativesPostAction(object):
                                "type":"pdb"
         })
 
-def save_representatives(representatives,
+def save_cluster_elements(elements,
                          out_pdb_name,
                          data_handler,
                          options):
@@ -65,13 +66,16 @@ def save_representatives(representatives,
     
     merged_structure = data.get_all_elements()
     
+    file_handler_out.write("REMARK 000 File created using Prody and pyProCT\n")
+    
     if not keep_remarks == "NONE" and not add_source_details:
-        prody.writePDBStream(file_handler_out, merged_structure, csets =  representatives)
+        prody.writePDBStream(file_handler_out, merged_structure, csets =  elements)
     else:
         all_remarks = data.get_all_remarks()
         all_model_numbers = data.get_all_model_numbers()
         
-        for element_id in representatives: 
+        current_model = 0
+        for element_id in elements: 
             if keep_remarks:
                 remarks = all_remarks[element_id]
                 file_handler_out.write("".join(remarks))
@@ -82,7 +86,16 @@ def save_representatives(representatives,
                 file_handler_out.write("REMARK source            : %s\n"%conf_source)
                 file_handler_out.write("REMARK original model nr : %d\n"%model_number)
             
-            prody.writePDBStream(file_handler_out, merged_structure, csets =  element_id)
+            file_handler_out.write("MODEL"+str(current_model).rjust(9)+"\n")
+            pdb_handler = cStringIO.StringIO()
+            prody.writePDBStream(pdb_handler, merged_structure, csets=  element_id)
+            # skip the first remark if any
+            lines = filter(lambda line: line[0:6]!="REMARK" and line[0:5]!="MODEL" and line[0:6]!="ENDMDL", 
+                           pdb_handler.getvalue().splitlines(True))
+            pdb_handler.close()
+            file_handler_out.write("".join(lines))
+            file_handler_out.write("ENDMDL\n")
+            current_model+=1
     
     file_handler_out.close()
 

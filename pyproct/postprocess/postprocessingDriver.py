@@ -21,7 +21,7 @@ class PostprocessingDriver(object):
             if postprocessing_action_class.KEYWORD in postprocessing_parameters:
                 try:
                     postprocessing_action_class().run(clustering, 
-                                              postprocessing_parameters, 
+                                              postprocessing_parameters[postprocessing_action_class.KEYWORD], 
                                               data_handler, 
                                               workspace_handler, 
                                               matrix_handler, 

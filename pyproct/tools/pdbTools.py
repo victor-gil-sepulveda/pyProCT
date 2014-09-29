@@ -44,13 +44,17 @@ def get_remarks(pdb_file):
     handler = open(pdb_file, "r")
     line_groups = []
     lines = []
+    starting_atom = True
+    
     for line in handler:
         if line[0:6] == "REMARK":
             lines.append(line)
+            starting_atom = True
         
-        if line[0:5] == "MODEL":
+        if line[0:5] == "MODEL" or (line[0:4] == "ATOM" and starting_atom):
             line_groups.append(lines)
             lines = []
+            starting_atom = False
     
     handler.close()
     

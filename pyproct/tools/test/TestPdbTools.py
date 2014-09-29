@@ -26,7 +26,7 @@ class Test(unittest.TestCase):
         
         all_remarks = pyproct.tools.pdbTools.get_remarks("test_pdb_for_remarks.pdb")
         
-        self.assertEqual( all_remarks,
+        self.assertSequenceEqual( all_remarks,
                           [
                                [], 
                                ['REMARK 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
@@ -34,7 +34,7 @@ class Test(unittest.TestCase):
                                ['REMARK 400 REGULAR REMARK\n']
                           ])
         
-        self.assertEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "ALL")
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "ALL"),
                           [
                                [], 
                                ['REMARK 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
@@ -42,7 +42,7 @@ class Test(unittest.TestCase):
                                ['REMARK 400 REGULAR REMARK\n']
                           ])
         
-        self.assertEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "NOT STANDARD"),
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "NOT STANDARD"),
                           [
                                [], 
                                ['REMARK 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
@@ -50,7 +50,7 @@ class Test(unittest.TestCase):
                                []
                           ])
         
-        self.assertEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "STANDARD"),
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "STANDARD"),
                           [
                                [], 
                                [], 
@@ -58,7 +58,7 @@ class Test(unittest.TestCase):
                                ['REMARK 400 REGULAR REMARK\n']
                           ])
         
-        self.assertEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "NONE"),
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "NONE"),
                           [
                                [], 
                                [], 

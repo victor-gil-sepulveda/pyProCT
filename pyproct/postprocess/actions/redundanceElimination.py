@@ -7,9 +7,9 @@ import os
 import math
 from pyproct.clustering.cluster import Cluster
 from pyproct.tools.matrixTools import get_submatrix
-from pyproct.postprocess.actions.representatives import save_representatives
 from pyproct.clustering.protocol.refinement.Refiner import Refiner
 from pyproct.clustering.algorithms.kmedoids.kMedoidsAlgorithm import KMedoidsAlgorithm
+from pyproct.postprocess.actions.representatives import save_cluster_elements
 
 
 class RedundanceEliminationPostAction(object):
@@ -19,14 +19,17 @@ class RedundanceEliminationPostAction(object):
         pass
 
     def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
-        compressor = RedundanceElimination(postprocessing_parameters[RedundanceEliminationPostAction.KEYWORD])
+        compressor = RedundanceElimination(postprocessing_parameters)
         compressed_file_path = compressor.compress(clustering,
                                                    workspaceHandler,
                                                    data_handler,
-                                                   matrixHandler)
-        generatedFiles.append({"description":"Compressed file",
-                                    "path":os.path.abspath(compressed_file_path),
-                                    "type":"pdb"})
+                                                   matrixHandler,
+                                                   postprocessing_parameters)
+        generatedFiles.append({
+                               "description":"Compressed file",
+                               "path":os.path.abspath(compressed_file_path),
+                               "type":"pdb"
+        })
 
 
 class RedundanceElimination(object):
@@ -34,11 +37,12 @@ class RedundanceElimination(object):
     def __init__(self, parameters):
         self.parameters = parameters
 
-    def compress(self, clustering, workspace_handler, data_handler, matrix_handler):
+    def compress(self, clustering, workspace_handler, data_handler, matrix_handler, options):
         representatives = []
         compression_type = self.parameters.get_value("type", default_value = "KMEDOIDS")
 
-        pdb_name =  self.parameters.get_value("file", default_value = "compressed")
+        pdb_name =  self.parameters.get_value("filename", default_value = "compressed")
+        pdb_path = os.path.join( workspace_handler["results"],"%s.pdb"%pdb_name)
 
         if compression_type == "RANDOM":
             representatives = self.__naive_compression(clustering, matrix_handler)
@@ -48,14 +52,13 @@ class RedundanceElimination(object):
 
         else:
             print "[ERROR Compressor::compress] The compression type does not exist (%s)"%(self.type)
-
-        return save_representatives(representatives,
-                                  pdb_name,
-                                  workspace_handler,
-                                  data_handler,
-                                  do_merged_files_have_correlative_models=True,
-                                  write_frame_number_instead_of_correlative_model_number=False,
-                                  keep_remarks = (lambda params: params['keep_remarks'] if 'keep_remarks' in params else False)(self.parameters))
+            exit() 
+        
+        save_cluster_elements(representatives,
+                              pdb_path,
+                              data_handler,
+                              options)
+        return pdb_name
 
     def __naive_compression(self, clustering, matrix_handler):
         """
