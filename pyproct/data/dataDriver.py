@@ -3,12 +3,11 @@ Created on 6/8/2014
 
 @author: victor
 """
+import os
 from pyproct.data.matrix.matrixCalculator import MatrixCalculator
 from pyproct.data.handler.dataHandler import DataHandler
 from pyproct.driver.time.timerHandler import timed_method
 from pyproct.tools import plotTools
-import pyproct
-import os
 
 class DataDriver(object):
     

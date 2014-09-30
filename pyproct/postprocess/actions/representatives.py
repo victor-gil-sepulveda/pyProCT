@@ -6,6 +6,7 @@ Created on 10/02/2014
 import os.path
 import prody
 import cStringIO
+from pyproct.tools.pdbTools import filter_remarks
 
 class RepresentativesPostAction(object):
 
@@ -77,7 +78,7 @@ def save_cluster_elements(elements,
         current_model = 0
         for element_id in elements: 
             if keep_remarks:
-                remarks = all_remarks[element_id]
+                remarks = filter_remarks(all_remarks[element_id], subset= keep_remarks)
                 file_handler_out.write("".join(remarks))
             
             if add_source_details:
