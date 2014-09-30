@@ -72,13 +72,13 @@ def save_cluster_elements(elements,
     if not keep_remarks == "NONE" and not add_source_details:
         prody.writePDBStream(file_handler_out, merged_structure, csets =  elements)
     else:
-        all_remarks = data.get_all_remarks()
+        all_remarks = filter_remarks(data.get_all_remarks(), subset= keep_remarks)
         all_model_numbers = data.get_all_model_numbers()
         
         current_model = 0
         for element_id in elements: 
             if keep_remarks:
-                remarks = filter_remarks(all_remarks[element_id], subset= keep_remarks)
+                remarks = all_remarks[element_id]
                 file_handler_out.write("".join(remarks))
             
             if add_source_details:
@@ -97,7 +97,7 @@ def save_cluster_elements(elements,
             file_handler_out.write("".join(lines))
             file_handler_out.write("ENDMDL\n")
             current_model+=1
-    
+
     file_handler_out.close()
 
 

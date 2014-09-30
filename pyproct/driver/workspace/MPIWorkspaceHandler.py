@@ -13,6 +13,7 @@ class MPIWorkspaceHandler(WorkspaceHandler):
         """
         super(MPIWorkspaceHandler,self).__init__(workspace_parameters, observer)
         self.disk_modif_allowed = (rank == allowed_rank)
+        
 
     def create_directories(self):
         if self.disk_modif_allowed:

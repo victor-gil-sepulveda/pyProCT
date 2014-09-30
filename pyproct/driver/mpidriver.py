@@ -4,12 +4,10 @@ Created on Mar 26, 2013
 @author: victor
 """
 from mpi4py import MPI
-from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.driver.driver import Driver
 from pyproct.driver.workspace.MPIWorkspaceHandler import MPIWorkspaceHandler
-from pyproct.data.dataDriver import DataDriver
 from pyproct.driver.time.timerHandler import timed_method
-from pyproct.data.matrix.matrixHandler import MatrixHandler
+from pyproct.data.MPIDataDriver import MPIDataDriver
 
 class MPIDriver(Driver):
     """
@@ -30,23 +28,17 @@ class MPIDriver(Driver):
 
         with MPIWorkspaceHandler(self.rank, 0, parameters["global"]["workspace"], self.observer) as self.workspaceHandler:
             self.comm.Barrier()
-
+            
             if self.rank == 0:
                 self.save_parameters_file(parameters)
 
             if "data" in parameters:
-                if self.rank == 0:
-                    self.data_handler, self.matrix_handler = DataDriver.run(parameters["data"],
-                                                                    self.workspaceHandler,
-                                                                    Driver.timer,
-                                                                    self.generatedFiles)
-                else:
-                    self.matrix_handler = MatrixHandler(parameters["data"]["matrix"], None)
-                self.comm.Barrier()
-
-                matrix_contents = list(self.comm.bcast(self.matrix_handler.distance_matrix.get_data(), root=0))
-                if self.rank != 0:
-                    self.matrix_handler.distance_matrix = CondensedMatrix(matrix_contents)
+                self.data_handler, self.matrix_handler = MPIDataDriver.run( self.rank,
+                                                                            self.comm,
+                                                                            parameters["data"],
+                                                                            self.workspaceHandler,
+                                                                            Driver.timer,
+                                                                            self.generatedFiles)
                 self.comm.Barrier()
                 
                 if "clustering" in parameters:

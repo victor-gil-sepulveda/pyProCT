@@ -49,11 +49,7 @@ class ProteinEnsembleData(Data):
         """
         return self.structure_ensemble
     
-    def get_num_elements(self):
-        """
-        TODO: This is repeated (The Data handler already has it through the loader, it looks better
-        to change it and get it trough the data itself :P )
-        """
+    def get_number_of_elements(self):
         return self.structure_ensemble.numCoordsets()
     
     def getSelection(self, selection_string):

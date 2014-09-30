@@ -33,7 +33,7 @@ class DataHandler(object):
         self.data = self.loader.close()
     
     def get_number_of_elements(self):
-        return self.loader.number_of_elements
+        return self.data.get_number_of_elements()
     
     def get_data(self):
         return self.data
@@ -81,6 +81,23 @@ class DataHandler(object):
         else:
             return loaders[0]
         
-        
-        
-        
+    def __getstate__(self):
+        """
+        Pickling protocol (pickle)
+        """
+        state = {
+                 "elements":self.elements,
+                 "data_type":self.data_type,
+                 "sources":self.sources,
+                 "data": self.data
+                 }
+        return state
+    
+    def __setstate__(self, state):
+        """
+        Pickling protocol (unpickle)
+        """
+        self.elements = state["elements"]
+        self.data_type = state["data_type"]
+        self.sources = state["sources"]
+        self.data = state["data"]

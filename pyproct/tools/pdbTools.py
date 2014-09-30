@@ -79,7 +79,7 @@ def filter_remarks(remarks_list, subset="NONE"):
     filtered_groups = []
     for group in remarks_list:
         filtered_remarks = []
-        for remark in group:        
+        for remark in group:
             standard_remark = (remark[6] == " " and remark[7:10].isdigit() and remark[10] == " ")
             if subset == "ALL":
                 filtered_remarks.append(remark)

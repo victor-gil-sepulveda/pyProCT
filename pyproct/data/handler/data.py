@@ -13,6 +13,13 @@ class Data(object):
     def __init__(self):
         pass
     
+    def get_number_of_elements(self):
+        """
+        Returns how much elements we have in this data package.
+        """
+        print "[ERROR Data::get_number_of_elements] This method must be overriden. Exiting..."
+        exit()
+    
     def get_element(self, element_id):
         """
         Returns the datum associated to the element id passed as argument.
