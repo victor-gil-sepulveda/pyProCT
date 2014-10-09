@@ -87,7 +87,7 @@ class RMSDMatrixBuilder(object):
     @classmethod
     def select_one_atom(self, structure, selection):
         # We pick coordinates only for first frame
-        coordsets =  structure.getSelectionCoordinates()[0]
+        coordsets =  structure.getSelectionCoordinates(selection)[0]
 
         if len(coordsets) == 0:
             print "[ERROR RMSDMatrixBuilder:select_one_atom] Selection returned 0 atoms (%s)."%selection
