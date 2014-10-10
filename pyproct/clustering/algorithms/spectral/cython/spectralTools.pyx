@@ -26,7 +26,8 @@ def order_by_eigenvalues(eigenvectors, eigenvalues):
 @cython.boundscheck(False)
 def calculate_degree_matrix(W):
     """
-    Calculates... the degree matrix (as an array containing the diagonal).
+    Computes the degree matrix (as an array containing the diagonal) of a directed
+    graph using its adjacency matrix.
 
     @param W: The adjacency matrix.
 

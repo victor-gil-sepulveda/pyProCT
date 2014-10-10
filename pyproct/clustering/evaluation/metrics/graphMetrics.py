@@ -92,7 +92,7 @@ class MinMaxCut(object):
     def __init__(self):
         pass
     
-    def evaluate(self,clustering,condensed_matrix):
+    def evaluate(self, clustering, condensed_matrix):
         """
         Evaluates:
         MinMaxCut = sum_{i=1}^k cut(A_i,A_i-complementary) / W(A_i,A_i)
@@ -135,7 +135,7 @@ class RatioCut(object):
     def __init__(self):
         pass
     
-    def evaluate(self,clustering,condensed_matrix):
+    def evaluate(self, clustering, condensed_matrix):
         """
         Evaluates:
         RatioCut = sum_{i=1}^k cut(A_i,A_i-complementary) / card(A_i)

@@ -32,7 +32,6 @@ cdef double vol(A, D, condensed_matrix):
         vol_val += D[i]
     return vol_val
 
-
 cdef class CythonNCut(object):
     """
     Is a very simple separation measure.
