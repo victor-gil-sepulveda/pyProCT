@@ -29,10 +29,11 @@ def calculate_degree_matrix(W):
     Computes the degree matrix (as an array containing the diagonal) of a directed
     graph using its adjacency matrix.
 
-    @param W: The adjacency matrix.
+    @param W: The adjacency matrix for ALL elements. 
 
     @return: The degree matrix as an array.
     """
+    #TODO: can reuse code from graph tools.
     # The degree matrix is the diagonal matrix with the degrees for each element.
     # The degree is the sum of the row of W (or column as it's symmetric) for each element.
     cdef int N = W.row_length
@@ -118,7 +119,7 @@ def force_sparsity(W, sparsity = 0.5):
     # Find the weight that converts at least the 51% of the elements of the matrix to 0s
     # TODO: here we need an extra copy because we are directly working with the matrix memory, is this a bug
     # or a feature?
-    threshold = sorted(data)[(((N*(N-1))/2) * sparsity)+1]
+    threshold = sorted(data)[int(((N*(N-1))/2) * sparsity)+1]
 
     for i in range(N-1):
         for j in range(i+1,N):
