@@ -66,10 +66,16 @@ class timed_method(object):
         self.alias = alias
 
     def __call__(self, f):
-        def timer_wrap(*args, **kwargs):
-            self.timer.start(self.alias)
-            result = f(*args, **kwargs)
-            self.timer.stop(self.alias)
-            return result
-        functools.update_wrapper(timer_wrap, f)
-        return timer_wrap
+        """
+        TODO: TEST both cases (timer = and != None)
+        """
+        if self.timer is not None:
+            def timer_wrap(*args, **kwargs):
+                self.timer.start(self.alias)
+                result = f(*args, **kwargs)
+                self.timer.stop(self.alias)
+                return result
+            functools.update_wrapper(timer_wrap, f)
+            return timer_wrap
+        else:
+            return f

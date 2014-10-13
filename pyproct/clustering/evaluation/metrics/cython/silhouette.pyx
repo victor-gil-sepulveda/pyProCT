@@ -17,7 +17,7 @@ DTYPE = numpy.double
 ctypedef numpy.double_t DTYPE_t
 from cpython cimport bool
 
-cdef class CythonSilhouetteCoefficientCalculator(object):
+cdef class SilhouetteCoefficientCalculator(object):
 
     cdef bool warn_misclustered_elements
 

@@ -5,7 +5,6 @@ Created on 16/03/2012
 """
 import sys
 import re
-import functools
 
 def merge_files(file_handler_list, merged_handler, verbose = True):
     """
@@ -100,4 +99,3 @@ def remove_comments(string):
     string = re.sub(re.compile("/\*.*?\*/",re.DOTALL ) ,"" ,string) # remove all occurance streamed comments (/*COMMENT */) from string
     string = re.sub(re.compile("//.*?\n" ) ,"" ,string) # remove all occurance singleline comments (//COMMENT\n ) from string
     return string
-

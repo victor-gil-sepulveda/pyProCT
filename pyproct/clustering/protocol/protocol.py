@@ -18,21 +18,20 @@ class ClusteringProtocol(Observable):
         super(ClusteringProtocol, self).__init__(observer)
         self.timer = timer
 
-    def run(self, clustering_parameters, matrixHandler, workspaceHandler, trajectoryHandler):
+    def run(self, clustering_parameters, matrix_handler, data_handler, workspaceHandler):
 
         ############################
         # Clustering exploration
         ############################
         self.notify("Exploration Started", [])
         self.timer.start("Clustering Exploration")
-        clusterings  = ClusteringExplorer(
-                                            clustering_parameters,
-                                            matrixHandler,
+        clusterings  = ClusteringExplorer(  clustering_parameters,
+                                            matrix_handler,
                                             workspaceHandler,
                                             scheduling_tools.build_scheduler(clustering_parameters["global"]["control"],
                                                                              self.observer),
                                             AlgorithmRunParametersGenerator(clustering_parameters,
-                                                                            matrixHandler),
+                                                                            matrix_handler),
                                             self.observer).run()
 
         self.notify("Clusterings Created", {"number_of_clusters":len(clusterings)})
@@ -43,7 +42,7 @@ class ClusteringProtocol(Observable):
         ######################
         self.timer.start("Clustering Filtering")
         selected_clusterings, not_selected_clusterings = ClusteringFilter(clustering_parameters["clustering"]["evaluation"],
-                                                                          matrixHandler).filter(clusterings)
+                                                                          matrix_handler).filter(clusterings)
 
         self.notify("Filter", {"selected":len(selected_clusterings.keys()),"not_selected":len(not_selected_clusterings.keys())})
         self.timer.stop("Clustering Filtering")
@@ -59,8 +58,8 @@ class ClusteringProtocol(Observable):
                                                        clustering_parameters["global"]["control"],
                                                        self.observer),
                                           selected_clusterings,
-                                          AnalysisPopulator(matrixHandler,
-                                                            trajectoryHandler,
+                                          AnalysisPopulator(matrix_handler,
+                                                            data_handler,
                                                             clustering_parameters))
 
         analyzer.evaluate()

@@ -500,62 +500,65 @@ A more detailed explanation of the script contents can be found [here](https://d
 Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working
 or can be done better. Any contribution can help to improve this software!
 
-# TODO
+# Improvements (TODO)
 
-- To improve this documentation (better explanations, more examples and downloadable scripts).
+- [ ] To improve this documentation (better explanations, more examples and downloadable scripts).
 
-- Refactoring and general improvements:
-    - Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)
-    - Data refactoring (Create a wrapper that stores the prody object, temporary selection storage, etc...).
-    - Check current tests.
-    - Rename script stuff
-    - Rename functions and vars
-    - Minimizing dependencies with scipy
-    - Minimizing dependencies with prody (create my own reader)
-    - Adding its own Hierarchical clustering code (educational motivations)
-    - Improve spectral algoritm (add more tests - comparisons with other implementations, adding new types)
-    - Improve MPI load balance (i.e. parameter generation must be processed in parallel)
-    - Improve test coverage
-    - The script must accept numbers and percentages
-    - Use JSON schema to validate the script. Try to delegate the full responsibility of validating to pyProCT (instead of the GUI)
-    [x] - Users must be able to comment their scripts (with '//' for instance).
-    - When loading a dcd file, we only want to load atomic data of the the associated pdb.
-    - Change "compression" by "redundancy_elimination"
-    - Allow to load all files (or [glob](https://docs.python.org/3.1/library/glob.html)) from a folder.
-    - Plotting distance matrix distances distribution.
-    - Change errors to std. error.
+### Refactoring and general improvements:  
 
-- Symetry handling:
-    - Symmetry handling for fitting coordinates.
-    - Improve symmetry handling for calculation coordinates (e.g. ligands).
-    [x] - Simple chain mapping feature.
+- [ ] Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)  
+- [x] Data refactoring (Create a wrapper that stores the prody object, temporary selection storage, etc...)  
+- [ ] Rename script stuff  
+- [ ] Rename functions and vars  
+- [ ] Minimizing dependencies with scipy  
+- [ ] Minimizing dependencies with prody (create an standalone reader)  
+- [ ] Add its own Hierarchical clustering code (educational motivations)  
+- [ ] Improve spectral algorithm (add more tests - comparisons with other implementations, adding new types)  
+- [ ] Improve MPI load balance (i.e. parameter generation must be processed in parallel)  
+- [ ] Check current tests. Improve test coverage  
+- [ ] The script must accept numbers and percentages  
+- [ ] Use JSON schema to validate the script. Try to delegate the full responsibility of validating to pyProCT (instead of the GUI)    
+- [x] Users must be able to comment their scripts (with '//' for instance).  
+- [x] When loading a dcd file, we only want to load atomic data of the the associated pdb.  
+- [ ] Change "compression" by "redundancy_elimination"  
+- [x] Allow to load all files (or [glob](https://docs.python.org/3.1/library/glob.html)) from a folder.  
+- [ ] Plotting distance matrix distances distribution.  
+- [ ] Change errors to std. error. Add logs.  
+- [ ] Improve postprocessing actions (must take advantage of new data layout).  
+- [x] Rename 'get_structure_ensemble' by get_inner_data (add virtual function too). Finally changed to 'get_all_elements'    
 
-- New algorithms:
-    - Modularity-based (Newman J. 2003)
-    - Passing messages (Frey and Dueck 2007)
-    - Flow simmulation (Stijin van Dongen)
-    - Fuzzy Clustering
-    - [Jarvis-Patrick Algorithm](http://www.improvedoutcomes.com/docs/WebSiteDocs/Clustering/Jarvis-Patrick_Clustering_Overview.htm)
-    - Others (adaptative spectral clustering flavours)
+### Specific improvements 
+####Symetry handling:  
+- [ ] Symmetry handling for fitting coordinates.
+- [ ] Improve symmetry handling for calculation coordinates (e.g. ligands).
+- [x] Simple chain mapping feature.
 
-- New quality functions.
-    - Balancedness: The sizes of the clusters must be balanced.
-    - J quality function: Cai Xiaoyan Proceedings of the 27th Chinese Control Conference
-    - Metastability function (Q) in Chodera et al. J. Chem. Phys. 126 155101 2007 .
-    - Improve separation quality functions.
-    - New standard separation ICVs (require inmutable prototypes)
+####New algorithms:
+- [ ] Modularity-based (Newman J. 2003)
+- [ ] Passing messages (Frey and Dueck 2007)
+- [ ] Flow simmulation (Stijin van Dongen)
+- [ ] Fuzzy Clustering
+- [ ] [Jarvis-Patrick Algorithm](http://www.improvedoutcomes.com/docs/WebSiteDocs/Clustering/Jarvis-Patrick_Clustering_Overview.htm)
+- [ ] Others (adaptative spectral clustering flavours)
 
-		>
-	    >Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
-	    >-  Single linkage: It measures the distance between the closest members of the clusters.
-	    >-  Complete linkage: It measures the distance between the most distant members.
-	    >- Comparison of centroids: It measures the distance between the centers of the clusters.
+####New quality functions.
+- [ ] Balancedness: The sizes of the clusters must be balanced.
+- [ ] J quality function: Cai Xiaoyan Proceedings of the 27th Chinese Control Conference
+- [ ] Metastability function (Q) in Chodera et al. J. Chem. Phys. 126 155101 2007 .
+- [ ] Improve separation quality functions.
+- [ ] New standard separation ICVs (require inmutable prototypes)
 
-- New features:
-    - Refine noise in DBSCAN
-    - Refine a preselected cluster (e.g "noise"), or "heterogeneous".
-    - TM-Score
+	>
+	>Separation, the clusters themselves should be widely spaced. There are three common approaches measuring the distance between two different clusters:
+	>-  Single linkage: It measures the distance between the closest members of the clusters.
+	>-  Complete linkage: It measures the distance between the most distant members.
+	>- Comparison of centroids: It measures the distance between the centers of the clusters.
 
-- New postprocessing options:
-    - Refinement
-    - Kinetic analysis
+####New features:
+- [ ] Refine noise in DBSCAN
+- [ ] Refine a preselected cluster (e.g "noise"), or "heterogeneous".
+- [ ] TM-Score
+
+####New postprocessing options:
+- [ ] Refinement  
+- [ ] Kinetic analysis  

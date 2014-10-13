@@ -5,7 +5,8 @@ Created on 10/02/2014
 """
 import os.path
 import prody
-import pyproct.tools.pdbTools as pdb_tools
+import cStringIO
+from pyproct.tools.pdbTools import filter_remarks
 
 class RepresentativesPostAction(object):
 
@@ -14,91 +15,89 @@ class RepresentativesPostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
-        save_representatives_wrapper(clustering, postprocessing_parameters[RepresentativesPostAction.KEYWORD],
-                             trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles)
+    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
 
+        medoids = clustering.get_medoids(matrixHandler.distance_matrix)
+    
+        pdb_name = postprocessing_parameters.get_value("filename", default_value = "representatives")
+        
+        representatives_file_path = os.path.join( workspaceHandler["results"],"%s.pdb"%pdb_name)
+    
+        save_cluster_elements( medoids,
+                              representatives_file_path,
+                              data_handler,
+                              postprocessing_parameters)
+    
+        generatedFiles.append({
+                               "description":"Cluster representatives",
+                               "path":os.path.abspath(representatives_file_path),
+                               "type":"pdb"
+        })
 
-def save_representatives_wrapper(clustering, my_params, trajectoryHandler, workspaceHandler, matrixHandler, generatedFiles):
-
-    #Parameters
-    keep_remarks = my_params.get_value("keep_remarks", default_value = False)
-    keep_frame_number = my_params.get_value("keep_frame_number", default_value = False)
-
-    # The real job
-    medoids = clustering.get_medoids(matrixHandler.distance_matrix)
-    # Set prototypes and ids (medoids are ordered) Once refactored this won't be necessary
-    for i in range(len(clustering.clusters)):
-        clustering.clusters[i].prototype = medoids[i]
-
-    representatives_path = save_representatives(medoids,
-                                                          "representatives",
-                                                          workspaceHandler,
-                                                          trajectoryHandler,
-                                                          do_merged_files_have_correlative_models=True,
-                                                          write_frame_number_instead_of_correlative_model_number = keep_frame_number,
-                                                          keep_remarks = keep_remarks )
-
-    generatedFiles.append({"description":"Cluster representatives",
-                                "path":os.path.abspath(representatives_path),
-                                "type":"pdb"})
-
-
-
-
-
-def save_representatives(representatives,
-                         pdb_name,
-                         workspace_handler,
-                         trajectory_holder,
-                         do_merged_files_have_correlative_models,
-                         write_frame_number_instead_of_correlative_model_number,
-                         keep_remarks = False):
+def save_cluster_elements(elements,
+                         out_pdb_name,
+                         data_handler,
+                         options):
     """
     Saves a pdb file containing the most representative elements of the clustering.
 
     @param representatives: A list of the representative elements of the clustering we want to extract.
 
-    @param workspace_handler: The workspace handler of this run.
+    @param out_pdb_name: The complete path of the produced file.
 
-    @param trajectory_holder: The trajectory handler for this run or an array with pdb file paths.
+    @param data_handler: The trajectory handler for this run or an array with pdb file paths.
 
-    @param do_merged_files_have_correlative_models: When merging, output file will have models from 0 to M, where M is the total number
-    of frames of the merged file.
-
-    @param write_frame_number_instead_of_model_number: When extracting frames, extract those models which number coincides with the
-    frame numbers in 'representatives'. Otherwise, extract those models which position coincide with the frame number in
-    'representatives'.
+    @param options: postprocessing options to generate the file. Currently a dic with any of these:
+        "keep_remarks" - Will add each model's remarks before the model header if present
+            Possible values are:
+            - "NONE": not to store remarks (Default)
+            - "STANDARD": stores remarks that follow pdb standard
+            - "NOT STANDARD": stores remarks not following the pdb standard
+            - "ALL": stores all remarks
+        "add_source_details" - Will add two remarks before the model tag: the path of the source file and 
+            the original model number. 
+        
     """
-    results_directory = workspace_handler["results"]
+    keep_remarks = options.get_value("keep_remarks", default_value = "NONE")
+    add_source_details = options.get_value("add_source_details", default_value = False)
 
-    # Merge pdbs (in order)
-    temporary_merged_trajectory_path = os.path.join(workspace_handler["tmp"],"tmp_merged_trajectory.pdb")
+    file_handler_out = open(out_pdb_name, "w")
+    
+    data = data_handler.get_data()
+    
+    merged_structure = data.get_all_elements()
+    
+    file_handler_out.write("REMARK 000 File created using Prody and pyProCT\n")
+    
+    if not keep_remarks == "NONE" and not add_source_details:
+        prody.writePDBStream(file_handler_out, merged_structure, csets =  elements)
+    else:
+        all_remarks = filter_remarks(data.get_all_remarks(), subset= keep_remarks)
+        all_model_numbers = data.get_all_model_numbers()
+        
+        current_model = 0
+        for element_id in elements: 
+            if keep_remarks:
+                remarks = all_remarks[element_id]
+                file_handler_out.write("".join(remarks))
+            
+            if add_source_details:
+                model_number = all_model_numbers[element_id]
+                conf_source = data_handler.get_source_of_element(element_id).get_path()
+                file_handler_out.write("REMARK source            : %s\n"%conf_source)
+                file_handler_out.write("REMARK original model nr : %d\n"%model_number)
+            
+            file_handler_out.write("MODEL"+str(current_model).rjust(9)+"\n")
+            pdb_handler = cStringIO.StringIO()
+            prody.writePDBStream(pdb_handler, merged_structure, csets=  element_id)
+            # skip the first remark if any
+            lines = filter(lambda line: line[0:6]!="REMARK" and line[0:5]!="MODEL" and line[0:6]!="ENDMDL", 
+                           pdb_handler.getvalue().splitlines(True))
+            pdb_handler.close()
+            file_handler_out.write("".join(lines))
+            file_handler_out.write("ENDMDL\n")
+            current_model+=1
 
-#===========================================================
-    # THIS DOES NOT WORK IF USING DCD FILES
-#     merge_pdbs(trajectory_holder,
-#                temporary_merged_trajectory_path,
-#                do_merged_files_have_correlative_models)
-
-    # TEMPORARY HACK TO OVERCOME DCD MERGING BUG
-
-    merged_pdb = trajectory_holder.getMergedStructure()
-    prody.writePDB(temporary_merged_trajectory_path, merged_pdb)
-#==========================================================
-
-    # Extract frames from the merged pdb
-    file_handler_in = open(temporary_merged_trajectory_path,"r")
-    file_handler_out = open(os.path.join(results_directory,"%s.pdb"%pdb_name),"w")
-
-    pdb_tools.extract_frames_from_trajectory_sequentially (file_handler_in = file_handler_in,
-                                             number_of_frames = pdb_tools.get_number_of_frames(temporary_merged_trajectory_path),
-                                             file_handler_out = file_handler_out,
-                                             frames_to_save = representatives,
-                                             write_frame_number_instead_of_correlative_model_number = write_frame_number_instead_of_correlative_model_number,
-                                             keep_header = keep_remarks)
-    file_handler_in.close()
     file_handler_out.close()
 
-    return os.path.join(results_directory,"%s.pdb"%pdb_name)
 

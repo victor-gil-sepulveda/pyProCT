@@ -6,7 +6,7 @@ Created on 07/05/2014
 import unittest
 import numpy
 
-import pyproct.algorithms.spectral.cython.spectralTools as SpectralTools
+import pyproct.clustering.algorithms.spectral.cython.spectralTools as SpectralTools
 from pyRMSD.condensedMatrix import CondensedMatrix
 
 class Test(unittest.TestCase):
@@ -135,6 +135,33 @@ class Test(unittest.TestCase):
                           [ 0, -4.,  0.,  1.]])
         v  = SpectralTools.calculateNormalizedEigenvectors(L, D, max_clusters, True)
         self.fail("CHECK EIGENCALCULATIONS AGAIN, VALUES FOR THIS METHODS ARE DIFFERENT")
+        
+    def test_calculate_degree_matrix_2(self):
+        """
+        Test provided by Nancy-Sarah Yacovzada.
+        """
+        
+#         0--3
+#         |\  \ 
+#         5 4  2
+#         
+#         X = np.array(
+#              [[0.0, 0.0, 1.0, 1.0, 1.0],
+#               [0.0, 0.0, 1.0, 0.0, 0.0],
+#               [1.0, 1.0, 0.0, 0.0, 0.0],
+#               [1.0, 0.0, 0.0, 0.0, 0.0],
+#               [1.0, 0.0, 0.0, 0.0, 0.0]]
+#               )
+        data = [0.0, 1.0, 1.0, 1.0,
+                     1.0, 0.0, 0.0,
+                          0.0, 0.0,
+                               0.0]
+        
+        W = CondensedMatrix(data)
+        
+        self.assertListEqual([ 3., 1., 2., 1., 1.], SpectralTools.calculate_degree_matrix(W))
+        
+        
 
 
 if __name__ == "__main__":

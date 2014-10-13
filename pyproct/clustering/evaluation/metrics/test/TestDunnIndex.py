@@ -8,7 +8,7 @@ from pyproct.clustering.cluster import Cluster
 from pyproct.clustering.clustering import Clustering
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.clustering.evaluation.metrics.test.data import squared_CH_table1
-from pyproct.clustering.evaluation.metrics.Dunn import DunnCalculator
+from pyproct.clustering.evaluation.metrics.dunn import DunnCalculator
 
 
 class TestDunnIndex(unittest.TestCase):

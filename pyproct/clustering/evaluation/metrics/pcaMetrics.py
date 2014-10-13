@@ -12,12 +12,12 @@ class PCAMetric(object):
     """
     This is a metric based in the PCA of the clusters composing a clustering,
     """
-    def __init__(self, trajectory_handler):
+    def __init__(self, data_handler):
         """
         @param trajectory_handler: The TrajectoryHandler containing the coordinates as prody-like coordsets.
         """
-        self.fitting_coordinates = trajectory_handler.getFittingCoordinates()
-        self.calculation_coordinates = trajectory_handler.getCalculationCoordinates()
+        self.fitting_coordinates = data_handler.get_data().getFittingCoordinates()
+        self.calculation_coordinates = data_handler.get_data().getCalculationCoordinates()
 
     def evaluate(self, clustering):
         """

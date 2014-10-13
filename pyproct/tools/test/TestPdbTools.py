@@ -21,6 +21,54 @@ class Test(unittest.TestCase):
         os.system("rm test_pdb_for_counting_1.pdb")
         self.assertEqual(num_models,test_data.pdb_1_num_of_models)
 
+    def test_get_remarks_and_filter(self):
+        open("test_pdb_for_remarks.pdb","w").write(test_data.pdb_2_file_content)
+        
+        all_remarks = pyproct.tools.pdbTools.get_remarks("test_pdb_for_remarks.pdb")
+        
+        self.assertSequenceEqual( all_remarks,
+                          [
+                               [], 
+                               ['REMARK 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
+                               ['REMARKS 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
+                               ['REMARK 400 REGULAR REMARK\n']
+                          ])
+        
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "ALL"),
+                          [
+                               [], 
+                               ['REMARK 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
+                               ['REMARKS 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
+                               ['REMARK 400 REGULAR REMARK\n']
+                          ])
+        
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "NOT STANDARD"),
+                          [
+                               [], 
+                               ['REMARK 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
+                               ['REMARKS 0 this\n', 'REMARKS 0 is\n', 'REMARKS 0 a remark\n'], 
+                               []
+                          ])
+        
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "STANDARD"),
+                          [
+                               [], 
+                               [], 
+                               [], 
+                               ['REMARK 400 REGULAR REMARK\n']
+                          ])
+        
+        self.assertSequenceEqual( pyproct.tools.pdbTools.filter_remarks(all_remarks, subset= "NONE"),
+                          [
+                               [], 
+                               [], 
+                               [], 
+                               []
+                          ])
+
+
+        os.system("rm test_pdb_for_remarks.pdb")
+
     def test_get_number_of_atoms(self):
         open("test_pdb_for_counting_2.pdb","w").write(test_data.pdb_1_sub2_file_content)
         num_models = pyproct.tools.pdbTools.get_number_of_atoms("test_pdb_for_counting_2.pdb")

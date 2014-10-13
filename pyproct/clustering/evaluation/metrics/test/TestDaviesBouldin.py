@@ -9,7 +9,7 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.clustering.cluster import Cluster
 import numpy
 from pyproct.clustering.evaluation.metrics.test.data import squared_CH_table1
-from pyproct.clustering.evaluation.metrics.DaviesBouldin import DaviesBouldinCalculator
+from pyproct.clustering.evaluation.metrics.daviesBouldin import DaviesBouldinCalculator
 from pyproct.clustering.evaluation.metrics.common import update_medoids
 class TestDaviesBouldin(unittest.TestCase):
    

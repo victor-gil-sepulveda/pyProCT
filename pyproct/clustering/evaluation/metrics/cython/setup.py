@@ -12,8 +12,8 @@ if __name__ == '__main__': # Comp. with sphynx
     setup(
         cmdclass = {'build_ext': build_ext},
         include_dirs = [np.get_include()],
-        ext_modules = [Extension("boundedCohesion", ["boundedCohesion.pyx"],extra_compile_args=["-O3","-ffast-math"]),
-        Extension("silhouette", ["silhouette.pyx"],extra_compile_args=["-O3","-ffast-math"]),
-        Extension("meanMinimumDistance", ["meanMinimumDistance.pyx"],extra_compile_args=["-O3","-ffast-math"]),
-        Extension("normNCut", ["normNCut.pyx"],extra_compile_args=["-O3","-ffast-math"])
+        ext_modules = [
+                       Extension("boundedCohesion", ["boundedCohesion.pyx"], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension("silhouette", ["silhouette.pyx"], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension("graph.nCut", ["graph/nCut.pyx"], extra_compile_args=["-O3","-ffast-math"]),
         ])

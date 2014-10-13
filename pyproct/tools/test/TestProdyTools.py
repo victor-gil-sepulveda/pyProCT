@@ -9,7 +9,7 @@ import numpy
 import StringIO
 from pyproct.tools.prodyTools import removeAllCoordsetsFromStructure,\
     removeAllCoordsetsFromStructureLeavingFirst
-from pyproct.data.proteins.matrix.test.data.pdb_data import switched_pdb_data
+from pyproct.tools.test.data.pdb_data import switched_pdb_data
 
 class Test(unittest.TestCase):
     def test_removeAllCoordsetsFromStructure(self):

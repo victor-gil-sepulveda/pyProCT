@@ -4,11 +4,10 @@ Created on Mar 26, 2013
 @author: victor
 """
 from mpi4py import MPI
-from pyRMSD.condensedMatrix import CondensedMatrix
-from pyproct.tools.commonTools import timed_method
 from pyproct.driver.driver import Driver
 from pyproct.driver.workspace.MPIWorkspaceHandler import MPIWorkspaceHandler
-from pyproct.data.proteins.matrix.matrixHandler import MatrixHandler
+from pyproct.driver.time.timerHandler import timed_method
+from pyproct.data.MPIDataDriver import MPIDataDriver
 
 class MPIDriver(Driver):
     """
@@ -23,18 +22,25 @@ class MPIDriver(Driver):
         self.trajectoryHandler = None
         self.matrixHandler = None
 
+
     @timed_method(Driver.timer, "Global")
     def run(self, parameters):
 
         with MPIWorkspaceHandler(self.rank, 0, parameters["global"]["workspace"], self.observer) as self.workspaceHandler:
             self.comm.Barrier()
-
+            
             if self.rank == 0:
                 self.save_parameters_file(parameters)
 
             if "data" in parameters:
-                self.data_section(parameters)
-
+                self.data_handler, self.matrix_handler = MPIDataDriver.run( self.rank,
+                                                                            self.comm,
+                                                                            parameters["data"],
+                                                                            self.workspaceHandler,
+                                                                            Driver.timer,
+                                                                            self.generatedFiles)
+                self.comm.Barrier()
+                
                 if "clustering" in parameters:
                     clustering_results = self.clustering_section(parameters)
                     self.comm.Barrier()
@@ -43,40 +49,13 @@ class MPIDriver(Driver):
                         self.postprocess(parameters, clustering_results)
                         self.save_results(clustering_results)
                         self.show_summary(parameters, clustering_results)
+                        return self.get_best_clustering(clustering_results)
+                else:
+                    print "[Warning MPIDriver::run] 'clustering' object was not defined in the control script. pyProCT will now stop."
+                    self.notify("Driver Finished", "\n"+str(Driver.timer))
+            else:
+                print "[Warning MPIDriver::run] 'data' object was not defined in the control script. pyProCT will now stop."
+                self.notify("MPIDriver Finished", "\n"+str(Driver.timer))
 
         if self.rank == 0:
             self.notify("MPI-Driver Finished", "\n"+str(self.timer))
-
-    def data_section(self, parameters):
-        """
-        MPI implementation of the data protocol.
-        """
-        matrix_parameters = parameters["data"]["matrix"]
-
-        self.load_trajectory(parameters)
-        self.comm.Barrier()
-
-        if self.rank == 0:
-            self.calculate_matrix(parameters)
-        else:
-            self.matrixHandler = MatrixHandler(matrix_parameters)
-            self.matrixHandler.distance_matrix = CondensedMatrix([0.]) # fake matrix
-        self.comm.Barrier()
-
-        matrix_contents = list(self.comm.bcast(self.matrixHandler.distance_matrix.get_data(), root=0))
-        if self.rank != 0:
-            self.matrixHandler.distance_matrix = CondensedMatrix(matrix_contents)
-
-        if self.nprocs > 1:
-
-            if self.rank == 0:
-                if "filename" in matrix_parameters:
-                    self.save_matrix(parameters)
-
-            if self.rank == 1:
-                if "image" in matrix_parameters:
-                    self.plot_matrix(parameters)
-        self.comm.Barrier()
-
-
-

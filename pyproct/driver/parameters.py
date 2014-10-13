@@ -6,7 +6,6 @@ Created on 04/06/2012
 import json
 from pyproct.tools.commonTools import convert_to_utf8, get_parameter_value
 
-
 class ProtocolParameters():
     """
     Stores the values of the parameters used to execute the protocol.
