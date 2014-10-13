@@ -38,6 +38,7 @@ if __name__ == '__main__': # Compatibility with sphynx
                     'pyproct.clustering.evaluation.analysis',
                     'pyproct.clustering.evaluation.metrics',
                     'pyproct.clustering.evaluation.metrics.cython',
+                    'pyproct.clustering.evaluation.metrics.cython.graph',
                     'pyproct.clustering.filtering',
                     'pyproct.clustering.protocol',
                     'pyproct.clustering.protocol.exploration',
@@ -77,6 +78,9 @@ if __name__ == '__main__': # Compatibility with sphynx
                        Extension('pyproct.clustering.evaluation.metrics.cython.graph.minMaxCut',[
                                     'pyproct/clustering/evaluation/metrics/cython/graph/minMaxCut.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension('pyproct.clustering.evaluation.metrics.cython.graph.tools',[
+                                    'pyproct/clustering/evaluation/metrics/cython/graph/tools.c'
+                       ], extra_compile_args=["-O3","-ffast-math"]),
                        
                        # Other metrics
                        Extension('pyproct.clustering.evaluation.metrics.cython.cohesion', [
@@ -99,12 +103,12 @@ if __name__ == '__main__': # Compatibility with sphynx
             "pyRMSD>=4.0.0",
             "pyScheduler>=0.1.0",
             "fastcluster>=1.1.6",
-            "PIL>=1.1.6",
             "ProDy>=1.4.2",
             "numpy>=1.6.1",
-            "matplotlib>=1.1.1rc",
             "scipy>=0.9.0",
             "scikit-learn>=0.12",
+            "PIL>=1.1.6",
+            "matplotlib>=1.1.1rc",
             "mpi4py>=1.3"
           ]
     )
