@@ -1,13 +1,22 @@
 
 from itertools import product
 from pyproct.clustering.algorithms.spectral.cython import spectralTools
+cimport cython
 
 """
 Application of graph theory's metrics to clustering, where each connected component is
 a cluster.
 """
 
-cdef double cut (A1, A2, adjacency_matrix):
+def calc_adjacency_matrix(condensed_matrix):
+    # Calculate adjacency matrix
+    sigmas = spectralTools.local_sigma_estimation(condensed_matrix)
+    W  = spectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix, sigmas)
+    D = spectralTools.calculate_degree_matrix(W)
+    return W, D
+
+@cython.boundscheck(False)
+def cut (A1, A2, adjacency_matrix):
     """
     W(A,B) = sum_{i pert A, j pert B} w_i_j in Luxburg's, cut in Shi & Malik.
     Sum of the weights of the edges one has to remove in order to separate two 
@@ -20,7 +29,8 @@ cdef double cut (A1, A2, adjacency_matrix):
         w = w + adjacency_matrix[i,j]
     return w
 
-cdef double internal_vol(A, D, adjacency_matrix):
+@cython.boundscheck(False)
+def internal_vol(A, D, adjacency_matrix):
     """
     vol(A) = sum_{i pert A} d_i -> Luxburg's
     
@@ -42,6 +52,7 @@ cdef double internal_vol(A, D, adjacency_matrix):
     
     return 0.5 * internal_vol 
 
+@cython.boundscheck(False)
 def get_cluster_and_complementary (i, all_clusters):
     """
     Returns a list with the elements of 'ith' cluster and anoher
@@ -59,71 +70,3 @@ def get_cluster_and_complementary (i, all_clusters):
             
     return all_clusters[i].all_elements, complementary_elements
             
-            
-            
-            
-
-def d(i, adjacency_condensed_matrix):
-    """
-    Degree of a vertex:
-    d_i = sum_{j=1}^n w_ij
-    """
-    d_val = 0
-    n = condensed_matrix.row_length
-    for j in range(n):
-        d_val += adjacency_condensed_matrix[i,j]
-    return d_val
-
-
-def vol(A, adjacency_condensed_matrix):
-    """
-    vol(A) = sum_{i pert A} d_i
-      where the degree matrix is the degree matrix of the unconnected graph.
-    """
-    vol_val = 0
-    for i in  A:
-        vol_val += d(i, adjacency_condensed_matrix)   
-    return vol_val
-
-def W_partition (A1, A2, W):
-    """
-    W(A,B) = sum_{i pert A, j pert B} w_i_j
-    """
-    w = 0.
-
-    for i,j in product(A1,A2):
-        w = w + W[i,j]
-    return w
-
-def W(A1, A2, condensed_matrix):
-    """
-    W(A,B) = sum_{i pert A, j pert B} w_i_j
-    """
-    w = 0;
-    
-    for indices in product(A1,A2):
-        w = w + condensed_matrix[indices]
-    return w
-
-def vol2(A, D, condensed_matrix):
-    """
-    vol2(A) = sum_{i pert A} d_i
-    """
-    vol_val = 0
-    for i in  A:
-        vol_val += D[i]
-    return vol_val
-
-def all_cut(clustering,condensed_matrix):
-    """
-    Cut measure of the connected component A vs the complementary set.
-    """
-    clusters = clustering.clusters
-    cut_val = 0
-    for i in range(len(clusters)):
-        A,Acomp = getClusterAndComplementary(i,clusters)
-        cut_val += W(A,Acomp,condensed_matrix)
-    return 0.5*cut_val
-
-def single_cut(A,Acomp,condensed_matrix):
-    return 0.5 * W(A,Acomp,condensed_matrix)

@@ -86,9 +86,9 @@ class TestMetrics(unittest.TestCase):
     def test_cluster_cohesion_without_prototype(self):
         
         distances =  CondensedMatrix( [ 1., 2., 3., 4.,
-                                                    5., 6., 7., 
-                                                        8., 9., 
-                                                           10.])
+                                            5., 6., 7., 
+                                                8., 9., 
+                                                   10.])
         clusters_1 = [Cluster(None, elements=[0,1]),
                       Cluster(None, elements=[2] ),
                       Cluster(None, elements=[3,4])]

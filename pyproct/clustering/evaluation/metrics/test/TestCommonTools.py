@@ -19,7 +19,15 @@ class Test(unittest.TestCase):
         matrix = CondensedMatrix(CH_table1)
         numpy.testing.assert_almost_equal(get_intra_cluster_distances(Cluster(None, [4,5]), matrix),[2.4494897427831779],5)
         numpy.testing.assert_almost_equal(get_intra_cluster_distances(Cluster(None, [1,3,5]), matrix),[2.4494897427831779, 3.8729833462074170, 3.8729833462074170],5)
-    
+        
+        data = [0.0, 1.0, 1.0, 1.0,
+                     1.0, 0.0, 0.0,
+                          0.0, 0.0,
+                               0.0]
+        matrix = CondensedMatrix(data)
+        expected_distance = 4
+        self.assertEqual(expected_distance, numpy.sum(get_intra_cluster_distances(Cluster(None, range(5)), matrix)))
+
     def test_get_inter_cluster_distances(self):
         matrix = CondensedMatrix(squared_CH_table1)
         clusters = [Cluster(None, [1,2]),Cluster(None, [3,4]), Cluster(None, [5])]

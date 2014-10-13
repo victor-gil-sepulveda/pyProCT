@@ -8,7 +8,7 @@ Created on 09/01/2013
 
 @author: victor
 """
-from pyproct.clustering.evaluation.metrics.cohesion import CohesionCalculator
+from pyproct.clustering.evaluation.metrics.cython.cohesion import CohesionCalculator
 
 class SeparationCalculator(object):
 

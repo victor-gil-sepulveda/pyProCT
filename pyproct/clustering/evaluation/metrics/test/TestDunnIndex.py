@@ -18,7 +18,7 @@ class TestDunnIndex(unittest.TestCase):
         cls.matrix = CondensedMatrix(squared_CH_table1)
          
         cls.clusterings = [Clustering([Cluster(None, [0,1,2,3]), Cluster(None, [4,5])]),
-                            Clustering([Cluster(None, [0,1]), Cluster(None, [2,3]), Cluster(None, [4,5])])]
+                           Clustering([Cluster(None, [0,1]), Cluster(None, [2,3]), Cluster(None, [4,5])])]
     
     def test_min_intracluster_distances(self):
         expected = [5, 5]

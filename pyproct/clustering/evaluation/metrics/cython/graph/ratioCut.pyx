@@ -1,23 +1,24 @@
-from pyproct.clustering.evaluation.metrics.cython.graph.nCut import get_cluster_and_complementary
+from pyproct.clustering.evaluation.metrics.cython.graph.tools import get_cluster_and_complementary, cut,\
+                                            calc_adjacency_matrix
 
-
-
-class RatioCut(object):
+cdef class RatioCut(object):
     """
     Is another simple separation measure.
     """
     def __init__(self):
         pass
     
-    def evaluate(self, clustering, condensed_matrix):
+    cpdef double evaluate(self, clustering, condensed_matrix) except *:
         """
         Evaluates:
-        RatioCut = sum_{i=1}^k cut(A_i,A_i-complementary) / card(A_i)
+        RatioCut = sum_{i=1}^k cut(A_i, A_i_complementary) / card(A_i)
         """
         clusters = clustering.clusters
-        ratiocut_val = 0
+        W,D = calc_adjacency_matrix(condensed_matrix)
+        
+        cdef double ratiocut_val = 0
+        
         for i in range(len(clusters)):
-            A, Acomp = get_cluster_and_complementary(i,clusters)
-            
-            ratiocut_val += W(A,Acomp,condensed_matrix) / len(A)
-        return 0.5*ratiocut_val
+            A, Acomp = get_cluster_and_complementary(i, clusters)
+            ratiocut_val += cut(A, Acomp, W) / len(A)
+        return ratiocut_val

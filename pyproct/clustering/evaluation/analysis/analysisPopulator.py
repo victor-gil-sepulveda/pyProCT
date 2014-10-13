@@ -7,18 +7,17 @@ import numpy
 from pyproct.clustering.cluster import get_cluster_sizes
 from pyproct.clustering.evaluation.analysis.analysis import Analysis
 from pyproct.clustering.evaluation.metrics.pcaMetrics import PCAMetric
-from pyproct.clustering.evaluation.metrics.cython.normNCut import CythonNCut
-from pyproct.clustering.evaluation.metrics.cython.boundedCohesion import CythonMirrorCohesionCalculator
-from pyproct.clustering.evaluation.metrics.cython.silhouette import SilhouetteCoefficientCalculator
-from pyproct.clustering.evaluation.metrics.boundedCohesion import MirrorCohesionCalculator
-from pyproct.clustering.evaluation.metrics.cohesion import CohesionCalculator
-from pyproct.clustering.evaluation.metrics.calinskiHarabasz import CalinskiHarabaszCalculator
+from pyproct.clustering.evaluation.metrics.cython.cohesion import CohesionCalculator
+from pyproct.clustering.evaluation.metrics.compactness import CompactnessCalculator
+from pyproct.clustering.evaluation.metrics.separation import SeparationCalculator
 from pyproct.clustering.evaluation.metrics.dunn import DunnCalculator
 from pyproct.clustering.evaluation.metrics.daviesBouldin import DaviesBouldinCalculator
+from pyproct.clustering.evaluation.metrics.calinskiHarabasz import CalinskiHarabaszCalculator
 from pyproct.clustering.evaluation.metrics.gaussianSeparation import GaussianSeparationCalculator
-from pyproct.clustering.evaluation.metrics.separation import SeparationCalculator
-from pyproct.clustering.evaluation.metrics.compactness import CompactnessCalculator
-
+from pyproct.clustering.evaluation.metrics.cython.silhouette import SilhouetteCoefficientCalculator
+from pyproct.clustering.evaluation.metrics.cython.graph.nCut import NCut
+from pyproct.clustering.evaluation.metrics.cython.graph.ratioCut import RatioCut
+from pyproct.clustering.evaluation.metrics.cython.graph.minMaxCut import MinMaxCut
 
 class AnalysisPopulator(object):
 
@@ -58,45 +57,38 @@ class AnalysisPopulator(object):
         self.all_possible_analysis["NoiseLevel"] = Analysis("Noise level", self.analysis_function_noise_level, distance_matrix.row_length)
 
         # Evaluators
-        self.all_possible_analysis["MirrorCohesion"] = Analysis("MirrorCohesion", self.evaluate_with_calculator,
-                                                          {"class":MirrorCohesionCalculator,"matrix":distance_matrix})
 
         self.all_possible_analysis["Cohesion"] = Analysis("Cohesion", self.evaluate_with_calculator,
-                                                          {"class":CohesionCalculator,"matrix":distance_matrix})
+                                                                      {"class":CohesionCalculator,"matrix":distance_matrix})
 
+        self.all_possible_analysis["Compactness"] = Analysis("Compactness", self.evaluate_with_calculator,
+                                                                    {"class":CompactnessCalculator,"matrix":distance_matrix})
+        
         self.all_possible_analysis["Separation"] = Analysis("Separation", self.evaluate_with_calculator,
                                                             {"class":SeparationCalculator,"matrix":distance_matrix})
 
-        self.all_possible_analysis["Calinski-Harabasz"] = Analysis("Calinski-Harabasz", self.evaluate_with_calculator,
-                                                                   {"class":CalinskiHarabaszCalculator,"matrix":distance_matrix})
-        self.all_possible_analysis["Dunn"] = Analysis("Dunn", self.evaluate_with_calculator,
-                                                      {"class":DunnCalculator,"matrix":distance_matrix})
-        self.all_possible_analysis["Davies-Bouldin"] = Analysis("Davies-Bouldin", self.evaluate_with_calculator,
-                                                                {"class":DaviesBouldinCalculator,"matrix":distance_matrix})
+        self.all_possible_analysis["Silhouette"] = Analysis("Silhouette", self.evaluate_with_calculator,
+                                                        {"class":SilhouetteCoefficientCalculator,"matrix":distance_matrix})
+
         self.all_possible_analysis["GaussianSeparation"] = Analysis("GaussianSeparation", self.evaluate_with_calculator,
                                                                     {"class":GaussianSeparationCalculator,"matrix":distance_matrix})
-        self.all_possible_analysis["Compactness"] = Analysis("Compactness", self.evaluate_with_calculator,
-                                                                    {"class":CompactnessCalculator,"matrix":distance_matrix})
 
-        # Cython
-        self.all_possible_analysis["CythonMirrorCohesion"] = Analysis("CythonMirrorCohesion", self.evaluate_with_calculator,
-                                                                      {"class":CythonMirrorCohesionCalculator,"matrix":distance_matrix})
-        self.all_possible_analysis["CythonSilhouette"] = Analysis("Silhouette", self.evaluate_with_calculator,
-                                                                  {"class":SilhouetteCoefficientCalculator,"matrix":distance_matrix})
+        self.all_possible_analysis["Calinski-Harabasz"] = Analysis("Calinski-Harabasz", self.evaluate_with_calculator,
+                                                                   {"class":CalinskiHarabaszCalculator,"matrix":distance_matrix})
+        
+        self.all_possible_analysis["Dunn"] = Analysis("Dunn", self.evaluate_with_calculator,
+                                                      {"class":DunnCalculator,"matrix":distance_matrix})
+        
+        self.all_possible_analysis["Davies-Bouldin"] = Analysis("Davies-Bouldin", self.evaluate_with_calculator,
+                                                                {"class":DaviesBouldinCalculator,"matrix":distance_matrix})
 
         # Graph
         self.all_possible_analysis["RatioCut"] = Analysis("RatioCut", self.evaluate_with_calculator,
                                                           {"class":RatioCut,"matrix":distance_matrix})
         self.all_possible_analysis["NCut"] = Analysis("NCut", self.evaluate_with_calculator,
                                                       {"class":NCut,"matrix":distance_matrix})
-        self.all_possible_analysis["NormNCut"] = Analysis("NormNCut", self.analysis_function_norm_n_cut,
-                                                          distance_matrix)
         self.all_possible_analysis["MinMaxCut"] = Analysis("MinMaxCut", self.evaluate_with_calculator,
                                                            {"class":MinMaxCut,"matrix":distance_matrix})
-
-        # Cython & Graph
-        self.all_possible_analysis["CythonNormNCut"] = Analysis("CythonNormNCut", self.analysis_function_cython_norm_n_cut,
-                                                                distance_matrix)
 
         # PCA
         self.all_possible_analysis["PCAanalysis"] = Analysis("PCAanalysis", self.analysis_function_pca, data_handler)
@@ -220,15 +212,3 @@ class AnalysisPopulator(object):
         """
         calculator = PCAMetric(data_handler)
         return calculator.evaluate(clustering)
-
-    def analysis_function_cython_norm_n_cut(self,clustering, condensed_matrix):
-        """
-        """
-        calculator = CythonNCut()
-        return calculator.evaluate(clustering, condensed_matrix) / len(clustering.clusters)
-
-    def analysis_function_norm_n_cut(self,clustering,condensed_matrix):
-        """
-        """
-        calculator = NCut()
-        return calculator.evaluate(clustering, condensed_matrix) / len(clustering.clusters)

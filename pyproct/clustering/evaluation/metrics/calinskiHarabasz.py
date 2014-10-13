@@ -1,10 +1,11 @@
 """
 Created on 11/06/2013
 
-@author: victor
+:author: victor
 """
 import numpy
 from pyproct.clustering.evaluation.metrics.common import update_medoids,  get_intra_cluster_distances
+from pyproct.tools.exceptions import SingularClusterException
 
 def mean(array):
     if len(array)==0:
@@ -24,9 +25,9 @@ class CalinskiHarabaszCalculator(object):
     def evaluate(self, clustering, matrix):
         """
         Calculates the index value for a clustering.
-        @param clustering: The clustering being checked.
-        @param matrix: The condensed matrix containing all distances.
-        @return: The calculated Calinski-Harabasz (VRC) index.
+        :param clustering: The clustering being checked.
+        :param matrix: The condensed matrix containing all distances.
+        :return: The calculated Calinski-Harabasz (VRC) index.
         """
         # Cluster prototypes (medoids here) must be updated
         update_medoids(clustering, matrix)
@@ -49,9 +50,9 @@ class CalinskiHarabaszCalculator(object):
     def WGSS(cls, clusters, matrix):
         """
         C-H description of the "Within group sum of squares".
-        @param clusters: An array with all clusters description (usually Clustering.clusters)
-        @param matrix: The condensed matrix containing all distances.
-        @return: The value of WGSS.
+        :param clusters: An array with all clusters description (usually Clustering.clusters)
+        :param matrix: The condensed matrix containing all distances.
+        :return: The value of WGSS.
         """
         wgss = 0
         for c in clusters:
@@ -64,10 +65,10 @@ class CalinskiHarabaszCalculator(object):
     def BGSS(cls, clustering, D, matrix):
         """
         C-H description of the "Between group sum of squares".
-        @param clustering: The clustering being checked.
-        @param D: Mean distance of the sum of all squared distances present in the matrix.
-        @param matrix: The condensed matrix containing all distances.
-        @return: The value of BGSS.
+        :param clustering: The clustering being checked.
+        :param D: Mean distance of the sum of all squared distances present in the matrix.
+        :param matrix: The condensed matrix containing all distances.
+        :return: The value of BGSS.
         """
         n = clustering.total_number_of_elements
         k = len(clustering.clusters)
@@ -78,9 +79,9 @@ class CalinskiHarabaszCalculator(object):
     def A_k(cls, clustering, D, matrix):
         """
         Calculates the A_k term.
-        @param clustering: The clustering being checked.
-        @param matrix: The condensed matrix containing all distances.
-        @return: The A_k term value.
+        :param clustering: The clustering being checked.
+        :param matrix: The condensed matrix containing all distances.
+        :return: The A_k term value.
         """
         n = clustering.total_number_of_elements
         k = len(clustering.clusters)
@@ -90,13 +91,17 @@ class CalinskiHarabaszCalculator(object):
     def ch_cluster_term(cls, cluster, global_mean_distance, matrix):
         """
         Calculates one of the formula terms (ng-1)(D-d_g)
-        @param cluster: The cluster to use in calculation.
-        @param global_mean_distance: 'D'. Is the mean of the n*(n-1)/2 distances of all the elements.
-        @param matrix: The condensed matrix containing all distances.
-        @return: Calculated term.
+        :param cluster: The cluster to use in calculation.
+        :param global_mean_distance: 'D'. Is the mean of the n*(n-1)/2 distances of all the elements.
+        :param matrix: The condensed matrix containing all distances.
+        :return: Calculated term.
         """
         # Calculate cluster mean distance
         n = len(cluster.all_elements)
-        cluster_mean_distance = mean(numpy.array(get_intra_cluster_distances( cluster, matrix))**2)
+        try:
+            cluster_mean_distance = mean(numpy.array(get_intra_cluster_distances( cluster, matrix))**2)
+        except SingularClusterException:
+            cluster_mean_distance = 0
+            
         return (n-1) * (global_mean_distance - cluster_mean_distance)
     

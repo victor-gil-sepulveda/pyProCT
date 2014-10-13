@@ -14,7 +14,7 @@ class CompactnessCalculator(object):
 
     def evaluate(self, clustering, matrix):
         """
-        mean is approximated to medoid
+        Mean is approximated to medoid.
         """
         update_medoids(clustering, matrix)
 

@@ -13,7 +13,10 @@ if __name__ == '__main__': # Comp. with sphynx
         cmdclass = {'build_ext': build_ext},
         include_dirs = [np.get_include()],
         ext_modules = [
-                       Extension("boundedCohesion", ["boundedCohesion.pyx"], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension("cohesion", ["cohesion.pyx"], extra_compile_args=["-O3","-ffast-math"]),
                        Extension("silhouette", ["silhouette.pyx"], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension("graph.nCut", ["graph/nCut.pyx"], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension("graph.tools", ["graph/tools.pyx"], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension("graph.ratioCut", ["graph/ratioCut.pyx"], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension("graph.minMaxCut", ["graph/minMaxCut.pyx"], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension("graph.nCut", ["graph/nCut.pyx"], extra_compile_args=["-O3","-ffast-math"])
         ])

@@ -3,12 +3,22 @@ Created on 06/06/2013
 
 @author: victor
 """
+from pyproct.tools.exceptions import SingularClusterException
+
+
 def get_intra_cluster_distances(cluster, matrix):
+    # TODO: graph.tools.cut can be a wrapper of this function
     distances = []
     cluster_elements = cluster.all_elements
     for i in range(len(cluster.all_elements)-1):
         for j in range(i+1,len(cluster.all_elements)):
             distances.append(matrix[cluster_elements[i],cluster_elements[j]])
+    
+    if len(distances) == 0:
+        # This means the cluster has only one element. We raise an exception
+        # so the caller has to define its behaviour
+        raise SingularClusterException("The cluster has only one element")
+
     return distances
 
 def get_inter_cluster_distances(i, j, clusters, matrix):

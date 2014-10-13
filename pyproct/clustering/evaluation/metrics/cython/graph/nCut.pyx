@@ -1,6 +1,7 @@
 from itertools import product
-import pyproct.clustering.algorithms.spectral.cython.spectralTools as SpectralTools
-from pyproct.clustering.evaluation.metrics.cython.graph.tools import 
+from pyproct.clustering.evaluation.metrics.cython.graph.tools import calc_adjacency_matrix, cut,\
+                                                internal_vol , get_cluster_and_complementary
+
 
 cdef class NCut(object):
     """
@@ -13,7 +14,7 @@ cdef class NCut(object):
     """
     def __init__(self):
         pass
-
+    
     cpdef double evaluate(self, clustering, condensed_matrix) except *:
         """
         Evaluates:
@@ -27,10 +28,8 @@ cdef class NCut(object):
         :return: The value of the measure (double).
         """
         # Calculate adjacency matrix
-        sigmas = SpectralTools.local_sigma_estimation(condensed_matrix)
-        W  = SpectralTools.calculate_fully_connected_adjacency_matrix_with_sigma_estimation(condensed_matrix, sigmas)
-        D = SpectralTools.calculate_degree_matrix(W)
         clusters = clustering.clusters
+        W,D = calc_adjacency_matrix(condensed_matrix)
 
         cdef double ncut_val = 0
         cdef int i = 0

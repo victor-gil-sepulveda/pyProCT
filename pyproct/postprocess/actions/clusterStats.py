@@ -5,6 +5,7 @@ Created on 30/06/2014
 """
 import os.path
 from pyproct.clustering.evaluation.metrics.common import get_intra_cluster_distances
+from pyproct.tools.exceptions import SingularClusterException
 
 
 class ClusterStatsPostAction(object):
@@ -41,9 +42,14 @@ def calculate_per_cluster_stats(best_clustering, matrix, parameters, results_fol
 
     for i in range(len(best_clustering.clusters)):
         cluster_i = best_clustering.clusters[i]
-        intra_distances = get_intra_cluster_distances(cluster_i, matrix)
-        radius = max(intra_distances) if intra_distances != [] else 0.
-        line = "%s(%.2f),"%(cluster_i.id, radius)
+        
+        try:
+            intra_distances = get_intra_cluster_distances(cluster_i, matrix)
+            radius = max(intra_distances) 
+        except SingularClusterException:
+            radius = 0
+        finally:
+            line = "%s(%.2f),"%(cluster_i.id, radius)
 
         for j in range(0, i+1):
             line += ","

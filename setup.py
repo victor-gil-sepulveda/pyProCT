@@ -70,7 +70,7 @@ if __name__ == '__main__': # Compatibility with sphynx
                        Extension('pyproct.clustering.evaluation.metrics.cython.normNCut',[
                                     'pyproct/clustering/evaluation/metrics/cython/normNCut.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension('pyproct.clustering.evaluation.metrics.cython.boundedCohesion', [
+                       Extension('pyproct.clustering.evaluation.metrics.cython.cohesion', [
                                     'pyproct/clustering/evaluation/metrics/cython/boundedCohesion.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
                        Extension('pyproct.clustering.evaluation.metrics.cython.silhouette',[
