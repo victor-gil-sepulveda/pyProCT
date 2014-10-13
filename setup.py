@@ -67,21 +67,26 @@ if __name__ == '__main__': # Compatibility with sphynx
           include_dirs = [numpy.get_include(),
                           distutils.sysconfig.get_python_inc()],
           ext_modules=[
-                       Extension('pyproct.clustering.evaluation.metrics.cython.normNCut',[
-                                    'pyproct/clustering/evaluation/metrics/cython/normNCut.c'
+                       # Graph metrics
+                       Extension('pyproct.clustering.evaluation.metrics.cython.graph.nCut',[
+                                    'pyproct/clustering/evaluation/metrics/cython/graph/nCut.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension('pyproct.clustering.evaluation.metrics.cython.graph.ratioCut',[
+                                    'pyproct/clustering/evaluation/metrics/cython/graph/ratioCut.c'
+                       ], extra_compile_args=["-O3","-ffast-math"]),
+                       Extension('pyproct.clustering.evaluation.metrics.cython.graph.minMaxCut',[
+                                    'pyproct/clustering/evaluation/metrics/cython/graph/minMaxCut.c'
+                       ], extra_compile_args=["-O3","-ffast-math"]),
+                       
+                       # Other metrics
                        Extension('pyproct.clustering.evaluation.metrics.cython.cohesion', [
-                                    'pyproct/clustering/evaluation/metrics/cython/boundedCohesion.c'
+                                    'pyproct/clustering/evaluation/metrics/cython/cohesion.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
                        Extension('pyproct.clustering.evaluation.metrics.cython.silhouette',[
                                     'pyproct/clustering/evaluation/metrics/cython/silhouette.c'
                        ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension('pyproct.clustering.evaluation.metrics.cython.meanMinimumDistance', [
-                                    'pyproct/clustering/evaluation/metrics/cython/meanMinimumDistance.c'
-                       ], extra_compile_args=["-O3","-ffast-math"]),
-                       Extension('pyproct.clustering.evaluation.metrics.cython.meanMinimumDistance', [
-                                    'pyproct/clustering/evaluation/metrics/cython/meanMinimumDistance.c'
-                       ], extra_compile_args=["-O3","-ffast-math"]),
+                       
+                       # Algorithm tools
                        Extension("pyproct.clustering.algorithms.dbscan.cython.cythonDbscanTools", [
                                     'pyproct/clustering/algorithms/dbscan/cython/cythonDbscanTools.c'
                        ],extra_compile_args=["-O3","-ffast-math"]),
