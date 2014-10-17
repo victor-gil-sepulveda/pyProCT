@@ -24,6 +24,7 @@ class SaveAllClustersPostAction(object):
             output_path = os.path.join(clusters_place, 
                                        "%s.pdb"%(cluster.id))
             save_cluster_elements(cluster.all_elements,
+                                  [cluster.id]*len(cluster.all_elements), # all share same cluster id
                                   output_path,
                                   data_handler,
                                   postprocessing_parameters)

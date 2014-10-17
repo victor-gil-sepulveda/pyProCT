@@ -18,12 +18,15 @@ class RepresentativesPostAction(object):
     def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
 
         medoids = clustering.get_medoids(matrixHandler.distance_matrix)
+        
+        ids = [cluster.id for cluster in clustering.clusters]
     
         pdb_name = postprocessing_parameters.get_value("filename", default_value = "representatives")
         
         representatives_file_path = os.path.join( workspaceHandler["results"],"%s.pdb"%pdb_name)
     
-        save_cluster_elements( medoids,
+        save_cluster_elements(medoids,
+                              ids, 
                               representatives_file_path,
                               data_handler,
                               postprocessing_parameters)
@@ -35,13 +38,16 @@ class RepresentativesPostAction(object):
         })
 
 def save_cluster_elements(elements,
-                         out_pdb_name,
-                         data_handler,
-                         options):
+                          ids,
+                          out_pdb_name,
+                          data_handler,
+                          options):
     """
     Saves a pdb file containing the most representative elements of the clustering.
 
-    @param representatives: A list of the representative elements of the clustering we want to extract.
+    @param elements: A list of the representative elements of the clustering we want to extract.
+
+    @params ids: A list with the cluster ids (1 to 1 mapping with 'elements').
 
     @param out_pdb_name: The complete path of the produced file.
 
@@ -76,7 +82,7 @@ def save_cluster_elements(elements,
         all_model_numbers = data.get_all_model_numbers()
         
         current_model = 0
-        for element_id in elements: 
+        for i, element_id in enumerate(elements): 
             if keep_remarks:
                 remarks = all_remarks[element_id]
                 file_handler_out.write("".join(remarks))
@@ -86,6 +92,8 @@ def save_cluster_elements(elements,
                 conf_source = data_handler.get_source_of_element(element_id).get_path()
                 file_handler_out.write("REMARK source            : %s\n"%conf_source)
                 file_handler_out.write("REMARK original model nr : %d\n"%model_number)
+                file_handler_out.write("REMARK cluster id : %s\n"%ids[i])
+                file_handler_out.write("REMARK cluster element : %d\n"%element_id)
             
             file_handler_out.write("MODEL"+str(current_model).rjust(9)+"\n")
             pdb_handler = cStringIO.StringIO()

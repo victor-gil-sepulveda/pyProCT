@@ -4,7 +4,8 @@ Created on 30/06/2014
 @author: victor
 """
 import os.path
-from pyproct.clustering.evaluation.metrics.common import get_intra_cluster_distances
+from pyproct.clustering.evaluation.metrics.common import get_intra_cluster_distances,\
+    update_medoids, get_distances_of_elements_to
 from pyproct.tools.exceptions import SingularClusterException
 
 
@@ -40,16 +41,26 @@ def calculate_per_cluster_stats(best_clustering, matrix, parameters, results_fol
 
     stats_file.write(header_line)
 
+    #TODO: Once clusterings and clusters become inmutable its medoids will be always updated,
+    # then this kind of operations will be unnecessary 
+    update_medoids(best_clustering, matrix)
+    #----------------------------------------
+
     for i in range(len(best_clustering.clusters)):
         cluster_i = best_clustering.clusters[i]
         
         try:
             intra_distances = get_intra_cluster_distances(cluster_i, matrix)
-            radius = max(intra_distances) 
+            diameter = max(intra_distances) 
+            distances_from_proto = get_distances_of_elements_to(cluster_i.prototype, 
+                                                                cluster_i.all_elements, 
+                                                                matrix)
+            radius = max(distances_from_proto)
         except SingularClusterException:
+            diameter = 0
             radius = 0
         finally:
-            line = "%s(%.2f),"%(cluster_i.id, radius)
+            line = "%s(d: %.2f r: %.2f),"%(cluster_i.id, diameter, radius)
 
         for j in range(0, i+1):
             line += ","
