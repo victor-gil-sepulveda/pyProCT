@@ -41,11 +41,11 @@ def calculate_per_cluster_stats(best_clustering, matrix, parameters, results_fol
 
     stats_file.write(header_line)
 
-    #TODO: Once clusterings and clusters become inmutable its medoids will be always updated,
+    # TODO: Once clusterings and clusters become inmutable its medoids will be always updated,
     # then this kind of operations will be unnecessary 
     update_medoids(best_clustering, matrix)
     #----------------------------------------
-
+    
     for i in range(len(best_clustering.clusters)):
         cluster_i = best_clustering.clusters[i]
         

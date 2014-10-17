@@ -49,6 +49,9 @@ class ProteinEnsembleDataLoader(DataLoader):
         Merges all handled structures into a single Prody AtomGroup object.
 
         @return: The prody object with all read coordsets for certain selection.
+        
+        TODO: If atoms of the different loaded files are not ordered, then selections
+        (which refer to the first loaded model) will not work as expected.
         """
         merged_ensemble = None
         for structure in structures:

@@ -115,14 +115,16 @@ class Cluster(object):
     def __getitem__(self, index):
         return self.all_elements[index]
 
-    def calculate_biased_medoid(self,condensed_distance_matrix,elements_into_account):
+    def calculate_biased_medoid(self, condensed_distance_matrix, elements_into_account):
         """
         Calculates the medoid (element with minimal distance to all other objects) of the
         elements of the cluster which are in elements_into_account.
+        Note that, even if it is not intuitive, the medoid can be different from the most
+        dense point of a cluster.
         """
         all_elems_set = set(self.all_elements)
         accountable_set = set(elements_into_account)
-
+        
         # Check that elements_into_account is a subset of all_elements
         elem_inters = all_elems_set.intersection(accountable_set)
         if len(elem_inters) != len(elements_into_account):
@@ -133,6 +135,7 @@ class Cluster(object):
             print "[ERROR Cluster::calculate_biased_medoid] This cluster is empty."
             return -1
 
+        #average distance of medoid is maximal
         min_dist_pair = (sys.maxint, -1)
         for ei in elements_into_account:
             # Calculate distances for this vs all the others
@@ -147,7 +150,7 @@ class Cluster(object):
 
         return medoid_element
 
-    def calculate_medoid(self,condensed_distance_matrix):
+    def calculate_medoid(self, condensed_distance_matrix):
         """
         Calculates the medoid for all_elements of the cluster and updates the prototype.
         """

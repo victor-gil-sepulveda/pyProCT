@@ -505,7 +505,9 @@ or can be done better. Any contribution can help to improve this software!
 - [ ] To improve this documentation (better explanations, more examples and downloadable scripts).
 
 ### Refactoring and general improvements:  
-
+- [ ] When loading more than one file, the first loaded file becomes the template for subsequent selections. If
+the number of atoms or the ordering of the next loaded files is different from the first one, the RMSD calculation
+can fail. Find a method to reorder the atoms.
 - [ ] Total refactoring (Clustering and Clusters are inmutable, hold a reference to the matrix -> prototypes are always updated)  
 - [x] Data refactoring (Create a wrapper that stores the prody object, temporary selection storage, etc...)  
 - [ ] Rename script stuff  
