@@ -23,6 +23,11 @@ class RMSDMatrixBuilder(object):
         """
         calculator_type = matrix_creation_parameters.get_value("calculator_type", 
                                                                default_value = "QTRFIT_OMP_CALCULATOR")
+
+        calculator_options = matrix_creation_parameters.get_value("calculator_options", 
+                                                               default_value = {"number_of_threads":8,
+                                                                                "blocks_per_grid":8,
+                                                                                "threads_per_block":32})
         
         structure = data_handler.get_data()
         fit_selection_coordsets = structure.getFittingCoordinates()
@@ -39,8 +44,13 @@ class RMSDMatrixBuilder(object):
                 symm_groups = cls.process_symm_groups(matrix_creation_parameters,
                                                       structure,
                                                       calc_selection_coordsets)
-                print "Using symmetries",symm_groups
-                
+                print "Using symmetries", symm_groups
+            
+            calculator.setNumberOfOpenMPThreads(calculator_options["number_of_threads"])
+            calculator.setCUDAKernelThreadsPerBlock(calculator_options["threads_per_block"], 
+                                                    calculator_options["blocks_per_grid"])
+            
+            
             calculator = RMSDCalculator(calculatorType = calculator_type,
                                         fittingCoordsets  = fit_selection_coordsets,
                                         calculationCoordsets = calc_selection_coordsets,
@@ -66,18 +76,31 @@ class RMSDMatrixBuilder(object):
     @classmethod
     def process_group(cls, equivalence_id, matrix_parameters, structure, calc_selection_coordsets):
 
-        common_selection = matrix_parameters["symmetries"][equivalence_id]["common"]
+        common_selection = matrix_parameters.get_value("symmetries.%s.common"%equivalence_id, 
+                                                               default_value= "")
+        
+        # This one is mandatory
+        if not "equivalences" in matrix_parameters["symmetries"][equivalence_id]:
+            print "[ERROR RMSDMatrixBuilder:process_group] It is mandatory to define the atom equivalences of a symmetry group (%s)."%equivalence_id
+            exit(-1)
+            
         atom_selections = matrix_parameters["symmetries"][equivalence_id]["equivalences"]
-
+        
+        def build_selection(common, atom_selection):
+            if common == "":
+                return atom_selection
+            else:
+                return "%s and %s"%(common_selection, atom_selection[0])
+        
         symm_group = []
         for atom_selection in atom_selections:
             atom1_coords = cls.select_one_atom( structure,
-                                                "%s and %s"%(common_selection,atom_selection[0]))
+                                                build_selection(common_selection, atom_selection[0]))
 
             atom1_index = cls.locate_index(atom1_coords, calc_selection_coordsets)
 
             atom2_coords = cls.select_one_atom( structure,
-                                                "%s and %s"%(common_selection,atom_selection[1]))
+                                                build_selection(common_selection, atom_selection[1]))
 
             atom2_index = cls.locate_index(atom2_coords, calc_selection_coordsets)
 
@@ -105,4 +128,3 @@ class RMSDMatrixBuilder(object):
             if  coord[0] == atom_coords[0] and coord[1] == atom_coords[1] and coord[2] == atom_coords[2]:
                 return i
         return None
-

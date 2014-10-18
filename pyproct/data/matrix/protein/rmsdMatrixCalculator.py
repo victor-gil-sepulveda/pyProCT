@@ -41,6 +41,7 @@ class RMSDMatrixCalculator(object):
                     "fit_selection": STRING,
                     "calc_selection": STRING,
                     "calculator_type": ENUM,
+                    "calculator_options": OBJECT,
                     "chain_map": BOOL
                 }
                 
