@@ -5,6 +5,7 @@ Created on 13/02/2013
 """
 from pyRMSD.RMSDCalculator import RMSDCalculator
 from pyRMSD.condensedMatrix import CondensedMatrix
+from pyproct.driver.parameters import ProtocolParameters
 
 class RMSDMatrixBuilder(object):
 
@@ -25,9 +26,10 @@ class RMSDMatrixBuilder(object):
                                                                default_value = "QTRFIT_OMP_CALCULATOR")
 
         calculator_options = matrix_creation_parameters.get_value("calculator_options", 
-                                                               default_value = {"number_of_threads":8,
+                                                               default_value = ProtocolParameters({"number_of_threads":8,
                                                                                 "blocks_per_grid":8,
-                                                                                "threads_per_block":32})
+                                                                                "threads_per_block":32}))
+        calculator_options = ProtocolParameters(calculator_options)
         
         structure = data_handler.get_data()
         fit_selection_coordsets = structure.getFittingCoordinates()
@@ -46,9 +48,6 @@ class RMSDMatrixBuilder(object):
                                                       calc_selection_coordsets)
                 print "Using symmetries", symm_groups
             
-            calculator.setNumberOfOpenMPThreads(calculator_options["number_of_threads"])
-            calculator.setCUDAKernelThreadsPerBlock(calculator_options["threads_per_block"], 
-                                                    calculator_options["blocks_per_grid"])
             
             
             calculator = RMSDCalculator(calculatorType = calculator_type,
@@ -56,8 +55,14 @@ class RMSDMatrixBuilder(object):
                                         calculationCoordsets = calc_selection_coordsets,
                                         calcSymmetryGroups = symm_groups)
             
+            calculator.setNumberOfOpenMPThreads(calculator_options.get_value("number_of_threads",
+                                                default_value = 8))
+            
+            calculator.setCUDAKernelThreadsPerBlock(calculator_options.get_value("threads_per_block",
+                                                                                 default_value = 32), 
+                                                    calculator_options.get_value("blocks_per_grid",
+                                                                                 default_value = 8))
         rmsds = calculator.pairwiseRMSDMatrix()
-
         return CondensedMatrix(rmsds)
 
     @classmethod
@@ -90,7 +95,7 @@ class RMSDMatrixBuilder(object):
             if common == "":
                 return atom_selection
             else:
-                return "%s and %s"%(common_selection, atom_selection[0])
+                return "%s and %s"%(common_selection, atom_selection)
         
         symm_group = []
         for atom_selection in atom_selections:
