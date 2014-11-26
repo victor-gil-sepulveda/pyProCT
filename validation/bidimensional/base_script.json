@@ -10,7 +10,7 @@
 		}
 	},
 	"data":{
-		"type":"2Dpoints",
+		"type":"protein::ensemble",
 		"files":["fake.pdb"],
 		"matrix": {
 	        "method": "load",

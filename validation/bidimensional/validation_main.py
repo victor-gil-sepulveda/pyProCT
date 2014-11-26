@@ -9,27 +9,27 @@ import os.path
 import validation.bidimensional.datasets as data
 import validation.bidimensional.validationTools as vtools
 from pyproct.tools.scriptTools import create_directory
-from pyproct.driver.handlers.matrix.matrixHandler import MatrixHandler
 from pyproct.driver.parameters import ProtocolParameters
 from pyproct.driver.observer.observer import Observer
 from pyproct.driver.driver import Driver
 from pyproct.tools.commonTools import convert_to_utf8
 from pyproct.clustering.clustering import Clustering
+from pyproct.data.matrix.matrixHandler import MatrixHandler
 
 if __name__ == '__main__':
     create_directory("./clustering_images")
     create_directory("./matrices")
     create_directory("./tmp")
     condensed_matrices, all_observations = vtools.create_matrices(data)
+    
     # Saving matrices
     for dataset_name in data.all_datasets:
-        handler = MatrixHandler({"method":"load"})
-        handler.distance_matrix = condensed_matrices[dataset_name]
+        handler = MatrixHandler(condensed_matrices[dataset_name], {"method":"load"})
         handler.save_matrix("./matrices/%s"%dataset_name)
 
     # Run pyProCT for each of them
     base_script = "".join(open("base_script.json","r").readlines())
-    for dataset_name in data.all_datasets: #["spaeth_06"]:#
+    for dataset_name in ['concentric_circles']: #data.all_datasets: #["spaeth_06"]:#
         print dataset_name
         # Change placeholders
         script_str = base_script%(os.path.abspath("./tmp/%s"%dataset_name),"./matrices/%s"%dataset_name)
@@ -46,7 +46,7 @@ if __name__ == '__main__':
             parameters["clustering"]["evaluation"]["evaluation_criteria"] = data.criteria["default"]
         Driver(Observer()).run(parameters)
 
-    for dataset_name in data.all_datasets:
+    for dataset_name in ['concentric_circles']: #data.all_datasets:
         results_file = os.path.join(os.path.abspath("./tmp/%s"%dataset_name),"results/results.json")
         results = convert_to_utf8(json.loads(open(results_file).read()))
         best = results["best_clustering"]
