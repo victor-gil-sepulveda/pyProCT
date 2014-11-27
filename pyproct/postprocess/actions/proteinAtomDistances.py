@@ -4,6 +4,7 @@ Created on 26/11/2014
 @author: victor
 """
 import os
+import numpy
 from prody.measure.measure import calcCenter, calcDistance
 
 class AtomicDistancesPostAction(object):
@@ -12,28 +13,38 @@ class AtomicDistancesPostAction(object):
     def __init__(self):
         pass
 
-    def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
-        file_name = parameters.get_value("file", default_value = "atomic_distances") + ".csv"
-        handler = open(file_name,"w")
+    def run(self, clustering, postprocessing_parameters, data_handler, workspace_handler, matrix_handler, generatedFiles):
+        file_name = postprocessing_parameters.get_value("file", default_value = "atomic_distances") + ".csv"
+        file_path = os.path.join( workspace_handler["results"], file_name)
+        handler = open(file_path,"w")
         distances =  calculate_selection_distances(postprocessing_parameters["distances"], data_handler)
         write_distances_file(handler, distances, clustering)
         handler.close()
-        
         generatedFiles.append({
                                "description":"Atom distances file",
-                               "path":os.path.abspath(file_name),
-                               "type":"pdb"
+                               "path":os.path.abspath(file_path),
+                               "type":"csv"
         })
 
-def write_distances_file(handler, distances):
+def write_distances_file(handler, distances, clustering):
     
     for cluster in clustering.clusters:
-    for distance_id in distances:
-        handler.write(distance_id+", ")
+        handler.write("cluster id, distance id, avg, std\n")
+        for distance_id in distances:
+            handler.write("%s, %s, %.3f, %.3f \n"%(cluster.id,
+                                                   distance_id, 
+                                                   numpy.mean(distances[distance_id]), 
+                                                   numpy.std(distances[distance_id])))
     
-    for i in range(len)
-        
-
+    handler.write("\n\n")
+    
+    for cluster in clustering.clusters:
+        for distance_id in distances:
+            handler.write("%s, %s, "%(cluster.id, distance_id))
+            for element in cluster.all_elements:
+                handler.write("%.3f, "%(distances[distance_id][element]))
+            handler.write("\n")
+    
 
 def calculate_selection_distances(distance_selection_objects, data_handler):
     """
