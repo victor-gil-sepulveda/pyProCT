@@ -7,7 +7,7 @@ from pyRMSD.matrixHandler import MatrixHandler as pyRMSD_MatrixHandler
 
 class LoaderMatrixCalculator(object):
     
-    CALCULATION_METHOD = "load"
+    CALCULATION_METHOD = "matrix::load"
     
     def __init__(self, params):
         pass
