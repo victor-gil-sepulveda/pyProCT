@@ -3,9 +3,9 @@ Created on 1/9/2014
 
 @author: victor
 """
-from pyproct.data.matrix.protein.cases.rmsdCase import RMSDMatrixBuilder
-from pyproct.data.matrix.protein.cases.autoChainMappingCase import ChainMappingBuilder
-from pyproct.data.matrix.protein.cases.dihedralCase import DihedralRMSDBuilder
+from pyproct.data.matrix.protein.cases.rmsd.cartesiansCase import RMSDMatrixBuilder
+from pyproct.data.matrix.protein.cases.rmsd.autoChainMappingCase import ChainMappingBuilder
+from pyproct.data.matrix.protein.cases.rmsd.dihedralsCase import DihedralRMSDBuilder
 
 class RMSDMatrixCalculator(object):
     """

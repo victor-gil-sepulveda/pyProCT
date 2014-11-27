@@ -55,7 +55,7 @@ class combinationMatrixCalculator(object):
         forbidden = ["add","sub","mult"]
         matrices_descr = matrix_params.get_value("matrices", default_value={})
         matrices = {}
-        combinations = matrix_params.get_value("matrices", default_value="")
+        operations = matrix_params.get_value("combination", default_value="")
         
         number_of_matrix_ids = len(matrices_descr.keys()) 
         if number_of_matrix_ids == 0:
@@ -74,7 +74,7 @@ class combinationMatrixCalculator(object):
                                                              matrices_descr[matrix_id])
             
         # Do the combination
-        
+        return combine(operations, matrices)
 
 
 def combine(operation, matrices):

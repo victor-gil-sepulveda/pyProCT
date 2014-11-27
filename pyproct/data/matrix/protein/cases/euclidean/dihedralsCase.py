@@ -27,7 +27,7 @@ class DihedralEuclideanDistanceBuilder(object):
         pass
     
     @classmethod
-    def build(cls, structure_data, matrix_params):
+    def build(cls, data_handler, matrix_params):
         """
         If method = "euclidean_distance::ensemble" and "parameters::type" is "DIHEDRALS"
         We only need fit_selection and a "bond_distance" parameter.
@@ -36,7 +36,7 @@ class DihedralEuclideanDistanceBuilder(object):
         """
         
         bond_distance = matrix_params.get_value("bond_distance", default_value=1.6)
-        selection_coords = structure_data.getFittingCoordinates()
+        selection_coords = data_handler.get_data().getCalculationCoordinates()
         
         ref_selection = selection_coords[0]
 
