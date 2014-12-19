@@ -547,6 +547,7 @@ can fail. Find a method to reorder the atoms.
 - [ ] Balancedness: The sizes of the clusters must be balanced.
 - [ ] J quality function: Cai Xiaoyan Proceedings of the 27th Chinese Control Conference
 - [ ] Metastability function (Q) in Chodera et al. J. Chem. Phys. 126 155101 2007 .
+- [ ] New Davies-Bouldin (http://www.litrp.cl/ccpr2014/papers/jcc2014_submission_131.pdf)
 - [ ] Improve separation quality functions.
 - [ ] New standard separation ICVs (require inmutable prototypes)
 
