@@ -3,8 +3,6 @@ Created on 13/02/2013
 
 @author: victor
 """
-import scipy.spatial.distance
-
 from pyRMSD.condensedMatrix import CondensedMatrix
 from pyproct.data.matrix.protein.cases.euclidean.dihedralsCase import DihedralEuclideanDistanceBuilder
 from pyproct.data.matrix.protein.cases.euclidean.cartesiansCase import euclideanDistanceBuilder
@@ -24,21 +22,24 @@ class EuclideanMatrixCalculator(object):
 
         @param trajectory_handler: The handler containing selection strings, pdb info and coordsets.
         @param matrix_parameters: The creation parameters (from the initial script).
-        
-         
 
         @return: The created distance matrix.
         """
         
         coords_type = matrix_parameters.get_value("type", default_value="COORDINATES")
+        builder = None
         
         if coords_type == "COORDINATES":
-            coordinates = euclideanDistanceBuilder.build(data_handler, 
-                                                         matrix_parameters)
+            print "using coords"
+            builder = euclideanDistanceBuilder
+            
         elif coords_type == "DIHEDRALS":
-            coordinates = DihedralEuclideanDistanceBuilder.build(data_handler, 
-                                                                 matrix_parameters)
+            print "using dihedrals"
+            builder = DihedralEuclideanDistanceBuilder
 
-        return CondensedMatrix(scipy.spatial.distance.pdist(coordinates, 'euclidean'))
+        coordinates = builder.build(data_handler,  matrix_parameters)
+        distances = builder.calc_distances(coordinates)
+        
+        return CondensedMatrix(distances)
 
     

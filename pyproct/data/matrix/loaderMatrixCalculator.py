@@ -12,7 +12,8 @@ class LoaderMatrixCalculator(object):
     def __init__(self, params):
         pass
     
-    def calculate(self, data_handler, matrix_params):
+    @classmethod
+    def calculate(cls, data_handler, matrix_params):
         """
         :param matrix_params: The parameters to build the matrix. In this base case the only
         option is "load".
@@ -39,4 +40,4 @@ class LoaderMatrixCalculator(object):
         :return: A CondensedMatrix.
         """
         
-        return pyRMSD_MatrixHandler.load_matrix(self.matrix_parameters["parameters"]["path"])
+        return pyRMSD_MatrixHandler.load_matrix(matrix_params["path"])

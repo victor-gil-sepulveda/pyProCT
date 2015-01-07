@@ -4,6 +4,7 @@ Created on 27/11/2014
 @author: victor
 '''
 from pyRMSD.RMSDCalculator import RMSDCalculator
+import scipy.spatial.distance
 
 class euclideanDistanceBuilder(object):
 
@@ -38,6 +39,12 @@ class euclideanDistanceBuilder(object):
         # Superpose iteratively (will modify all coordinates)
         calculator.iterativeSuperposition()
         
-        centers = body_selection_coordsets.mean(1)
+        #centers = body_selection_coordsets.mean(1)
+        from prody.measure import calcCenter
+        centers = calcCenter(body_selection_coordsets)
         
         return centers
+    
+    @classmethod
+    def calc_distances(cls, coordinates):
+        return scipy.spatial.distance.pdist(coordinates, 'euclidean')

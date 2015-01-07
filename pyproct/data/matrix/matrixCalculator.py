@@ -34,7 +34,7 @@ class MatrixCalculator(object):
                                                           selection_keyword = "MatrixCalculator", 
                                                           skip_list = ["test", "cases", "matrixCalculator"],
                                                           plugin_name = "matrix")
-        
+        print available_calculators
         # Choose the calculator we need
         calculation_method = matrix_params["method"]
         calculator_classes = filter(lambda x: x.CALCULATION_METHOD == calculation_method, available_calculators)
@@ -44,3 +44,4 @@ class MatrixCalculator(object):
             exit()
         else:
             return calculator_classes[0] 
+    

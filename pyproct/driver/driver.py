@@ -67,7 +67,7 @@ class Driver(Observable):
 
     @timed_method(timer, "Clustering Load")
     def load_clustering(self, parameters):
-        best_clustering = {"clustering":Clustering.from_dic(parameters["clustering"]["generation"])}
+        best_clustering = {"clustering":Clustering.from_dic(parameters["clustering"]["generation"]["parameters"])}
         return ( "loaded_clustering", {"loaded_clustering":best_clustering}, {}, None)
 
     @timed_method(timer, "Clustering Section")
