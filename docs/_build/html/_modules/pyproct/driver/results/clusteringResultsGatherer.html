@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyproct.driver.results.clusteringResultsGatherer &mdash; pyProCT 1.2.0 documentation</title>
+    <title>pyproct.driver.results.clusteringResultsGatherer &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,48 +48,64 @@
           <div class="body">
             
   <h1>Source code for pyproct.driver.results.clusteringResultsGatherer</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on 29/04/2013</span>
 
 <span class="sd">@author: victor</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">Cluster</span>
 <span class="kn">from</span> <span class="nn">pyproct.clustering.clustering</span> <span class="kn">import</span> <span class="n">Clustering</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">cmp_to_key</span>
 
 <span class="c">#http://stackoverflow.com/questions/4821940/how-to-make-simplejson-serializable-class</span>
-<div class="viewcode-block" id="SerializerRegistry"><a class="viewcode-back" href="../../../../pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry">[docs]</a><span class="k">class</span> <span class="nc">SerializerRegistry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="SerializerRegistry"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry">[docs]</a><span class="k">class</span> <span class="nc">SerializerRegistry</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span> <span class="o">=</span> <span class="p">{}</span>
 
-<div class="viewcode-block" id="SerializerRegistry.add"><a class="viewcode-back" href="../../../../pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
+<div class="viewcode-block" id="SerializerRegistry.add"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry.add">[docs]</a>    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cls</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">cls</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span> <span class="n">cls</span><span class="o">.</span><span class="n">__name__</span><span class="p">]</span> <span class="o">=</span> <span class="n">cls</span>
         <span class="k">return</span> <span class="n">cls</span>
 </div>
-<div class="viewcode-block" id="SerializerRegistry.object_hook"><a class="viewcode-back" href="../../../../pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry.object_hook">[docs]</a>    <span class="k">def</span> <span class="nf">object_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dct</span><span class="p">):</span>
+<div class="viewcode-block" id="SerializerRegistry.object_hook"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry.object_hook">[docs]</a>    <span class="k">def</span> <span class="nf">object_hook</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dct</span><span class="p">):</span>
         <span class="n">module</span><span class="p">,</span> <span class="n">cls_name</span> <span class="o">=</span> <span class="n">dct</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s">&#39;__type__&#39;</span><span class="p">,</span> <span class="p">(</span><span class="bp">None</span><span class="p">,</span> <span class="bp">None</span><span class="p">))</span>
         <span class="k">if</span> <span class="n">cls_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_classes</span><span class="p">[</span><span class="n">module</span><span class="p">,</span> <span class="n">cls_name</span><span class="p">]</span><span class="o">.</span><span class="n">from_dic</span><span class="p">(</span><span class="n">dct</span><span class="p">)</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">dct</span>
 </div>
-<div class="viewcode-block" id="SerializerRegistry.default"><a class="viewcode-back" href="../../../../pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+<div class="viewcode-block" id="SerializerRegistry.default"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.SerializerRegistry.default">[docs]</a>    <span class="k">def</span> <span class="nf">default</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">obj</span><span class="o">.</span><span class="n">to_dic</span><span class="p">()</span>
 </div></div>
-<div class="viewcode-block" id="ClusteringResultsGatherer"><a class="viewcode-back" href="../../../../pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.ClusteringResultsGatherer">[docs]</a><span class="k">class</span> <span class="nc">ClusteringResultsGatherer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="sort_clustering_results"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.sort_clustering_results">[docs]</a><span class="k">def</span> <span class="nf">sort_clustering_results</span><span class="p">(</span><span class="n">c_results</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">compare_func</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;type&quot;</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="s">&quot;k&quot;</span> <span class="ow">in</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;parameters&quot;</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;parameters&quot;</span><span class="p">][</span><span class="s">&quot;k&quot;</span><span class="p">]</span> <span class="o">-</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;parameters&quot;</span><span class="p">][</span><span class="s">&quot;k&quot;</span><span class="p">]</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">cmp</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;type&quot;</span><span class="p">],</span> <span class="n">b</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="s">&quot;type&quot;</span><span class="p">])</span>
+    <span class="k">return</span> <span class="nb">sorted</span><span class="p">([(</span><span class="n">cid</span><span class="p">,</span> <span class="n">c_results</span><span class="p">[</span><span class="n">cid</span><span class="p">])</span> <span class="k">for</span> <span class="n">cid</span> <span class="ow">in</span> <span class="n">c_results</span><span class="p">]</span> <span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="n">cmp_to_key</span><span class="p">(</span><span class="n">compare_func</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="ClusteringResultsGatherer"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.ClusteringResultsGatherer">[docs]</a><span class="k">class</span> <span class="nc">ClusteringResultsGatherer</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">pass</span>
 
-<div class="viewcode-block" id="ClusteringResultsGatherer.gather"><a class="viewcode-back" href="../../../../pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.ClusteringResultsGatherer.gather">[docs]</a>    <span class="k">def</span> <span class="nf">gather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_handler</span><span class="p">,</span> <span class="n">trajectory_handler</span><span class="p">,</span> <span class="n">workspace_handler</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
+<div class="viewcode-block" id="ClusteringResultsGatherer.gather"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.results.html#pyproct.driver.results.clusteringResultsGatherer.ClusteringResultsGatherer.gather">[docs]</a>    <span class="k">def</span> <span class="nf">gather</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">timer_handler</span><span class="p">,</span> <span class="n">data_handler</span><span class="p">,</span> <span class="n">workspace_handler</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">,</span> <span class="n">files</span><span class="p">):</span>
         <span class="n">results</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;timing&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">timer_handler</span><span class="o">.</span><span class="n">get_elapsed</span><span class="p">()</span>
-        <span class="n">results</span><span class="p">[</span><span class="s">&quot;trajectories&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">trajectory_handler</span><span class="o">.</span><span class="n">pdbs</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;source_files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">s</span><span class="o">.</span><span class="n">source</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="n">data_handler</span><span class="o">.</span><span class="n">sources</span><span class="p">]</span>
         <span class="k">if</span><span class="p">(</span><span class="n">clustering_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">):</span>
             <span class="n">results</span><span class="p">[</span><span class="s">&quot;best_clustering&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-            <span class="n">results</span><span class="p">[</span><span class="s">&quot;selected&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-            <span class="n">results</span><span class="p">[</span><span class="s">&quot;not_selected&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+            <span class="c">####</span>
+            <span class="c"># Removing &quot;dict&quot; allows to a easily comparable output format. This can help to</span>
+            <span class="c"># locate or study possible bugs.</span>
+            <span class="c">####</span>
+            <span class="n">results</span><span class="p">[</span><span class="s">&quot;selected&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sort_clustering_results</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="n">results</span><span class="p">[</span><span class="s">&quot;not_selected&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">sort_clustering_results</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">[</span><span class="mi">2</span><span class="p">]))</span>
+            <span class="c">####</span>
             <span class="n">results</span><span class="p">[</span><span class="s">&quot;scores&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span>
-        <span class="n">results</span><span class="p">[</span><span class="s">&quot;files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">files</span>
+        <span class="n">results</span><span class="p">[</span><span class="s">&quot;created_files&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">files</span>
         <span class="n">results</span><span class="p">[</span><span class="s">&quot;workspace&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">workspace_handler</span><span class="o">.</span><span class="n">data</span>
 
         <span class="n">serializer</span> <span class="o">=</span> <span class="n">SerializerRegistry</span><span class="p">()</span>
@@ -132,12 +149,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

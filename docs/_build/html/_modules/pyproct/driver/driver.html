@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyproct.driver.driver &mdash; pyProCT 1.2.0 documentation</title>
+    <title>pyproct.driver.driver &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,296 +48,155 @@
           <div class="body">
             
   <h1>Source code for pyproct.driver.driver</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on Mar 26, 2013</span>
 
 <span class="sd">@author: victor</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
-<span class="kn">from</span> <span class="nn">pyproct.driver.handlers.timerHandler</span> <span class="kn">import</span> <span class="n">TimerHandler</span>
-<span class="kn">from</span> <span class="nn">pyproct.driver.handlers.workspaceHandler</span> <span class="kn">import</span> <span class="n">WorkspaceHandler</span>
-<span class="kn">from</span> <span class="nn">pyproct.driver.handlers.trajectoryHandler</span> <span class="kn">import</span> <span class="n">TrajectoryHandler</span>
-<span class="kn">from</span> <span class="nn">pyproct.driver.handlers.matrix.matrixHandler</span> <span class="kn">import</span> <span class="n">MatrixHandler</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.time.timerHandler</span> <span class="kn">import</span> <span class="n">TimerHandler</span><span class="p">,</span> <span class="n">timed_method</span>
+<span class="kn">from</span> <span class="nn">pyproct.driver.workspace.workspaceHandler</span> <span class="kn">import</span> <span class="n">WorkspaceHandler</span>
 <span class="kn">from</span> <span class="nn">pyproct.driver.observer.observable</span> <span class="kn">import</span> <span class="n">Observable</span>
-<span class="kn">import</span> <span class="nn">pyproct.tools.plotTools</span> <span class="kn">as</span> <span class="nn">plotTools</span>
-<span class="kn">from</span> <span class="nn">pyproct.protocol.protocol</span> <span class="kn">import</span> <span class="n">ClusteringProtocol</span>
-<span class="kn">from</span> <span class="nn">pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence</span> <span class="kn">import</span> <span class="n">KullbackLeiblerDivergence</span>
-<span class="kn">from</span> <span class="nn">pyproct.driver.compressor.compressor</span> <span class="kn">import</span> <span class="n">Compressor</span>
 <span class="kn">from</span> <span class="nn">pyproct.driver.results.clusteringResultsGatherer</span> <span class="kn">import</span> <span class="n">ClusteringResultsGatherer</span>
-<span class="kn">import</span> <span class="nn">json</span>
 <span class="kn">from</span> <span class="nn">pyproct.clustering.clustering</span> <span class="kn">import</span> <span class="n">Clustering</span>
-<span class="kn">from</span> <span class="nn">pyproct.tools</span> <span class="kn">import</span> <span class="n">visualizationTools</span>
-<span class="kn">from</span> <span class="nn">pyproct.driver.postprocessing.clusters</span> <span class="kn">import</span> <span class="n">save_representatives</span><span class="p">,</span>\
-    <span class="n">save_all_clusters</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.protocol.protocol</span> <span class="kn">import</span> <span class="n">ClusteringProtocol</span>
+<span class="kn">from</span> <span class="nn">pyproct.postprocess.postprocessingDriver</span> <span class="kn">import</span> <span class="n">PostprocessingDriver</span>
+<span class="kn">from</span> <span class="nn">pyproct.data.dataDriver</span> <span class="kn">import</span> <span class="n">DataDriver</span>
 
-<div class="viewcode-block" id="Driver"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver">[docs]</a><span class="k">class</span> <span class="nc">Driver</span><span class="p">(</span><span class="n">Observable</span><span class="p">):</span>
+<div class="viewcode-block" id="Driver"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver">[docs]</a><span class="k">class</span> <span class="nc">Driver</span><span class="p">(</span><span class="n">Observable</span><span class="p">):</span>
+    <span class="n">timer</span> <span class="o">=</span> <span class="n">TimerHandler</span><span class="p">()</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">observer</span><span class="p">):</span>
         <span class="nb">super</span><span class="p">(</span><span class="n">Driver</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">observer</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span> <span class="o">=</span> <span class="p">[]</span>
 
-<div class="viewcode-block" id="Driver.create_workspace"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.create_workspace">[docs]</a>    <span class="k">def</span> <span class="nf">create_workspace</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span> <span class="o">=</span> <span class="n">WorkspaceHandler</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;global&quot;</span><span class="p">][</span><span class="s">&quot;workspace&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="o">.</span><span class="n">create_directories</span><span class="p">()</span>
+    <span class="nd">@timed_method</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="s">&quot;Global&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="Driver.run"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Driver&#39;s main function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">with</span> <span class="n">WorkspaceHandler</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;global&quot;</span><span class="p">][</span><span class="s">&quot;workspace&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">)</span> <span class="k">as</span> <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_parameters_file</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="s">&quot;data&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data_handler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrix_handler</span> <span class="o">=</span> <span class="n">DataDriver</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">],</span>
+                                                                        <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span>
+                                                                        <span class="n">Driver</span><span class="o">.</span><span class="n">timer</span><span class="p">,</span>
+                                                                        <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="s">&quot;clustering&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+                    <span class="n">clustering_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clustering_section</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">save_results</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">show_summary</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">)</span>
+                    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_best_clustering</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">)</span>
+
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">print</span> <span class="s">&quot;[Warning driver::run] &#39;clustering&#39; object was not defined in the control script. pyProCT will now stop.&quot;</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Driver Finished&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Driver</span><span class="o">.</span><span class="n">timer</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">print</span> <span class="s">&quot;[Warning driver::run] &#39;data&#39; object was not defined in the control script. pyProCT will now stop.&quot;</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Driver Finished&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Driver</span><span class="o">.</span><span class="n">timer</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Driver Finished&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">Driver</span><span class="o">.</span><span class="n">timer</span><span class="p">))</span>
 </div>
-<div class="viewcode-block" id="Driver.save_parameters_file"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.save_parameters_file">[docs]</a>    <span class="k">def</span> <span class="nf">save_parameters_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<div class="viewcode-block" id="Driver.save_parameters_file"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.save_parameters_file">[docs]</a>    <span class="k">def</span> <span class="nf">save_parameters_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="n">parameters_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">[</span><span class="s">&quot;results&quot;</span><span class="p">],</span> <span class="s">&quot;parameters.json&quot;</span><span class="p">)</span>
-        <span class="nb">open</span><span class="p">(</span><span class="n">parameters_file_path</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">parameters</span><span class="o">.</span><span class="n">params_dic</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;: &#39;</span><span class="p">)))</span>
+        <span class="nb">open</span><span class="p">(</span><span class="n">parameters_file_path</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">parameters</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span> <span class="o">=</span> <span class="p">[{</span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="s">&quot;Parameters file&quot;</span><span class="p">,</span>
                                 <span class="s">&quot;path&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">parameters_file_path</span><span class="p">),</span>
                                 <span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;text&quot;</span><span class="p">}]</span>
 </div>
-<div class="viewcode-block" id="Driver.create_matrix"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.create_matrix">[docs]</a>    <span class="k">def</span> <span class="nf">create_matrix</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span> <span class="o">=</span> <span class="n">MatrixHandler</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;matrix&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Matrix calculation&quot;</span><span class="p">,</span> <span class="p">[])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Matrix Generation&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="o">.</span><span class="n">create_matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span><span class="p">)</span>
-        <span class="n">statistics_file_path</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="o">.</span><span class="n">save_statistics</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">[</span><span class="s">&quot;matrix&quot;</span><span class="p">])</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="s">&quot;Matrix statistics&quot;</span><span class="p">,</span>
-                                    <span class="s">&quot;path&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">statistics_file_path</span><span class="p">),</span>
-                                    <span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;text&quot;</span><span class="p">})</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Matrix Generation&quot;</span><span class="p">)</span>
-        <span class="k">if</span> <span class="s">&quot;filename&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;matrix&quot;</span><span class="p">]:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Matrix Save&quot;</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="o">.</span><span class="n">save_matrix</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">[</span><span class="s">&quot;matrix&quot;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;matrix&quot;</span><span class="p">][</span><span class="s">&quot;filename&quot;</span><span class="p">]))</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Matrix Save&quot;</span><span class="p">)</span>
-        <span class="c">#########################</span>
-        <span class="c"># Matrix plot</span>
-        <span class="c">#########################</span>
-        <span class="k">if</span> <span class="s">&quot;image&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;matrix&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Matrix Imaging&quot;</span><span class="p">)</span>
-            <span class="n">matrix_image_file_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">[</span><span class="s">&quot;matrix&quot;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;matrix&quot;</span><span class="p">][</span><span class="s">&quot;image&quot;</span><span class="p">][</span><span class="s">&quot;filename&quot;</span><span class="p">])</span>
-            <span class="n">max_dim</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;matrix&quot;</span><span class="p">][</span><span class="s">&quot;image&quot;</span><span class="p">][</span><span class="s">&quot;dimension&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="s">&quot;dimension&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;matrix&quot;</span><span class="p">][</span><span class="s">&quot;image&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1000</span>
-            <span class="n">plotTools</span><span class="o">.</span><span class="n">matrixToImage</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="o">.</span><span class="n">distance_matrix</span><span class="p">,</span> <span class="n">matrix_image_file_path</span><span class="p">,</span> <span class="n">max_dim</span><span class="o">=</span><span class="n">max_dim</span><span class="p">,</span> <span class="n">observer</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="s">&quot;Matrix image&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;path&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">matrix_image_file_path</span><span class="p">),</span>
-                                        <span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;image&quot;</span><span class="p">})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Matrix Imaging&quot;</span><span class="p">)</span>
-</div>
-<div class="viewcode-block" id="Driver.get_best_clustering"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.get_best_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-        <span class="n">best_clustering</span> <span class="o">=</span> <span class="bp">None</span>
-        <span class="c">##############################</span>
-        <span class="c"># Do the actual clustering</span>
-        <span class="c">##############################</span>
-        <span class="n">clustering_results</span> <span class="o">=</span> <span class="bp">None</span>
+<div class="viewcode-block" id="Driver.clustering_section"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.clustering_section">[docs]</a>    <span class="k">def</span> <span class="nf">clustering_section</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
 
-        <span class="c">##############################</span>
-        <span class="c"># Load the clustering</span>
-        <span class="c">##############################</span>
         <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;generation&quot;</span><span class="p">][</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;load&quot;</span><span class="p">:</span>
-            <span class="n">best_clustering</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;clustering&quot;</span><span class="p">:</span><span class="n">Clustering</span><span class="o">.</span><span class="n">from_dic</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;generation&quot;</span><span class="p">])}</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">load_clustering</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 
-        <span class="c">##############################</span>
-        <span class="c"># Or generate it</span>
-        <span class="c">##############################</span>
         <span class="k">elif</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;generation&quot;</span><span class="p">][</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;generate&quot;</span><span class="p">:</span>
-            <span class="n">clustering_results</span> <span class="o">=</span> <span class="n">ClusteringProtocol</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="p">,</span>
-                                                                                                <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span>
-                                                                                                <span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span><span class="p">)</span>
-            <span class="n">best_clustering</span> <span class="o">=</span> <span class="bp">None</span>
-            <span class="n">abort</span> <span class="o">=</span> <span class="bp">False</span>
-
-            <span class="k">if</span> <span class="n">clustering_results</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
-                <span class="n">best_clustering_id</span><span class="p">,</span> <span class="n">selected</span><span class="p">,</span> <span class="n">not_selected</span><span class="p">,</span> <span class="n">scores</span> <span class="o">=</span> <span class="n">clustering_results</span>  <span class="c"># @UnusedVariable</span>
-
-                <span class="c">#################################</span>
-                <span class="c"># Abort if no clusters were found</span>
-                <span class="c">#################################</span>
-                <span class="k">if</span> <span class="n">best_clustering_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
-                    <span class="n">abort</span> <span class="o">=</span> <span class="bp">True</span>
-
-                <span class="n">best_clustering</span> <span class="o">=</span> <span class="n">selected</span><span class="p">[</span><span class="n">best_clustering_id</span><span class="p">]</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">abort</span> <span class="o">=</span> <span class="bp">True</span>
-
-            <span class="k">if</span> <span class="n">abort</span><span class="p">:</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;SHUTDOWN&quot;</span><span class="p">,</span> <span class="s">&quot;Improductive clustering search. Relax evaluation constraints.&quot;</span><span class="p">)</span>
-                <span class="k">print</span> <span class="s">&quot;[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting...&quot;</span>
-                <span class="nb">exit</span><span class="p">()</span>
-
-        <span class="k">return</span> <span class="n">best_clustering</span><span class="p">,</span> <span class="n">clustering_results</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">perform_clustering_exploration</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Driver.save_clustering_results"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.save_clustering_results">[docs]</a>    <span class="k">def</span> <span class="nf">save_clustering_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">):</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Global&quot;</span><span class="p">)</span>
+    <span class="nd">@timed_method</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="s">&quot;Clustering Load&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="Driver.load_clustering"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.load_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">load_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">best_clustering</span> <span class="o">=</span> <span class="p">{</span><span class="s">&quot;clustering&quot;</span><span class="p">:</span><span class="n">Clustering</span><span class="o">.</span><span class="n">from_dic</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;generation&quot;</span><span class="p">][</span><span class="s">&quot;parameters&quot;</span><span class="p">])}</span>
+        <span class="k">return</span> <span class="p">(</span> <span class="s">&quot;loaded_clustering&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s">&quot;loaded_clustering&quot;</span><span class="p">:</span><span class="n">best_clustering</span><span class="p">},</span> <span class="p">{},</span> <span class="bp">None</span><span class="p">)</span>
+</div>
+    <span class="nd">@timed_method</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="s">&quot;Clustering Section&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="Driver.perform_clustering_exploration"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.perform_clustering_exploration">[docs]</a>    <span class="k">def</span> <span class="nf">perform_clustering_exploration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">best_clustering</span> <span class="o">=</span> <span class="bp">None</span>
 
+        <span class="n">clustering_results</span> <span class="o">=</span> <span class="n">ClusteringProtocol</span><span class="p">(</span><span class="n">Driver</span><span class="o">.</span><span class="n">timer</span><span class="p">,</span> 
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> 
+                                                                   <span class="bp">self</span><span class="o">.</span><span class="n">matrix_handler</span><span class="p">,</span>
+                                                                   <span class="bp">self</span><span class="o">.</span><span class="n">data_handler</span><span class="p">,</span>
+                                                                   <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">clustering_results</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">best_clustering</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_best_clustering</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">clustering_results</span> <span class="ow">is</span> <span class="bp">None</span> <span class="ow">or</span> <span class="n">best_clustering</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;SHUTDOWN&quot;</span><span class="p">,</span> <span class="s">&quot;Improductive clustering search. Relax evaluation constraints.&quot;</span><span class="p">)</span>
+            <span class="k">print</span> <span class="s">&quot;[FATAL Driver:get_best_clustering] Improductive clustering search. Exiting...&quot;</span>
+            <span class="nb">exit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">clustering_results</span>
+</div>
+<div class="viewcode-block" id="Driver.get_best_clustering"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.get_best_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_clustering</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Obtains the best clustering structure from the results. To get the clustering object use</span>
+<span class="sd">        self.get_best_clustering(clustering_results)[&quot;clustering&quot;]</span>
+
+<span class="sd">        @param clustering_results: The results from a clustering exploration.</span>
+
+<span class="sd">        @return: The structure describing the best scored clustering.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">best_clustering_id</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">best_clustering_id</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">None</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">selected</span><span class="p">[</span><span class="n">best_clustering_id</span><span class="p">]</span>
+</div>
+    <span class="nd">@timed_method</span><span class="p">(</span><span class="n">timer</span><span class="p">,</span> <span class="s">&quot;Postprocessing&quot;</span><span class="p">)</span>
+<div class="viewcode-block" id="Driver.postprocess"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.postprocess">[docs]</a>    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">):</span>
+        <span class="n">best_clustering</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_best_clustering</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">)[</span><span class="s">&quot;clustering&quot;</span><span class="p">]</span>
+        <span class="n">PostprocessingDriver</span><span class="p">()</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">best_clustering</span><span class="p">,</span>
+                                   <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">],</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">data_handler</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">matrix_handler</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Driver.save_results"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.save_results">[docs]</a>    <span class="k">def</span> <span class="nf">save_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">):</span>
         <span class="n">results_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">[</span><span class="s">&quot;results&quot;</span><span class="p">],</span> <span class="s">&quot;results.json&quot;</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="s">&quot;Results file&quot;</span><span class="p">,</span>
                                     <span class="s">&quot;path&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">results_path</span><span class="p">),</span>
                                     <span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;text&quot;</span><span class="p">})</span>
-        <span class="n">json_results</span> <span class="o">=</span> <span class="n">ClusteringResultsGatherer</span><span class="p">()</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="p">,</span>
-                                                            <span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span><span class="p">,</span>
+        <span class="n">json_results</span> <span class="o">=</span> <span class="n">ClusteringResultsGatherer</span><span class="p">()</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">Driver</span><span class="o">.</span><span class="n">timer</span><span class="p">,</span>
+                                                            <span class="bp">self</span><span class="o">.</span><span class="n">data_handler</span><span class="p">,</span>
                                                             <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span>
                                                             <span class="n">clustering_results</span><span class="p">,</span>
                                                             <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="p">)</span>
+
         <span class="c"># Results are first added and saved later to avoid metareferences :D</span>
         <span class="nb">open</span><span class="p">(</span><span class="n">results_path</span><span class="p">,</span> <span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_results</span><span class="p">)</span>
-
-
-
-    <span class="c">#TODO: This needs to be refactored, and</span></div>
-<div class="viewcode-block" id="Driver.postprocess"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.postprocess">[docs]</a>    <span class="k">def</span> <span class="nf">postprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">):</span>
-        <span class="c">##############################</span>
-        <span class="c"># Specialized post-processing</span>
-        <span class="c">##############################</span>
-
-        <span class="k">if</span> <span class="ow">not</span> <span class="s">&quot;postprocess&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
-            <span class="k">return</span>
-
-        <span class="c">##############################</span>
-        <span class="c"># Saving representatives</span>
-        <span class="c">##############################</span>
-        <span class="k">if</span> <span class="s">&quot;representatives&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">]:</span>
-            <span class="n">save_representatives</span><span class="p">(</span><span class="n">best_clustering</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">][</span><span class="s">&quot;representatives&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="p">,</span>
-                                 <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span><span class="p">,</span>
-                                 <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="p">)</span>
-
-        <span class="c">##########################################</span>
-        <span class="c"># Saving all clusters in different files</span>
-        <span class="c">##########################################</span>
-        <span class="k">if</span> <span class="s">&quot;pdb_clusters&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">]:</span>
-            <span class="n">save_all_clusters</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">][</span><span class="s">&quot;pdb_clusters&quot;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;data&quot;</span><span class="p">][</span><span class="s">&quot;files&quot;</span><span class="p">],</span>\
-                              <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="p">)</span>
-
-
-        <span class="c">##############################</span>
-        <span class="c"># Generating rmsf plots</span>
-        <span class="c">##############################</span>
-
-        <span class="k">if</span> <span class="s">&quot;rmsf&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">]:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">displacements_path</span><span class="p">,</span> <span class="n">CA_mean_square_displacements</span> <span class="o">=</span> <span class="n">visualizationTools</span><span class="o">.</span><span class="n">calculate_RMSF</span><span class="p">(</span><span class="n">best_clustering</span><span class="p">,</span>
-                                                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span><span class="p">,</span>
-                                                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span>
-                                                                                                     <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="p">)</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-                                            <span class="s">&quot;description&quot;</span><span class="p">:</span><span class="s">&quot;Alpha Carbon mean square displacements&quot;</span><span class="p">,</span>
-                                            <span class="s">&quot;path&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">displacements_path</span><span class="p">),</span>
-                                            <span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;text&quot;</span>
-                <span class="p">})</span>
-
-                <span class="nb">open</span><span class="p">(</span><span class="n">displacements_path</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">CA_mean_square_displacements</span><span class="p">,</span>
-                                                      <span class="n">sort_keys</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                                                      <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-                                                      <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;: &#39;</span><span class="p">)))</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">print</span> <span class="s">&quot;[ERROR][Driver::postprocess] Impossible to calculate CA displacements file.&quot;</span>
-
-
-        <span class="c">##############################</span>
-        <span class="c"># Generating 3D plots of center of mass+ trace</span>
-        <span class="c">##############################</span>
-        <span class="k">if</span> <span class="s">&quot;centers_and_trace&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">]:</span>
-            <span class="k">try</span><span class="p">:</span>
-                <span class="n">centers_path</span><span class="p">,</span> <span class="n">centers_contents</span> <span class="o">=</span> <span class="n">visualizationTools</span><span class="o">.</span><span class="n">generate_selection_centers_file</span><span class="p">(</span><span class="n">best_clustering</span><span class="p">,</span>
-                                                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span>
-                                                                                                    <span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span><span class="p">)</span>
-
-                <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
-                                            <span class="s">&quot;description&quot;</span><span class="p">:</span><span class="s">&quot;Centers of the selection used to calculate distances&quot;</span><span class="p">,</span>
-                                            <span class="s">&quot;path&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">centers_path</span><span class="p">),</span>
-                                            <span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;text&quot;</span>
-                <span class="p">})</span>
-
-                <span class="nb">open</span><span class="p">(</span><span class="n">centers_path</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">centers_contents</span><span class="p">,</span>
-                                          <span class="n">sort_keys</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span>
-                                          <span class="n">indent</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
-                                          <span class="n">separators</span><span class="o">=</span><span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;: &#39;</span><span class="p">)))</span>
-            <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                <span class="k">print</span> <span class="s">&quot;[ERROR][Driver::postprocess] Impossible to calculate selection centers file.&quot;</span>
-
-
-<span class="c">#         if action_type == &quot;comparison&quot;:</span>
-<span class="c">#             ############################################</span>
-<span class="c">#             # Distribution analysis</span>
-<span class="c">#             ############################################</span>
-<span class="c">#             self.timer.start(&quot;KL divergence&quot;)</span>
-<span class="c">#             klDiv = KullbackLeiblerDivergence(self.trajectoryHandler.pdbs, self.matrixHandler.distance_matrix)</span>
-<span class="c">#             kl_file_path = os.path.join(self.workspaceHandler[&quot;matrix&quot;], &quot;kullback_liebler_divergence&quot;)</span>
-<span class="c">#             klDiv.save(kl_file_path)</span>
-<span class="c">#             matrix_image_file_path = os.path.join(self.workspaceHandler[&quot;matrix&quot;], parameters[&quot;matrix&quot;][&quot;image&quot;][&quot;filename&quot;])</span>
-<span class="c">#             self.generatedFiles.append({&quot;description&quot;:&quot;Kullback-Leibler divergence&quot;,</span>
-<span class="c">#                                         &quot;path&quot;:matrix_image_file_path,</span>
-<span class="c">#                                         &quot;type&quot;:&quot;text&quot;})</span>
-<span class="c">#             self.timer.stop(&quot;KL divergence&quot;)</span>
-
-
-        <span class="c">##############################</span>
-        <span class="c"># Compress trajectory</span>
-        <span class="c">##############################</span>
-        <span class="k">if</span> <span class="s">&quot;compression&quot;</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">]:</span>
-            <span class="c">############################################</span>
-            <span class="c"># Compress</span>
-            <span class="c">############################################</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Compression&quot;</span><span class="p">)</span>
-            <span class="n">compressor</span> <span class="o">=</span> <span class="n">Compressor</span><span class="p">(</span><span class="n">parameters</span><span class="p">[</span><span class="s">&quot;postprocess&quot;</span><span class="p">][</span><span class="s">&quot;compression&quot;</span><span class="p">])</span>
-            <span class="n">compressed_file_path</span> <span class="o">=</span> <span class="n">compressor</span><span class="o">.</span><span class="n">compress</span><span class="p">(</span><span class="n">best_clustering</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">],</span>
-                                                       <span class="bp">self</span><span class="o">.</span><span class="n">workspaceHandler</span><span class="p">,</span>
-                                                       <span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span><span class="p">,</span>
-                                                       <span class="bp">self</span><span class="o">.</span><span class="n">matrixHandler</span><span class="p">)</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">generatedFiles</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&quot;description&quot;</span><span class="p">:</span><span class="s">&quot;Compressed file&quot;</span><span class="p">,</span>
-                                        <span class="s">&quot;path&quot;</span><span class="p">:</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">compressed_file_path</span><span class="p">),</span>
-                                        <span class="s">&quot;type&quot;</span><span class="p">:</span><span class="s">&quot;pdb&quot;</span><span class="p">})</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Compression&quot;</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Driver.perform_actions"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.perform_actions">[docs]</a>    <span class="k">def</span> <span class="nf">perform_actions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-        <span class="n">best_clustering</span><span class="p">,</span> <span class="n">clustering_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_best_clustering</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+<div class="viewcode-block" id="Driver.show_summary"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.driver.Driver.show_summary">[docs]</a>    <span class="k">def</span> <span class="nf">show_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">,</span> <span class="n">clustering_results</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Writes a small summary of the execution.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">not_selected</span> <span class="o">=</span> <span class="n">clustering_results</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">best_clustering</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_best_clustering</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">)</span>
 
-        <span class="bp">self</span><span class="o">.</span><span class="n">postprocess</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">)</span>
-
-        <span class="c">#################################</span>
-        <span class="c"># Results are saved to a file</span>
-        <span class="c">#################################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_clustering_results</span><span class="p">(</span><span class="n">clustering_results</span><span class="p">)</span>
-
-        <span class="c">#################################</span>
-        <span class="c"># Small summary of the best_cluster is shown</span>
-        <span class="c">#################################</span>
-        <span class="k">print</span> <span class="n">best_clustering</span>
         <span class="k">print</span> <span class="s">&quot;=======================&quot;</span>
-        <span class="k">print</span> <span class="s">&quot;One clustering was found:&quot;</span>
-        <span class="k">print</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">- Used algorithm: &quot;</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span>
-        <span class="k">print</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">- Number of clusters: &quot;</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">[</span><span class="s">&#39;evaluation&#39;</span><span class="p">][</span><span class="s">&#39;Number of clusters&#39;</span><span class="p">]</span>
-        <span class="k">print</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">- Noise: &quot;</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">[</span><span class="s">&#39;evaluation&#39;</span><span class="p">][</span><span class="s">&#39;Noise level&#39;</span><span class="p">]</span>
-
-
-</div>
-<div class="viewcode-block" id="Driver.run"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.driver.Driver.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-
-        <span class="c">#####################</span>
-        <span class="c"># Start timing</span>
-        <span class="c">#####################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">TimerHandler</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Global&quot;</span><span class="p">)</span>
-
-        <span class="c">#####################</span>
-        <span class="c"># Workspace Creation</span>
-        <span class="c">#####################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_workspace</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-
-        <span class="c">#####################</span>
-        <span class="c"># Saving Parameters</span>
-        <span class="c">#####################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">save_parameters_file</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-
-        <span class="c">#####################</span>
-        <span class="c"># Trajectory Loading</span>
-        <span class="c">#####################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="s">&quot;Trajectory Loading&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">trajectoryHandler</span> <span class="o">=</span> <span class="n">TrajectoryHandler</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observer</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">(</span><span class="s">&quot;Trajectory Loading&quot;</span><span class="p">)</span>
-
-        <span class="c">##############################</span>
-        <span class="c"># Distance Matrix Generation</span>
-        <span class="c">##############################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">create_matrix</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-
-        <span class="c">##############################</span>
-        <span class="c"># Actions</span>
-        <span class="c">##############################</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">perform_actions</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
-
-        <span class="bp">self</span><span class="o">.</span><span class="n">notify</span><span class="p">(</span><span class="s">&quot;Driver Finished&quot;</span><span class="p">,</span> <span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="p">))</span></div></div>
+        <span class="k">print</span> <span class="s">&quot;Summary:&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;--------&quot;</span>
+        <span class="k">print</span> <span class="s">&quot;- </span><span class="si">%d</span><span class="s"> clusterings were generated.&quot;</span><span class="o">%</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">selected</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="o">+</span><span class="nb">len</span><span class="p">(</span><span class="n">not_selected</span><span class="o">.</span><span class="n">keys</span><span class="p">()))</span>
+        <span class="k">if</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;generation&quot;</span><span class="p">][</span><span class="s">&quot;method&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s">&quot;load&quot;</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;- Chosen cluster:&quot;</span>
+            <span class="k">print</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">- Used algorithm: &quot;</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">[</span><span class="s">&#39;type&#39;</span><span class="p">]</span>
+            <span class="k">print</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">- Number of clusters: &quot;</span><span class="p">,</span> <span class="n">best_clustering</span><span class="p">[</span><span class="s">&#39;evaluation&#39;</span><span class="p">][</span><span class="s">&#39;Number of clusters&#39;</span><span class="p">]</span>
+            <span class="k">print</span> <span class="s">&quot;</span><span class="se">\t</span><span class="s">- Noise: </span><span class="si">%.2f</span><span class="s"> </span><span class="si">%%</span><span class="s">&quot;</span><span class="o">%</span><span class="n">best_clustering</span><span class="p">[</span><span class="s">&#39;evaluation&#39;</span><span class="p">][</span><span class="s">&#39;Noise level&#39;</span><span class="p">]</span>
+        <span class="k">print</span> <span class="s">&quot;=======================&quot;</span></div></div>
 </pre></div>
 
           </div>
@@ -370,12 +230,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyproct.clustering.clustering &mdash; pyProCT 1.2.0 documentation</title>
+    <title>pyproct.clustering.clustering &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,25 +48,25 @@
           <div class="body">
             
   <h1>Source code for pyproct.clustering.clustering</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on 20/03/2012</span>
 
 <span class="sd">@author: victor</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">os</span>
 <span class="kn">import</span> <span class="nn">pickle</span>
 <span class="kn">import</span> <span class="nn">math</span>
 <span class="kn">from</span> <span class="nn">pyproct.tools</span> <span class="kn">import</span> <span class="n">scriptTools</span>
 <span class="kn">from</span> <span class="nn">pyproct.clustering.cluster</span> <span class="kn">import</span> <span class="n">Cluster</span>
 
-<div class="viewcode-block" id="Clustering"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering">[docs]</a><span class="k">class</span> <span class="nc">Clustering</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="Clustering"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering">[docs]</a><span class="k">class</span> <span class="nc">Clustering</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Class representing the result of a clustering algorithm (a set of clusters).</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clusters</span><span class="p">,</span> <span class="n">details</span><span class="o">=</span><span class="s">&quot;&quot;</span><span class="p">,</span> <span class="n">sort</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
-        <span class="sd">&#39;&#39;&#39;</span>
+        <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Constructor</span>
-<span class="sd">        &#39;&#39;&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_elements</span>  <span class="o">=</span> <span class="mi">0</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">:</span>
@@ -75,7 +76,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">sort_clusters_by_size</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">details</span> <span class="o">=</span> <span class="n">details</span>
 
-<div class="viewcode-block" id="Clustering.add_cluster"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.add_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">add_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.add_cluster"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.add_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">add_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Adds a cluster to the clusterization.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -85,7 +86,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_elements</span> <span class="o">+=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Clustering.get_population_percent_of_cluster"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_population_percent_of_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_percent_of_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.get_population_percent_of_cluster"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_population_percent_of_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_percent_of_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">i</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the percentage of elements of this cluster over the number of</span>
 <span class="sd">        all the elements of the dataset used to get the clusters (total_elements).</span>
@@ -101,7 +102,7 @@
             <span class="k">print</span> <span class="s">&quot;[WARNING Clustering::get_population_percent_of_cluster] No clusters in this clusterization.&quot;</span>
             <span class="k">return</span> <span class="mf">0.</span>
 </div>
-<div class="viewcode-block" id="Clustering.get_population_percent_of_n_bigger_clusters"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_population_percent_of_n_bigger_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_percent_of_n_bigger_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.get_population_percent_of_n_bigger_clusters"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_population_percent_of_n_bigger_clusters">[docs]</a>    <span class="k">def</span> <span class="nf">get_population_percent_of_n_bigger_clusters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Gets the percentage of population over total population  of the first</span>
 <span class="sd">        n bigger modules.</span>
@@ -119,7 +120,7 @@
 
         <span class="k">return</span> <span class="n">percents</span>
 </div>
-<div class="viewcode-block" id="Clustering.sort_clusters_by_size"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.sort_clusters_by_size">[docs]</a>    <span class="k">def</span> <span class="nf">sort_clusters_by_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reverse</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.sort_clusters_by_size"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.sort_clusters_by_size">[docs]</a>    <span class="k">def</span> <span class="nf">sort_clusters_by_size</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reverse</span> <span class="o">=</span> <span class="bp">True</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list o sorted clusters by size of the cluster. The biggest cluster goes first</span>
 <span class="sd">        unless reverse = False.</span>
@@ -128,7 +129,7 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">reverse</span><span class="o">=</span><span class="n">reverse</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">c</span><span class="p">:</span> <span class="n">c</span><span class="o">.</span><span class="n">get_size</span><span class="p">())</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">sorted</span> <span class="o">=</span> <span class="bp">True</span>
 </div>
-<div class="viewcode-block" id="Clustering.number_of_clusters_to_get_percent"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.number_of_clusters_to_get_percent">[docs]</a>    <span class="k">def</span> <span class="nf">number_of_clusters_to_get_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percent</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.number_of_clusters_to_get_percent"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.number_of_clusters_to_get_percent">[docs]</a>    <span class="k">def</span> <span class="nf">number_of_clusters_to_get_percent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">percent</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the number of clusters needed to get the percentage &#39;percent&#39; over total_elements.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -147,13 +148,13 @@
 
         <span class="k">return</span> <span class="n">clusters_visited</span>
 </div>
-<div class="viewcode-block" id="Clustering.cluster_is_inside"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.cluster_is_inside">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_is_inside</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.cluster_is_inside"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.cluster_is_inside">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_is_inside</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns True if the cluster &#39;cluster&#39; is currently in the clusters list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_index</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
 </div>
-<div class="viewcode-block" id="Clustering.cluster_index"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.cluster_index">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.cluster_index"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.cluster_index">[docs]</a>    <span class="k">def</span> <span class="nf">cluster_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns the index where the cluster &#39;cluster&#39; is in the list &#39;self.clusters&#39;</span>
 <span class="sd">        or -1 if it&#39;s not.</span>
@@ -163,14 +164,14 @@
                 <span class="k">return</span> <span class="n">i</span>
         <span class="k">return</span> <span class="o">-</span><span class="mi">1</span>
 </div>
-<div class="viewcode-block" id="Clustering.eliminate_cluster"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.eliminate_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">eliminate_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.eliminate_cluster"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.eliminate_cluster">[docs]</a>    <span class="k">def</span> <span class="nf">eliminate_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes one cluster of the clusters list. The cluster has to be inside the list.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">cluster</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">total_number_of_elements</span> <span class="o">-=</span> <span class="n">cluster</span><span class="o">.</span><span class="n">get_size</span><span class="p">()</span>
 </div>
-<div class="viewcode-block" id="Clustering.eliminate_noise"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.eliminate_noise">[docs]</a>    <span class="k">def</span> <span class="nf">eliminate_noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_size</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.eliminate_noise"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.eliminate_noise">[docs]</a>    <span class="k">def</span> <span class="nf">eliminate_noise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cluster_size</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Deletes all the clusters with a number of elements under cluster_size.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -182,11 +183,14 @@
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">to_eliminate</span><span class="p">:</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">eliminate_cluster</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Clustering.gen_class_list"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.gen_class_list">[docs]</a>    <span class="k">def</span> <span class="nf">gen_class_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">starts_with</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.gen_class_list"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.gen_class_list">[docs]</a>    <span class="k">def</span> <span class="nf">gen_class_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_elements</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span> <span class="n">starts_with</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Generates a class list from a clustering.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="n">class_list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_clustered_elements</span><span class="p">())</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">number_of_elements</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="n">class_list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">number_of_elements</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">class_list</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_all_clustered_elements</span><span class="p">())</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
         <span class="n">j</span> <span class="o">=</span> <span class="n">starts_with</span>
         <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">clusters</span><span class="p">:</span>
             <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">c</span><span class="o">.</span><span class="n">all_elements</span><span class="p">:</span>
@@ -194,7 +198,7 @@
             <span class="n">j</span> <span class="o">=</span> <span class="n">j</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c"># one class for each cluster</span>
         <span class="k">return</span> <span class="n">class_list</span>
 </div>
-<div class="viewcode-block" id="Clustering.get_all_clustered_elements"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_all_clustered_elements">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_clustered_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.get_all_clustered_elements"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_all_clustered_elements">[docs]</a>    <span class="k">def</span> <span class="nf">get_all_clustered_elements</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the elements in all its clusters.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -203,7 +207,7 @@
             <span class="n">all_clustered_elements</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">all_elements</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">all_clustered_elements</span>
 </div>
-<div class="viewcode-block" id="Clustering.save_to_disk"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.save_to_disk">[docs]</a>    <span class="k">def</span> <span class="nf">save_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_with_file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.save_to_disk"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.save_to_disk">[docs]</a>    <span class="k">def</span> <span class="nf">save_to_disk</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path_with_file_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Saves itself as a binary file.</span>
 
@@ -215,7 +219,7 @@
         <span class="n">file_handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Clustering.load_from_disk"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.load_from_disk">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_disk</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path_with_file_name</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.load_from_disk"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.load_from_disk">[docs]</a>    <span class="k">def</span> <span class="nf">load_from_disk</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">path_with_file_name</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads a clustering which was stored into disk.</span>
 
@@ -229,7 +233,7 @@
         <span class="k">return</span> <span class="n">clustering</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Clustering.load_all_from_directory"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.load_all_from_directory">[docs]</a>    <span class="k">def</span> <span class="nf">load_all_from_directory</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.load_all_from_directory"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.load_all_from_directory">[docs]</a>    <span class="k">def</span> <span class="nf">load_all_from_directory</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">directory</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Loads all clusterings residing in a directory.</span>
 
@@ -252,7 +256,7 @@
         <span class="k">return</span> <span class="n">clusterings</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Clustering.classify"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.classify">[docs]</a>    <span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">tags</span><span class="p">,</span><span class="n">clusterings</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.classify"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.classify">[docs]</a>    <span class="k">def</span> <span class="nf">classify</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span><span class="n">tags</span><span class="p">,</span><span class="n">clusterings</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Classifies a collection of clusterings using the classes in &#39;tags&#39;, counting the occurrences for each class.</span>
 <span class="sd">        A clustering belongs to a class if in its &#39;details&#39; string the class-tag appears.</span>
@@ -271,7 +275,7 @@
                     <span class="n">counter</span><span class="p">[</span><span class="n">t</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="k">return</span> <span class="n">counter</span>
 </div>
-<div class="viewcode-block" id="Clustering.get_medoids"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_medoids">[docs]</a>    <span class="k">def</span> <span class="nf">get_medoids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance_matrix</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.get_medoids"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_medoids">[docs]</a>    <span class="k">def</span> <span class="nf">get_medoids</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">distance_matrix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list containing the medoids of all clusters.</span>
 
@@ -284,7 +288,7 @@
             <span class="n">medoids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="o">.</span><span class="n">calculate_medoid</span><span class="p">(</span><span class="n">distance_matrix</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">medoids</span>
 </div>
-<div class="viewcode-block" id="Clustering.get_proportional_size_representatives"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_proportional_size_representatives">[docs]</a>    <span class="k">def</span> <span class="nf">get_proportional_size_representatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_structures</span><span class="p">,</span> <span class="n">distance_matrix</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.get_proportional_size_representatives"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.get_proportional_size_representatives">[docs]</a>    <span class="k">def</span> <span class="nf">get_proportional_size_representatives</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">number_of_structures</span><span class="p">,</span> <span class="n">distance_matrix</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Returns a list with the medoids and a random sample of cluster elements so that the number of elements</span>
 <span class="sd">        of each cluster in the list is proportional to the size of each cluster.</span>
@@ -302,7 +306,7 @@
         <span class="n">representatives</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_medoids</span><span class="p">(</span><span class="n">distance_matrix</span><span class="p">))</span>
         <span class="k">return</span> <span class="n">representatives</span>
 </div>
-<div class="viewcode-block" id="Clustering.to_dic"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.to_dic">[docs]</a>    <span class="k">def</span> <span class="nf">to_dic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.to_dic"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.to_dic">[docs]</a>    <span class="k">def</span> <span class="nf">to_dic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Converts this clustering into a dictionary (to be used with json serializers).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -315,7 +319,7 @@
         <span class="k">return</span> <span class="n">clustering_dic</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="Clustering.from_dic"><a class="viewcode-back" href="../../../pyproct.clustering.html#pyproct.clustering.clustering.Clustering.from_dic">[docs]</a>    <span class="k">def</span> <span class="nf">from_dic</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">clustering_dic</span><span class="p">):</span>
+<div class="viewcode-block" id="Clustering.from_dic"><a class="viewcode-back" href="../../../base/api/pyproct.clustering.html#pyproct.clustering.clustering.Clustering.from_dic">[docs]</a>    <span class="k">def</span> <span class="nf">from_dic</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">clustering_dic</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Creates a clustering from a clustering dictionary describing it (as reverse operation of</span>
 <span class="sd">        &#39;to_dic&#39;).</span>
@@ -376,12 +380,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

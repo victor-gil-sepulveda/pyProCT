@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyproct.driver.observer.MPIObserver &mdash; pyProCT 1.2.0 documentation</title>
+    <title>pyproct.driver.observer.MPIObserver &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,41 +48,41 @@
           <div class="body">
             
   <h1>Source code for pyproct.driver.observer.MPIObserver</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on 04/02/2013</span>
 
 <span class="sd">@author: victor</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">from</span> <span class="nn">pyproct.driver.observer.observer</span> <span class="kn">import</span> <span class="n">ObservableMessage</span>
 <span class="kn">from</span> <span class="nn">mpi4py</span> <span class="kn">import</span> <span class="n">MPI</span>
-<div class="viewcode-block" id="MPIObserver"><a class="viewcode-back" href="../../../../pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver">[docs]</a><span class="k">class</span> <span class="nc">MPIObserver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
-    <span class="sd">&#39;&#39;&#39;</span>
+<div class="viewcode-block" id="MPIObserver"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver">[docs]</a><span class="k">class</span> <span class="nc">MPIObserver</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Observer for MPI. It&#39;s replicated n times (where n is the number of processes), no possible race conditions</span>
-<span class="sd">    occur except a possible race condition with stdout. Because of this, the observer accumulates all messages to </span>
+<span class="sd">    occur except a possible race condition with stdout. Because of this, the observer accumulates all messages to</span>
 <span class="sd">    finally write them into a file.</span>
-<span class="sd">    &#39;&#39;&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="bp">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="bp">False</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">comm</span> <span class="o">=</span> <span class="n">MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">rank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">messages</span> <span class="o">=</span> <span class="p">[]</span>
-    
-<div class="viewcode-block" id="MPIObserver.notify"><a class="viewcode-back" href="../../../../pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.notify">[docs]</a>    <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actor</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MPIObserver.notify"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.notify">[docs]</a>    <span class="k">def</span> <span class="nf">notify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">actor</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">ObservableMessage</span><span class="p">(</span><span class="n">actor</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">message</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">))</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="bp">True</span>
-    </div>
-<div class="viewcode-block" id="MPIObserver.get_data"><a class="viewcode-back" href="../../../../pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="MPIObserver.get_data"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.get_data">[docs]</a>    <span class="k">def</span> <span class="nf">get_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
-    </div>
-<div class="viewcode-block" id="MPIObserver.wait"><a class="viewcode-back" href="../../../../pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.wait">[docs]</a>    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="MPIObserver.wait"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.wait">[docs]</a>    <span class="k">def</span> <span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">while</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">flag</span><span class="p">:</span>
             <span class="k">pass</span>
-    </div>
-<div class="viewcode-block" id="MPIObserver.clear"><a class="viewcode-back" href="../../../../pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+</div>
+<div class="viewcode-block" id="MPIObserver.clear"><a class="viewcode-back" href="../../../../base/api/pyproct.driver.observer.html#pyproct.driver.observer.MPIObserver.MPIObserver.clear">[docs]</a>    <span class="k">def</span> <span class="nf">clear</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="bp">False</span>
-    </div>
+</div>
     <span class="k">def</span> <span class="nf">__del__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="s">&quot;When destroyed, create a file with the contents.&quot;</span>
         <span class="nb">open</span><span class="p">(</span><span class="s">&quot;</span><span class="si">%03d</span><span class="s">.out&quot;</span><span class="o">%</span><span class="bp">self</span><span class="o">.</span><span class="n">rank</span><span class="p">,</span><span class="s">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">msg</span><span class="o">+</span><span class="s">&quot;</span><span class="se">\n</span><span class="s">&quot;</span> <span class="k">for</span> <span class="n">msg</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">messages</span><span class="p">]))</span></div>
@@ -118,12 +119,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

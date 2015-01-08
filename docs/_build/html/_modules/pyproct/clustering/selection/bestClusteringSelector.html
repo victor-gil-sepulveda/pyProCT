@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyproct.clustering.selection.bestClusteringSelector &mdash; pyProCT 1.2.0 documentation</title>
+    <title>pyproct.clustering.selection.bestClusteringSelector &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../../../../index.html" />
     <link rel="up" title="Module code" href="../../../index.html" /> 
   </head>
   <body>
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,17 +48,16 @@
           <div class="body">
             
   <h1>Source code for pyproct.clustering.selection.bestClusteringSelector</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on 07/09/2012</span>
 
 <span class="sd">@author: victor</span>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="kn">import</span> <span class="nn">math</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">random</span>
 <span class="kn">import</span> <span class="nn">numpy</span>
-<span class="kn">from</span> <span class="nn">pyproct.clustering.analysis.analysisPopulator</span> <span class="kn">import</span> <span class="n">AnalysisPopulator</span>
+<span class="kn">from</span> <span class="nn">pyproct.clustering.evaluation.analysis.analysisPopulator</span> <span class="kn">import</span> <span class="n">AnalysisPopulator</span>
 
-<div class="viewcode-block" id="BestClusteringSelector"><a class="viewcode-back" href="../../../../pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector">[docs]</a><span class="k">class</span> <span class="nc">BestClusteringSelector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="BestClusteringSelector"><a class="viewcode-back" href="../../../../base/api/pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector">[docs]</a><span class="k">class</span> <span class="nc">BestClusteringSelector</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
@@ -68,7 +68,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span> <span class="o">=</span> <span class="n">parameters</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">criteria</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s">&quot;clustering&quot;</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;evaluation_criteria&quot;</span><span class="p">]</span>
 
-<div class="viewcode-block" id="BestClusteringSelector.choose_best"><a class="viewcode-back" href="../../../../pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.choose_best">[docs]</a>    <span class="k">def</span> <span class="nf">choose_best</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
+<div class="viewcode-block" id="BestClusteringSelector.choose_best"><a class="viewcode-back" href="../../../../base/api/pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.choose_best">[docs]</a>    <span class="k">def</span> <span class="nf">choose_best</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Normalizes the values of the evaluation scores, then calculates the scores for all clusterings and criteria</span>
 <span class="sd">        and finally chooses the best clustering.</span>
@@ -99,7 +99,7 @@
         <span class="k">return</span> <span class="n">best_clustering_id</span><span class="p">,</span> <span class="n">scores</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="BestClusteringSelector.get_best_clustering"><a class="viewcode-back" href="../../../../pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_best_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_clustering</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">scores</span><span class="p">):</span>
+<div class="viewcode-block" id="BestClusteringSelector.get_best_clustering"><a class="viewcode-back" href="../../../../base/api/pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_best_clustering">[docs]</a>    <span class="k">def</span> <span class="nf">get_best_clustering</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">scores</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Selects the clustering with best score.</span>
 
@@ -117,7 +117,7 @@
         <span class="k">return</span> <span class="n">best_clustering_id</span><span class="p">,</span> <span class="n">best_criteria_id</span><span class="p">,</span> <span class="n">scores</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="BestClusteringSelector.get_scores_for_all_clusters_and_criterias"><a class="viewcode-back" href="../../../../pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_scores_for_all_clusters_and_criterias">[docs]</a>    <span class="k">def</span> <span class="nf">get_scores_for_all_clusters_and_criterias</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
+<div class="viewcode-block" id="BestClusteringSelector.get_scores_for_all_clusters_and_criterias"><a class="viewcode-back" href="../../../../base/api/pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_scores_for_all_clusters_and_criterias">[docs]</a>    <span class="k">def</span> <span class="nf">get_scores_for_all_clusters_and_criterias</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">criteria</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates all scores for a group of clusterings and criteria.</span>
 
@@ -142,7 +142,7 @@
         <span class="k">return</span> <span class="n">scores</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="BestClusteringSelector.get_score_for_criteria"><a class="viewcode-back" href="../../../../pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_score_for_criteria">[docs]</a>    <span class="k">def</span> <span class="nf">get_score_for_criteria</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">clustering_id</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">,</span> <span class="n">criteria</span><span class="p">):</span>
+<div class="viewcode-block" id="BestClusteringSelector.get_score_for_criteria"><a class="viewcode-back" href="../../../../base/api/pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_score_for_criteria">[docs]</a>    <span class="k">def</span> <span class="nf">get_score_for_criteria</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">clustering_id</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">,</span> <span class="n">criteria</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Calculates the score for one clustering and one criteria.</span>
 
@@ -175,7 +175,7 @@
         <span class="k">return</span> <span class="n">score</span> <span class="o">/</span> <span class="n">accum_weight</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="BestClusteringSelector.normalize_one_evaluation_type"><a class="viewcode-back" href="../../../../pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.normalize_one_evaluation_type">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_one_evaluation_type</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">evaluation_type</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
+<div class="viewcode-block" id="BestClusteringSelector.normalize_one_evaluation_type"><a class="viewcode-back" href="../../../../base/api/pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.normalize_one_evaluation_type">[docs]</a>    <span class="k">def</span> <span class="nf">normalize_one_evaluation_type</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">evaluation_type</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Normalizes all the values of one evaluation type in the clustering_info structure in the range [0..1]</span>
 
@@ -199,7 +199,7 @@
                 <span class="n">clustering_info</span><span class="p">[</span><span class="n">clustering_id</span><span class="p">][</span><span class="s">&quot;evaluation&quot;</span><span class="p">][</span><span class="s">&quot;Normalized_&quot;</span><span class="o">+</span><span class="n">evaluation_type</span><span class="p">]</span> <span class="o">=</span>  <span class="p">(</span><span class="n">value</span><span class="o">-</span><span class="n">valmin</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">valmax</span> <span class="o">-</span> <span class="n">valmin</span><span class="p">)</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="BestClusteringSelector.get_values_for_evaluation_type"><a class="viewcode-back" href="../../../../pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_values_for_evaluation_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_values_for_evaluation_type</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">evaluation_type</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
+<div class="viewcode-block" id="BestClusteringSelector.get_values_for_evaluation_type"><a class="viewcode-back" href="../../../../base/api/pyproct.clustering.selection.html#pyproct.clustering.selection.bestClusteringSelector.BestClusteringSelector.get_values_for_evaluation_type">[docs]</a>    <span class="k">def</span> <span class="nf">get_values_for_evaluation_type</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">evaluation_type</span><span class="p">,</span> <span class="n">clustering_info</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Testing helper. Gets all the values of one evaluation type.</span>
 
@@ -247,12 +247,12 @@
         <li class="right" >
           <a href="../../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

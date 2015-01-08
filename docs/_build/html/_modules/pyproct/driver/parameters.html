@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyproct.driver.parameters &mdash; pyProCT 1.2.0 documentation</title>
+    <title>pyproct.driver.parameters &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,37 +48,73 @@
           <div class="body">
             
   <h1>Source code for pyproct.driver.parameters</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on 04/06/2012</span>
 
 <span class="sd">@author: victor</span>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="kn">import</span> <span class="nn">json</span>
-<span class="kn">from</span> <span class="nn">pyproct.tools.commonTools</span> <span class="kn">import</span> <span class="n">convert_to_utf8</span>
+<span class="kn">from</span> <span class="nn">pyproct.tools.commonTools</span> <span class="kn">import</span> <span class="n">convert_to_utf8</span><span class="p">,</span> <span class="n">get_parameter_value</span>
 
-<div class="viewcode-block" id="ProtocolParameters"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters">[docs]</a><span class="k">class</span> <span class="nc">ProtocolParameters</span><span class="p">():</span>
+<div class="viewcode-block" id="ProtocolParameters"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters">[docs]</a><span class="k">class</span> <span class="nc">ProtocolParameters</span><span class="p">():</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Stores the values of the parameters used to execute the protocol.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params_dic</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span> <span class="o">=</span> <span class="n">params_dic</span>
 
     <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">[</span><span class="n">key</span><span class="p">],</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">ProtocolParameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">[</span><span class="n">key</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">value</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
 
     <span class="k">def</span> <span class="nf">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">key</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span>
 
-    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">,</span> <span class="n">sort_keys</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">separators</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;: &#39;</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">yield</span> <span class="n">k</span>
 
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">ProtocolParameters</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">),</span> <span class="n">sort_keys</span> <span class="o">=</span> <span class="bp">False</span><span class="p">,</span> <span class="n">indent</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span> <span class="n">separators</span> <span class="o">=</span> <span class="p">(</span><span class="s">&#39;,&#39;</span><span class="p">,</span> <span class="s">&#39;: &#39;</span><span class="p">))</span>
+
+<div class="viewcode-block" id="ProtocolParameters.get_value"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.get_value">[docs]</a>    <span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key_description</span><span class="p">,</span> <span class="n">default_value</span> <span class="o">=</span> <span class="bp">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_parameter_value</span><span class="p">(</span><span class="n">key_description</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="p">,</span> <span class="n">default_value</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="ProtocolParameters.keys"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.keys">[docs]</a>    <span class="k">def</span> <span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">k</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_dic</span><span class="o">.</span><span class="n">keys</span><span class="p">()]</span>
+</div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="ProtocolParameters.get_params_from_json"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.get_params_from_json">[docs]</a>    <span class="k">def</span> <span class="nf">get_params_from_json</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">json_string</span><span class="p">):</span>
+<div class="viewcode-block" id="ProtocolParameters.get_params_from_json"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.get_params_from_json">[docs]</a>    <span class="k">def</span> <span class="nf">get_params_from_json</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">json_string</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ProtocolParameters</span><span class="p">(</span><span class="n">convert_to_utf8</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">json_string</span><span class="p">)));</span>
 </div>
     <span class="nd">@classmethod</span>
-<div class="viewcode-block" id="ProtocolParameters.get_default_params"><a class="viewcode-back" href="../../../pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.get_default_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_default_params</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
+<div class="viewcode-block" id="ProtocolParameters.get_default_params"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.get_default_params">[docs]</a>    <span class="k">def</span> <span class="nf">get_default_params</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">source</span><span class="p">):</span>
         <span class="k">return</span> <span class="n">ProtocolParameters</span><span class="o">.</span><span class="n">get_params_from_json</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">source</span><span class="p">,</span><span class="s">&quot;r&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">read</span><span class="p">())</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ProtocolParameters.empty"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.empty">[docs]</a>    <span class="k">def</span> <span class="nf">empty</span><span class="p">(</span><span class="n">cls</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">ProtocolParameters</span><span class="p">({})</span>
+</div>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ProtocolParameters.to_dict"><a class="viewcode-back" href="../../../base/api/pyproct.driver.html#pyproct.driver.parameters.ProtocolParameters.to_dict">[docs]</a>    <span class="k">def</span> <span class="nf">to_dict</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">proParam</span><span class="p">):</span>
+        <span class="n">new_dic</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">proParam</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">item</span>  <span class="o">=</span> <span class="n">proParam</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">ProtocolParameters</span><span class="p">):</span>
+                <span class="n">new_dic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ProtocolParameters</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+            <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+                <span class="n">new_dic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">ProtocolParameters</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(</span><span class="n">ProtocolParameters</span><span class="p">(</span><span class="n">proParam</span><span class="p">[</span><span class="n">k</span><span class="p">]))</span>
+
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">new_dic</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="n">proParam</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">new_dic</span>
 </pre></div></div></div>
 
           </div>
@@ -111,12 +148,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

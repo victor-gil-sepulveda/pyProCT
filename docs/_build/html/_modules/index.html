@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Overview: module code &mdash; pyProCT 1.2.0 documentation</title>
+    <title>Overview: module code &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../index.html" /> 
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../index.html" /> 
   </head>
   <body>
     <div class="related">
@@ -35,7 +36,7 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li> 
       </ul>
     </div>  
 
@@ -45,85 +46,62 @@
           <div class="body">
             
   <h1>All modules for which code is available</h1>
-<ul><li><a href="pyproct/algorithms/dbscan/dbscanAlgorithm.html">pyproct.algorithms.dbscan.dbscanAlgorithm</a></li>
-<li><a href="pyproct/algorithms/dbscan/dbscanTools.html">pyproct.algorithms.dbscan.dbscanTools</a></li>
-<li><a href="pyproct/algorithms/dbscan/parametersGeneration.html">pyproct.algorithms.dbscan.parametersGeneration</a></li>
-<li><a href="pyproct/algorithms/dbscan/test/TestDBSCAN.html">pyproct.algorithms.dbscan.test.TestDBSCAN</a></li>
-<li><a href="pyproct/algorithms/gromos/gromosAlgorithm.html">pyproct.algorithms.gromos.gromosAlgorithm</a></li>
-<li><a href="pyproct/algorithms/gromos/gromosAlgorithmTools.html">pyproct.algorithms.gromos.gromosAlgorithmTools</a></li>
-<li><a href="pyproct/algorithms/gromos/parametersGeneration.html">pyproct.algorithms.gromos.parametersGeneration</a></li>
-<li><a href="pyproct/algorithms/gromos/test/TestAutoParametrization.html">pyproct.algorithms.gromos.test.TestAutoParametrization</a></li>
-<li><a href="pyproct/algorithms/gromos/test/TestGromos.html">pyproct.algorithms.gromos.test.TestGromos</a></li>
-<li><a href="pyproct/algorithms/hierarchical/hierarchicalAlgorithm.html">pyproct.algorithms.hierarchical.hierarchicalAlgorithm</a></li>
-<li><a href="pyproct/algorithms/hierarchical/hierarchicalTools.html">pyproct.algorithms.hierarchical.hierarchicalTools</a></li>
-<li><a href="pyproct/algorithms/hierarchical/parametersGeneration.html">pyproct.algorithms.hierarchical.parametersGeneration</a></li>
-<li><a href="pyproct/algorithms/hierarchical/test/TestHierarchicalClustering.html">pyproct.algorithms.hierarchical.test.TestHierarchicalClustering</a></li>
-<li><a href="pyproct/algorithms/kmedoids/kMedoidsAlgorithm.html">pyproct.algorithms.kmedoids.kMedoidsAlgorithm</a></li>
-<li><a href="pyproct/algorithms/kmedoids/parametersGeneration.html">pyproct.algorithms.kmedoids.parametersGeneration</a></li>
-<li><a href="pyproct/algorithms/kmedoids/test/TestKmedoids.html">pyproct.algorithms.kmedoids.test.TestKmedoids</a></li>
-<li><a href="pyproct/algorithms/kmedoids/test/TestParametersGeneration.html">pyproct.algorithms.kmedoids.test.TestParametersGeneration</a></li>
-<li><a href="pyproct/algorithms/random/RandomAlgorithm.html">pyproct.algorithms.random.RandomAlgorithm</a></li>
-<li><a href="pyproct/algorithms/random/parametersGeneration.html">pyproct.algorithms.random.parametersGeneration</a></li>
-<li><a href="pyproct/algorithms/spectral/parametersGeneration.html">pyproct.algorithms.spectral.parametersGeneration</a></li>
-<li><a href="pyproct/algorithms/spectral/spectralClusteringAlgorithm.html">pyproct.algorithms.spectral.spectralClusteringAlgorithm</a></li>
-<li><a href="pyproct/algorithms/spectral/test/TestSpectralClustering.html">pyproct.algorithms.spectral.test.TestSpectralClustering</a></li>
-<li><a href="pyproct/algorithms/spectral/test/TestSpectralTools.html">pyproct.algorithms.spectral.test.TestSpectralTools</a></li>
-<li><a href="pyproct/algorithms/test/TestParameterGeneration.html">pyproct.algorithms.test.TestParameterGeneration</a></li>
-<li><a href="pyproct/clustering/analysis/analysis.html">pyproct.clustering.analysis.analysis</a></li>
-<li><a href="pyproct/clustering/analysis/analysisPopulator.html">pyproct.clustering.analysis.analysisPopulator</a></li>
-<li><a href="pyproct/clustering/analysis/analysisRunner.html">pyproct.clustering.analysis.analysisRunner</a></li>
-<li><a href="pyproct/clustering/analysis/test/TestAnalysisPopulator.html">pyproct.clustering.analysis.test.TestAnalysisPopulator</a></li>
+<ul><li><a href="pyproct/clustering/algorithms/dbscan/dbscanAlgorithm.html">pyproct.clustering.algorithms.dbscan.dbscanAlgorithm</a></li>
+<li><a href="pyproct/clustering/algorithms/dbscan/dbscanTools.html">pyproct.clustering.algorithms.dbscan.dbscanTools</a></li>
+<li><a href="pyproct/clustering/algorithms/dbscan/parametersGeneration.html">pyproct.clustering.algorithms.dbscan.parametersGeneration</a></li>
+<li><a href="pyproct/clustering/algorithms/gromos/gromosAlgorithm.html">pyproct.clustering.algorithms.gromos.gromosAlgorithm</a></li>
+<li><a href="pyproct/clustering/algorithms/gromos/gromosAlgorithmTools.html">pyproct.clustering.algorithms.gromos.gromosAlgorithmTools</a></li>
+<li><a href="pyproct/clustering/algorithms/gromos/parametersGeneration.html">pyproct.clustering.algorithms.gromos.parametersGeneration</a></li>
+<li><a href="pyproct/clustering/algorithms/hierarchical/hierarchicalAlgorithm.html">pyproct.clustering.algorithms.hierarchical.hierarchicalAlgorithm</a></li>
+<li><a href="pyproct/clustering/algorithms/hierarchical/hierarchicalTools.html">pyproct.clustering.algorithms.hierarchical.hierarchicalTools</a></li>
+<li><a href="pyproct/clustering/algorithms/hierarchical/parametersGeneration.html">pyproct.clustering.algorithms.hierarchical.parametersGeneration</a></li>
+<li><a href="pyproct/clustering/algorithms/kmedoids/kMedoidsAlgorithm.html">pyproct.clustering.algorithms.kmedoids.kMedoidsAlgorithm</a></li>
+<li><a href="pyproct/clustering/algorithms/kmedoids/parametersGeneration.html">pyproct.clustering.algorithms.kmedoids.parametersGeneration</a></li>
+<li><a href="pyproct/clustering/algorithms/random/RandomAlgorithm.html">pyproct.clustering.algorithms.random.RandomAlgorithm</a></li>
+<li><a href="pyproct/clustering/algorithms/random/parametersGeneration.html">pyproct.clustering.algorithms.random.parametersGeneration</a></li>
+<li><a href="pyproct/clustering/algorithms/spectral/parametersGeneration.html">pyproct.clustering.algorithms.spectral.parametersGeneration</a></li>
+<li><a href="pyproct/clustering/algorithms/spectral/spectralClusteringAlgorithm.html">pyproct.clustering.algorithms.spectral.spectralClusteringAlgorithm</a></li>
 <li><a href="pyproct/clustering/cluster.html">pyproct.clustering.cluster</a></li>
 <li><a href="pyproct/clustering/clustering.html">pyproct.clustering.clustering</a></li>
-<li><a href="pyproct/clustering/comparison/caDisplacement.html">pyproct.clustering.comparison.caDisplacement</a></li>
-<li><a href="pyproct/clustering/comparison/comparator.html">pyproct.clustering.comparison.comparator</a></li>
-<li><a href="pyproct/clustering/comparison/distrprob/kullbackLieblerDivergence.html">pyproct.clustering.comparison.distrprob.kullbackLieblerDivergence</a></li>
-<li><a href="pyproct/clustering/comparison/distrprob/test/TestKullbackLiebler.html">pyproct.clustering.comparison.distrprob.test.TestKullbackLiebler</a></li>
-<li><a href="pyproct/clustering/comparison/rmsf.html">pyproct.clustering.comparison.rmsf</a></li>
-<li><a href="pyproct/clustering/comparison/test/TestAnalyzer.html">pyproct.clustering.comparison.test.TestAnalyzer</a></li>
-<li><a href="pyproct/clustering/comparison/test/TestCADisplacement.html">pyproct.clustering.comparison.test.TestCADisplacement</a></li>
-<li><a href="pyproct/clustering/comparison/test/TestComparator.html">pyproct.clustering.comparison.test.TestComparator</a></li>
-<li><a href="pyproct/clustering/comparison/test/TestSeparator.html">pyproct.clustering.comparison.test.TestSeparator</a></li>
+<li><a href="pyproct/clustering/evaluation/analysis/analysis.html">pyproct.clustering.evaluation.analysis.analysis</a></li>
+<li><a href="pyproct/clustering/evaluation/analysis/analysisPopulator.html">pyproct.clustering.evaluation.analysis.analysisPopulator</a></li>
+<li><a href="pyproct/clustering/evaluation/analysis/analysisRunner.html">pyproct.clustering.evaluation.analysis.analysisRunner</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/calinskiHarabasz.html">pyproct.clustering.evaluation.metrics.calinskiHarabasz</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/common.html">pyproct.clustering.evaluation.metrics.common</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/compactness.html">pyproct.clustering.evaluation.metrics.compactness</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/daviesBouldin.html">pyproct.clustering.evaluation.metrics.daviesBouldin</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/dunn.html">pyproct.clustering.evaluation.metrics.dunn</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/gaussianSeparation.html">pyproct.clustering.evaluation.metrics.gaussianSeparation</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/pcaMetrics.html">pyproct.clustering.evaluation.metrics.pcaMetrics</a></li>
+<li><a href="pyproct/clustering/evaluation/metrics/separation.html">pyproct.clustering.evaluation.metrics.separation</a></li>
 <li><a href="pyproct/clustering/filtering/clusteringFilter.html">pyproct.clustering.filtering.clusteringFilter</a></li>
-<li><a href="pyproct/clustering/filtering/test/TestFiltering.html">pyproct.clustering.filtering.test.TestFiltering</a></li>
-<li><a href="pyproct/clustering/metrics/CalinskiHarabasz.html">pyproct.clustering.metrics.CalinskiHarabasz</a></li>
-<li><a href="pyproct/clustering/metrics/DaviesBouldin.html">pyproct.clustering.metrics.DaviesBouldin</a></li>
-<li><a href="pyproct/clustering/metrics/Dunn.html">pyproct.clustering.metrics.Dunn</a></li>
-<li><a href="pyproct/clustering/metrics/boundedCohesion.html">pyproct.clustering.metrics.boundedCohesion</a></li>
-<li><a href="pyproct/clustering/metrics/cohesion.html">pyproct.clustering.metrics.cohesion</a></li>
-<li><a href="pyproct/clustering/metrics/common.html">pyproct.clustering.metrics.common</a></li>
-<li><a href="pyproct/clustering/metrics/compactness.html">pyproct.clustering.metrics.compactness</a></li>
-<li><a href="pyproct/clustering/metrics/gaussianSeparation.html">pyproct.clustering.metrics.gaussianSeparation</a></li>
-<li><a href="pyproct/clustering/metrics/graphMetrics.html">pyproct.clustering.metrics.graphMetrics</a></li>
-<li><a href="pyproct/clustering/metrics/meanMinimumDistance.html">pyproct.clustering.metrics.meanMinimumDistance</a></li>
-<li><a href="pyproct/clustering/metrics/pcaMetrics.html">pyproct.clustering.metrics.pcaMetrics</a></li>
-<li><a href="pyproct/clustering/metrics/separation.html">pyproct.clustering.metrics.separation</a></li>
-<li><a href="pyproct/clustering/metrics/silhouette.html">pyproct.clustering.metrics.silhouette</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestBoundedMetrics.html">pyproct.clustering.metrics.test.TestBoundedMetrics</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestCalinskiHarabasz.html">pyproct.clustering.metrics.test.TestCalinskiHarabasz</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestCommonTools.html">pyproct.clustering.metrics.test.TestCommonTools</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestDaviesBouldin.html">pyproct.clustering.metrics.test.TestDaviesBouldin</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestDunnIndex.html">pyproct.clustering.metrics.test.TestDunnIndex</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestGaussianCalculator.html">pyproct.clustering.metrics.test.TestGaussianCalculator</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestGraphMetrics.html">pyproct.clustering.metrics.test.TestGraphMetrics</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestMetrics.html">pyproct.clustering.metrics.test.TestMetrics</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestPCAMetric.html">pyproct.clustering.metrics.test.TestPCAMetric</a></li>
-<li><a href="pyproct/clustering/metrics/test/TestSilhouette.html">pyproct.clustering.metrics.test.TestSilhouette</a></li>
+<li><a href="pyproct/clustering/protocol/exploration/algorithmRunParametersGenerator.html">pyproct.clustering.protocol.exploration.algorithmRunParametersGenerator</a></li>
+<li><a href="pyproct/clustering/protocol/exploration/clusteringExplorer.html">pyproct.clustering.protocol.exploration.clusteringExplorer</a></li>
+<li><a href="pyproct/clustering/protocol/protocol.html">pyproct.clustering.protocol.protocol</a></li>
+<li><a href="pyproct/clustering/protocol/refinement/Refiner.html">pyproct.clustering.protocol.refinement.Refiner</a></li>
 <li><a href="pyproct/clustering/selection/bestClusteringSelector.html">pyproct.clustering.selection.bestClusteringSelector</a></li>
-<li><a href="pyproct/clustering/selection/test/testBestClusteringSelection.html">pyproct.clustering.selection.test.testBestClusteringSelection</a></li>
-<li><a href="pyproct/clustering/test/TestCluster.html">pyproct.clustering.test.TestCluster</a></li>
-<li><a href="pyproct/clustering/test/TestClustering.html">pyproct.clustering.test.TestClustering</a></li>
-<li><a href="pyproct/driver/compressor/compressor.html">pyproct.driver.compressor.compressor</a></li>
+<li><a href="pyproct/data/MPIDataDriver.html">pyproct.data.MPIDataDriver</a></li>
+<li><a href="pyproct/data/dataDriver.html">pyproct.data.dataDriver</a></li>
+<li><a href="pyproct/data/handler/data.html">pyproct.data.handler.data</a></li>
+<li><a href="pyproct/data/handler/dataHandler.html">pyproct.data.handler.dataHandler</a></li>
+<li><a href="pyproct/data/handler/dataLoader.html">pyproct.data.handler.dataLoader</a></li>
+<li><a href="pyproct/data/handler/dataSource.html">pyproct.data.handler.dataSource</a></li>
+<li><a href="pyproct/data/handler/elementRange.html">pyproct.data.handler.elementRange</a></li>
+<li><a href="pyproct/data/handler/protein/proteinEnsembleData.html">pyproct.data.handler.protein.proteinEnsembleData</a></li>
+<li><a href="pyproct/data/handler/protein/proteinEnsembleDataLoader.html">pyproct.data.handler.protein.proteinEnsembleDataLoader</a></li>
+<li><a href="pyproct/data/handler/sourceGenerator.html">pyproct.data.handler.sourceGenerator</a></li>
+<li><a href="pyproct/data/matrix/combination/combinationMatrixCalculator.html">pyproct.data.matrix.combination.combinationMatrixCalculator</a></li>
+<li><a href="pyproct/data/matrix/loaderMatrixCalculator.html">pyproct.data.matrix.loaderMatrixCalculator</a></li>
+<li><a href="pyproct/data/matrix/matrixCalculator.html">pyproct.data.matrix.matrixCalculator</a></li>
+<li><a href="pyproct/data/matrix/matrixHandler.html">pyproct.data.matrix.matrixHandler</a></li>
+<li><a href="pyproct/data/matrix/protein/cases/euclidean/cartesiansCase.html">pyproct.data.matrix.protein.cases.euclidean.cartesiansCase</a></li>
+<li><a href="pyproct/data/matrix/protein/cases/euclidean/dihedralsCase.html">pyproct.data.matrix.protein.cases.euclidean.dihedralsCase</a></li>
+<li><a href="pyproct/data/matrix/protein/cases/rmsd/autoChainMappingCase.html">pyproct.data.matrix.protein.cases.rmsd.autoChainMappingCase</a></li>
+<li><a href="pyproct/data/matrix/protein/cases/rmsd/cartesiansCase.html">pyproct.data.matrix.protein.cases.rmsd.cartesiansCase</a></li>
+<li><a href="pyproct/data/matrix/protein/cases/rmsd/dihedralsCase.html">pyproct.data.matrix.protein.cases.rmsd.dihedralsCase</a></li>
+<li><a href="pyproct/data/matrix/protein/euclideanMatrixCalculator.html">pyproct.data.matrix.protein.euclideanMatrixCalculator</a></li>
+<li><a href="pyproct/data/matrix/protein/rmsdMatrixCalculator.html">pyproct.data.matrix.protein.rmsdMatrixCalculator</a></li>
 <li><a href="pyproct/driver/driver.html">pyproct.driver.driver</a></li>
-<li><a href="pyproct/driver/handlers/matrix/euclideanDistanceMatrixBuilder.html">pyproct.driver.handlers.matrix.euclideanDistanceMatrixBuilder</a></li>
-<li><a href="pyproct/driver/handlers/matrix/matrixHandler.html">pyproct.driver.handlers.matrix.matrixHandler</a></li>
-<li><a href="pyproct/driver/handlers/matrix/rmsdMatrixBuilder.html">pyproct.driver.handlers.matrix.rmsdMatrixBuilder</a></li>
-<li><a href="pyproct/driver/handlers/matrix/test/TestEuclidean.html">pyproct.driver.handlers.matrix.test.TestEuclidean</a></li>
-<li><a href="pyproct/driver/handlers/matrix/test/testMatrix.html">pyproct.driver.handlers.matrix.test.testMatrix</a></li>
-<li><a href="pyproct/driver/handlers/test/TestTrajectoryHandler.html">pyproct.driver.handlers.test.TestTrajectoryHandler</a></li>
-<li><a href="pyproct/driver/handlers/timerHandler.html">pyproct.driver.handlers.timerHandler</a></li>
-<li><a href="pyproct/driver/handlers/trajectoryHandler.html">pyproct.driver.handlers.trajectoryHandler</a></li>
-<li><a href="pyproct/driver/handlers/workspaceHandler.html">pyproct.driver.handlers.workspaceHandler</a></li>
 <li><a href="pyproct/driver/mpidriver.html">pyproct.driver.mpidriver</a></li>
 <li><a href="pyproct/driver/observer/MPIObserver.html">pyproct.driver.observer.MPIObserver</a></li>
 <li><a href="pyproct/driver/observer/accumulativeObserver.html">pyproct.driver.observer.accumulativeObserver</a></li>
@@ -131,33 +109,37 @@
 <li><a href="pyproct/driver/observer/observable.html">pyproct.driver.observer.observable</a></li>
 <li><a href="pyproct/driver/observer/observer.html">pyproct.driver.observer.observer</a></li>
 <li><a href="pyproct/driver/parameters.html">pyproct.driver.parameters</a></li>
-<li><a href="pyproct/driver/postprocessing/clusters.html">pyproct.driver.postprocessing.clusters</a></li>
 <li><a href="pyproct/driver/results/clusteringResultsGatherer.html">pyproct.driver.results.clusteringResultsGatherer</a></li>
 <li><a href="pyproct/driver/scheduling/tools.html">pyproct.driver.scheduling.tools</a></li>
+<li><a href="pyproct/driver/time/timerHandler.html">pyproct.driver.time.timerHandler</a></li>
+<li><a href="pyproct/driver/workspace/MPIWorkspaceHandler.html">pyproct.driver.workspace.MPIWorkspaceHandler</a></li>
+<li><a href="pyproct/driver/workspace/workspaceHandler.html">pyproct.driver.workspace.workspaceHandler</a></li>
 <li><a href="pyproct/main.html">pyproct.main</a></li>
-<li><a href="pyproct/protocol/exploration/algorithmRunParametersGenerator.html">pyproct.protocol.exploration.algorithmRunParametersGenerator</a></li>
-<li><a href="pyproct/protocol/exploration/clusteringExplorator.html">pyproct.protocol.exploration.clusteringExplorator</a></li>
-<li><a href="pyproct/protocol/exploration/test/TestClusteringExplorator.html">pyproct.protocol.exploration.test.TestClusteringExplorator</a></li>
-<li><a href="pyproct/protocol/protocol.html">pyproct.protocol.protocol</a></li>
-<li><a href="pyproct/protocol/refinement/Refiner.html">pyproct.protocol.refinement.Refiner</a></li>
-<li><a href="pyproct/protocol/refinement/test/testRefinementProtocol.html">pyproct.protocol.refinement.test.testRefinementProtocol</a></li>
-<li><a href="pyproct/protocol/saveTools.html">pyproct.protocol.saveTools</a></li>
-<li><a href="pyproct/protocol/test/testSaveTools.html">pyproct.protocol.test.testSaveTools</a></li>
+<li><a href="pyproct/postprocess/actions/centersAndTrace.html">pyproct.postprocess.actions.centersAndTrace</a></li>
+<li><a href="pyproct/postprocess/actions/clusterStats.html">pyproct.postprocess.actions.clusterStats</a></li>
+<li><a href="pyproct/postprocess/actions/clusters.html">pyproct.postprocess.actions.clusters</a></li>
+<li><a href="pyproct/postprocess/actions/confSpaceComparison/comparator.html">pyproct.postprocess.actions.confSpaceComparison.comparator</a></li>
+<li><a href="pyproct/postprocess/actions/confSpaceComparison/confSpaceComparison_.html">pyproct.postprocess.actions.confSpaceComparison.confSpaceComparison_</a></li>
+<li><a href="pyproct/postprocess/actions/confSpaceComparison/overlapCalculator.html">pyproct.postprocess.actions.confSpaceComparison.overlapCalculator</a></li>
+<li><a href="pyproct/postprocess/actions/confSpaceComparison/tools.html">pyproct.postprocess.actions.confSpaceComparison.tools</a></li>
+<li><a href="pyproct/postprocess/actions/kullbackLiebler.html">pyproct.postprocess.actions.kullbackLiebler</a></li>
+<li><a href="pyproct/postprocess/actions/proteinAtomDistances.html">pyproct.postprocess.actions.proteinAtomDistances</a></li>
+<li><a href="pyproct/postprocess/actions/proteinDihedralPlot.html">pyproct.postprocess.actions.proteinDihedralPlot</a></li>
+<li><a href="pyproct/postprocess/actions/redundanceElimination.html">pyproct.postprocess.actions.redundanceElimination</a></li>
+<li><a href="pyproct/postprocess/actions/representatives.html">pyproct.postprocess.actions.representatives</a></li>
+<li><a href="pyproct/postprocess/actions/rmsf.html">pyproct.postprocess.actions.rmsf</a></li>
+<li><a href="pyproct/postprocess/postprocessingDriver.html">pyproct.postprocess.postprocessingDriver</a></li>
 <li><a href="pyproct/tools/commonTools.html">pyproct.tools.commonTools</a></li>
 <li><a href="pyproct/tools/distributionTools.html">pyproct.tools.distributionTools</a></li>
+<li><a href="pyproct/tools/exceptions.html">pyproct.tools.exceptions</a></li>
+<li><a href="pyproct/tools/mathTools.html">pyproct.tools.mathTools</a></li>
 <li><a href="pyproct/tools/matrixTools.html">pyproct.tools.matrixTools</a></li>
 <li><a href="pyproct/tools/pdbTools.html">pyproct.tools.pdbTools</a></li>
 <li><a href="pyproct/tools/plotTools.html">pyproct.tools.plotTools</a></li>
+<li><a href="pyproct/tools/plugins.html">pyproct.tools.plugins</a></li>
+<li><a href="pyproct/tools/prodyTools.html">pyproct.tools.prodyTools</a></li>
 <li><a href="pyproct/tools/scriptTools.html">pyproct.tools.scriptTools</a></li>
 <li><a href="pyproct/tools/stateGraphTools.html">pyproct.tools.stateGraphTools</a></li>
-<li><a href="pyproct/tools/test/TestCommonTools.html">pyproct.tools.test.TestCommonTools</a></li>
-<li><a href="pyproct/tools/test/TestDistribTools.html">pyproct.tools.test.TestDistribTools</a></li>
-<li><a href="pyproct/tools/test/TestMatrixTools.html">pyproct.tools.test.TestMatrixTools</a></li>
-<li><a href="pyproct/tools/test/TestPdbTools.html">pyproct.tools.test.TestPdbTools</a></li>
-<li><a href="pyproct/tools/test/TestPlotTools.html">pyproct.tools.test.TestPlotTools</a></li>
-<li><a href="pyproct/tools/test/TestScriptTools.html">pyproct.tools.test.TestScriptTools</a></li>
-<li><a href="pyproct/tools/test/TestStateGraphTools.html">pyproct.tools.test.TestStateGraphTools</a></li>
-<li><a href="pyproct/tools/visualizationTools.html">pyproct.tools.visualizationTools</a></li>
 </ul>
 
           </div>
@@ -191,11 +173,11 @@
         <li class="right" >
           <a href="../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li> 
+        <li><a href="../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>pyproct.tools.pdbTools &mdash; pyProCT 1.2.0 documentation</title>
+    <title>pyproct.tools.pdbTools &mdash; pyProCT 1.6.0 documentation</title>
     
     <link rel="stylesheet" href="../../../_static/default.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
@@ -14,7 +14,7 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    '../../../',
-        VERSION:     '1.2.0',
+        VERSION:     '1.6.0',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
         HAS_SOURCE:  true
@@ -23,7 +23,8 @@
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
-    <link rel="top" title="pyProCT 1.2.0 documentation" href="../../../index.html" />
+    <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="top" title="pyProCT 1.6.0 documentation" href="../../../index.html" />
     <link rel="up" title="Module code" href="../../index.html" /> 
   </head>
   <body>
@@ -36,7 +37,7 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" accesskey="U">Module code</a> &raquo;</li> 
       </ul>
     </div>  
@@ -47,28 +48,101 @@
           <div class="body">
             
   <h1>Source code for pyproct.tools.pdbTools</h1><div class="highlight"><pre>
-<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">Created on 16/03/2012</span>
 
 <span class="sd">@author: victor</span>
-<span class="sd">&#39;&#39;&#39;</span>
-<span class="kn">import</span> <span class="nn">subprocess</span>
-<span class="kn">import</span> <span class="nn">prody</span> 
+<span class="sd">&quot;&quot;&quot;</span>
 
-<div class="viewcode-block" id="get_number_of_frames"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.get_number_of_frames">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_frames</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
+<div class="viewcode-block" id="get_model_tags"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.get_model_tags">[docs]</a><span class="k">def</span> <span class="nf">get_model_tags</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Uses the &#39;egrep&#39; shell command to count the number of times MODEL appears in the trajectory file, which will be indeed</span>
 <span class="sd">    the number of different structures.</span>
 <span class="sd">    </span>
-<span class="sd">    @param pdb_file: The pdb file (path) from which the number of frames will be counted.</span>
+<span class="sd">    :param pdb_file: The pdb file (path) from which the number of frames will be counted.</span>
 <span class="sd">    </span>
-<span class="sd">    @return: The number of MODEL tags found.</span>
+<span class="sd">    :return: The lines containing the found model tags.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">process</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">Popen</span><span class="p">([</span><span class="s">&quot;egrep&quot;</span><span class="p">,</span><span class="s">&quot;-c&quot;</span><span class="p">,</span><span class="s">&#39;&#39;&quot;^MODEL&quot;&#39;&#39;</span><span class="p">,</span><span class="n">pdb_file</span><span class="p">],</span><span class="n">stdout</span><span class="o">=</span><span class="n">subprocess</span><span class="o">.</span><span class="n">PIPE</span><span class="p">)</span>
-    <span class="n">lines</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
-    <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">model_lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MODEL&quot;</span><span class="p">:</span>
+            <span class="n">model_lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">model_lines</span>
 </div>
-<div class="viewcode-block" id="get_number_of_atoms"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.get_number_of_atoms">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_atoms</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
+<div class="viewcode-block" id="get_number_of_frames"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.get_number_of_frames">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_frames</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses the &#39;egrep&#39; shell command to count the number of times MODEL appears in the trajectory file, which will be indeed</span>
+<span class="sd">    the number of different structures.</span>
+<span class="sd">    </span>
+<span class="sd">    :param pdb_file: The pdb file (path) from which the number of frames will be counted.</span>
+<span class="sd">    </span>
+<span class="sd">    :return: The number of MODEL tags found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">get_model_tags</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">))</span>
+</div>
+<div class="viewcode-block" id="get_remarks"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.get_remarks">[docs]</a><span class="k">def</span> <span class="nf">get_remarks</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Sometimes pdb files have remarks with extra information before the MODEL tag. </span>
+<span class="sd">    This remarks have a fixed format, however sometimes, when adding user information, this </span>
+<span class="sd">    format is not honored.</span>
+<span class="sd">    :param pdb_file: The pdb file (path) from which the number of frames will be counted.</span>
+<span class="sd">    </span>
+<span class="sd">    :return: an array of arrays with the remarks (one array of lines per model). </span>
+<span class="sd">    </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+  
+    <span class="n">handler</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">,</span> <span class="s">&quot;r&quot;</span><span class="p">)</span>
+    <span class="n">line_groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">starting_atom</span> <span class="o">=</span> <span class="bp">True</span>
+    
+    <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">handler</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;REMARK&quot;</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">line</span><span class="p">)</span>
+            <span class="n">starting_atom</span> <span class="o">=</span> <span class="bp">True</span>
+        
+        <span class="k">if</span> <span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">5</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;MODEL&quot;</span> <span class="ow">or</span> <span class="p">(</span><span class="n">line</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">4</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot;ATOM&quot;</span> <span class="ow">and</span> <span class="n">starting_atom</span><span class="p">):</span>
+            <span class="n">line_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+            <span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">starting_atom</span> <span class="o">=</span> <span class="bp">False</span>
+    
+    <span class="n">handler</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    
+    <span class="k">return</span> <span class="n">line_groups</span>
+</div>
+<div class="viewcode-block" id="filter_remarks"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.filter_remarks">[docs]</a><span class="k">def</span> <span class="nf">filter_remarks</span><span class="p">(</span><span class="n">remarks_list</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="s">&quot;NONE&quot;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Filters a remarks list using a subset criteria.</span>
+<span class="sd">    :param remarks_list: the list we want to filter.</span>
+<span class="sd">    :param subset: The criteria to do the filtering. Possible values are:</span>
+<span class="sd">            - &quot;NONE&quot;: not to store remarks (Default)</span>
+<span class="sd">            - &quot;STANDARD&quot;: stores remarks that follow pdb standard</span>
+<span class="sd">            - &quot;NOT STANDARD&quot;: stores remarks not following the pdb standard</span>
+<span class="sd">            - &quot;ALL&quot;: stores all remarks</span>
+<span class="sd">    :return: The filtered list of remarks. </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">available</span> <span class="o">=</span>  <span class="p">[</span><span class="s">&quot;NONE&quot;</span><span class="p">,</span><span class="s">&quot;ALL&quot;</span><span class="p">,</span><span class="s">&quot;STANDARD&quot;</span><span class="p">,</span> <span class="s">&quot;NOT STANDARD&quot;</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">subset</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;[WARNING proteinEnsembleDataLoader::filter_remarks] </span><span class="si">%s</span><span class="s"> subset is not an available option </span><span class="si">%s</span><span class="s">.&quot;</span><span class="o">%</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">available</span><span class="p">))</span>
+        <span class="k">return</span> <span class="p">[]</span>
+    
+    <span class="n">filtered_groups</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="n">remarks_list</span><span class="p">:</span>
+        <span class="n">filtered_remarks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">remark</span> <span class="ow">in</span> <span class="n">group</span><span class="p">:</span>
+            <span class="n">standard_remark</span> <span class="o">=</span> <span class="p">(</span><span class="n">remark</span><span class="p">[</span><span class="mi">6</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot; &quot;</span> <span class="ow">and</span> <span class="n">remark</span><span class="p">[</span><span class="mi">7</span><span class="p">:</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">isdigit</span><span class="p">()</span> <span class="ow">and</span> <span class="n">remark</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="o">==</span> <span class="s">&quot; &quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">subset</span> <span class="o">==</span> <span class="s">&quot;ALL&quot;</span><span class="p">:</span>
+                <span class="n">filtered_remarks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remark</span><span class="p">)</span>
+            
+            <span class="k">elif</span> <span class="n">subset</span> <span class="o">==</span> <span class="s">&quot;STANDARD&quot;</span> <span class="ow">and</span> <span class="n">standard_remark</span><span class="p">:</span> 
+                <span class="n">filtered_remarks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remark</span><span class="p">)</span>
+            
+            <span class="k">elif</span> <span class="n">subset</span> <span class="o">==</span> <span class="s">&quot;NOT STANDARD&quot;</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">standard_remark</span><span class="p">:</span>
+                <span class="n">filtered_remarks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">remark</span><span class="p">)</span>
+        <span class="n">filtered_groups</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filtered_remarks</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">filtered_groups</span>
+</div>
+<div class="viewcode-block" id="get_number_of_atoms"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.get_number_of_atoms">[docs]</a><span class="k">def</span> <span class="nf">get_number_of_atoms</span><span class="p">(</span><span class="n">pdb_file</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Counts the number of ATOM and HETATM entries in the first model of a pdb file.</span>
 <span class="sd">    </span>
@@ -90,7 +164,7 @@
             <span class="n">number_of_atoms</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">number_of_atoms</span>
 </div>
-<div class="viewcode-block" id="read_to_TAG"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.read_to_TAG">[docs]</a><span class="k">def</span> <span class="nf">read_to_TAG</span><span class="p">(</span><span class="n">file_input_handler</span><span class="p">,</span> <span class="n">TAG</span><span class="p">):</span>
+<div class="viewcode-block" id="read_to_TAG"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.read_to_TAG">[docs]</a><span class="k">def</span> <span class="nf">read_to_TAG</span><span class="p">(</span><span class="n">file_input_handler</span><span class="p">,</span> <span class="n">TAG</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Advances the file handler reading cursor to the line after a tag.</span>
 <span class="sd">    </span>
@@ -111,7 +185,7 @@
                 <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
     <span class="k">raise</span> <span class="ne">Exception</span><span class="p">,</span> <span class="s">&quot;The end of the file was reached and the tag &quot;</span><span class="o">+</span><span class="n">TAG</span><span class="o">+</span><span class="s">&quot; was not found.&quot;</span> 
 </div>
-<div class="viewcode-block" id="advance_to_TAG"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.advance_to_TAG">[docs]</a><span class="k">def</span> <span class="nf">advance_to_TAG</span><span class="p">(</span><span class="n">file_input_handler</span><span class="p">,</span> <span class="n">TAG</span><span class="p">):</span>
+<div class="viewcode-block" id="advance_to_TAG"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.advance_to_TAG">[docs]</a><span class="k">def</span> <span class="nf">advance_to_TAG</span><span class="p">(</span><span class="n">file_input_handler</span><span class="p">,</span> <span class="n">TAG</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Advances the file handler reading cursor until it finds a tag.</span>
 <span class="sd">    </span>
@@ -122,7 +196,7 @@
         <span class="k">if</span> <span class="n">l</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">TAG</span><span class="p">)]</span><span class="o">==</span><span class="n">TAG</span><span class="p">:</span>
             <span class="k">return</span>
 </div>
-<div class="viewcode-block" id="write_a_tfile_model_into_other_tfile"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.write_a_tfile_model_into_other_tfile">[docs]</a><span class="k">def</span> <span class="nf">write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="n">file_in_handler</span><span class="p">,</span> 
+<div class="viewcode-block" id="write_a_tfile_model_into_other_tfile"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.write_a_tfile_model_into_other_tfile">[docs]</a><span class="k">def</span> <span class="nf">write_a_tfile_model_into_other_tfile</span><span class="p">(</span><span class="n">file_in_handler</span><span class="p">,</span> 
                                          <span class="n">file_out_handler</span><span class="p">,</span> 
                                          <span class="n">current_model</span><span class="p">,</span> 
                                          <span class="n">INITIAL_TAG</span><span class="p">,</span> 
@@ -161,7 +235,7 @@
         <span class="n">file_out_handler</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s">&quot;ENDMDL</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">)</span>
     
 </div>
-<div class="viewcode-block" id="extract_frames_from_trajectory_sequentially"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.extract_frames_from_trajectory_sequentially">[docs]</a><span class="k">def</span> <span class="nf">extract_frames_from_trajectory_sequentially</span><span class="p">(</span><span class="n">file_handler_in</span><span class="p">,</span> 
+<div class="viewcode-block" id="extract_frames_from_trajectory_sequentially"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.extract_frames_from_trajectory_sequentially">[docs]</a><span class="k">def</span> <span class="nf">extract_frames_from_trajectory_sequentially</span><span class="p">(</span><span class="n">file_handler_in</span><span class="p">,</span> 
                                    <span class="n">number_of_frames</span><span class="p">,</span> 
                                    <span class="n">file_handler_out</span><span class="p">,</span> 
                                    <span class="n">frames_to_save</span><span class="p">,</span> 
@@ -201,7 +275,7 @@
                                              <span class="ow">not</span> <span class="n">write</span><span class="p">,</span>
                                              <span class="n">keep_header</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="create_CA_file"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.create_CA_file">[docs]</a><span class="k">def</span> <span class="nf">create_CA_file</span><span class="p">(</span><span class="n">file_handler_in</span><span class="p">,</span> <span class="n">file_handler_out</span><span class="p">):</span>
+<div class="viewcode-block" id="create_CA_file"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.create_CA_file">[docs]</a><span class="k">def</span> <span class="nf">create_CA_file</span><span class="p">(</span><span class="n">file_handler_in</span><span class="p">,</span> <span class="n">file_handler_out</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Creates a valid CA pdb from a valid pdb. Useful to reduce load times.</span>
 <span class="sd">    </span>
@@ -215,7 +289,7 @@
             <span class="k">if</span> <span class="n">l</span><span class="p">[</span><span class="mi">12</span><span class="p">:</span><span class="mi">16</span><span class="p">]</span> <span class="o">==</span><span class="s">&quot; CA &quot;</span><span class="p">:</span>
                 <span class="n">file_handler_out</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
                 </div>
-<div class="viewcode-block" id="get_model_boundaries"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.get_model_boundaries">[docs]</a><span class="k">def</span> <span class="nf">get_model_boundaries</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">):</span>
+<div class="viewcode-block" id="get_model_boundaries"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.get_model_boundaries">[docs]</a><span class="k">def</span> <span class="nf">get_model_boundaries</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Tries to discover the structure of the file.</span>
 <span class="sd">    </span>
@@ -249,7 +323,7 @@
         <span class="n">line_number</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">return</span> <span class="n">boundaries</span>
 </div>
-<div class="viewcode-block" id="repair_MODEL_ENDMDL_tags"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.repair_MODEL_ENDMDL_tags">[docs]</a><span class="k">def</span> <span class="nf">repair_MODEL_ENDMDL_tags</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">,</span> <span class="n">output_pdb_handler</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">):</span>
+<div class="viewcode-block" id="repair_MODEL_ENDMDL_tags"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.repair_MODEL_ENDMDL_tags">[docs]</a><span class="k">def</span> <span class="nf">repair_MODEL_ENDMDL_tags</span><span class="p">(</span><span class="n">input_pdb_handler</span><span class="p">,</span> <span class="n">output_pdb_handler</span><span class="p">,</span> <span class="n">boundaries</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Uses the previously discovered partition with &#39;get_model_boundaries&#39; to add the necessary MODEL, </span>
 <span class="sd">    ENDMDL tags for each of its discovered models.</span>
@@ -272,7 +346,7 @@
             <span class="n">current_boundary</span> <span class="o">+=</span> <span class="mi">1</span>
         <span class="n">line_number</span> <span class="o">+=</span> <span class="mi">1</span>
 </div>
-<div class="viewcode-block" id="grab_existing_frame_from_trajectory"><a class="viewcode-back" href="../../../pyproct.tools.html#pyproct.tools.pdbTools.grab_existing_frame_from_trajectory">[docs]</a><span class="k">def</span> <span class="nf">grab_existing_frame_from_trajectory</span><span class="p">(</span><span class="n">trajectory_file_handler</span><span class="p">,</span> <span class="n">output_file_handler</span><span class="p">,</span> <span class="n">model_number</span><span class="p">):</span>
+<div class="viewcode-block" id="grab_existing_frame_from_trajectory"><a class="viewcode-back" href="../../../base/api/pyproct.tools.html#pyproct.tools.pdbTools.grab_existing_frame_from_trajectory">[docs]</a><span class="k">def</span> <span class="nf">grab_existing_frame_from_trajectory</span><span class="p">(</span><span class="n">trajectory_file_handler</span><span class="p">,</span> <span class="n">output_file_handler</span><span class="p">,</span> <span class="n">model_number</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Extracts a model of a trajectory and writes it into another file. The model must exist in the trajectory,</span>
 <span class="sd">    otherwise the behavior will be undefined.</span>
@@ -329,12 +403,12 @@
         <li class="right" >
           <a href="../../../py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
-        <li><a href="../../../index.html">pyProCT 1.2.0 documentation</a> &raquo;</li>
+        <li><a href="../../../index.html">pyProCT 1.6.0 documentation</a> &raquo;</li>
           <li><a href="../../index.html" >Module code</a> &raquo;</li> 
       </ul>
     </div>
     <div class="footer">
-        &copy; Copyright 2014, Víctor A. Gil Sepúlveda.
+        &copy; Copyright 2015, Víctor A. Gil Sepúlveda.
       Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.2.
     </div>
   </body>

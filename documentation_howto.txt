@@ -1,0 +1,41 @@
+Steps followed to generate the docs:
+=====================================
+
+1 - Create the docs, docs/base/api, docs/base/tutorials folder tree.
+
+2 - Use sphinx-quickstart. One must answer the questions. Usually the default values are just ok (which means you only have to push enter). In 
+my case I have chosen to not generate epub, not to test code snippets, autodoc, check coverage and include math using mathjax. 
+It looks like this features can be added later using the extensions list. 
+
+3 - Set up autodoc. Despite having chosen the 'autodoc' option in the quick start script, one has to fully configure it in order to work:
+	- Add 'sphinx.ext.autodoc' in the extensions list in conf.py
+	- Use 'sphinx-apidoc -o base/api/ ../pyproct/' in order to autogenerate the .rst files for all the modules
+	- Clean the .rst files we don not want to keep (rm *.test *.benchmark*)
+
+
+Things to be aware:
+========================
+
+Only .rst files are considered documents.
+
+When using rst commands (e.g. toctree) we have to leave a blank line after its parameters.
+
+The :params : directive must be a one-liner (?). To split it one has to use '\CR'. Function description can be splitted
+instead.
+
+Ex.
+
+"""Checks if a module/package must be skipped. A submodule will be skipped if the module
+or any of its subpackages is inside skip_list.
+
+:param this_module: A string with the complete name of the module/package we want to test.\
+Ex: ``"pyproct.clustering.algorithms".``
+
+:param skip_list: A list of packages/module we want to skip.
+
+:return: True or False depending if the module/package must be skipped.
+"""
+
+Both :return: and :returns: can be used.
+
+

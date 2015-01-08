@@ -1,8 +1,8 @@
-'''
+"""
 Created on 7/8/2014
 
 @author: victor
-'''
+"""
 import pkgutil
 import importlib
 import inspect
@@ -40,8 +40,9 @@ class PluginHandler(object):
         """
         Gets all possible plugin classes from the source tree of a given package.
         
-        :param root_package_p: A dot-separated string with the name of the package where 
-        the search is going to be started. Ex: "numpy.testing"
+        :param root_package_p: A dot-separated string with the name of the package where \
+        the search is going to be started. \
+            Ex: ``"numpy.testing"``
         
         :param selection_keyword: A common keyword that the class we want to get has.
         
@@ -82,7 +83,7 @@ class PluginHandler(object):
         which is the generic plugin entry point for pyproct. This entry point pointers to a
         that must return 
         
-        :return: The list of classes available through plugins. 
+        :returns: The list of classes available through plugins. 
         """
         classes = []
         for plugin_handler in pkg_resources.iter_entry_points( entry_point_group, name = name):
@@ -91,13 +92,12 @@ class PluginHandler(object):
     
     @classmethod
     def skip_submodule(cls, this_module, skip_list):
-        """
-        Checks if a module/package must be skipped. A submodule will be skipped if the module
+        """Checks if a module/package must be skipped. A submodule will be skipped if the module
         or any of its subpackages is inside skip_list.
         
-        :param this_module: A string with the complete name of the module/package we want to test
-        Ex: "pyproct.clustering.algorithms"
-
+        :param this_module: A string with the complete name of the module/package we want to test.\
+        Ex: ``"pyproct.clustering.algorithms".``
+        
         :param skip_list: A list of packages/module we want to skip.
     
         :return: True or False depending if the module/package must be skipped.
@@ -106,3 +106,4 @@ class PluginHandler(object):
             if submodule in skip_list:
                 return True
         return False
+    
