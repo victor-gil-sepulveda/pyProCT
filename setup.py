@@ -50,6 +50,7 @@ if __name__ == '__main__': # Compatibility with sphynx
                     'pyproct.data.handler.protein',
                     'pyproct.data.matrix',
                     'pyproct.data.matrix.featurearray',
+                    'pyproct.data.matrix.combination',
                     'pyproct.data.matrix.protein',
                     'pyproct.data.matrix.protein.cases',
                     'pyproct.driver',
@@ -107,7 +108,7 @@ if __name__ == '__main__': # Compatibility with sphynx
             "numpy>=1.6.1",
             "scipy>=0.9.0",
             "scikit-learn>=0.12",
-            "PIL>=1.1.6",
+            "Pillow>=2.6.2",
             "matplotlib>=1.1.1rc",
             "mpi4py>=1.3"
           ]

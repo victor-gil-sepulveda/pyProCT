@@ -13,6 +13,16 @@ from pyRMSD.condensedMatrix import CondensedMatrix
 import math
 
 def shrink_matrix(this_matrix, to_have_this_size):
+    """
+    Uses a stencil technique to scale down the matrix in order to be able to represent it in an image file
+    [Warning] It does not any size check. If the matrix is already smaller than the expected size, the
+    function behaviour is undefined.
+    
+    :param this_matrix: The matrix we want to reduce.
+    :param to_have_this_size: The new side length of the matrix.
+    
+    :return: A resized matrix.
+    """
     max_dim = to_have_this_size
     row_dim = this_matrix.row_length
 
@@ -20,7 +30,9 @@ def shrink_matrix(this_matrix, to_have_this_size):
     number_of_boxes = int(math.ceil(row_dim /box_size))
     box_mid = int(math.ceil(box_size/2.))
     max_dim = number_of_boxes * box_size
-    print "Box size, mid", box_size, box_mid, max_dim, row_dim, number_of_boxes
+    
+    print "* Producing reduced matrix image (from %d pixels to %d pixels)."%(row_dim, to_have_this_size)
+    print "* Box_size: %d pixels"%box_size
 
     tmp_condensed = CondensedMatrix(numpy.zeros(int((number_of_boxes*(number_of_boxes-1))/2.), dtype=numpy.float))
 

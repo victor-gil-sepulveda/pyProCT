@@ -9,7 +9,9 @@ import traceback
 
 class MatrixCalculator(object):
     
-    CALCULATION_METHOD = "None"
+    CALCULATION_METHOD = "None" # Hack that allow us to work with matrix combination.
+                                # in skip_list, matrixCalculator has been removed.
+                                # TODO: understand why this is necessary
 
     def __init__(self):
         pass
