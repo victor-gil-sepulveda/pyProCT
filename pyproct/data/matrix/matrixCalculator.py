@@ -8,6 +8,8 @@ from pyproct.tools.plugins import PluginHandler
 import traceback
 
 class MatrixCalculator(object):
+    
+    CALCULATION_METHOD = "None"
 
     def __init__(self):
         pass
@@ -32,9 +34,8 @@ class MatrixCalculator(object):
         # Get all available calculators
         available_calculators = PluginHandler.get_classes('pyproct.data.matrix', 
                                                           selection_keyword = "MatrixCalculator", 
-                                                          skip_list = ["test", "cases", "matrixCalculator"],
+                                                          skip_list = ["test", "cases"],
                                                           plugin_name = "matrix")
-        print available_calculators
         # Choose the calculator we need
         calculation_method = matrix_params["method"]
         calculator_classes = filter(lambda x: x.CALCULATION_METHOD == calculation_method, available_calculators)
