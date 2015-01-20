@@ -1,6 +1,10 @@
+<img src="img/warning.png"></img>  pyProCT README and docs are currently a bit outdated (some new functionalities and changes are missing) if you 
+find something is not working as expected, just send me a mail to victor.gil.sepulveda@gmail.com and I will try to answer (and update the part you need) the
+faster I can.
+
 pyProCT
 ==========
-
+  
 pyProCT is an open source cluster analysis software especially adapted for jobs related with structural proteomics. Its approach allows users to define a clustering goal (clustering hypothesis) based on their domain knowledge. This hypothesis will guide the software in order to find the best algorithm and parameters (including the number of clusters) to obtain the result that better fulfills their expectatives. In this way users do not need to use cluster analysis algorithms as a black box, which will (hopefully) improve their results.
 pyProCT not only generates a resulting clustering, it also implements some use cases like the extraction of representatives or trajectory redundance elimination.
 
@@ -467,7 +471,6 @@ if __name__ == "__main__":
     show()
 ```
 
-
 ### Using it as a separate program from other Python script
 
 * <img src="img/workinprogress.png"></img>  Loading results
@@ -486,13 +489,13 @@ To execute pyProCT in parallel you just need to issue this line:
 
 <img src="img/warning.png"></img>  Remember that you need to use the same libraries and versions to build mpi4py and mpirun, otherwise you won't be able to execute it.
 
-
 # Documentation
-We are still experimenting to see which documentation generator fits better with us. Currently we have two versions of the documentations: one
-using [Sphinx](http://sphinx-doc.org/) and the other using [Doxygen](http://www.stack.nl/~dimitri/doxygen/)+[doxpy](http://code.foosel.org/doxypy).
-See them [here](pyproct/docs/_build/html/index.html) and [here](pyproct/docs/doxyxml/html/index.html). We will possibly publish it in a cloud
-solution like [readthedocs.org](https://readthedocs.org/)
-
+<img src="img/warning.png"></img>  pyProCT README and docs are currently a bit outdated (some new functionalities and changes are missing) if you 
+find something is not working as expected, just send me a mail to victor.gil.sepulveda@gmail.com and I will try to answer (and update the part you need) the
+faster I can. The [Sphinx](http://sphinx-doc.org/)-based documentation is (verly) slowly being written. Meanwhile I have updated section 2 of the
+supplementary materials (free access) from the paper. This document can be downloaded from [here](https://dl.dropboxusercontent.com/u/58918851/pyProCT-SupportingInformation.pdf).
+Note that chapter 3 may be outdated.
+  
 ### Learn more
 A more detailed explanation of the script contents can be found [here](https://dl.dropboxusercontent.com/u/58918851/script_info.pdf), and a discussion
  about the different implemented ICVs can be found [here](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf).

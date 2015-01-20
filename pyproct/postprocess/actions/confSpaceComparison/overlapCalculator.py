@@ -65,7 +65,8 @@ class OverlapCalculator():
                 for element in decomposed_cluster[setId]:
                     min_distances.append( numpy.min(get_distances_of_elements_to(element, vs_elements, distance_matrix)))
                     max_distances.append( numpy.max(get_distances_of_elements_to(element, vs_elements, distance_matrix)))
-        return numpy.array(min_distances), numpy.array(max_distances)
-
+            return numpy.array(min_distances), numpy.array(max_distances)
+        else:
+            raise ValueError("Asking min max distances of a PURE cluster.")
 
 
