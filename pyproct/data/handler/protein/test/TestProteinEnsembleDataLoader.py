@@ -11,7 +11,6 @@ from pyproct.driver.parameters import ProtocolParameters
 import pyproct.data.handler.protein.test.data as test_data
 from pyproct.data.handler.protein.proteinEnsembleDataLoader import ProteinEnsembleDataLoader
 
-
 class TestProteinEnsembleDataLoader(unittest.TestCase):
     
     def setup_loader(self):

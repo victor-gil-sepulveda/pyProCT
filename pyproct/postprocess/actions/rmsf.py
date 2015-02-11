@@ -17,23 +17,21 @@ class RmsfPostAction(object):
 
     def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
         
-        rmsf_per_cluster = calculate_RMSF(clustering, data_handler, workspaceHandler, matrixHandler)
+        rmsf_per_cluster = calculate_RMSF(clustering, data_handler)
 
         rmsf_file_path = os.path.join(workspaceHandler["results"], "CA_displacements.json")
         open(rmsf_file_path,"w").write(json.dumps(rmsf_per_cluster,
                                               sort_keys=False,
                                               indent=4,
                                               separators=(',', ': ')))
-         
+        
         generatedFiles.append({
                                 "description":"Alpha Carbon mean square displacements",
                                 "path":os.path.abspath(rmsf_file_path),
                                 "type":"text"
         })
 
-       
-
-def calculate_RMSF(best_clustering, data_handler, workspaceHandler, matrixHandler):
+def calculate_RMSF(best_clustering, data_handler):
     ca_pdb_coordsets = data_handler.get_data().getSelectionCoordinates("name CA")
 
     global_cluster = Cluster(None, best_clustering.get_all_clustered_elements())

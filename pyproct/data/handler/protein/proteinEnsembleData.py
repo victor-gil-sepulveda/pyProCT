@@ -10,7 +10,7 @@ from prody.measure.measure import calcPhi, calcPsi
 class ProteinEnsembleData(Data):
     """
     Holds a protein ensemble with ALL conformations and helps to handle it (selections etc...).
-    TODO: Methods to lowecase.
+    TODO: Methods to lowercase.
     """
     
     def __init__(self,  structure_ensemble, model_numbers, model_remarks, selection_params):
