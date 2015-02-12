@@ -144,6 +144,18 @@ class Driver(Observable):
         if parameters["clustering"]["generation"]["method"] != "load":
             print "- Chosen cluster:"
             print "\t- Used algorithm: ", best_clustering['type']
-            print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
-            print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
+            
+            if 'Number of clusters' in best_clustering['evaluation']:
+                print "\t- Number of clusters: ", best_clustering['evaluation']['Number of clusters']
+            
+            if 'Mean cluster size' in best_clustering['evaluation']:
+                print "\t- Mean cluster size: ", best_clustering['evaluation']['Mean cluster size']
+            
+            if 'Noise level' in best_clustering['evaluation']:
+                print "\t- Noise: %.2f %%"%best_clustering['evaluation']['Noise level']
+            
+            print "\t- Quality function results: "
+            for qual_func in best_clustering['evaluation']:
+                if not qual_func in ['Number of clusters','Noise level', 'Mean cluster size'] and not "Normalized_" in qual_func:
+                    print "\t\t- %s: %f"%(qual_func, best_clustering['evaluation'][qual_func])
         print "======================="
