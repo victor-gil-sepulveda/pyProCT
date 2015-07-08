@@ -14,7 +14,7 @@ class PostprocessingDriver(object):
     def run(self, clustering, postprocessing_parameters, data_handler, workspace_handler, matrix_handler, generated_files):
         available_action_classes = PluginHandler.get_classes('pyproct.postprocess.actions', 
                                                                   "PostAction", 
-                                                                  ["test","confSpaceComparison"],
+                                                                  ["test"],
                                                                   "postprocess")
         
         for postprocessing_action_class in available_action_classes:

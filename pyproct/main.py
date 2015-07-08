@@ -54,6 +54,8 @@ if __name__ == '__main__':
         print e.message
         exit()
 
+    print "pyProCT v.%s"%(pyproct.__version__)
+
     observer = None
     cmd_thread = None
     if options.use_mpi:
