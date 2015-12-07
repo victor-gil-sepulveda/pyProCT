@@ -43,9 +43,6 @@ class Test(unittest.TestCase):
         expected_radius = numpy.max(distances)
         self.assertItemsEqual((expected_mean,expected_std,expected_radius),(calc_mean, calc_std, calc_radius))
 
-
-
-
 if __name__ == "__main__":
     #import sys;sys.argv = ['', 'Test.test_Name']
     unittest.main()

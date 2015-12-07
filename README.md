@@ -1,3 +1,7 @@
+<img src="img/cite.png"></img> If you plan to use pyProCT or any of its parts, including its documentation, to write a scientific article, 
+please consider to add the following cite:  
+*J. Chem. Theory Comput., 2014, 10 (8), pp 3236–3243*  
+
 <img src="img/warning.png"></img>  pyProCT README and docs are currently a bit outdated (some new functionalities and changes are missing) if you 
 find something is not working as expected, just send me a mail to victor.gil.sepulveda@gmail.com and I will try to answer (and update the part you need) the
 faster I can.
@@ -312,7 +316,7 @@ Ex.
 The second part of the _Clustering Hypothesis_ tries to characterize the clustering internal traits in a more qualitative way. Concepts like
 cluster "Compactness" or "Separation" can be used here to define the expected clustering. To this end users must write their expectations in
 form of _criteria_. This criteria are, in general, linear combinations of Internal Clustering Validation Indices (ICVs). The best clustering
-will be the one that gets the best score in any of these _criteria_. See [this document](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf)
+will be the one that gets the best score in any of these _criteria_. See chapter 2 of [this document](https://dl.dropboxusercontent.com/u/58918851/pyProCT-SupportingInformation.pdf)
 to get more insight about the different implemented criteria and their meaning.
 
 Additionally users may choose to ask pyProCT about the results of this ICVs and other evaluation functions(e.g. the average cluster size) by adding
@@ -493,13 +497,10 @@ To execute pyProCT in parallel you just need to issue this line:
 <img src="img/warning.png"></img>  pyProCT README and docs are currently a bit outdated (some new functionalities and changes are missing) if you 
 find something is not working as expected, just send me a mail to victor.gil.sepulveda@gmail.com and I will try to answer (and update the part you need) the
 faster I can. The [Sphinx](http://sphinx-doc.org/)-based documentation is (verly) slowly being written. Meanwhile I have updated section 2 of the
-supplementary materials (free access) from the paper. This document can be downloaded from [here](https://dl.dropboxusercontent.com/u/58918851/pyProCT-SupportingInformation.pdf).
+supplementary materials (free access) from the paper. This document can be downloaded [here](https://dl.dropboxusercontent.com/u/58918851/pyProCT-SupportingInformation.pdf).
 Note that chapter 3 may be outdated.
   
 ### Learn more
-A more detailed explanation of the script contents can be found [here](https://dl.dropboxusercontent.com/u/58918851/script_info.pdf), and a discussion
- about the different implemented ICVs can be found [here](https://dl.dropboxusercontent.com/u/58918851/icv_info.pdf).
-
 Please, do not hesitate to send a mail to victor.gil.sepulveda@gmail.com with your questions, criticisms and whatever you think it is not working
 or can be done better. Any contribution can help to improve this software!
 

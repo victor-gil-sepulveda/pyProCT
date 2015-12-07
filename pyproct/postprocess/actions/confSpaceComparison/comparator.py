@@ -21,9 +21,9 @@ class Separator(object):
         Classifies decomposed clusters in 2 categories:
         - pure clusters: Are those that only contain elements from one trajectory.
         - mixed clusters: Are those that contain elements from more than one source trajectory.
-        @param decomposed_clusters: A list of decomposed clusters.
+        :param decomposed_clusters: A list of decomposed clusters.
 
-        @return: A dictionary with two entries (one per category). Each entry holds a list with the
+        :return: A dictionary with two entries (one per category). Each entry holds a dict. with the
         decomposed clusters in that category.
         """
         classification = {
@@ -52,12 +52,12 @@ class Separator(object):
         The resulting "decomposed cluster" will be:
         dc = {"traj_A":[1, 3, 4], "traj_B":[7, 8, 12]}
 
-        @param clusters: A list containing cluster objects.
-        @param traj_ranges: A dictionary that contains the starting and ending frame of each trajectory (indexed by
+        :param clusters: A list containing cluster objects.
+        :param traj_ranges: A dictionary that contains the starting and ending frame of each trajectory (indexed by
         a trajectory id). The numbering is accumulative, so if we have 2 trajectories of 10 models each, first will
         start in 0 and end in 9 and second will start in 10 and end in 19.
 
-        @return: The list of decomposed clusterings.
+        :return: The list of decomposed clusterings.
         """
         set_ranges = {}
         for traj_id in traj_ranges:
@@ -81,12 +81,12 @@ class Separator(object):
         """
         Decomposes and separates all the clusters in clustering into pure or mixed clusters depending if their
         elements come from one or more source trajectories.
-        @param clusters: A list containing cluster objects.
-        @param traj_ranges: A dictionary that contains the starting and ending frame of each trajectory (indexed by
+        :param clusters: A list containing cluster objects.
+        :param traj_ranges: A dictionary that contains the starting and ending frame of each trajectory (indexed by
         a trajectory id). The numbering is accumulative, so if we have 2 trajectories of 10 models each, first will
         start in 0 and end in 9 and second will start in 10 and end in 19.
 
-        @return: A dictionary with two entries (one per category). Each entry holds a list with the
+        :return: A dictionary with two entries (one per category). Each entry holds a list with the
         decomposed clusters in that category.
         """
         return cls.classify(cls.decompose(clusters, traj_ranges))
@@ -101,11 +101,11 @@ class Analyzer(object):
     def run(self, decomposed_clusters, matrix):
         """
         Performs a series of analysis to the whole dataset and each of the decomposed clusters.
-        @param decomposed_clusters: A dictionary of decomposed clusters containing 2 keys: "pure" and "mixed",
+        :param decomposed_clusters: A dictionary of decomposed clusters containing 2 keys: "pure" and "mixed",
         each with a list containing decomposed clusters of each kind.
-        @param matrix: The work distance matrix.
+        :param matrix: The work distance matrix.
 
-        @return: The analysis dictionary with all the values.
+        :return: The analysis dictionary with all the values.
         """
         analysis = {}
         analysis["total_num_elements"] = 0
@@ -119,18 +119,25 @@ class Analyzer(object):
 
     @classmethod
     def analyze_clustering(cls, separated_decomposed_clusters, distance_matrix, analysis):
+        """ 
+        Performs the overlap analysis of a clustering (calculates global measurements).
+        """
         analysis["total_num_clusters"] = 0
         analysis["total_num_elements"] = 0
-        analysis["overlap"] = OverlapCalculator.calculate_global_overlap(mergeSeparatedClusters(separated_decomposed_clusters), distance_matrix, 2, 1)
+        analysis["overlap"] = OverlapCalculator.calculate_clustering_overlap(mergeSeparatedClusters(separated_decomposed_clusters), distance_matrix)
+        analysis["mixed_overlap"] = OverlapCalculator.calculate_clustering_overlap(mergeSeparatedClusters({"mixed":separated_decomposed_clusters["mixed"]}), distance_matrix)
+       
         for cluster_type in separated_decomposed_clusters:
             analysis["num_" + cluster_type] = len(separated_decomposed_clusters[cluster_type])
             analysis["total_num_clusters"] += analysis["num_" + cluster_type]
             analysis["num_" + cluster_type + "_elements"] = numpy.sum([len(getAllElements(separated_decomposed_clusters[cluster_type][dc_id])) for dc_id in separated_decomposed_clusters[cluster_type]])
             analysis["total_num_elements"] += analysis["num_" + cluster_type + "_elements"]
-        return cluster_type
 
     @classmethod
     def analyze_clusters(cls, separated_decomposed_clusters, distance_matrix, analysis):
+        """
+        Performs the overlap analysis of separated clusters.
+        """
         for cluster_type in separated_decomposed_clusters:
             for cluster_id in separated_decomposed_clusters[cluster_type]:
                 decomposed_cluster = separated_decomposed_clusters[cluster_type][cluster_id]
@@ -145,5 +152,7 @@ class Analyzer(object):
 
                 if cluster_type == "mixed":
                     analysis[cluster_id]["centers_mean_diff"] = calculate_mean_center_differences(decomposed_cluster, distance_matrix)
-                    analysis[cluster_id]["global"]["overlap"] = OverlapCalculator.calculate_cluster_overlap(2, decomposed_cluster, distance_matrix)
+                    # The overlap ranges between 0 and 1, being 0 the best value. We invert it in order to
+                    # to get a more understandable range (1 is the best value and 0 the worst). 
+                    analysis[cluster_id]["global"]["overlap"] = 1 - OverlapCalculator.calculate_cluster_overlap( decomposed_cluster, distance_matrix)
 

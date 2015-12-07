@@ -15,7 +15,7 @@ if __name__ == '__main__': # Compatibility with sphynx
 
     setup(
           name='pyProCT',
-          version='1.7.1',
+          version='1.7.2',
           description='pyProCT is an open source cluster analysis software especially adapted for jobs related with structural proteomics',
           author='Victor Alejandro Gil Sepulveda',
           author_email='victor.gil.sepulveda@gmail.com',
@@ -53,6 +53,8 @@ if __name__ == '__main__': # Compatibility with sphynx
                     'pyproct.data.matrix.combination',
                     'pyproct.data.matrix.protein',
                     'pyproct.data.matrix.protein.cases',
+                    'pyproct.data.matrix.protein.cases.rmsd',
+                    'pyproct.data.matrix.protein.cases.euclidean',
                     'pyproct.driver',
                     'pyproct.driver.observer',
                     'pyproct.driver.results',
