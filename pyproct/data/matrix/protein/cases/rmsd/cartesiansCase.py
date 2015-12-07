@@ -54,14 +54,21 @@ class RMSDMatrixBuilder(object):
                                         fittingCoordsets  = fit_selection_coordsets,
                                         calculationCoordsets = calc_selection_coordsets,
                                         calcSymmetryGroups = symm_groups)
-            
+        
+        try:
             calculator.setNumberOfOpenMPThreads(calculator_options.get_value("number_of_threads",
-                                                default_value = 8))
-            
+                                            default_value = 8))
+        except KeyError:
+            pass
+        
+        try:
             calculator.setCUDAKernelThreadsPerBlock(calculator_options.get_value("threads_per_block",
-                                                                                 default_value = 32), 
-                                                    calculator_options.get_value("blocks_per_grid",
-                                                                                 default_value = 8))
+                                                                             default_value = 32), 
+                                                calculator_options.get_value("blocks_per_grid",
+                                                                             default_value = 8))
+        except KeyError:
+            pass
+        
         rmsds = calculator.pairwiseRMSDMatrix()
         return CondensedMatrix(rmsds)
 
