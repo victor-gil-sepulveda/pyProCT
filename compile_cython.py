@@ -16,5 +16,4 @@ current_dir = os.getcwd()
 for inst_path in installers:
     os.chdir(inst_path)
     os.system("python setup.py build_ext --inplace")
-
-os.chdir(current_dir)
+    os.chdir(current_dir)

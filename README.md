@@ -276,7 +276,7 @@ algorithm. Ex.
 	},
 	"spectral": {
 		"max": 50,
-		"force_sparse":true,
+		"force_sparse":true
 	}
 }
 ```

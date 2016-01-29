@@ -49,16 +49,27 @@ class RedundanceElimination(object):
 
         elif compression_type == "KMEDOIDS":
             representatives = self.__kmedoids_compression(clustering, matrix_handler)
-
+        
         else:
             print "[ERROR Compressor::compress] The compression type does not exist (%s)"%(self.type)
             exit() 
         
+        ids = self.get_cluster_ids(representatives, clustering.clusters)
         save_cluster_elements(representatives,
+                              ids,
                               pdb_path,
                               data_handler,
                               options)
         return pdb_name
+
+    def get_cluster_ids(self, elements, clusters):
+        ids = []
+        for element in elements:
+            for cluster in clusters:
+                if element in cluster.all_elements:
+                    ids.append(cluster.id)
+                    break
+        return ids
 
     def __naive_compression(self, clustering, matrix_handler):
         """

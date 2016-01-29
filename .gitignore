@@ -3,4 +3,5 @@ build
 .project
 .pydevproject
 *.so
-
+*~
+docs/
