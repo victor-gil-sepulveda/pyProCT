@@ -68,8 +68,9 @@ class RMSDMatrixBuilder(object):
                                                                              default_value = 8))
         except KeyError:
             pass
-        
+        print "starting pairwise"
         rmsds = calculator.pairwiseRMSDMatrix()
+        print "creating condensed"
         return CondensedMatrix(rmsds)
 
     @classmethod
