@@ -9,7 +9,7 @@ import tarfile
 from pyproct.postprocess.actions.representatives import save_cluster_elements
 
 class SaveAllClustersPostAction(object):
-    KEYWORD = "representatives"
+    KEYWORD = "clusters"
 
     def __init__(self):
         pass

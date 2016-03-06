@@ -32,7 +32,7 @@ class ProteinEnsembleDataLoader(DataLoader):
         
         structure_ensemble = self.generate_merged_structure_ensemble(self.loaded_data) 
         
-        # We free some memory
+        # Free some memory
         del self.loaded_data
         
         print "%d conformations of %d atoms were read."% (structure_ensemble.numCoordsets(),
@@ -58,8 +58,13 @@ class ProteinEnsembleDataLoader(DataLoader):
             if merged_ensemble is None:
                 merged_ensemble = structure
             else:
-                for coordset in structure.getCoordsets():
-                    merged_ensemble.addCoordset(coordset)
+                try:
+                    for coordset in structure.getCoordsets():
+                        merged_ensemble.addCoordset(coordset)
+                except ValueError as e:
+                    print "[EROR] It was impossible to add the coodinates"
+                    print e
+                    exit()
         return merged_ensemble
 
     def load_data_from_source(self, source):
@@ -111,7 +116,7 @@ class ProteinEnsembleDataLoader(DataLoader):
         elif ext == ".pdb":
             structure = prody.parsePDB(source.get_path())
         else:
-            print "[ERROR][ProteinStructureEnsembleData::get_structure] pyProCT does not know hot to load the file %s (unknown extension '%s')"%(source.get_path(),ext)
+            print "[ERROR][ProteinStructureEnsembleData::get_structure] pyProCT does not know how to load the file %s (unknown extension '%s')"%(source.get_path(),ext)
             exit()
         
         if source.has_info("base_selection"):
@@ -119,6 +124,11 @@ class ProteinEnsembleDataLoader(DataLoader):
             if structure is None:
                 common.print_and_flush("[ERROR ProteinStructureEnsembleData::get_structure] Improductive base selection (%s). Exiting...\n"%source.get_info("base_selection"))
                 exit()
+        
+        print "Loaded %d conformations with %d atoms from %s."%(structure.numCoordsets(), 
+                                                                structure.numAtoms(),
+                                                                source.get_path())
+#         prody.writePDB("%s_test"%source.get_path(), structure, csets= [1])
 
         source.add_info("number_of_conformations", structure.numCoordsets())
         source.add_info("number_of_atoms", structure.numAtoms())
