@@ -37,7 +37,7 @@ class FeatureArrayDataLoader(DataLoader):
                     merged_data[label].extend(data[label].tolist())
                 else:
                     merged_data[label] = data[label].tolist()
-        
+        print merged_data
         return FeatureArrayData(merged_data)
 
     def load_data_from_source(self, source):

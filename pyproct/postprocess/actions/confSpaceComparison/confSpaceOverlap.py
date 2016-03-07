@@ -16,7 +16,6 @@ import seaborn as sns
  
 sns.set_style("whitegrid")
 
-
 class ConfSpaceOverlapPostAction(object):
     KEYWORD = "conformational_space_overlap"
 

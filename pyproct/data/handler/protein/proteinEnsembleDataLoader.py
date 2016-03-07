@@ -59,8 +59,11 @@ class ProteinEnsembleDataLoader(DataLoader):
                 merged_ensemble = structure
             else:
                 try:
-                    for coordset in structure.getCoordsets():
-                        merged_ensemble.addCoordset(coordset)
+#                     for coordset in structure.getCoordsets():
+#                         merged_ensemble.addCoordset(coordset)
+                    merged_ensemble.addCoordset(structure) # performs better!!
+                    # Free some memory
+                    del structure
                 except ValueError as e:
                     print "[EROR] It was impossible to add the coodinates"
                     print e
