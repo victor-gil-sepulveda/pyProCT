@@ -17,7 +17,7 @@ class KMedoidsAlgorithm(object):
     dataset). It has 3 different initial seeding implementations.
     """
 
-    MAX_ITERATIONS = 500
+    MAX_ITERATIONS = 2000
 
     @staticmethod
     def seeding_types():
@@ -87,6 +87,11 @@ class KMedoidsAlgorithm(object):
 
         algorithm_details = "K-Medoids algorithm with k ="+str(int(self.k))+" and %s initial seeding"%self.seeding_to_str()
         clusters = gen_clusters_from_class_list(self.class_list)
+        
+        # Put medoids as representatives
+        for c in clusters:
+            c.set_prototype(c.calculate_medoid(self.condensed_matrix))
+            
         return Clustering(clusters,details = algorithm_details)
 
     def seeding_to_str(self):
