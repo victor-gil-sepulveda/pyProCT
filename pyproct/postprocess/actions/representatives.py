@@ -102,7 +102,7 @@ def save_cluster_elements(elements,
                 file_handler_out.write("REMARK 000  cluster id : %s\n"%ids[i])
                 file_handler_out.write("REMARK 000  cluster element : %d\n"%element_id)
                 if cluster_sizes is not None:
-                    file_handler_out.write("REMARK 000  cluster population : %s\n"%(cluster_sizes[i])
+                    file_handler_out.write("REMARK 000  cluster population : %s\n"%(cluster_sizes[i]))
             
             file_handler_out.write("MODEL"+str(current_model).rjust(9)+"\n")
             pdb_handler = cStringIO.StringIO()
