@@ -17,9 +17,11 @@ class RepresentativesPostAction(object):
 
     def run(self, clustering, postprocessing_parameters, data_handler, workspaceHandler, matrixHandler, generatedFiles):
 
-        medoids = clustering.get_medoids(matrixHandler.distance_matrix)
+        medoids = [cluster.calculate_medoid(matrixHandler.distance_matrix) for cluster in clustering.clusters] 
         
         ids = [cluster.id for cluster in clustering.clusters]
+    
+        cluster_sizes = [len(cluster.all_elements) for cluster in clustering.clusters]
     
         pdb_name = postprocessing_parameters.get_value("filename", default_value = "representatives")
         
@@ -29,7 +31,8 @@ class RepresentativesPostAction(object):
                               ids, 
                               representatives_file_path,
                               data_handler,
-                              postprocessing_parameters)
+                              postprocessing_parameters,
+                              cluster_sizes)
     
         generatedFiles.append({
                                "description":"Cluster representatives",
@@ -41,7 +44,8 @@ def save_cluster_elements(elements,
                           ids,
                           out_pdb_name,
                           data_handler,
-                          options):
+                          options,
+                          cluster_sizes = None):
     """
     Saves a pdb file containing the most representative elements of the clustering.
 
@@ -62,6 +66,9 @@ def save_cluster_elements(elements,
             - "ALL": stores all remarks
         "add_source_details" - Will add two remarks before the model tag: the path of the source file and 
             the original model number. 
+            
+    @params cluster_sizes: specific for the representatives case. Each element of this array holds the
+    size of its cluster. 
         
     """
     keep_remarks = options.get_value("keep_remarks", default_value = "NONE")
@@ -90,10 +97,12 @@ def save_cluster_elements(elements,
             if add_source_details:
                 model_number = all_model_numbers[element_id]
                 conf_source = data_handler.get_source_of_element(element_id).get_path()
-                file_handler_out.write("REMARK source            : %s\n"%conf_source)
-                file_handler_out.write("REMARK original model nr : %d\n"%model_number)
-                file_handler_out.write("REMARK cluster id : %s\n"%ids[i])
-                file_handler_out.write("REMARK cluster element : %d\n"%element_id)
+                file_handler_out.write("REMARK 000  source            : %s\n"%conf_source)
+                file_handler_out.write("REMARK 000  original model nr : %d\n"%model_number)
+                file_handler_out.write("REMARK 000  cluster id : %s\n"%ids[i])
+                file_handler_out.write("REMARK 000  cluster element : %d\n"%element_id)
+                if cluster_sizes is not None:
+                    file_handler_out.write("REMARK 000  cluster population : %s\n"%(cluster_sizes[i])
             
             file_handler_out.write("MODEL"+str(current_model).rjust(9)+"\n")
             pdb_handler = cStringIO.StringIO()
