@@ -157,5 +157,5 @@ class Driver(Observable):
             print "\t- Quality function results: "
             for qual_func in best_clustering['evaluation']:
                 if not qual_func in ['Number of clusters','Noise level', 'Mean cluster size'] and not "Normalized_" in qual_func:
-                    print "\t\t- %s: %f"%(qual_func, best_clustering['evaluation'][qual_func])
+                    print "\t\t- {0}: {1}".format(qual_func, best_clustering['evaluation'][qual_func])
         print "======================="
